@@ -1,19 +1,50 @@
 'use client';
 
+import * as z from 'zod';
+
 import { Eye, EyeOff } from 'lucide-react';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { signUpSchema } from '@/types/validation';
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface SignUpFormProps {
 	onLoginClickAction: () => void;
+	onSubmitAction: (values: z.infer<typeof signUpSchema>) => void;
+	isLoading: boolean;
 }
 
-export function SignUpForm({ onLoginClickAction }: SignUpFormProps) {
+export function SignUpForm({
+	onLoginClickAction,
+	onSubmitAction,
+	isLoading,
+}: SignUpFormProps) {
 	const [showPassword, setShowPassword] = useState(false);
+
+	// Initialize the form with Zod resolver
+	const form = useForm<z.infer<typeof signUpSchema>>({
+		resolver: zodResolver(signUpSchema),
+		defaultValues: {
+			email: '',
+			password: '',
+		},
+	});
+
+	const handleSubmit = (values: z.infer<typeof signUpSchema>) => {
+		onSubmitAction(values);
+	};
 
 	return (
 		<div className='grid gap-6'>
@@ -23,7 +54,7 @@ export function SignUpForm({ onLoginClickAction }: SignUpFormProps) {
 					alt='WeOuddy'
 					width={48}
 					height={48}
-					className='h-12 w-12'
+					className='h-16 w-16'
 				/>
 				<h1 className='text-2xl font-semibold tracking-tight'>
 					Create account
@@ -50,38 +81,66 @@ export function SignUpForm({ onLoginClickAction }: SignUpFormProps) {
 				</div>
 			</div>
 
-			<div className='grid gap-4'>
-				<div className='grid gap-2'>
-					<Label htmlFor='email'>Email</Label>
-					<Input id='email' type='email' placeholder='Your email address' />
-				</div>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(handleSubmit)} className='grid gap-4'>
+					<FormField
+						control={form.control}
+						name='email'
+						render={({ field }) => (
+							<FormItem className='grid gap-2'>
+								<FormLabel htmlFor='email'>Email</FormLabel>
+								<FormControl>
+									<Input
+										id='email'
+										type='email'
+										placeholder='Your email address'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-				<div className='grid gap-2'>
-					<Label htmlFor='password'>Password</Label>
-					<div className='relative'>
-						<Input
-							id='password'
-							type={showPassword ? 'text' : 'password'}
-							placeholder='Your password'
-						/>
-						<Button
-							type='button'
-							variant='ghost'
-							size='icon'
-							className='absolute right-2 top-1/2 -translate-y-1/2'
-							onClick={() => setShowPassword(!showPassword)}
-						>
-							{showPassword ? (
-								<EyeOff className='h-4 w-4' />
-							) : (
-								<Eye className='h-4 w-4' />
-							)}
-						</Button>
-					</div>
-				</div>
-			</div>
+					<FormField
+						control={form.control}
+						name='password'
+						render={({ field }) => (
+							<FormItem className='grid gap-2'>
+								<FormLabel htmlFor='password'>Password</FormLabel>
+								<FormControl>
+									<div className='relative'>
+										<Input
+											id='password'
+											type={showPassword ? 'text' : 'password'}
+											placeholder='Your password'
+											{...field}
+										/>
+										<Button
+											type='button'
+											variant='ghost'
+											size='icon'
+											className='absolute right-2 top-1/2 -translate-y-1/2'
+											onClick={() => setShowPassword(!showPassword)}
+										>
+											{showPassword ? (
+												<EyeOff className='h-4 w-4' />
+											) : (
+												<Eye className='h-4 w-4' />
+											)}
+										</Button>
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-			<Button className='w-full'>Continue</Button>
+					<Button type='submit' className='w-full' disabled={isLoading}>
+						Continue
+					</Button>
+				</form>
+			</Form>
 
 			<div className='text-center text-sm'>
 				By continuing, you agree to WeOuddy&apos;s{' '}

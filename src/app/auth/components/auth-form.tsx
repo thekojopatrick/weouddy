@@ -2,40 +2,21 @@
 
 import * as z from 'zod';
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { loginSchema, signUpSchema } from '@/types/validation';
 import { signIn, signUp, signUpWithGuest } from '../actions/actions';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { LoginForm } from '@/components/auth/login-form';
+import { SignUpForm } from '@/components/auth/signup-form';
 import { supabase } from '@/lib/supabase/client';
-import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-const authSchema = z.object({
-	email: z.string().email(),
-	password: z.string().min(6),
-});
 
 export function AuthForm() {
 	const [isLoading, setIsLoading] = useState(false);
+	const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
 	const router = useRouter();
 	const { toast } = useToast();
 
@@ -44,47 +25,28 @@ export function AuthForm() {
 			const {
 				data: { session },
 			} = await supabase.auth.getSession();
-			console.log({ session });
 
 			if (session) {
-				console.log({ session });
-
-				// router.push('/rooms'); // Redirect to a protected route
+				//router.push('/rooms'); // Redirect to a protected route
 			}
 		};
 		checkSession();
 	}, [router]);
 
-	const form = useForm<z.infer<typeof authSchema>>({
-		resolver: zodResolver(authSchema),
-		defaultValues: {
-			email: '',
-			password: '',
-		},
-	});
-
-	const onSubmit = async (
-		values: z.infer<typeof authSchema>,
-		isSignUp: boolean
-	) => {
+	const handleSignUp = async (values: z.infer<typeof signUpSchema>) => {
 		setIsLoading(true);
 		try {
-			const { error, success } = isSignUp
-				? await signUp(values)
-				: await signIn(values);
+			const { error, success } = await signUp(values);
 
 			if (error) throw error;
 
-			// Ensure session is set
 			if (success) {
 				toast({
-					title: isSignUp ? 'Account created!' : 'Welcome back!',
-					description: isSignUp
-						? 'Please check your email to verify your account.'
-						: 'You have successfully signed in.',
+					title: 'Account created!',
+					description: 'Please check your email to verify your account.',
 				});
 
-				router.push('/rooms'); // Redirect to a protected route
+				router.push('/rooms');
 			}
 
 			router.refresh();
@@ -95,6 +57,36 @@ export function AuthForm() {
 				variant: 'destructive',
 			});
 			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleSignIn = async (values: z.infer<typeof loginSchema>) => {
+		setIsLoading(true);
+		try {
+			const { error, success } = await signIn(values);
+
+			if (error) throw error;
+
+			if (success) {
+				toast({
+					title: 'Welcome back!',
+					description: 'You have successfully signed in.',
+				});
+
+				router.push('/rooms');
+			}
+
+			router.refresh();
+		} catch (error: Error | unknown) {
+			toast({
+				title: 'Error',
+				description: (error as Error).message || 'An unknown error occurred.',
+				variant: 'destructive',
+			});
+			console.error(error);
+		} finally {
 			setIsLoading(false);
 		}
 	};
@@ -127,130 +119,40 @@ export function AuthForm() {
 		}
 	};
 
+	const handleForgotPassword = () => {
+		// TODO: Implement forgot password functionality
+		toast({
+			title: 'Forgot Password',
+			description: 'Forgot password functionality coming soon.',
+		});
+	};
+
 	return (
-		<Card className='w-full max-w-md mx-auto'>
-			<CardHeader>
-				<CardTitle>Authentication</CardTitle>
-				<CardDescription>
-					Sign in or create an account to continue
-				</CardDescription>
-			</CardHeader>
+		<Card className='w-full max-w-md mx-auto shadow-sm'>
 			<CardContent>
-				<Tabs defaultValue='signin'>
-					<TabsList className='grid w-full grid-cols-2 mb-4'>
-						<TabsTrigger value='signin'>Sign In</TabsTrigger>
-						<TabsTrigger value='signup'>Sign Up</TabsTrigger>
-					</TabsList>
+				{activeTab === 'login' ? (
+					<LoginForm
+						onSubmitAction={handleSignIn}
+						onSignUpClickAction={() => setActiveTab('signup')}
+						onForgotPassword={handleForgotPassword}
+						isLoading={isLoading}
+					/>
+				) : (
+					<SignUpForm
+						onSubmitAction={handleSignUp}
+						onLoginClickAction={() => setActiveTab('login')}
+						isLoading={isLoading}
+					/>
+				)}
 
-					<TabsContent value='signin'>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit((values) =>
-									onSubmit(values, false)
-								)}
-								className='space-y-4'
-							>
-								<FormField
-									control={form.control}
-									name='email'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Email</FormLabel>
-											<FormControl>
-												<Input {...field} type='email' disabled={isLoading} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name='password'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Password</FormLabel>
-											<FormControl>
-												<Input
-													{...field}
-													type='password'
-													disabled={isLoading}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button type='submit' className='w-full' disabled={isLoading}>
-									{isLoading ? 'Just a sec..' : 'Sign In'}
-								</Button>
-							</form>
-						</Form>
-					</TabsContent>
-
-					<TabsContent value='signup'>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit((values) => onSubmit(values, true))}
-								className='space-y-4'
-							>
-								<FormField
-									control={form.control}
-									name='email'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Email</FormLabel>
-											<FormControl>
-												<Input {...field} type='email' disabled={isLoading} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name='password'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Password</FormLabel>
-											<FormControl>
-												<Input
-													{...field}
-													type='password'
-													disabled={isLoading}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button type='submit' className='w-full' disabled={isLoading}>
-									{isLoading ? 'Signing up...' : 'Sign Up'}
-								</Button>
-							</form>
-						</Form>
-					</TabsContent>
-				</Tabs>
-
-				<div className='mt-6'>
-					<div className='relative'>
-						<div className='absolute inset-0 flex items-center'>
-							<span className='w-full border-t' />
-						</div>
-						<div className='relative flex justify-center text-xs uppercase'>
-							<span className='bg-background px-2 text-muted-foreground'>
-								Or
-							</span>
-						</div>
-					</div>
-					<Button
-						variant='outline'
-						className='w-full mt-4'
-						onClick={handleGuestAccess}
-						disabled={isLoading}
-					>
-						Continue as Guest
-					</Button>
-				</div>
+				<Button
+					variant='outline'
+					className='w-full mt-4'
+					onClick={handleGuestAccess}
+					disabled={isLoading}
+				>
+					Continue as Guest
+				</Button>
 			</CardContent>
 		</Card>
 	);

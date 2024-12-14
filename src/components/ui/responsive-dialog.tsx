@@ -4,6 +4,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { useEffect, useState } from 'react';
 
+import { DialogTitle } from '@radix-ui/react-dialog';
+
 interface ResponsiveDialogProps {
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
@@ -39,7 +41,10 @@ export function ResponsiveDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChangeAction}>
-			<DialogContent className='sm:max-w-[425px]'>{children}</DialogContent>
+			<DialogContent className='sm:max-w-[425px]'>
+				<DialogTitle className='sr-only'>Modal</DialogTitle>
+				{children}
+			</DialogContent>
 		</Dialog>
 	);
 }
