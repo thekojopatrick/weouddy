@@ -81,7 +81,7 @@ export function CountrySelector({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
-					variant='outline'
+					variant='ghost'
 					role='combobox'
 					aria-expanded={open}
 					className={cn('w-[50px] justify-between', className)}
@@ -94,7 +94,7 @@ export function CountrySelector({
 							height: '2em',
 						}}
 					/>
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					<ChevronsUpDown className='ml-1 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className='w-[200px] p-0'>
@@ -106,7 +106,7 @@ export function CountrySelector({
 					/>
 					<CommandEmpty>No country found.</CommandEmpty>
 					<CommandGroup>
-						{filteredCountries.map((country) => (
+						{filteredCountries?.map((country) => (
 							<CommandItem
 								key={country.value}
 								value={country.value}
