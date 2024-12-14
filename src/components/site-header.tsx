@@ -5,6 +5,7 @@ import { CountrySelector } from './country-selector';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { NavUser } from './nav-user';
 import { Search } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
@@ -52,6 +53,13 @@ export function SiteHeader() {
 					<Button variant='outline' className='rounded-full' asChild>
 						<Link href='/auth'>Login</Link>
 					</Button>
+					<NavUser
+						user={{
+							name: 'Welbeck',
+							email: 'welbeck@gmail.com',
+							avatar: '/placeholder.svg',
+						}}
+					/>
 					<CountrySelector />
 				</div>
 			</div>

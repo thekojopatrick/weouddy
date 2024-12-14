@@ -22,9 +22,10 @@ export function useMediaQuery(query: string) {
 
 	const getSnapshot = () => window.matchMedia(query).matches;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const getServerSnapshot = () => {
 		throw Error('useMediaQuery is a client-only hook');
 	};
 
-	return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+	return React.useSyncExternalStore(subscribe, getSnapshot);
 }
