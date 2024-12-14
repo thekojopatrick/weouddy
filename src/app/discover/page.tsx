@@ -1,21 +1,14 @@
 'use client';
 
 import { Plus, UserPlus } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
 import { EventCard } from '@/components/event-card';
 import { LocationFilters } from '@/components/location-filters';
 import { SiteHeader } from '@/components/site-header';
-import { usePathname } from 'next/navigation';
-
-const locations = [
-	{ name: 'Accra', href: 'accra' },
-	{ name: 'Ghana', href: 'gh' },
-	{ name: 'Africa', href: 'africa' },
-	{ name: 'Rest of the world', href: 'world' },
-];
+import { useSearchParams } from 'next/navigation';
 
 const allEvents = [
 	{
@@ -27,7 +20,7 @@ const allEvents = [
 			name: 'Kojo Patrick',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Accra',
+		location: 'accra',
 		members: 0,
 		category: 'House Party',
 		date: '2024-03-20',
@@ -43,7 +36,7 @@ const allEvents = [
 			name: 'Lila Anderson',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Ghana',
+		location: 'gh',
 		members: 5,
 		category: 'Club',
 		date: '2024-03-20',
@@ -59,7 +52,7 @@ const allEvents = [
 			name: 'Sophie Lee',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Africa',
+		location: 'africa',
 		members: 20,
 		category: 'Outdoor Event',
 		date: '2024-03-20',
@@ -75,7 +68,7 @@ const allEvents = [
 			name: 'James Smith',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Rest of the world',
+		location: 'world',
 		members: 10,
 		category: 'House Party',
 		date: '2024-03-20',
@@ -91,7 +84,7 @@ const allEvents = [
 			name: 'Pastor Johnson',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Accra',
+		location: 'accra',
 		members: 100,
 		category: 'Church',
 		date: '2024-03-20',
@@ -107,7 +100,7 @@ const allEvents = [
 			name: 'Emma and John',
 			avatar: '/placeholder.svg',
 		},
-		location: 'Ghana',
+		location: 'gh',
 		members: 50,
 		category: 'Weddings',
 		date: '2024-03-20',
@@ -116,26 +109,19 @@ const allEvents = [
 	},
 ];
 
-export default function HomePage() {
+export default function DiscoverPage() {
 	const [filteredEvents, setFilteredEvents] = useState(allEvents);
-	const [currentLocation, setCurrentLocation] = useState('Accra');
 	const [currentCategory, setCurrentCategory] = useState('All');
-
-	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
 	useEffect(() => {
-		const path = pathname.split('/')[2];
-		if (path) {
-			const location =
-				locations.find((loc) => loc.href.includes(path))?.name || 'Accra';
-			setCurrentLocation(location);
-			filterEvents(location, currentCategory);
-		}
-	}, [currentCategory, pathname]);
+		const location = searchParams.get('location') || 'accra';
+		filterEvents(location, currentCategory);
+	}, [searchParams, currentCategory]);
 
 	const filterEvents = (location: string, category: string) => {
 		let filtered = allEvents;
-		if (location !== 'Rest of the world') {
+		if (location !== 'world') {
 			filtered = filtered.filter((event) => event.location === location);
 		}
 		if (category !== 'All') {
@@ -145,17 +131,14 @@ export default function HomePage() {
 	};
 
 	const handleLocationChange = (location: string) => {
-		setCurrentLocation(location);
 		filterEvents(location, currentCategory);
 	};
 
-	const handleCategoryChange = useCallback(
-		(category: string) => {
-			setCurrentCategory(category);
-			filterEvents(currentLocation, category);
-		},
-		[currentLocation]
-	);
+	const handleCategoryChange = (category: string) => {
+		setCurrentCategory(category);
+		const location = searchParams.get('location') || 'accra';
+		filterEvents(location, category);
+	};
 
 	const availableCategories = [
 		'All',
@@ -176,7 +159,7 @@ export default function HomePage() {
 					</div>
 					<div className='mt-8'>
 						<LocationFilters
-							currentLocation={currentLocation}
+							currentLocation={searchParams.get('location') || 'accra'}
 							onLocationChangeAction={handleLocationChange}
 						/>
 						<CategoryFilters
