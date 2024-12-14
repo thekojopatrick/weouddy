@@ -12,8 +12,8 @@ export function SiteHeader() {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	return (
 		<header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-			<div className='flex h-16 items-center max-w-7xl px-6 mx-auto'>
-				<Link href='/' className='mr-4 md:mr-8'>
+			<div className='flex h-16 items-center max-w-7xl md:px-6 mx-auto gap-x-2'>
+				<Link href='/'>
 					<Image
 						src={isSmallDevice ? '/logomark.svg' : '/logo.svg'}
 						alt={'WeOuddy'}
