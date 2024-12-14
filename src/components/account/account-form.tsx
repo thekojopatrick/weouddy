@@ -1,128 +1,219 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { type User } from '@supabase/supabase-js';
+
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { AlertTriangle, Edit2, Save, User as UserIcon } from 'lucide-react';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
+
 import Avatar from './avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { User } from '@supabase/supabase-js';
+import { useAccount } from '@/hooks/account/use-account';
+import { useState } from 'react';
 
 export default function AccountForm({ user }: { user: User | null }) {
-	const [loading, setLoading] = useState(true);
-	const [fullname, setFullname] = useState<string | null>(null);
-	const [username, setUsername] = useState<string | null>(null);
-	const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+	const { accountData, loading, updateProfile } = useAccount(user);
+	const [isEditing, setIsEditing] = useState(false);
+	const [localData, setLocalData] = useState({
+		fullname: accountData.fullname ?? '',
+		username: accountData.username ?? '',
+	});
+	const [updateStatus, setUpdateStatus] = useState<{
+		type: 'success' | 'error' | null;
+		message: string;
+	}>({ type: null, message: '' });
 
-	const getProfile = useCallback(async () => {
-		try {
-			setLoading(true);
-			const { data, error, status } = await supabase
-				.from('User')
-				.select(`name, username, avatarUrl`)
-				.eq('email', user?.email)
-				.single();
+	const handleSave = async () => {
+		const result = await updateProfile({
+			fullname: localData.fullname,
+			username: localData.username,
+		});
 
-			if (error && status !== 406) {
-				console.log(error);
-				throw error;
-			}
-
-			if (data) {
-				setFullname(data.name);
-				setUsername(data.username);
-				setAvatarUrl(data.avatarUrl);
-			}
-		} catch (error: Error | unknown) {
-			console.error(error);
-			alert('Error loading user data!');
-		} finally {
-			setLoading(false);
-		}
-	}, [user]);
-
-	useEffect(() => {
-		getProfile();
-	}, [user, getProfile]);
-
-	async function updateProfile({
-		username,
-		avatarUrl,
-	}: {
-		username: string | null;
-		fullname: string | null;
-		avatarUrl: string | null;
-	}) {
-		try {
-			setLoading(true);
-
-			console.log({ user, fullname });
-
-			const { error } = await supabase.from('User').upsert({
-				id: user?.id as string,
-				email: user?.email as string,
-				name: fullname,
-				username,
-				avatarUrl,
-				updatedAt: new Date().toISOString(),
+		if (result?.success) {
+			setUpdateStatus({
+				type: 'success',
+				message: result.message,
 			});
-			if (error) throw error;
-			alert('Profile updated!');
-		} catch (error: Error | unknown) {
-			console.log(error);
-			alert('Error updating the data!');
-		} finally {
-			setLoading(false);
+			setIsEditing(false);
+		} else {
+			setUpdateStatus({
+				type: 'error',
+				message: result?.message ?? 'Update failed',
+			});
 		}
-	}
+	};
+
+	const handleAvatarUpload = async (url: string) => {
+		await updateProfile({ avatarUrl: url });
+	};
 
 	return (
-		<div className='form-widget'>
-			<Avatar
-				uid={user?.id ?? null}
-				url={avatarUrl}
-				size={150}
-				onUploadAction={(url: string) => {
-					setAvatarUrl(url);
-					updateProfile({ fullname, username, avatarUrl: url });
-				}}
-			/>
-			<div>
-				<label htmlFor='email'>Email</label>
-				<input id='email' type='text' value={user?.email} disabled />
-			</div>
-			<div>
-				<label htmlFor='fullName'>Full Name</label>
-				<input
-					id='fullName'
-					type='text'
-					value={fullname || ''}
-					onChange={(e) => setFullname(e.target.value)}
-				/>
-			</div>
-			<div>
-				<label htmlFor='username'>Username</label>
-				<input
-					id='username'
-					type='text'
-					value={username || ''}
-					onChange={(e) => setUsername(e.target.value)}
-				/>
-			</div>
+		<Card className='max-w-md mx-auto shadow-lg'>
+			<CardHeader className='bg-gradient-to-r from-blue-50 to-blue-100 pb-4'>
+				<CardTitle className='flex items-center'>
+					<UserIcon className='mr-2' /> Account Settings
+				</CardTitle>
+				<CardDescription>Manage your profile and preferences</CardDescription>
+			</CardHeader>
 
-			<div>
-				<button
-					className='button primary block'
-					onClick={() => updateProfile({ fullname, username, avatarUrl })}
-					disabled={loading}
-				>
-					{loading ? 'Loading ...' : 'Update'}
-				</button>
-			</div>
+			<CardContent className='space-y-4 pt-6'>
+				<div className='flex justify-center mb-4'>
+					<Avatar
+						uid={user?.id ?? null}
+						url={accountData.avatarUrl}
+						size={150}
+						onUploadAction={handleAvatarUpload}
+					/>
+				</div>
 
-			<div>
-				<form action='/auth/signout' method='post'>
-					<button className='button block' type='submit'>
-						Sign out
-					</button>
-				</form>
-			</div>
-		</div>
+				<div className='space-y-2'>
+					<Label htmlFor='email'>Email</Label>
+					<Input
+						id='email'
+						value={accountData.email ?? ''}
+						disabled
+						className='bg-gray-100 cursor-not-allowed'
+					/>
+				</div>
+
+				<div className='space-y-2'>
+					<div className='flex justify-between items-center'>
+						<Label htmlFor='fullName'>Full Name</Label>
+						{!isEditing ? (
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger>
+										<Button
+											variant='ghost'
+											size='sm'
+											onClick={() => setIsEditing(true)}
+										>
+											<Edit2 className='h-4 w-4 mr-2' /> Edit
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>Click to edit your profile</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+						) : null}
+					</div>
+					<Input
+						id='fullName'
+						value={isEditing ? localData.fullname : accountData.fullname ?? ''}
+						onChange={(e) =>
+							setLocalData((prev) => ({
+								...prev,
+								fullname: e.target.value,
+							}))
+						}
+						disabled={!isEditing}
+						className={
+							isEditing
+								? 'border-blue-500 focus:ring-2 focus:ring-blue-200'
+								: 'bg-gray-100 cursor-not-allowed'
+						}
+					/>
+				</div>
+
+				<div className='space-y-2'>
+					<Label htmlFor='username'>Username</Label>
+					<Input
+						id='username'
+						value={isEditing ? localData.username : accountData.username ?? ''}
+						onChange={(e) =>
+							setLocalData((prev) => ({
+								...prev,
+								username: e.target.value,
+							}))
+						}
+						disabled={!isEditing}
+						className={
+							isEditing
+								? 'border-blue-500 focus:ring-2 focus:ring-blue-200'
+								: 'bg-gray-100 cursor-not-allowed'
+						}
+					/>
+				</div>
+
+				{isEditing && (
+					<div className='flex space-x-2'>
+						<Button onClick={handleSave} disabled={loading} className='w-full'>
+							<Save className='mr-2 h-4 w-4' />
+							{loading ? 'Saving...' : 'Save Changes'}
+						</Button>
+						<Button
+							variant='outline'
+							onClick={() => setIsEditing(false)}
+							className='w-full'
+						>
+							Cancel
+						</Button>
+					</div>
+				)}
+
+				{updateStatus.type && (
+					<div
+						className={`p-3 rounded-md ${
+							updateStatus.type === 'success'
+								? 'bg-green-50 text-green-700'
+								: 'bg-red-50 text-red-700'
+						}`}
+					>
+						{updateStatus.message}
+					</div>
+				)}
+
+				<AlertDialog>
+					<AlertDialogTrigger asChild>
+						<Button variant='destructive' className='w-full'>
+							<AlertTriangle className='mr-2 h-4 w-4' />
+							Sign Out
+						</Button>
+					</AlertDialogTrigger>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>
+								Are you sure you want to sign out?
+							</AlertDialogTitle>
+							<AlertDialogDescription>
+								You will need to log in again to access your account.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Cancel</AlertDialogCancel>
+							<AlertDialogAction
+								onClick={() => {
+									// Client-side sign out logic or form submission
+								}}
+							>
+								Sign Out
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+			</CardContent>
+		</Card>
 	);
 }
