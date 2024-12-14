@@ -87,7 +87,7 @@ export function SignUpForm({
 						control={form.control}
 						name='email'
 						render={({ field }) => (
-							<FormItem className='grid gap-2'>
+							<FormItem>
 								<FormLabel htmlFor='email'>Email</FormLabel>
 								<FormControl>
 									<Input
@@ -106,7 +106,7 @@ export function SignUpForm({
 						control={form.control}
 						name='password'
 						render={({ field }) => (
-							<FormItem className='grid gap-2'>
+							<FormItem>
 								<FormLabel htmlFor='password'>Password</FormLabel>
 								<FormControl>
 									<div className='relative'>

@@ -15,15 +15,10 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import { loginSchema } from '@/types/validation';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-// Zod schema for login validation
-const loginSchema = z.object({
-	email: z.string().email('Invalid email address'),
-	password: z.string().min(1, 'Password is required'),
-});
 
 interface LoginFormProps {
 	isLoading: boolean;
