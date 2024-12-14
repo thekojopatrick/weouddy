@@ -11,6 +11,9 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
+
+import { supabase } from '@/lib/supabase/client';
 
 export function NavUser({
 	user,
@@ -21,11 +24,34 @@ export function NavUser({
 		avatar: string;
 	};
 }) {
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(user.avatar);
+
+	useEffect(() => {
+		async function downloadImage(path: string) {
+			try {
+				const { data, error } = await supabase.storage
+					.from('avatars')
+					.download(path);
+
+				if (error) {
+					throw error;
+				}
+
+				const url = URL.createObjectURL(data);
+				setAvatarUrl(url);
+			} catch (error) {
+				console.log('Error downloading image: ', error);
+			}
+		}
+
+		if (user) downloadImage(user.avatar);
+	}, [user]);
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger>
 				<Avatar className='h-8 w-8 rounded-full'>
-					<AvatarImage src={user.avatar} alt={user.name} />
+					<AvatarImage src={avatarUrl!} alt={user.name} />
 					<AvatarFallback className='rounded-lg'>CN</AvatarFallback>
 				</Avatar>
 			</DropdownMenuTrigger>
@@ -38,7 +64,7 @@ export function NavUser({
 				<DropdownMenuLabel className='p-0 font-normal'>
 					<div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
 						<Avatar className='h-8 w-8 rounded-lg'>
-							<AvatarImage src={user.avatar} alt={user.name} />
+							<AvatarImage src={avatarUrl!} alt={user.name} />
 							<AvatarFallback className='rounded-lg'>CN</AvatarFallback>
 						</Avatar>
 						<div className='grid flex-1 text-left text-sm leading-tight'>

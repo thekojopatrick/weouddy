@@ -7,10 +7,14 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { NavUser } from './nav-user';
 import { Search } from 'lucide-react';
+import { User } from '@supabase/supabase-js';
+import { useAccount } from '@/hooks/account/use-account';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-export function SiteHeader() {
+export function SiteHeader({ user }: { user: User | null }) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
+
+	const { accountData, loading } = useAccount(user);
 	return (
 		<header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 			<div className='flex h-16 items-center max-w-7xl md:px-6 mx-auto gap-x-2'>
@@ -50,16 +54,19 @@ export function SiteHeader() {
 					/>
 				</div>
 				<div className='md:ml-auto flex items-center space-x-3'>
-					<Button variant='outline' className='rounded-full' asChild>
-						<Link href='/auth'>Login</Link>
-					</Button>
-					<NavUser
-						user={{
-							name: 'Welbeck',
-							email: 'welbeck@gmail.com',
-							avatar: '/placeholder.svg',
-						}}
-					/>
+					{!loading && accountData ? (
+						<NavUser
+							user={{
+								name: `${accountData.fullname || 'Anonymous'}`,
+								email: accountData.email ?? 'unknown@email.com',
+								avatar: accountData.avatarUrl ?? '',
+							}}
+						/>
+					) : (
+						<Button variant='outline' className='rounded-full' asChild>
+							<Link href='/auth'>Login</Link>
+						</Button>
+					)}
 					<CountrySelector />
 				</div>
 			</div>
