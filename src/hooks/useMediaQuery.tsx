@@ -1,5 +1,12 @@
 import React from 'react';
 
+/**
+ * Custom hook to monitor media query changes.
+ *
+ * @param query - The media query string to evaluate (e.g., "(min-width: 768px)").
+ * @returns A boolean indicating whether the media query matches.
+ */
+
 export function useMediaQuery(query: string) {
 	const subscribe = React.useCallback(
 		(callback: (event: MediaQueryListEvent) => void) => {
@@ -13,9 +20,7 @@ export function useMediaQuery(query: string) {
 		[query]
 	);
 
-	const getSnapshot = () => {
-		return window.matchMedia(query).matches;
-	};
+	const getSnapshot = () => window.matchMedia(query).matches;
 
 	const getServerSnapshot = () => {
 		throw Error('useMediaQuery is a client-only hook');
