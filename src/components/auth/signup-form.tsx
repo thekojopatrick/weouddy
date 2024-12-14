@@ -32,7 +32,7 @@ export function SignUpForm({ onLoginClickAction }: SignUpFormProps) {
 
 			<Button variant='outline' className='relative'>
 				<Image
-					src='/google.svg'
+					src='/brand/google.svg'
 					alt='Google'
 					width={20}
 					height={20}
