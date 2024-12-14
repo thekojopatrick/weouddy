@@ -149,9 +149,11 @@ export default function DiscoverPage() {
 		<div className='flex min-h-screen flex-col'>
 			<SiteHeader />
 			<main className='flex-1'>
-				<section className='container py-8 mx-auto'>
+				<section className='max-w-7xl px-6 py-8 '>
 					<div className='flex flex-col gap-4'>
-						<h1 className='text-3xl font-bold'>Discover Events</h1>
+						<h1 className='text-3xl font-bold tracking-tighter'>
+							Discover Events
+						</h1>
 						<p className='text-muted-foreground'>
 							Explore events near you, browse by category, or search events by
 							name.

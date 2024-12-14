@@ -53,7 +53,7 @@ export function EventCard({
 	return (
 		<>
 			<Card
-				className='overflow-hidden cursor-pointer'
+				className='overflow-hidden cursor-pointer shadow-sm'
 				onClick={() => setIsModalOpen(true)}
 			>
 				<CardHeader className='p-0'>
