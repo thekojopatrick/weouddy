@@ -2,16 +2,26 @@
 
 import { Button } from '@/components/ui/button';
 import { CountrySelector } from './country-selector';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export function SiteHeader() {
+	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	return (
 		<header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 			<div className='flex h-16 items-center max-w-7xl px-6 mx-auto'>
-				<Link href='/' className='mr-8'>
-					<span className='text-xl font-bold'>WeOuddy</span>
+				<Link href='/' className='mr-4 md:mr-8'>
+					<Image
+						src={isSmallDevice ? '/logomark.svg' : '/logo.svg'}
+						alt={'WeOuddy'}
+						className='object-cover'
+						width={isSmallDevice ? 150 : 120}
+						height={isSmallDevice ? 150 : 120}
+					/>
+					<span className='text-xl font-bold sr-only'>WeOuddy</span>
 				</Link>
 				<nav className='hidden md:flex items-center space-x-6 text-sm font-medium'>
 					<Link href='/' className='transition-colors hover:text-foreground/80'>
@@ -38,7 +48,7 @@ export function SiteHeader() {
 						className='pl-8 shadow-none rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100'
 					/>
 				</div>
-				<div className='ml-auto flex items-center space-x-3'>
+				<div className='md:ml-auto flex items-center space-x-3'>
 					<Button variant='outline' className='rounded-full' asChild>
 						<Link href='/auth'>Login</Link>
 					</Button>
