@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,31 +8,82 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum RoomActivityType {
+  JOIN
+  LEAVE
+  POST
+  LIKE
+  COMMENT
+  DELETE
+  REPORT
+}
+
 model User {
-  id          String    @id @default(cuid())
-  email       String?   @unique
-  name        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  isAnonymous Boolean   @default(false)
-  hostedRooms Room[]    @relation("RoomHost")
-  joinedRooms Room[]    @relation("RoomMembers")
-  posts       Post[]
-  comments    Comment[]
-  likes       Like[]
+  id             String         @id @default(cuid())
+  email          String?        @unique
+  name           String?
+  username       String?        @unique
+  avatarUrl      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  lastActive     DateTime       @default(now())
+  isAnonymous    Boolean        @default(false)
+  allowFollowers Boolean        @default(true)
+  followers      Follow[]       @relation("UserFollowers")
+  following      Follow[]       @relation("UserFollowing")
+  hostedRooms    Room[]         @relation("RoomHost")
+  joinedRooms    Room[]         @relation("RoomMembers")
+  roomActivities RoomActivity[]
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  chats          ChatMessage[]
 }
 
 model Room {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  hostId      String
-  host        User     @relation("RoomHost", fields: [hostId], references: [id])
-  members     User[]   @relation("RoomMembers")
-  posts       Post[]
+  id           String         @id @default(cuid())
+  name         String
+  description  String?
+  date         DateTime
+  isPrivate    Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  hostId       String
+  qrCodeUrl    String?
+  activities   RoomActivity[]
+  settings     RoomSettings?
+  host         User           @relation("RoomHost", fields: [hostId], references: [id])
+  members      User[]         @relation("RoomMembers")
+  posts        Post[]
+  chats        ChatMessage[]
+  chatSettings ChatSettings?
+}
+
+model RoomSettings {
+  id            String   @id @default(cuid())
+  room          Room     @relation(fields: [roomId], references: [id])
+  roomId        String   @unique
+  isPrivate     Boolean  @default(false)
+  isDisabled    Boolean  @default(false)
+  allowComments Boolean  @default(false)
+  allowLikes    Boolean  @default(false)
+  allowChat     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model RoomActivity {
+  id        String           @id @default(cuid())
+  roomId    String
+  userId    String
+  type      RoomActivityType // 'join', 'leave', 'post', 'like', 'comment'
+  createdAt DateTime         @default(now())
+  room      Room             @relation(fields: [roomId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Post {
@@ -76,4 +121,44 @@ model Like {
   post      Post     @relation(fields: [postId], references: [id])
 
   @@unique([userId, postId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id])
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  content   String
+  isPinned  Boolean  @default(false)
+  isHidden  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ChatSettings {
+  id                 String  @id @default(cuid())
+  roomId             String  @unique
+  isEnabled          Boolean @default(true)
+  allowGuestMessages Boolean @default(true)
+  slowMode           Boolean @default(false)
+  slowModeInterval   Int     @default(0) // Seconds between messages
+  requireModeration  Boolean @default(false)
+  room               Room    @relation(fields: [roomId], references: [id])
 }
