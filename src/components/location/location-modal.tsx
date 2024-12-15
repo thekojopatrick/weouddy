@@ -59,6 +59,8 @@ export function LocationModal({
 		libraries: ['places'],
 	});
 
+	console.log({ isLoaded });
+
 	const {
 		ready,
 		value,
@@ -95,7 +97,7 @@ export function LocationModal({
 					const { latitude: lat, longitude: lng } = position.coords;
 					try {
 						const response = await fetch(
-							`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+							`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${'AIzaSyBiWsz7jQMjQBk4Ld3An2MnzZxqRhqNbOM'}`
 						);
 						const data = await response.json();
 						if (data.results[0]) {

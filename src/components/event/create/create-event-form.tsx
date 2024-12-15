@@ -1,17 +1,17 @@
 'use client';
 
-import { EventFormValues, eventFormSchema } from '@/types/validation';
-
-import { CoverUploadStep } from './steps/cover-upload';
-import { EventDetailsStep } from './steps/event-details';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { eventFormSchema, type EventFormValues } from '@/types/validation';
 import { Form } from '@/components/ui/form';
+
 import { LocationTimeStep } from './steps/location-time-step';
 import { PrivacyStep } from './steps/privacy';
 import { SuccessStep } from './steps/success';
 import { WelcomeStep } from './steps/welcome';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { CoverUploadStep } from './steps/cover-upload';
+import { EventDetailsStep } from './steps/event-details';
 
 interface CreateEventFormProps {
 	onCloseAction: () => void;
@@ -38,53 +38,38 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 			location: '',
 			date: '',
 			time: '',
+			coverImage: '',
 			isPublic: false,
 		},
+		mode: 'onChange',
 	});
 
 	const onSubmit = async (data: EventFormValues) => {
-		try {
-			// Validate the entire form data
-			const result = eventFormSchema.safeParse(data);
-
-			if (!result.success) {
-				// Log detailed validation errors
-				console.error('Validation Errors:', result.error.flatten());
-				return;
-			}
-
-			// Proceed with form submission
-			console.log(data);
-			setEventUrl('weoudy.com/lisley?event=birthday-party');
-			setStep('success');
-		} catch (error) {
-			console.error('Submission Error:', error);
-		}
+		console.log(data);
+		setEventUrl('weoudy.com/lisley?event=birthday-party');
+		setStep('success');
 	};
 
-	const handleStepSubmit = async (nextStep: Step) => {
-		let isValid = false;
-		switch (step) {
-			case 'details':
-				isValid = await form.trigger(['title', 'type', 'description']);
-				break;
-			case 'location':
-				isValid = await form.trigger(['location', 'date', 'time']);
-				break;
-			case 'privacy':
-				isValid = await form.trigger(['isPublic']);
-				break;
-			default:
-				isValid = true;
+	const handleStepChange = async (nextStep: Step) => {
+		const fieldsToValidate = {
+			details: ['title', 'type', 'description'],
+			location: ['location', 'date', 'time'],
+			cover: ['coverImage'],
+			privacy: ['isPublic'],
+			welcome: [],
+			success: [],
+		}[step] as (keyof EventFormValues)[];
+
+		if (fieldsToValidate.length > 0) {
+			const isValid = await form.trigger(fieldsToValidate);
+			if (!isValid) return;
 		}
 
-		if (isValid) {
-			setStep(nextStep);
-		}
+		setStep(nextStep);
 	};
 
 	return (
-		<div className='max-w-2xl mx-auto z-40'>
+		<div className='max-w-2xl mx-auto'>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					{step === 'welcome' && (
@@ -95,29 +80,25 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 					)}
 					{step === 'details' && (
 						<EventDetailsStep
-							form={form}
-							onSubmit={() => handleStepSubmit('location')}
+							onNext={() => handleStepChange('location')}
 							onBack={() => setStep('welcome')}
 						/>
 					)}
 					{step === 'location' && (
 						<LocationTimeStep
-							form={form}
-							onNext={() => setStep('cover')}
-							onBack={() => setStep('details')}
+							onNextAction={() => handleStepChange('cover')}
+							onBackAction={() => setStep('details')}
 						/>
 					)}
 					{step === 'cover' && (
 						<CoverUploadStep
-							form={form}
-							onNext={() => setStep('privacy')}
+							onNext={() => handleStepChange('privacy')}
 							onBack={() => setStep('location')}
 						/>
 					)}
 					{step === 'privacy' && (
 						<PrivacyStep
-							form={form}
-							onSubmit={onSubmit}
+							onSubmit={form.handleSubmit(onSubmit)}
 							onBack={() => setStep('cover')}
 						/>
 					)}
