@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Loader2, MapPin, Navigation } from 'lucide-react';
+import { ArrowLeft, Loader2, MapPin } from 'lucide-react';
 import {
 	Command,
 	CommandEmpty,
@@ -32,8 +32,8 @@ interface Location {
 
 interface LocationModalProps {
 	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	onSelectLocation: (location: Location) => void;
+	onOpenChangeAction: (open: boolean) => void;
+	onSelectLocationAction: (location: Location) => void;
 }
 
 const GoogleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
@@ -73,14 +73,15 @@ const predefinedLocations: Location[] = [
 
 export function LocationModal({
 	open,
-	onOpenChange,
-	onSelectLocation,
+	onOpenChangeAction,
+	onSelectLocationAction,
 }: LocationModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { isLoaded, loadError } = useJsApiLoader({
 		id: 'google-map-script',
 		googleMapsApiKey: GoogleMapsApiKey,
+		libraries: ['places'],
 	});
 
 	const {
@@ -90,11 +91,12 @@ export function LocationModal({
 		setValue,
 		clearSuggestions,
 	} = usePlacesAutocomplete({
-		callbackName: 'initMap',
 		requestOptions: {
-			/* Define search scope here */
+			types: ['geocode', 'establishment'],
 		},
 		debounce: 300,
+		cache: 86400,
+		initOnMount: true,
 	});
 
 	useEffect(() => {
@@ -105,10 +107,23 @@ export function LocationModal({
 		});
 	}, [isLoaded, loadError]);
 
+	useEffect(() => {
+		if (open) {
+			setValue('');
+			clearSuggestions();
+		}
+	}, [open, setValue, clearSuggestions]);
+
+	const handleInputChange = (newValue: string) => {
+		setValue(newValue);
+	};
+
 	const handleSelect = async (description: string, placeId?: string) => {
 		try {
 			setIsLoading(true);
+			console.log({ description });
 			setValue(description, false);
+
 			clearSuggestions();
 
 			// First, check if it's a predefined location
@@ -117,8 +132,8 @@ export function LocationModal({
 			);
 
 			if (predefinedLocation) {
-				onSelectLocation(predefinedLocation);
-				onOpenChange(false);
+				onSelectLocationAction(predefinedLocation);
+				onOpenChangeAction(false);
 				return;
 			}
 
@@ -126,8 +141,8 @@ export function LocationModal({
 			if (placeId) {
 				const locationDetails = await fetchFullLocationDetails(placeId);
 				if (locationDetails) {
-					onSelectLocation(locationDetails);
-					onOpenChange(false);
+					onSelectLocationAction(locationDetails);
+					onOpenChangeAction(false);
 				} else {
 					toast.error('Could not fetch location details');
 				}
@@ -135,13 +150,15 @@ export function LocationModal({
 				// Fallback to geocoding
 				const results = await getGeocode({ address: description });
 				const { lat, lng } = await getLatLng(results[0]);
-				onSelectLocation({
+				console.log(results);
+
+				onSelectLocationAction({
 					name: description,
 					address: results[0].formatted_address,
 					lat,
 					lng,
 				});
-				onOpenChange(false);
+				onOpenChangeAction(false);
 			}
 		} catch (error) {
 			console.error('Error selecting location:', error);
@@ -179,6 +196,7 @@ export function LocationModal({
 		}
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const getCurrentLocation = () => {
 		setIsLoading(true);
 		if (navigator.geolocation) {
@@ -198,10 +216,11 @@ export function LocationModal({
 								lng,
 								types: data.results[0].types,
 							};
-							onSelectLocation(locationDetails);
-							onOpenChange(false);
+							onSelectLocationAction(locationDetails);
+							onOpenChangeAction(false);
 						}
 					} catch (error) {
+						setIsLoading(false);
 						console.error('Error:', error);
 						toast.error('Could not retrieve current location');
 					} finally {
@@ -221,7 +240,7 @@ export function LocationModal({
 
 	if (loadError) {
 		return (
-			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 				<div className='p-4 text-red-500'>
 					Error loading Google Maps: {loadError.message}
 					<Button onClick={() => window.location.reload()} className='mt-2'>
@@ -234,7 +253,7 @@ export function LocationModal({
 
 	if (!isLoaded) {
 		return (
-			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 				<div className='flex justify-center items-center p-6'>
 					<Loader2 className='h-8 w-8 animate-spin' />
 				</div>
@@ -243,13 +262,13 @@ export function LocationModal({
 	}
 
 	return (
-		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 			<div className='space-y-4 py-4'>
 				<div className='flex items-center gap-2 px-4'>
 					<Button
 						variant='ghost'
 						size='icon'
-						onClick={() => onOpenChange(false)}
+						onClick={() => onOpenChangeAction(false)}
 					>
 						<ArrowLeft className='h-4 w-4' />
 					</Button>
@@ -261,13 +280,13 @@ export function LocationModal({
 						<CommandInput
 							placeholder='Enter location'
 							value={value}
-							onValueChange={setValue}
+							onValueChange={handleInputChange}
 							disabled={!ready}
 						/>
 						<CommandList>
 							<CommandEmpty>No results found.</CommandEmpty>
 							<CommandGroup>
-								<CommandItem
+								{/* <CommandItem
 									onSelect={() => getCurrentLocation()}
 									className='flex items-center gap-2'
 								>
@@ -277,10 +296,17 @@ export function LocationModal({
 										<Navigation className='h-4 w-4' />
 									)}
 									Use my current location
-								</CommandItem>
-
-								{status === 'OK' &&
-									data.map(({ place_id, description }) => (
+								</CommandItem> */}
+								{isLoading ? (
+									<CommandItem
+										disabled={true}
+										className='flex items-center gap-2'
+									>
+										<Loader2 className='h-4 w-4 animate-spin' />
+									</CommandItem>
+								) : (
+									status === 'OK' &&
+									data?.map(({ place_id, description }) => (
 										<CommandItem
 											key={place_id}
 											onSelect={() => handleSelect(description)}
@@ -288,7 +314,8 @@ export function LocationModal({
 											<MapPin className='mr-2 h-4 w-4' />
 											{description}
 										</CommandItem>
-									))}
+									))
+								)}
 
 								{predefinedLocations.map((location) => (
 									<CommandItem
