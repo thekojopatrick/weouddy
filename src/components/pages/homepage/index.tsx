@@ -1,14 +1,15 @@
 'use client';
 
-import { Plus, UserPlus } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
+import { CreateEventButton } from '@/components/create-button';
 import { EventCard } from '@/components/event-card';
 import { LocationFilters } from '@/components/location-filters';
 import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
+import { UserPlus } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const locations = [
@@ -200,10 +201,7 @@ export default function HomePage({ user }: { user: User | null }) {
 					<UserPlus className='mr-2 h-5 w-5' />
 					Join Event
 				</Button>
-				<Button size='lg' className='rounded-full shadow-lg'>
-					<Plus className='mr-2 h-5 w-5' />
-					Create Event
-				</Button>
+				<CreateEventButton />
 			</div>
 		</div>
 	);

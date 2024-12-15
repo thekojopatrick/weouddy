@@ -25,7 +25,11 @@ export const eventFormSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
 	type: z.string().min(1, 'Event type is required'),
 	description: z.string().min(1, 'Description is required'),
-	// Additional fields will be added in subsequent steps
+	location: z.string().min(1, 'Location is required'),
+	date: z.string().min(1, 'Date is required'),
+	time: z.string().min(1, 'Time is required'),
+	coverImage: z.string().optional(),
+	isPublic: z.boolean().default(false),
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
