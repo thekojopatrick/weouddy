@@ -21,5 +21,14 @@ export const loginSchema = z.object({
 	password: z.string().min(1, 'Password is required'),
 });
 
+export const eventFormSchema = z.object({
+	title: z.string().min(1, 'Title is required'),
+	type: z.string().min(1, 'Event type is required'),
+	description: z.string().min(1, 'Description is required'),
+	// Additional fields will be added in subsequent steps
+});
+
+export type EventFormValues = z.infer<typeof eventFormSchema>;
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
