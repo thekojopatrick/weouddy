@@ -13,8 +13,14 @@ export function CreateEventDialog({
 	onOpenChangeAction,
 }: CreateEventDialogProps) {
 	return (
-		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
-			<CreateEventForm onClose={() => onOpenChangeAction(false)} />
+		<ResponsiveDialog
+			open={open}
+			onOpenChangeAction={onOpenChangeAction}
+			className='sm:max-w-[620px] p-0 overflow-hidden'
+		>
+			<div className='relative p-4 z-10'>
+				<CreateEventForm onCloseAction={() => onOpenChangeAction(false)} />
+			</div>
 		</ResponsiveDialog>
 	);
 }

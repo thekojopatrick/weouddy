@@ -1,5 +1,5 @@
+import { EventFormValues, eventDetailsSchema } from '@/types/validation';
 import {
-	Form,
 	FormControl,
 	FormField,
 	FormItem,
@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/select';
 
 import { Button } from '@/components/ui/button';
-import { EventFormValues } from '@/types/validation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
 const eventTypes = [
 	'Birthday',
@@ -31,7 +31,7 @@ const eventTypes = [
 
 interface EventDetailsStepProps {
 	form: UseFormReturn<EventFormValues>;
-	onSubmit: (values: EventFormValues) => void;
+	onSubmit: (values: z.infer<typeof eventDetailsSchema>) => void;
 	onBack: () => void;
 }
 
@@ -40,6 +40,12 @@ export function EventDetailsStep({
 	onSubmit,
 	onBack,
 }: EventDetailsStepProps) {
+	const handleNext = (data: EventFormValues) => {
+		console.log({ data });
+
+		// If form validation passes, move to next step
+		onSubmit(data);
+	};
 	return (
 		<div className='space-y-6 py-6'>
 			<div className='space-y-2'>
@@ -52,8 +58,8 @@ export function EventDetailsStep({
 				</p>
 			</div>
 
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+			<>
+				<div className='space-y-6'>
 					<FormField
 						control={form.control}
 						name='title'
@@ -120,10 +126,10 @@ export function EventDetailsStep({
 						<Button type='button' variant='ghost' onClick={onBack}>
 							Back
 						</Button>
-						<Button type='submit'>Next</Button>
+						<Button onClick={() => handleNext}>Next</Button>
 					</div>
-				</form>
-			</Form>
+				</div>
+			</>
 		</div>
 	);
 }

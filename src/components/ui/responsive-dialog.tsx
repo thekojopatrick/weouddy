@@ -1,21 +1,24 @@
 'use client';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { useEffect, useState } from 'react';
 
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { cn } from '@/lib/utils';
 
 interface ResponsiveDialogProps {
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
 	children: React.ReactNode;
+	className?: string;
 }
 
 export function ResponsiveDialog({
 	open,
 	onOpenChangeAction,
 	children,
+	className,
 }: ResponsiveDialogProps) {
 	const [isMobile, setIsMobile] = useState(false);
 
@@ -32,8 +35,11 @@ export function ResponsiveDialog({
 	if (isMobile) {
 		return (
 			<Drawer open={open} onOpenChange={onOpenChangeAction}>
-				<DrawerContent className='px-4'>
-					<div className='mx-auto w-full max-w-sm'>{children}</div>
+				<DrawerContent className='px-0'>
+					<DrawerTitle className='sr-only'>Modal</DrawerTitle>
+					<div className={cn('mx-auto w-full max-w-sm', className)}>
+						{children}
+					</div>
 				</DrawerContent>
 			</Drawer>
 		);
@@ -41,7 +47,7 @@ export function ResponsiveDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChangeAction}>
-			<DialogContent className='sm:max-w-[425px]'>
+			<DialogContent className={cn('sm:max-w-[425px]', className)}>
 				<DialogTitle className='sr-only'>Modal</DialogTitle>
 				{children}
 			</DialogContent>

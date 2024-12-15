@@ -25,9 +25,9 @@ export const eventFormSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
 	type: z.string().min(1, 'Event type is required'),
 	description: z.string().min(1, 'Description is required'),
-	location: z.string().min(1, 'Location is required'),
-	date: z.string().min(1, 'Date is required'),
-	time: z.string().min(1, 'Time is required'),
+	location: z.string().min(1, 'Location is required').optional(),
+	date: z.string().min(1, 'Date is required').optional(),
+	time: z.string().min(1, 'Time is required').optional(),
 	coverImage: z.string().optional(),
 	isPublic: z.boolean().default(false),
 });
@@ -36,3 +36,19 @@ export type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+export const eventDetailsSchema = eventFormSchema.pick({
+	title: true,
+	type: true,
+	description: true,
+});
+
+export const locationTimeSchema = eventFormSchema.pick({
+	location: true,
+	date: true,
+	time: true,
+});
+
+export const privacySchema = eventFormSchema.pick({
+	isPublic: true,
+});
