@@ -92,8 +92,8 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 					)}
 					{step === 'cover' && (
 						<CoverUploadStep
-							onNext={() => handleStepChange('privacy')}
-							onBack={() => setStep('location')}
+							onNextAction={() => handleStepChange('privacy')}
+							onBackAction={() => setStep('location')}
 						/>
 					)}
 					{step === 'privacy' && (
