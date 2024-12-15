@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, MoreVertical, Users } from 'lucide-react';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetFooter } from '@/components/ui/sheet';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -57,7 +57,7 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 				side={isMobile ? 'bottom' : 'right'}
 				className={`w-full ${isMobile ? 'h-[90vh] rounded-t-[10px]' : 'max-w-xl'}`}
 			>
-				<div className='relative h-48 -mx-6 -mt-6'>
+				<div className='relative h-48 -mx-6 -mt-2'>
 					<Image
 						src={event.coverImage}
 						alt={event.title}
@@ -73,9 +73,9 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 					</Button>
 				</div>
 
-				<div className='space-y-6 mt-6'>
+				<div className='space-y-6 mt-6 mb-auto md:h-[56vh]'>
 					<div>
-						<Badge>{event.type}</Badge>
+						<Badge variant={'secondary'}>{event.type}</Badge>
 						<h2 className='text-2xl font-bold mt-2'>{event.title}</h2>
 						<div className='flex items-center gap-2 mt-2'>
 							<Avatar className='h-6 w-6'>
@@ -128,7 +128,8 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 							</p>
 						</div>
 					)}
-
+				</div>
+				<SheetFooter className='mt-auto'>
 					<div className='space-y-2'>
 						<p className='text-sm text-center'>
 							Please welcome to join the room. You will be notified if host
@@ -138,7 +139,7 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 							Request to Join
 						</Button>
 					</div>
-				</div>
+				</SheetFooter>
 			</SheetContent>
 		</Sheet>
 	);
