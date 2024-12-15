@@ -28,9 +28,11 @@ interface Location {
 
 interface LocationModalProps {
 	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	onSelectLocation: (location: Location) => void;
+	onOpenChangeAction: (open: boolean) => void;
+	onSelectLocationAction: (location: Location) => void;
 }
+
+const GoogleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 
 const predefinedLocations = [
 	{ name: 'United States', value: 'US' },
@@ -50,8 +52,8 @@ const predefinedLocations = [
 
 export function LocationModal({
 	open,
-	onOpenChange,
-	onSelectLocation,
+	onOpenChangeAction,
+	onSelectLocationAction,
 }: LocationModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const { isLoaded } = useLoadScript({
@@ -82,8 +84,8 @@ export function LocationModal({
 		try {
 			const results = await getGeocode({ address });
 			const { lat, lng } = await getLatLng(results[0]);
-			onSelectLocation({ address, lat, lng });
-			onOpenChange(false);
+			onSelectLocationAction({ address, lat, lng });
+			onOpenChangeAction(false);
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -97,16 +99,16 @@ export function LocationModal({
 					const { latitude: lat, longitude: lng } = position.coords;
 					try {
 						const response = await fetch(
-							`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${'AIzaSyBiWsz7jQMjQBk4Ld3An2MnzZxqRhqNbOM'}`
+							`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GoogleMapsApiKey}`
 						);
 						const data = await response.json();
 						if (data.results[0]) {
-							onSelectLocation({
+							onSelectLocationAction({
 								address: data.results[0].formatted_address,
 								lat,
 								lng,
 							});
-							onOpenChange(false);
+							onOpenChangeAction(false);
 						}
 					} catch (error) {
 						console.error('Error:', error);
@@ -125,13 +127,13 @@ export function LocationModal({
 	if (!isLoaded) return null;
 
 	return (
-		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 			<div className='space-y-4 py-4'>
 				<div className='flex items-center gap-2 px-4'>
 					<Button
 						variant='ghost'
 						size='icon'
-						onClick={() => onOpenChange(false)}
+						onClick={() => onOpenChangeAction(false)}
 					>
 						<ArrowLeft className='h-4 w-4' />
 					</Button>
