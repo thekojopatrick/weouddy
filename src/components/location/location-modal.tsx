@@ -9,6 +9,7 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
+import { useEffect, useState } from 'react';
 import usePlacesAutocomplete, {
 	getGeocode,
 	getLatLng,
@@ -16,13 +17,16 @@ import usePlacesAutocomplete, {
 
 import { Button } from '@/components/ui/button';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { useLoadScript } from '@react-google-maps/api';
-import { useState } from 'react';
+import { toast } from 'sonner';
+import { useJsApiLoader } from '@react-google-maps/api';
 
 interface Location {
+	name: string;
 	address: string;
 	lat: number;
 	lng: number;
+	placeId?: string;
+	types?: string[];
 	subtitle?: string;
 }
 
@@ -34,19 +38,36 @@ interface LocationModalProps {
 
 const GoogleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 
-const predefinedLocations = [
-	{ name: 'United States', value: 'US' },
-	{ name: 'United Kingdom', value: 'UK' },
-	{ name: 'Ghana', value: 'GH' },
+const predefinedLocations: Location[] = [
+	{
+		name: 'United States',
+		address: 'United States',
+		lat: 37.0902,
+		lng: -95.7129,
+		types: ['country'],
+	},
+	{
+		name: 'United Kingdom',
+		address: 'United Kingdom',
+		lat: 55.3781,
+		lng: -3.436,
+		types: ['country'],
+	},
 	{
 		name: 'Accra, Ghana',
-		value: 'accra',
-		subtitle: 'East Legon',
+		address: 'Accra, Ghana',
+		lat: 5.6037,
+		lng: -0.187,
+		subtitle: 'Capital City',
+		types: ['locality', 'political'],
 	},
 	{
 		name: 'Takoradi',
-		value: 'takoradi',
-		subtitle: 'Airport Ridge, 32 Derrick Ave',
+		address: 'Takoradi, Ghana',
+		lat: 4.8757,
+		lng: -1.7831,
+		subtitle: 'Western Region',
+		types: ['locality', 'political'],
 	},
 ];
 
@@ -56,12 +77,11 @@ export function LocationModal({
 	onSelectLocation,
 }: LocationModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
-	const { isLoaded } = useLoadScript({
-		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-		libraries: ['places'],
-	});
 
-	console.log({ isLoaded });
+	const { isLoaded, loadError } = useJsApiLoader({
+		id: 'google-map-script',
+		googleMapsApiKey: GoogleMapsApiKey,
+	});
 
 	const {
 		ready,
@@ -77,17 +97,85 @@ export function LocationModal({
 		debounce: 300,
 	});
 
-	const handleSelect = async (address: string) => {
-		setValue(address, false);
-		clearSuggestions();
+	useEffect(() => {
+		console.log('Google Maps Script Loading:', {
+			isLoaded,
+			loadError,
+			apiKey: GoogleMapsApiKey ? 'Key Present' : 'Key Missing',
+		});
+	}, [isLoaded, loadError]);
 
+	const handleSelect = async (description: string, placeId?: string) => {
 		try {
-			const results = await getGeocode({ address });
-			const { lat, lng } = await getLatLng(results[0]);
-			onSelectLocation({ address, lat, lng });
-			onOpenChange(false);
+			setIsLoading(true);
+			setValue(description, false);
+			clearSuggestions();
+
+			// First, check if it's a predefined location
+			const predefinedLocation = predefinedLocations.find(
+				(loc) => loc.name === description || loc.address === description
+			);
+
+			if (predefinedLocation) {
+				onSelectLocation(predefinedLocation);
+				onOpenChange(false);
+				return;
+			}
+
+			// If not predefined, fetch full details
+			if (placeId) {
+				const locationDetails = await fetchFullLocationDetails(placeId);
+				if (locationDetails) {
+					onSelectLocation(locationDetails);
+					onOpenChange(false);
+				} else {
+					toast.error('Could not fetch location details');
+				}
+			} else {
+				// Fallback to geocoding
+				const results = await getGeocode({ address: description });
+				const { lat, lng } = await getLatLng(results[0]);
+				onSelectLocation({
+					name: description,
+					address: results[0].formatted_address,
+					lat,
+					lng,
+				});
+				onOpenChange(false);
+			}
 		} catch (error) {
-			console.error('Error:', error);
+			console.error('Error selecting location:', error);
+			toast.error('Error selecting location');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const fetchFullLocationDetails = async (
+		placeId: string
+	): Promise<Location | null> => {
+		try {
+			const response = await fetch(
+				`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GoogleMapsApiKey}`
+			);
+			const data = await response.json();
+
+			if (data.result) {
+				const result = data.result;
+				return {
+					name: result.name,
+					address: result.formatted_address,
+					lat: result.geometry.location.lat,
+					lng: result.geometry.location.lng,
+					placeId: result.place_id,
+					types: result.types,
+					subtitle: result.vicinity,
+				};
+			}
+			return null;
+		} catch (error) {
+			console.error('Error fetching place details:', error);
+			return null;
 		}
 	};
 
@@ -103,28 +191,46 @@ export function LocationModal({
 						);
 						const data = await response.json();
 						if (data.results[0]) {
-							onSelectLocation({
+							const locationDetails: Location = {
+								name: data.results[0].address_components[0].long_name,
 								address: data.results[0].formatted_address,
 								lat,
 								lng,
-							});
+								types: data.results[0].types,
+							};
+							onSelectLocation(locationDetails);
 							onOpenChange(false);
 						}
 					} catch (error) {
 						console.error('Error:', error);
+						toast.error('Could not retrieve current location');
 					} finally {
 						setIsLoading(false);
 					}
 				},
 				(error) => {
-					console.error('Error:', error);
+					console.error('Geolocation error:', error);
+					toast.error('Geolocation access denied');
 					setIsLoading(false);
 				}
 			);
+		} else {
+			toast.error('Geolocation is not supported by this browser');
 		}
 	};
 
-	//if (!isLoaded) return null;
+	if (loadError) {
+		return (
+			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+				<div className='p-4 text-red-500'>
+					Error loading Google Maps: {loadError.message}
+					<Button onClick={() => window.location.reload()} className='mt-2'>
+						Retry Loading
+					</Button>
+				</div>
+			</ResponsiveDialog>
+		);
+	}
 
 	if (!isLoaded) {
 		return (
@@ -186,7 +292,7 @@ export function LocationModal({
 
 								{predefinedLocations.map((location) => (
 									<CommandItem
-										key={location.value}
+										key={location.name}
 										onSelect={() => handleSelect(location.name)}
 										className='flex flex-col items-start'
 									>
