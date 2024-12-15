@@ -9,6 +9,7 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
+	CommandList,
 } from '@/components/ui/command';
 import {
 	Popover,
@@ -69,7 +70,7 @@ export function CountrySelector({
 	// Memoized filtered countries for performance
 	const filteredCountries = React.useMemo(
 		() =>
-			COUNTRIES.filter(
+			COUNTRIES?.filter(
 				(country) =>
 					country.label.toLowerCase().includes(value.toLowerCase()) ||
 					country.value.toLowerCase().includes(value.toLowerCase())
@@ -94,6 +95,7 @@ export function CountrySelector({
 							height: '2em',
 						}}
 					/>
+
 					<ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
@@ -104,37 +106,39 @@ export function CountrySelector({
 						value={value}
 						onValueChange={setValue}
 					/>
-					<CommandEmpty>No country found.</CommandEmpty>
-					<CommandGroup>
-						{filteredCountries?.map((country) => (
-							<CommandItem
-								key={country.value}
-								value={country.value}
-								onSelect={(currentValue) => {
-									// If selecting the same country, reset, otherwise set new value
-									setValue(currentValue === value ? '' : currentValue);
-									setOpen(false);
-								}}
-							>
-								<Check
-									className={cn(
-										'mr-2 h-4 w-4',
-										value === country.value ? 'opacity-100' : 'opacity-0'
-									)}
-								/>
-								<ReactCountryFlag
-									countryCode={country.value}
-									svg
-									style={{
-										width: '1em',
-										height: '1em',
-										marginRight: '0.5em',
+					<CommandList>
+						<CommandEmpty>No country found.</CommandEmpty>
+						<CommandGroup>
+							{filteredCountries?.map((country) => (
+								<CommandItem
+									key={country.value}
+									value={country.value}
+									onSelect={(currentValue) => {
+										// If selecting the same country, reset, otherwise set new value
+										setValue(currentValue === value ? '' : currentValue);
+										setOpen(false);
 									}}
-								/>
-								{country.label}
-							</CommandItem>
-						))}
-					</CommandGroup>
+								>
+									<Check
+										className={cn(
+											'mr-2 h-4 w-4',
+											value === country.value ? 'opacity-100' : 'opacity-0'
+										)}
+									/>
+									<ReactCountryFlag
+										countryCode={country.value}
+										svg
+										style={{
+											width: '1em',
+											height: '1em',
+											marginRight: '0.5em',
+										}}
+									/>
+									{country.label}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</CommandList>
 				</Command>
 			</PopoverContent>
 		</Popover>
