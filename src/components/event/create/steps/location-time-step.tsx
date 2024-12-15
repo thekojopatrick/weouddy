@@ -90,10 +90,10 @@ export function LocationTimeStep({
 							<Button
 								type='button'
 								variant='outline'
-								className='w-full justify-start'
+								className='w-full justify-start truncate '
 								onClick={() => setShowLocationModal(true)}
 							>
-								<MapPin className='mr-2 h-4 w-4' />
+								<MapPin className='mr-1 h-4 w-4' />
 								{field.value || 'Select location'}
 							</Button>
 						</FormControl>
@@ -214,8 +214,8 @@ export function LocationTimeStep({
 
 			<LocationModal
 				open={showLocationModal}
-				onOpenChangeAction={setShowLocationModal}
-				onSelectLocationAction={(location) => {
+				onOpenChange={setShowLocationModal}
+				onSelectLocation={(location) => {
 					setValue('location', location.address);
 					console.log({ location });
 				}}

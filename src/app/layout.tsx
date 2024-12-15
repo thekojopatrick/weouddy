@@ -32,9 +32,15 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				{children}
-				{modal}
+				<>
+					{children}
+					{modal}
+				</>
 				<Toaster />
+				<script
+					defer
+					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`}
+				></script>
 			</body>
 		</html>
 	);

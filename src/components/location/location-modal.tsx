@@ -28,8 +28,8 @@ interface Location {
 
 interface LocationModalProps {
 	open: boolean;
-	onOpenChangeAction: (open: boolean) => void;
-	onSelectLocationAction: (location: Location) => void;
+	onOpenChange: (open: boolean) => void;
+	onSelectLocation: (location: Location) => void;
 }
 
 const GoogleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
@@ -52,8 +52,8 @@ const predefinedLocations = [
 
 export function LocationModal({
 	open,
-	onOpenChangeAction,
-	onSelectLocationAction,
+	onOpenChange,
+	onSelectLocation,
 }: LocationModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const { isLoaded } = useLoadScript({
@@ -70,7 +70,7 @@ export function LocationModal({
 		setValue,
 		clearSuggestions,
 	} = usePlacesAutocomplete({
-		callbackName: 'YOUR_CALLBACK_NAME',
+		callbackName: 'initMap',
 		requestOptions: {
 			/* Define search scope here */
 		},
@@ -84,8 +84,8 @@ export function LocationModal({
 		try {
 			const results = await getGeocode({ address });
 			const { lat, lng } = await getLatLng(results[0]);
-			onSelectLocationAction({ address, lat, lng });
-			onOpenChangeAction(false);
+			onSelectLocation({ address, lat, lng });
+			onOpenChange(false);
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -103,12 +103,12 @@ export function LocationModal({
 						);
 						const data = await response.json();
 						if (data.results[0]) {
-							onSelectLocationAction({
+							onSelectLocation({
 								address: data.results[0].formatted_address,
 								lat,
 								lng,
 							});
-							onOpenChangeAction(false);
+							onOpenChange(false);
 						}
 					} catch (error) {
 						console.error('Error:', error);
@@ -124,16 +124,26 @@ export function LocationModal({
 		}
 	};
 
-	if (!isLoaded) return null;
+	//if (!isLoaded) return null;
+
+	if (!isLoaded) {
+		return (
+			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
+				<div className='flex justify-center items-center p-6'>
+					<Loader2 className='h-8 w-8 animate-spin' />
+				</div>
+			</ResponsiveDialog>
+		);
+	}
 
 	return (
-		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
+		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
 			<div className='space-y-4 py-4'>
 				<div className='flex items-center gap-2 px-4'>
 					<Button
 						variant='ghost'
 						size='icon'
-						onClick={() => onOpenChangeAction(false)}
+						onClick={() => onOpenChange(false)}
 					>
 						<ArrowLeft className='h-4 w-4' />
 					</Button>
