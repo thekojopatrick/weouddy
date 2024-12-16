@@ -24,16 +24,11 @@ export const useAccount = (user: User | null) => {
 
     try {
       setLoading(true);
-      const { data: users } = await supabase
-        .from("users")
-        .select("*");
-
-      console.log({ users });
 
       const { data, error, status } = await supabase
-        .from("users")
+        .from("User")
         .select(`name, username, avatarUrl`)
-        .eq("email", user.email)
+        .eq("id", user.id)
         .single();
 
       console.log({ data });
