@@ -15,6 +15,9 @@ export function SiteHeader({ user }: { user: User | null }) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 
 	const { accountData, loading } = useAccount(user);
+
+	console.log({ accountData });
+
 	return (
 		<header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 			<div className='flex h-16 items-center max-w-7xl md:px-6 mx-auto gap-x-2'>

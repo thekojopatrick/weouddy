@@ -70,9 +70,9 @@ export function AuthForm() {
 	const handleGoogleSignIn = async () => {
 		setIsLoading(true);
 		try {
-			const { error, success, redirectPath } = await SignInWithGoogle();
+			const { success, redirectPath } = await SignInWithGoogle();
 
-			if (error) throw error;
+			//if (error) throw error;
 
 			if (success) {
 				toast({

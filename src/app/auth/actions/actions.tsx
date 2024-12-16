@@ -32,11 +32,16 @@ export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 	if (authData.user) {
 		await prisma.user.upsert({
 			where: { email: authData.user.email || '' },
-			update: {},
+			update: {
+				name: authData.user.user_metadata.full_name ?? '',
+				avatarUrl: authData.user.user_metadata.avatar_url ?? '',
+			},
 			create: {
 				id: authData.user.id,
 				email: authData.user.email || '',
-				name: authData.user.email?.split('@')[0],
+				name:
+					authData.user.user_metadata.full_name ??
+					authData.user.email?.split('@')[0],
 				isAnonymous: false,
 			},
 		});

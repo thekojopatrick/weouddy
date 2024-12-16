@@ -15,11 +15,9 @@ export const useAccount = (user: User | null) => {
   const [accountData, setAccountData] = useState<AccountData>({
     fullname: user?.user_metadata.full_name ?? null,
     username: null,
-    avatarUrl: null,
+    avatarUrl: user?.user_metadata.avatar_url ?? null,
     email: user?.email ?? null,
   });
-
-  console.log({ user });
 
   const fetchProfile = useCallback(async () => {
     if (!user) return;
