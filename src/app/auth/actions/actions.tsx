@@ -1,6 +1,7 @@
 'use server';
 
-import { AuthFormValues } from '@/types/validation';
+import { LoginFormValues, SignUpFormValues } from '@/types/validation';
+
 import { PrismaClient } from '@prisma/client';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
@@ -13,7 +14,7 @@ type AuthResult = {
 	redirectPath?: string;
 };
 
-export async function signIn(formData: AuthFormValues): Promise<AuthResult> {
+export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 	const supabase = await createClient();
 
 	const { error, data: authData } =
@@ -46,7 +47,7 @@ export async function signIn(formData: AuthFormValues): Promise<AuthResult> {
 	};
 }
 
-export async function signUp(formData: AuthFormValues): Promise<AuthResult> {
+export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
 	const supabase = await createClient();
 
 	const { error, data: authData } = await supabase.auth.signUp(formData);
