@@ -33,6 +33,8 @@ model User {
   attendees      Attendee[]
   chats          ChatMessage[]
   eventLogs      EventActivity[]
+
+  @@map("users")
 }
 
 model Event {
