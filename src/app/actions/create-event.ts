@@ -14,18 +14,21 @@ export async function createEvent(data: EventFormValues) {
 	}
 
 	try {
+		const [hours, minutes] = data.time.split(':');
+		const dateTime = new Date(data.date);
+		dateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+
 		const event = await prisma.event.create({
 			data: {
-				title: data.title,
+				name: data.title,
 				description: data.description,
 				type: data.type,
 				location: data.location,
-				dateTime: new Date(data.date),
-				time: data.time,
+				dateTime: dateTime,
 				coverImage: data.coverImage,
-				isPublic: data.isPublic,
-				userId: userId,
-				slug: generateSlug(data.title), // You'll need to implement this helper
+				isPrivate: data.isPublic,
+				hostId: session.user.id,
+				slug: generateSlug(data.title),
 			},
 		});
 

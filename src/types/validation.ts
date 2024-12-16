@@ -23,13 +23,15 @@ export const loginSchema = z.object({
 
 export const eventFormSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
-	type: z.string().min(1, 'Event type is required'),
+	type: z.string().min(1, 'Type is required'),
 	description: z.string().min(1, 'Description is required'),
-	location: z.string().min(1, 'Location is required').optional(),
-	date: z.string().min(1, 'Date is required').optional(),
-	time: z.string().optional(),
-	coverImage: z.string().optional(),
-	isPublic: z.boolean().default(false),
+	location: z.string().min(1, 'Location is required'),
+	date: z.string().min(1, 'Date is required'),
+	time: z
+		.string()
+		.regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
+	coverImage: z.string().min(1, 'Cover image is required'),
+	isPublic: z.boolean(),
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
