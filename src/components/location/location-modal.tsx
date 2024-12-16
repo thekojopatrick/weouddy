@@ -25,8 +25,6 @@ interface Location {
 	address: string;
 	lat: number;
 	lng: number;
-	placeId?: string;
-	types?: string[];
 	subtitle?: string;
 }
 
@@ -36,38 +34,20 @@ interface LocationModalProps {
 	onSelectLocationAction: (location: Location) => void;
 }
 
-const GoogleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
-
 const predefinedLocations: Location[] = [
-	{
-		name: 'United States',
-		address: 'United States',
-		lat: 37.0902,
-		lng: -95.7129,
-		types: ['country'],
-	},
-	{
-		name: 'United Kingdom',
-		address: 'United Kingdom',
-		lat: 55.3781,
-		lng: -3.436,
-		types: ['country'],
-	},
 	{
 		name: 'Accra, Ghana',
 		address: 'Accra, Ghana',
 		lat: 5.6037,
 		lng: -0.187,
 		subtitle: 'Capital City',
-		types: ['locality', 'political'],
 	},
 	{
-		name: 'Takoradi',
+		name: 'Takoradi, Ghana',
 		address: 'Takoradi, Ghana',
 		lat: 4.8757,
 		lng: -1.7831,
 		subtitle: 'Western Region',
-		types: ['locality', 'political'],
 	},
 ];
 
@@ -78,12 +58,13 @@ export function LocationModal({
 }: LocationModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 
+	// Initialize Google Maps with correct libraries array
 	const { isLoaded, loadError } = useJsApiLoader({
-		id: 'google-map-script',
-		googleMapsApiKey: GoogleMapsApiKey,
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
 		libraries: ['places'],
 	});
 
+	// Initialize Places Autocomplete with correct options
 	const {
 		ready,
 		value,
@@ -92,21 +73,16 @@ export function LocationModal({
 		clearSuggestions,
 	} = usePlacesAutocomplete({
 		requestOptions: {
-			types: ['geocode', 'establishment'],
+			componentRestrictions: { country: 'gh' }, // Restrict to Ghana
+			types: ['geocode'], // Use only geocode type for consistent results
 		},
 		debounce: 300,
 		cache: 86400,
+		defaultValue: '',
 		initOnMount: true,
 	});
 
-	useEffect(() => {
-		console.log('Google Maps Script Loading:', {
-			isLoaded,
-			loadError,
-			apiKey: GoogleMapsApiKey ? 'Key Present' : 'Key Missing',
-		});
-	}, [isLoaded, loadError]);
-
+	// Reset search when modal opens
 	useEffect(() => {
 		if (open) {
 			setValue('');
@@ -114,21 +90,25 @@ export function LocationModal({
 		}
 	}, [open, setValue, clearSuggestions]);
 
+	// Handle input change
 	const handleInputChange = (newValue: string) => {
+		console.log('Input Value Changed:', newValue);
 		setValue(newValue);
+		if (!newValue) {
+			clearSuggestions();
+		}
 	};
 
-	const handleSelect = async (description: string, placeId?: string) => {
+	// Handle location selection
+	const handleLocationSelect = async (description: string) => {
 		try {
 			setIsLoading(true);
-			console.log({ description });
 			setValue(description, false);
-
 			clearSuggestions();
 
-			// First, check if it's a predefined location
+			// Check predefined locations first
 			const predefinedLocation = predefinedLocations.find(
-				(loc) => loc.name === description || loc.address === description
+				(loc) => loc.name === description
 			);
 
 			if (predefinedLocation) {
@@ -137,29 +117,17 @@ export function LocationModal({
 				return;
 			}
 
-			// If not predefined, fetch full details
-			if (placeId) {
-				const locationDetails = await fetchFullLocationDetails(placeId);
-				if (locationDetails) {
-					onSelectLocationAction(locationDetails);
-					onOpenChangeAction(false);
-				} else {
-					toast.error('Could not fetch location details');
-				}
-			} else {
-				// Fallback to geocoding
-				const results = await getGeocode({ address: description });
-				const { lat, lng } = await getLatLng(results[0]);
-				console.log(results);
+			// Otherwise geocode the location
+			const results = await getGeocode({ address: description });
+			const { lat, lng } = await getLatLng(results[0]);
 
-				onSelectLocationAction({
-					name: description,
-					address: results[0].formatted_address,
-					lat,
-					lng,
-				});
-				onOpenChangeAction(false);
-			}
+			onSelectLocationAction({
+				name: description,
+				address: results[0].formatted_address,
+				lat,
+				lng,
+			});
+			onOpenChangeAction(false);
 		} catch (error) {
 			console.error('Error selecting location:', error);
 			toast.error('Error selecting location');
@@ -168,84 +136,12 @@ export function LocationModal({
 		}
 	};
 
-	const fetchFullLocationDetails = async (
-		placeId: string
-	): Promise<Location | null> => {
-		try {
-			const response = await fetch(
-				`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GoogleMapsApiKey}`
-			);
-			const data = await response.json();
-
-			if (data.result) {
-				const result = data.result;
-				return {
-					name: result.name,
-					address: result.formatted_address,
-					lat: result.geometry.location.lat,
-					lng: result.geometry.location.lng,
-					placeId: result.place_id,
-					types: result.types,
-					subtitle: result.vicinity,
-				};
-			}
-			return null;
-		} catch (error) {
-			console.error('Error fetching place details:', error);
-			return null;
-		}
-	};
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const getCurrentLocation = () => {
-		setIsLoading(true);
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				async (position) => {
-					const { latitude: lat, longitude: lng } = position.coords;
-					try {
-						const response = await fetch(
-							`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GoogleMapsApiKey}`
-						);
-						const data = await response.json();
-						if (data.results[0]) {
-							const locationDetails: Location = {
-								name: data.results[0].address_components[0].long_name,
-								address: data.results[0].formatted_address,
-								lat,
-								lng,
-								types: data.results[0].types,
-							};
-							onSelectLocationAction(locationDetails);
-							onOpenChangeAction(false);
-						}
-					} catch (error) {
-						setIsLoading(false);
-						console.error('Error:', error);
-						toast.error('Could not retrieve current location');
-					} finally {
-						setIsLoading(false);
-					}
-				},
-				(error) => {
-					console.error('Geolocation error:', error);
-					toast.error('Geolocation access denied');
-					setIsLoading(false);
-				}
-			);
-		} else {
-			toast.error('Geolocation is not supported by this browser');
-		}
-	};
-
+	// Loading and error states
 	if (loadError) {
 		return (
 			<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 				<div className='p-4 text-red-500'>
 					Error loading Google Maps: {loadError.message}
-					<Button onClick={() => window.location.reload()} className='mt-2'>
-						Retry Loading
-					</Button>
 				</div>
 			</ResponsiveDialog>
 		);
@@ -278,79 +174,57 @@ export function LocationModal({
 				<div className='px-4'>
 					<Command>
 						<CommandInput
-							placeholder='Enter location'
+							placeholder='Search for a location...'
 							value={value}
 							onValueChange={handleInputChange}
-							disabled={!ready}
+							disabled={!ready || !isLoaded}
 						/>
 						<CommandList>
-							<CommandEmpty>No results found.</CommandEmpty>
+							<CommandEmpty>
+								{isLoading ? 'Searching...' : 'No results found.'}
+							</CommandEmpty>
 							<CommandGroup>
-								{/* <CommandItem
-									onSelect={() => getCurrentLocation()}
-									className='flex items-center gap-2'
-								>
-									{isLoading ? (
-										<Loader2 className='h-4 w-4 animate-spin' />
-									) : (
-										<Navigation className='h-4 w-4' />
-									)}
-									Use my current location
-								</CommandItem> */}
-								{isLoading ? (
-									<CommandItem
-										disabled={true}
-										className='flex items-center gap-2'
-									>
-										<Loader2 className='h-4 w-4 animate-spin' />
-									</CommandItem>
-								) : (
-									status === 'OK' &&
-									data?.map(({ place_id, description }) => (
+								{/* Show suggestions when available */}
+								{status === 'OK' &&
+									data.map(({ place_id, description }) => (
 										<CommandItem
 											key={place_id}
-											onSelect={() => handleSelect(description)}
+											value={description}
+											onSelect={(currentValue) => {
+												// If selecting the same country, reset, otherwise set new value
+												setValue(currentValue === value ? '' : currentValue);
+												handleLocationSelect(description);
+											}}
 										>
-											<MapPin className='mr-2 h-4 w-4' />
-											{description}
+											<div className='flex items-center gap-2'>
+												<MapPin className='h-4 w-4' />
+												{description}
+											</div>
 										</CommandItem>
-									))
-								)}
+									))}
 
-								{predefinedLocations.map((location) => (
-									<CommandItem
-										key={location.name}
-										onSelect={() => handleSelect(location.name)}
-										className='flex flex-col items-start'
-									>
-										<div className='flex items-center gap-2'>
-											<MapPin className='h-4 w-4' />
-											{location.name}
-										</div>
-										{location.subtitle && (
-											<span className='ml-6 text-sm text-muted-foreground'>
-												{location.subtitle}
-											</span>
-										)}
-									</CommandItem>
-								))}
+								{/* Show predefined locations only when no suggestions */}
+								{(!status || status !== 'OK' || data.length === 0) &&
+									predefinedLocations.map((location) => (
+										<CommandItem
+											key={location.name}
+											onSelect={() => handleLocationSelect(location.name)}
+											className='flex flex-col items-start'
+										>
+											<div className='flex items-center gap-2'>
+												<MapPin className='h-4 w-4' />
+												{location.name}
+											</div>
+											{location.subtitle && (
+												<span className='ml-6 text-sm text-muted-foreground'>
+													{location.subtitle}
+												</span>
+											)}
+										</CommandItem>
+									))}
 							</CommandGroup>
 						</CommandList>
 					</Command>
-				</div>
-
-				<div className='px-4'>
-					<Button
-						className='w-full'
-						onClick={() => {
-							if (value) {
-								handleSelect(value);
-							}
-						}}
-						disabled={!value}
-					>
-						Use the address entered
-					</Button>
 				</div>
 			</div>
 		</ResponsiveDialog>

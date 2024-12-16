@@ -216,7 +216,7 @@ export function LocationTimeStep({
 				open={showLocationModal}
 				onOpenChangeAction={setShowLocationModal}
 				onSelectLocationAction={(location) => {
-					setValue('location', location.address);
+					setValue('location', location.name);
 					console.log({ location });
 				}}
 			/>
