@@ -53,6 +53,8 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 		try {
 			const event = await createEvent(data);
 
+			console.log({ event });
+
 			// Generate the event URL using the returned event data
 			setEventUrl(`${window.location.origin}/events/${event.slug}`);
 			setStep('success');
