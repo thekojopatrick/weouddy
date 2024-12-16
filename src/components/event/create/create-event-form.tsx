@@ -55,9 +55,16 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 
 			console.log({ event });
 
-			// Generate the event URL using the returned event data
-			setEventUrl(`${window.location.origin}/events/${event.slug}`);
-			setStep('success');
+			if (event) {
+				toast({
+					title: 'Event created!',
+					description: 'Your event room has been created successfully.',
+				});
+
+				// Generate the event URL using the returned event data
+				setEventUrl(`${window.location.origin}/events/${event.slug}`);
+				setStep('success');
+			}
 		} catch (error) {
 			toast({
 				title: 'Error',

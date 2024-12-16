@@ -1,3 +1,4 @@
+import { Button, LoadingButton } from '@/components/ui/button';
 import {
 	FormControl,
 	FormDescription,
@@ -5,7 +6,6 @@ import {
 	FormItem,
 } from '@/components/ui/form';
 
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 
 interface PrivacyStepProps {
@@ -58,9 +58,14 @@ export function PrivacyStep({
 				>
 					Back
 				</Button>
-				<Button type='submit' onClick={onSubmit} disabled={isSubmitting}>
-					Finish
-				</Button>
+				<LoadingButton
+					type='submit'
+					onClick={onSubmit}
+					disabled={isSubmitting}
+					loading={isSubmitting}
+				>
+					{isSubmitting ? 'Creating..' : 'Finish'}
+				</LoadingButton>
 			</div>
 		</div>
 	);
