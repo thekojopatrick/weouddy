@@ -44,8 +44,9 @@ model Room {
   id           String         @id @default(cuid())
   name         String
   description  String?
-  date         DateTime
-  isPrivate    Boolean        @default(false)
+  dateTime     DateTime       @default(now())
+  location     String?
+  coverImage   String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   hostId       String
