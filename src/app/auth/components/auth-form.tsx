@@ -74,7 +74,7 @@ export function AuthForm() {
 
 			//if (error) throw error;
 
-			if (success) {
+			if (success && success === true) {
 				toast({
 					title: 'Welcome!',
 					description: 'You have successfully signed in.',
