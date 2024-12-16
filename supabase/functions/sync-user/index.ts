@@ -36,7 +36,10 @@ Deno.serve(async (req) => {
         .select()
         .single();
 
-      if (userError) throw userError;
+      if (userError) {
+        console.error("User sync failed:", userError);
+        throw userError;
+      }
 
       return new Response(
         JSON.stringify({ message: "User synchronized successfully" }),

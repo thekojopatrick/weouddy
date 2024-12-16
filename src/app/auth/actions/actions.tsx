@@ -39,9 +39,8 @@ export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 			create: {
 				id: authData.user.id,
 				email: authData.user.email || '',
-				name:
-					authData.user.user_metadata.full_name ??
-					authData.user.email?.split('@')[0],
+				name: authData.user.user_metadata.full_name ?? '',
+				username: authData.user.email?.split('@')[0] ?? '',
 				isAnonymous: false,
 			},
 		});
@@ -71,7 +70,8 @@ export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
 			data: {
 				id: authData.user.id,
 				email: authData.user.email || '',
-				name: authData.user.email?.split('@')[0],
+				name: authData.user.user_metadata.full_name ?? '',
+				username: authData.user.email?.split('@')[0] ?? '',
 				isAnonymous: false,
 			},
 		});

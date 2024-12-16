@@ -28,10 +28,8 @@ export const useAccount = (user: User | null) => {
       const { data, error, status } = await supabase
         .from("User")
         .select(`name, username, avatarUrl`)
-        .eq("id", user.id)
+        .eq("email", user.email!)
         .single();
-
-      console.log({ data });
 
       if (error && status !== 406) {
         console.error(error);
@@ -43,7 +41,7 @@ export const useAccount = (user: User | null) => {
           ...prev,
           fullname: data.name,
           username: data.username,
-          avatarUrl: data.avatarUrl,
+          avatarUrl: data.avatarUrl ?? user.user_metadata.avatar_url,
         }));
       }
     } catch (error) {
@@ -68,7 +66,10 @@ export const useAccount = (user: User | null) => {
         updatedAt: new Date().toISOString(),
       };
 
-      const { error } = await supabase.from("User").upsert(updateData);
+      const { error } = await supabase.from("User").update(updateData).eq(
+        "email",
+        user.email!,
+      ).single();
 
       if (error) throw error;
 

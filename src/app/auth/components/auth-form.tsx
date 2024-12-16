@@ -43,7 +43,12 @@ export function AuthForm() {
 		try {
 			const { error, success } = await signUp(values);
 
-			if (error) throw error;
+			if (error) {
+				toast({
+					title: 'Error',
+					description: error || 'Account creation not successfully',
+				});
+			}
 
 			if (success) {
 				toast({
@@ -91,7 +96,12 @@ export function AuthForm() {
 		try {
 			const { error, success } = await signIn(values);
 
-			if (error) throw error;
+			if (error) {
+				toast({
+					title: 'Error',
+					description: 'Invalid login credentials.',
+				});
+			}
 
 			if (success) {
 				toast({
