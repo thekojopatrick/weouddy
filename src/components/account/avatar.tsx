@@ -32,24 +32,26 @@ export default function Avatar({
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	useEffect(() => {
-		async function downloadImage(path: string) {
-			try {
-				const { data, error } = await supabase.storage
-					.from('avatars')
-					.download(path);
+		if (!url?.startsWith('https://lh3.googleusercontent.com')) {
+			async function downloadImage(path: string) {
+				try {
+					const { data, error } = await supabase.storage
+						.from('avatars')
+						.download(path);
 
-				if (error) {
-					throw error;
+					if (error) {
+						throw error;
+					}
+
+					const url = URL.createObjectURL(data);
+					setAvatarUrl(url);
+				} catch (error) {
+					console.log('Error downloading image: ', error);
 				}
-
-				const url = URL.createObjectURL(data);
-				setAvatarUrl(url);
-			} catch (error) {
-				console.log('Error downloading image: ', error);
 			}
-		}
 
-		if (url) downloadImage(url);
+			if (url) downloadImage(url);
+		}
 	}, [url]);
 
 	const uploadAvatar: React.ChangeEventHandler<HTMLInputElement> = async (

@@ -27,25 +27,27 @@ export function NavUser({
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(user.avatar);
 
 	useEffect(() => {
-		async function downloadImage(path: string) {
-			try {
-				const { data, error } = await supabase.storage
-					.from('avatars')
-					.download(path);
+		if (!avatarUrl?.startsWith('https://lh3.googleusercontent.com')) {
+			async function downloadImage(path: string) {
+				try {
+					const { data, error } = await supabase.storage
+						.from('avatars')
+						.download(path);
 
-				if (error) {
-					throw error;
+					if (error) {
+						throw error;
+					}
+
+					const url = URL.createObjectURL(data);
+					setAvatarUrl(url);
+				} catch (error) {
+					console.log('Error downloading image: ', error);
 				}
-
-				const url = URL.createObjectURL(data);
-				setAvatarUrl(url);
-			} catch (error) {
-				console.log('Error downloading image: ', error);
 			}
-		}
 
-		if (user) downloadImage(user.avatar);
-	}, [user]);
+			if (user) downloadImage(user.avatar);
+		}
+	}, [avatarUrl, user]);
 
 	return (
 		<DropdownMenu>
