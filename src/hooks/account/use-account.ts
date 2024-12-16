@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/admin";
 
 export interface AccountData {
   fullname: string | null;
