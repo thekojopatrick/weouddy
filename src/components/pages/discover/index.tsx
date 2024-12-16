@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
-import { EventCard } from '@/components/event-card';
+import { EventCard } from '@/components/event/event-card';
 import { LocationFilters } from '@/components/location-filters';
 import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
