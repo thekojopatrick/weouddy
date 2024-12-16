@@ -33,6 +33,7 @@ export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 			where: { email: authData.user.email || '' },
 			update: {},
 			create: {
+				id: authData.user.id,
 				email: authData.user.email || '',
 				name: authData.user.email?.split('@')[0],
 				isAnonymous: false,
@@ -46,7 +47,6 @@ export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 		redirectPath: '/',
 	};
 }
-
 export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
 	const supabase = await createClient();
 
@@ -63,6 +63,7 @@ export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
 	if (authData.user) {
 		await prisma.user.create({
 			data: {
+				id: authData.user.id,
 				email: authData.user.email || '',
 				name: authData.user.email?.split('@')[0],
 				isAnonymous: false,

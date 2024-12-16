@@ -27,7 +27,7 @@ export function AuthForm() {
 			} = await supabase.auth.getSession();
 
 			if (session) {
-				//router.push('/rooms'); // Redirect to a protected route
+				router.push('/discover'); // Redirect to a protected route
 			}
 		};
 		checkSession();
@@ -46,7 +46,7 @@ export function AuthForm() {
 					description: 'Please check your email to verify your account.',
 				});
 
-				router.push('/rooms');
+				router.push('/discover');
 			}
 
 			router.refresh();
@@ -75,7 +75,7 @@ export function AuthForm() {
 					description: 'You have successfully signed in.',
 				});
 
-				router.push('/rooms');
+				router.push('/discover');
 			}
 
 			router.refresh();
@@ -104,7 +104,7 @@ export function AuthForm() {
 					description: 'You are now browsing as a guest.',
 				});
 
-				router.push('/rooms');
+				router.push('/discover');
 			}
 
 			router.refresh();

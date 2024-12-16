@@ -1,100 +1,110 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase/client';
+import { User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase/client";
 
 export interface AccountData {
-	fullname: string | null;
-	username: string | null;
-	avatarUrl: string | null;
-	email: string | null;
+  fullname: string | null;
+  username: string | null;
+  avatarUrl: string | null;
+  email: string | null;
 }
 
 export const useAccount = (user: User | null) => {
-	const [loading, setLoading] = useState(true);
-	const [accountData, setAccountData] = useState<AccountData>({
-		fullname: null,
-		username: null,
-		avatarUrl: null,
-		email: user?.email ?? null,
-	});
+  const [loading, setLoading] = useState(true);
+  const [accountData, setAccountData] = useState<AccountData>({
+    fullname: user?.user_metadata.full_name ?? null,
+    username: null,
+    avatarUrl: null,
+    email: user?.email ?? null,
+  });
 
-	const fetchProfile = useCallback(async () => {
-		if (!user) return;
+  console.log({ user });
 
-		try {
-			setLoading(true);
-			const { data, error, status } = await supabase
-				.from('User')
-				.select(`name, username, avatarUrl`)
-				.eq('email', user.email)
-				.single();
+  const fetchProfile = useCallback(async () => {
+    if (!user) return;
 
-			if (error && status !== 406) {
-				console.error(error);
-				throw error;
-			}
+    try {
+      setLoading(true);
+      const { data: users } = await supabase
+        .from("users")
+        .select("*");
 
-			if (data) {
-				setAccountData((prev) => ({
-					...prev,
-					fullname: data.name,
-					username: data.username,
-					avatarUrl: data.avatarUrl,
-				}));
-			}
-		} catch (error) {
-			console.error('Error loading user data:', error);
-		} finally {
-			setLoading(false);
-		}
-	}, [user]);
+      console.log({ users });
 
-	const updateProfile = async (updates: Partial<AccountData>) => {
-		if (!user) return;
+      const { data, error, status } = await supabase
+        .from("users")
+        .select(`name, username, avatarUrl`)
+        .eq("email", user.email)
+        .single();
 
-		try {
-			setLoading(true);
+      console.log({ data });
 
-			const updateData = {
-				id: user.id,
-				email: user.email,
-				name: updates.fullname ?? accountData.fullname,
-				username: updates.username ?? accountData.username,
-				avatarUrl: updates.avatarUrl ?? accountData.avatarUrl,
-				updatedAt: new Date().toISOString(),
-			};
+      if (error && status !== 406) {
+        console.error(error);
+        throw error;
+      }
 
-			const { error } = await supabase.from('User').upsert(updateData);
+      if (data) {
+        setAccountData((prev) => ({
+          ...prev,
+          fullname: data.name,
+          username: data.username,
+          avatarUrl: data.avatarUrl,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
-			if (error) throw error;
+  const updateProfile = async (updates: Partial<AccountData>) => {
+    if (!user) return;
 
-			// Update local state
-			setAccountData((prev) => ({
-				...prev,
-				...updates,
-			}));
+    try {
+      setLoading(true);
 
-			return { success: true, message: 'Profile updated!' };
-		} catch (error) {
-			console.error('Error updating profile:', error);
-			return {
-				success: false,
-				message: 'Error updating the data!',
-			};
-		} finally {
-			setLoading(false);
-		}
-	};
+      const updateData = {
+        id: user.id,
+        email: user.email,
+        name: updates.fullname ?? accountData.fullname,
+        username: updates.username ?? accountData.username,
+        avatarUrl: updates.avatarUrl ?? accountData.avatarUrl,
+        updatedAt: new Date().toISOString(),
+      };
 
-	useEffect(() => {
-		fetchProfile();
-	}, [user, fetchProfile]);
+      const { error } = await supabase.from("User").upsert(updateData);
 
-	return {
-		accountData,
-		loading,
-		updateProfile,
-		fetchProfile,
-	};
+      if (error) throw error;
+
+      // Update local state
+      setAccountData((prev) => ({
+        ...prev,
+        ...updates,
+      }));
+
+      return { success: true, message: "Profile updated!" };
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return {
+        success: false,
+        message: "Error updating the data!",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [user, fetchProfile]);
+
+  return {
+    accountData,
+    loading,
+    updateProfile,
+    fetchProfile,
+  };
 };
