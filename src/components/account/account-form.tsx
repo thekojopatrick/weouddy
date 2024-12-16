@@ -203,13 +203,9 @@ export default function AccountForm({ user }: { user: User | null }) {
 						</AlertDialogHeader>
 						<AlertDialogFooter>
 							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction
-								onClick={() => {
-									// Client-side sign out logic or form submission
-								}}
-							>
-								Sign Out
-							</AlertDialogAction>
+							<form action='/auth/signout' method='post'>
+								<AlertDialogAction type='submit'>Sign Out</AlertDialogAction>
+							</form>
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>

@@ -24,12 +24,14 @@ interface SignUpFormProps {
 	onLoginClickAction: () => void;
 	onSubmitAction: (values: z.infer<typeof signUpSchema>) => void;
 	isLoading: boolean;
+	onGoogleSignIn?: () => void;
 }
 
 export function SignUpForm({
 	onLoginClickAction,
 	onSubmitAction,
 	isLoading,
+	onGoogleSignIn,
 }: SignUpFormProps) {
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -61,7 +63,7 @@ export function SignUpForm({
 				</h1>
 			</div>
 
-			<Button variant='outline' className='relative'>
+			<Button variant='outline' className='relative' onClick={onGoogleSignIn}>
 				<Image
 					src='/brand/google.svg'
 					alt='Google'

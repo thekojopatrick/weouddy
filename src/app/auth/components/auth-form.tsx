@@ -3,8 +3,13 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
+import {
+	SignInWithGoogle,
+	signIn,
+	signUp,
+	signUpWithGuest,
+} from '../actions/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
-import { signIn, signUp, signUpWithGuest } from '../actions/actions';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -47,6 +52,35 @@ export function AuthForm() {
 				});
 
 				router.push('/discover');
+			}
+
+			router.refresh();
+		} catch (error: Error | unknown) {
+			toast({
+				title: 'Error',
+				description: (error as Error).message || 'An unknown error occurred.',
+				variant: 'destructive',
+			});
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleGoogleSignIn = async () => {
+		setIsLoading(true);
+		try {
+			const { error, success, redirectPath } = await SignInWithGoogle();
+
+			if (error) throw error;
+
+			if (success) {
+				toast({
+					title: 'Welcome!',
+					description: 'You have successfully signed in.',
+				});
+
+				router.push(`${redirectPath}`);
 			}
 
 			router.refresh();
@@ -136,12 +170,14 @@ export function AuthForm() {
 						onSignUpClickAction={() => setActiveTab('signup')}
 						onForgotPassword={handleForgotPassword}
 						isLoading={isLoading}
+						onGoogleSignIn={handleGoogleSignIn}
 					/>
 				) : (
 					<SignUpForm
 						onSubmitAction={handleSignUp}
 						onLoginClickAction={() => setActiveTab('login')}
 						isLoading={isLoading}
+						onGoogleSignIn={handleGoogleSignIn}
 					/>
 				)}
 

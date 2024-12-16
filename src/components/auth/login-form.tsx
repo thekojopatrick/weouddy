@@ -25,6 +25,7 @@ interface LoginFormProps {
 	onSignUpClickAction: () => void;
 	onSubmitAction: (values: z.infer<typeof loginSchema>) => void;
 	onForgotPassword?: () => void;
+	onGoogleSignIn?: () => void;
 }
 
 export function LoginForm({
@@ -32,6 +33,7 @@ export function LoginForm({
 	onSubmitAction,
 	onForgotPassword,
 	isLoading,
+	onGoogleSignIn,
 }: LoginFormProps) {
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -61,7 +63,7 @@ export function LoginForm({
 				<h1 className='text-2xl font-semibold tracking-tight'>Welcome Back!</h1>
 			</div>
 
-			<Button variant='outline' className='relative'>
+			<Button variant='outline' className='relative' onClick={onGoogleSignIn}>
 				<Image
 					src='/brand/google.svg'
 					alt='Google'

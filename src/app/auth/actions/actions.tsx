@@ -4,6 +4,7 @@ import { LoginFormValues, SignUpFormValues } from '@/types/validation';
 
 import { PrismaClient } from '@prisma/client';
 import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 const prisma = new PrismaClient();
@@ -101,4 +102,35 @@ export async function signUpWithGuest() {
 	revalidatePath('/', 'layout');
 
 	return { error, data };
+}
+
+export async function SignInWithGoogle(): Promise<AuthResult> {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase.auth.signInWithOAuth({
+		provider: 'google',
+		options: {
+			redirectTo: `https://grown-cattle-mature.ngrok-free.app/auth/callback`,
+			queryParams: {
+				access_type: 'offline',
+				prompt: 'consent',
+			},
+		},
+	});
+
+	if (error) {
+		return {
+			success: false,
+			error: error.message,
+		};
+	}
+
+	if (data.url) {
+		redirect(data.url);
+	}
+
+	return {
+		success: true,
+		redirectPath: '/discover',
+	};
 }
