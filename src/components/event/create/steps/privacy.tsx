@@ -11,9 +11,14 @@ import { Switch } from '@/components/ui/switch';
 interface PrivacyStepProps {
 	onSubmit: () => void;
 	onBack: () => void;
+	isSubmitting: boolean;
 }
 
-export function PrivacyStep({ onSubmit, onBack }: PrivacyStepProps) {
+export function PrivacyStep({
+	onSubmit,
+	onBack,
+	isSubmitting,
+}: PrivacyStepProps) {
 	return (
 		<div className='space-y-6 py-6'>
 			<div className='space-y-2'>
@@ -45,10 +50,15 @@ export function PrivacyStep({ onSubmit, onBack }: PrivacyStepProps) {
 			/>
 
 			<div className='flex justify-between'>
-				<Button type='button' variant='ghost' onClick={onBack}>
+				<Button
+					type='button'
+					variant='ghost'
+					onClick={onBack}
+					disabled={isSubmitting}
+				>
 					Back
 				</Button>
-				<Button type='submit' onClick={onSubmit}>
+				<Button type='submit' onClick={onSubmit} disabled={isSubmitting}>
 					Finish
 				</Button>
 			</div>

@@ -1,7 +1,8 @@
 import './globals.css';
 
 import type { Metadata } from 'next';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster as SonnerToaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
 import localFont from 'next/font/local';
 
 const geistSans = localFont({
@@ -37,6 +38,7 @@ export default function RootLayout({
 					{modal}
 				</>
 				<Toaster />
+				<SonnerToaster />
 				<script
 					async
 					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`}

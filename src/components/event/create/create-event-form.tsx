@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { eventFormSchema, type EventFormValues } from '@/types/validation';
 import { Form } from '@/components/ui/form';
+import { createEvent } from '@/app/actions/create-event';
+import { useToast } from '@/hooks/use-toast';
 
 import { LocationTimeStep } from './steps/location-time-step';
 import { PrivacyStep } from './steps/privacy';
@@ -28,6 +30,8 @@ type Step =
 export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 	const [step, setStep] = useState<Step>('welcome');
 	const [eventUrl, setEventUrl] = useState('');
+	const { toast } = useToast();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<EventFormValues>({
 		resolver: zodResolver(eventFormSchema),
@@ -45,9 +49,23 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 	});
 
 	const onSubmit = async (data: EventFormValues) => {
-		console.log(data);
-		setEventUrl('weoudy.com/lisley?event=birthday-party');
-		setStep('success');
+		setIsSubmitting(true);
+		try {
+			const event = await createEvent(data);
+
+			// Generate the event URL using the returned event data
+			setEventUrl(`${window.location.origin}/events/${event.slug}`);
+			setStep('success');
+		} catch (error) {
+			toast({
+				title: 'Error',
+				description: 'Failed to create event. Please try again.',
+				variant: 'destructive',
+			});
+			console.error(error);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	const handleStepChange = async (nextStep: Step) => {
@@ -100,6 +118,7 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 						<PrivacyStep
 							onSubmit={form.handleSubmit(onSubmit)}
 							onBack={() => setStep('cover')}
+							isSubmitting={isSubmitting}
 						/>
 					)}
 					{step === 'success' && (
