@@ -9,90 +9,102 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(cuid())
-  email           String?         @unique
-  name            String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  isAnonymous     Boolean         @default(false)
-  lastActive      DateTime        @default(now())
-  allowFollowers  Boolean         @default(true)
-  avatarUrl       String?
-  username        String?         @unique
-  chats           ChatMessage[]
-  comments        Comment[]
-  hostedEvents    Event[]         @relation("EventHost")
-  joinedEvents    Event[]         @relation("EventMembers")
-  eventActivities EventActivity[]
-  following       Follow[]        @relation("UserFollowing")
-  followers       Follow[]        @relation("UserFollowers")
-  likes           Like[]
-  posts           Post[]
-  attendees       Attendee[]
+  id             String          @id @default(cuid())
+  email          String?         @unique
+  username       String?         @unique
+  name           String?
+  avatarUrl      String?
+  bio            String?
+  dob            DateTime? //Date of birth
+  role           UserRole        @default(USER)
+  isAnonymous    Boolean         @default(false)
+  allowFollowers Boolean         @default(true)
+  lastActive     DateTime        @default(now())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  hostedEvents   Event[]         @relation("HostedEvents")
+  joinedEvents   Event[]         @relation("JoinedEvents")
+  following      Follow[]        @relation("Following")
+  followers      Follow[]        @relation("Followers")
+  roles          EventRole[]
+  attendees      Attendee[]
+  chats          ChatMessage[]
+  eventLogs      EventActivity[]
 }
 
 model Event {
-  id           String          @id @default(cuid())
-  name         String
-  description  String?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  hostId       String
-  qrCodeUrl    String?
-  coverImage   String?
-  dateTime     DateTime        @default(now())
-  location     String?
-  chats        ChatMessage[]
-  chatSettings ChatSettings?
-  host         User            @relation("EventHost", fields: [hostId], references: [id])
-  members      User[]          @relation("EventMembers")
-  attendees    Attendee[]
-  activities   EventActivity[]
-  settings     EventSettings?
-  Post         Post[]
-}
-
-model EventSettings {
-  id            String   @id @default(cuid())
-  roomId        String   @unique
-  isPrivate     Boolean  @default(false)
-  isDisabled    Boolean  @default(false)
-  allowComments Boolean  @default(false)
-  allowLikes    Boolean  @default(false)
-  allowChat     Boolean  @default(false)
-  allowPosts    Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  event         Event    @relation(fields: [roomId], references: [id])
+  id            String          @id @default(cuid())
+  name          String
+  description   String?
+  location      String?
+  dateTime      DateTime
+  qrCodeUrl     String?
+  coverImage    String?
+  slug          String?         @unique
+  isPrivate     Boolean         @default(false)
+  isDisabled    Boolean         @default(false)
+  allowComments Boolean         @default(true)
+  allowLikes    Boolean         @default(true)
+  allowChat     Boolean         @default(false)
+  allowPosts    Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  hostId        String
+  host          User            @relation("HostedEvents", fields: [hostId], references: [id])
+  members       User[]          @relation("JoinedEvents")
+  attendees     Attendee[]
+  posts         Post[]
+  chats         ChatMessage[]
+  chatSettings  ChatSettings?
+  roles         EventRole[]
+  eventLogs     EventActivity[]
 }
 
 model EventActivity {
   id        String            @id @default(cuid())
-  roomId    String
+  eventId   String
   userId    String
   type      EventActivityType
   createdAt DateTime          @default(now())
-  Event     Event             @relation(fields: [roomId], references: [id])
+  event     Event             @relation(fields: [eventId], references: [id])
   user      User              @relation(fields: [userId], references: [id])
 
   @@index([createdAt])
-  @@index([roomId])
+  @@index([eventId])
   @@index([userId])
+}
+
+model ChatSettings {
+  id                 String   @id @default(cuid())
+  eventId            String   @unique
+  isEnabled          Boolean  @default(true)
+  allowGuestMessages Boolean  @default(true)
+  slowMode           Boolean  @default(false)
+  slowModeInterval   Int      @default(0)
+  requireModeration  Boolean  @default(false)
+  muteList           Json? // List of muted users by ID
+  banList            Json? // List of banned users by ID
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+  event              Event    @relation(fields: [eventId], references: [id])
 }
 
 model Post {
   id        String    @id @default(cuid())
-  mediaUrl  String
-  mediaType String
+  mediaUrl  String?
+  mediaType String?
   caption   String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String
   eventId   String
+  user      User      @relation(fields: [userId], references: [id])
+  event     Event     @relation(fields: [eventId], references: [id])
   comments  Comment[]
   likes     Like[]
-  event     Event     @relation(fields: [eventId], references: [id])
-  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Comment {
@@ -102,8 +114,8 @@ model Comment {
   updatedAt DateTime @updatedAt
   userId    String
   postId    String
-  post      Post     @relation(fields: [postId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
 }
 
 model Like {
@@ -111,8 +123,8 @@ model Like {
   createdAt DateTime @default(now())
   userId    String
   postId    String
-  post      Post     @relation(fields: [postId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
 
   @@unique([userId, postId])
 }
@@ -122,48 +134,55 @@ model Follow {
   followerId  String
   followingId String
   createdAt   DateTime @default(now())
-  follower    User     @relation("UserFollowing", fields: [followerId], references: [id])
-  following   User     @relation("UserFollowers", fields: [followingId], references: [id])
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  following   User     @relation("Followers", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId])
-  @@index([followerId])
-  @@index([followingId])
-}
-
-model ChatMessage {
-  id        String   @id @default(cuid())
-  roomId    String
-  userId    String
-  content   String
-  isPinned  Boolean  @default(false)
-  isHidden  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  event     Event    @relation(fields: [roomId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([createdAt])
-  @@index([roomId])
-}
-
-model ChatSettings {
-  id                 String  @id @default(cuid())
-  roomId             String  @unique
-  isEnabled          Boolean @default(true)
-  allowGuestMessages Boolean @default(true)
-  slowMode           Boolean @default(false)
-  slowModeInterval   Int     @default(0)
-  requireModeration  Boolean @default(false)
-  event              Event   @relation(fields: [roomId], references: [id])
 }
 
 model Attendee {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
+  eventId   String
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+}
+
+model EventRole {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  role      Role
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  PARTNER
+  MEMBER
 }
 
 enum EventActivityType {
