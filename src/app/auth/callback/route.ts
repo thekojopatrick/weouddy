@@ -21,9 +21,14 @@ export async function GET(request: Request) {
       } else {
         return NextResponse.redirect(`${origin}${next}`);
       }
+    } else {
+      console.error("OAuth Exchange Error:", error);
+      return NextResponse.json({
+        error: "Failed to exchange code for session",
+      });
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return NextResponse.redirect(`${origin}/auth/auth-code-error?error=`);
 }

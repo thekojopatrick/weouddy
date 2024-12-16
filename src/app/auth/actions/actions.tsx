@@ -109,13 +109,19 @@ export async function signUpWithGuest() {
 	return { error, data };
 }
 
-export async function SignInWithGoogle(): Promise<AuthResult> {
+export async function SignInWithGoogle() {
 	const supabase = await createClient();
+
+	// Determine the redirect URL based on the environment
+	const redirectUrl =
+		process.env.NODE_ENV === 'production'
+			? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+			: `http://localhost:3000/auth/callback`;
 
 	const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'google',
 		options: {
-			redirectTo: `https://grown-cattle-mature.ngrok-free.app/auth/callback`,
+			redirectTo: redirectUrl,
 			queryParams: {
 				access_type: 'offline',
 				prompt: 'consent',
@@ -133,9 +139,4 @@ export async function SignInWithGoogle(): Promise<AuthResult> {
 	if (data.url) {
 		redirect(data.url);
 	}
-
-	return {
-		success: true,
-		redirectPath: '/discover',
-	};
 }

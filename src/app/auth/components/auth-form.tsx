@@ -70,27 +70,17 @@ export function AuthForm() {
 	const handleGoogleSignIn = async () => {
 		setIsLoading(true);
 		try {
-			const { success, redirectPath } = await SignInWithGoogle();
-
-			//if (error) throw error;
-
-			if (success && success === true) {
-				toast({
-					title: 'Welcome!',
-					description: 'You have successfully signed in.',
-				});
-
-				router.push(`${redirectPath}`);
-			}
-
-			router.refresh();
-		} catch (error: Error | unknown) {
+			await SignInWithGoogle();
+		} catch (error) {
 			toast({
 				title: 'Error',
-				description: (error as Error).message || 'An unknown error occurred.',
+				description: 'An unexpected error occurred during Google Sign-In.',
 				variant: 'destructive',
 			});
-			console.error(error);
+			console.error(
+				'An unexpected error occurred during Google Sign-In:',
+				error
+			);
 		} finally {
 			setIsLoading(false);
 		}
