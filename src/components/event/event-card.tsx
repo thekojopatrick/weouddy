@@ -58,10 +58,7 @@ export function EventCard({
 			>
 				<CardHeader className='p-0'>
 					<div className='relative aspect-[4/3]'>
-						<Badge
-							variant={!isPrivate ? 'secondary' : 'outline'}
-							className='absolute left-4 top-4 z-10'
-						>
+						<Badge variant={'secondary'} className='absolute left-4 top-4 z-10'>
 							{!isPrivate ? 'Public' : 'Private'}
 						</Badge>
 						<Image

@@ -48,7 +48,7 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 	}, []);
 
 	const handleJoinRequest = () => {
-		router.push(`/events/${event.name.toLowerCase().replace(/ /g, '-')}/room`);
+		router.push(`/events/${event.name.toLowerCase().replace(/ /g, '-')}`);
 	};
 
 	return (

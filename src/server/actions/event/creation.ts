@@ -29,7 +29,7 @@ export async function createEventAction(data: EventFormValues, userId: string) {
 
   // Generate and store QR code
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const eventUrl = `${baseUrl}/events/${event.id}/room`;
+  const eventUrl = `${baseUrl}/events/${event.id}`;
   const qrCode = await generateQRCode(eventUrl);
   const publicUrl = await storeQRCode(event.id, qrCode);
 
