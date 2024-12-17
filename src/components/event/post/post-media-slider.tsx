@@ -31,24 +31,13 @@ export function PostMediaSlider({
 }: PostMediaSliderProps) {
 	const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
-
-	const [isMuted, setIsMuted] = useState(true);
+	const [isMuted, setIsMuted] = useState(false);
 	const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-	//const autoplayIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Reset refs when media changes
 	useEffect(() => {
 		videoRefs.current = media.map(() => null);
 	}, [media]);
-
-	// Cleanup interval on unmount
-	// useEffect(() => {
-	// 	return () => {
-	// 		if (autoplayIntervalRef.current) {
-	// 			clearInterval(autoplayIntervalRef.current);
-	// 		}
-	// 	};
-	// }, []);
 
 	// Manage video playback when media or hover state changes
 	useEffect(() => {
@@ -73,13 +62,6 @@ export function PostMediaSlider({
 				console.error('Autoplay was prevented:', error);
 			});
 
-			// Start autoplay interval for multiple media
-			// if (media.length > 1) {
-			// 	autoplayIntervalRef.current = setInterval(() => {
-			// 		setCurrentMediaIndex((prev) => (prev + 1) % media.length);
-			// 	}, 3000);
-			// }
-
 			setIsPlaying(true);
 		} else {
 			// Stop all videos when not hovered
@@ -88,9 +70,6 @@ export function PostMediaSlider({
 				currentVideo.currentTime = 0;
 			}
 
-			// if (autoplayIntervalRef.current) {
-			// 	clearInterval(autoplayIntervalRef.current);
-			// }
 			setIsPlaying(false);
 		}
 	}, [isHovered, currentMediaIndex, media, isMuted]);
@@ -120,11 +99,7 @@ export function PostMediaSlider({
 	const currentMedia = media[currentMediaIndex];
 
 	return (
-		<div
-			className='relative w-full'
-			//onMouseEnter={() => setIsHovered(true)}
-			//onMouseLeave={() => setIsHovered(false)}
-		>
+		<div className='relative w-full'>
 			<AspectRatio ratio={1}>
 				{currentMedia.type === 'IMAGE' ? (
 					<Image
