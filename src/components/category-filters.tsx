@@ -26,27 +26,16 @@ export function CategoryFilters({
 		<div className='flex items-center justify-between py-4'>
 			<ScrollArea className='w-full whitespace-nowrap'>
 				<div className='flex space-x-2'>
-					{uniqueCategories.map((category) => {
-						// Hide other categories when a specific category is selected
-						if (
-							currentCategory !== 'All' &&
-							category !== currentCategory &&
-							category !== 'All'
-						) {
-							return null;
-						}
-
-						return (
-							<Button
-								key={category}
-								variant={currentCategory === category ? 'default' : 'secondary'}
-								className='rounded-full capitalize'
-								onClick={() => onCategoryChangeAction(category)}
-							>
-								{category}
-							</Button>
-						);
-					})}
+					{uniqueCategories.map((category) => (
+						<Button
+							key={category}
+							variant={currentCategory === category ? 'default' : 'secondary'}
+							className='rounded-full capitalize'
+							onClick={() => onCategoryChangeAction(category)}
+						>
+							{category}
+						</Button>
+					))}
 				</div>
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
