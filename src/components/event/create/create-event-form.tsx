@@ -57,7 +57,7 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 		try {
 			const event = await createEvent(data);
 
-			console.log({ event });
+			console.log('Event creation response:', { event });
 
 			if (event) {
 				toast({
@@ -71,14 +71,25 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 				setQrCode(event.qrCode);
 				setEventName(event.name);
 				setStep('success');
+			} else {
+				// Add a specific toast for when event is null
+				toast({
+					title: 'Error',
+					description: 'Event creation returned no data. Please try again.',
+					variant: 'destructive',
+				});
 			}
 		} catch (error) {
+			// More detailed error logging and toasting
+			console.error('Full error during event creation:', error);
 			toast({
 				title: 'Error',
-				description: 'Failed to create event. Please try again.',
+				description:
+					error instanceof Error
+						? error.message
+						: 'Failed to create event. Please try again.',
 				variant: 'destructive',
 			});
-			console.error(error);
 		} finally {
 			setIsSubmitting(false);
 		}

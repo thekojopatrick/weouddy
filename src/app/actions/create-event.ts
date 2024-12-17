@@ -17,12 +17,27 @@ export async function createEvent(data: EventFormValues) {
     const dateTime = new Date(data.date);
     dateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10));
 
+    // Add some debug logging
+    console.log("Creating event with data:", data);
+    console.log("User ID:", session.userId);
+
     const event = await createEventAction(data, session.userId);
+
+    // Add logging for the created event
+    console.log("Event created:", event);
 
     revalidatePath("/events");
     return event;
   } catch (error) {
-    console.error("Failed to create event:", error);
-    throw new Error("Failed to create event");
+    // More detailed error logging
+    console.error("Detailed error in createEvent:", error);
+
+    // If it's an error with a message, throw that specific message
+    if (error instanceof Error) {
+      throw new Error(`Failed to create event: ${error.message}`);
+    }
+
+    // Fallback error if something else goes wrong
+    throw new Error("Failed to create event due to an unknown error");
   }
 }
