@@ -24,7 +24,7 @@ export function CategoryFilters({
 						<Button
 							key={category}
 							variant={currentCategory === category ? 'default' : 'secondary'}
-							className='rounded-full'
+							className='rounded-full capitalize'
 							onClick={() => onCategoryChangeAction(category)}
 						>
 							{category}

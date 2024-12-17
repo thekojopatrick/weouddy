@@ -7,7 +7,7 @@ export async function generateEventQRCode(eventId: string, baseUrl: string) {
   return QRCode.toDataURL(eventUrl);
 }
 
-export async function geteventById(eventId: string) {
+export async function getEventById(eventId: string) {
   return prisma.event.findUnique({
     where: { id: eventId },
     include: {
@@ -24,7 +24,7 @@ export async function geteventById(eventId: string) {
   });
 }
 
-export async function getAllevents(userId?: string) {
+export async function getAllEvents(userId?: string) {
   if (userId) {
     // For authenticated users, return all events
     return prisma.event.findMany({

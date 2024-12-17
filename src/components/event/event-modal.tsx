@@ -14,12 +14,12 @@ interface EventModalProps {
 	isOpen: boolean;
 	onCloseAction: () => void;
 	event: {
-		title: string;
+		name: string;
 		type: string;
-		coverImage: string;
+		coverImage: string | null;
 		host: {
 			name: string;
-			avatar: string;
+			avatarUrl: string;
 		};
 		date: string;
 		time: string;
@@ -48,7 +48,7 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 	}, []);
 
 	const handleJoinRequest = () => {
-		router.push(`/events/${event.title.toLowerCase().replace(/ /g, '-')}/room`);
+		router.push(`/events/${event.name.toLowerCase().replace(/ /g, '-')}/room`);
 	};
 
 	return (
@@ -59,8 +59,8 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 			>
 				<div className='relative h-48 -mx-6 -mt-2'>
 					<Image
-						src={event.coverImage}
-						alt={event.title}
+						src={event.coverImage ?? '/placeholder.svg'}
+						alt={event.name}
 						fill
 						className='object-cover'
 					/>
@@ -76,10 +76,10 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 				<div className='space-y-6 mt-6 mb-auto md:h-[56vh]'>
 					<div>
 						<Badge variant={'secondary'}>{event.type}</Badge>
-						<h2 className='text-2xl font-bold mt-2'>{event.title}</h2>
+						<h2 className='text-2xl font-bold mt-2'>{event.name}</h2>
 						<div className='flex items-center gap-2 mt-2'>
 							<Avatar className='h-6 w-6'>
-								<AvatarImage src={event.host.avatar} />
+								<AvatarImage src={event.host.avatarUrl} />
 								<AvatarFallback>{event.host.name[0]}</AvatarFallback>
 							</Avatar>
 							<span className='text-sm text-muted-foreground'>

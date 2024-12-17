@@ -5,11 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
 import { CreateEventButton } from '@/components/create-button';
+import { Event } from '@prisma/client';
 import { EventCard } from '@/components/event/event-card';
 import { LocationFilters } from '@/components/location-filters';
 import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
 import { UserPlus } from 'lucide-react';
+import { formatDate } from 'date-fns';
 import { usePathname } from 'next/navigation';
 
 const locations = [
@@ -19,107 +21,21 @@ const locations = [
 	{ name: 'Rest of the world', href: 'world' },
 ];
 
-const allEvents = [
-	{
-		title: 'Sweet 16 Birthday',
-		type: 'Birthday',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Kojo Patrick',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Accra',
-		members: 0,
-		category: 'House Party',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing sweet 16 celebration!',
-	},
-	{
-		title: 'Bachelor Party',
-		type: 'Party',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'Lila Anderson',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Ghana',
-		members: 5,
-		category: 'Club',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing bachelor party!',
-	},
-	{
-		title: 'Company Retreat',
-		type: 'Retreat',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Sophie Lee',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Africa',
-		members: 20,
-		category: 'Outdoor Event',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing company retreat!',
-	},
-	{
-		title: 'Family Reunion',
-		type: 'Reunion',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'James Smith',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Rest of the world',
-		members: 10,
-		category: 'House Party',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing family reunion!',
-	},
-	{
-		title: 'Sunday Service',
-		type: 'Religious',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Pastor Johnson',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Accra',
-		members: 100,
-		category: 'Church',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing Sunday service!',
-	},
-	{
-		title: 'Beach Wedding',
-		type: 'Wedding',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'Emma and John',
-			avatar: '/placeholder.svg',
-		},
-		location: 'Ghana',
-		members: 50,
-		category: 'Weddings',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing beach wedding!',
-	},
-];
+type EventData = Event & {
+	host: {
+		name: string;
+		avatarUrl: string;
+	};
+};
 
-export default function HomePage({ user }: { user: User | null }) {
-	const [filteredEvents, setFilteredEvents] = useState(allEvents);
+export default function HomePage({
+	user,
+	events,
+}: {
+	user: User | null;
+	events: EventData[];
+}) {
+	const [filteredEvents, setFilteredEvents] = useState(events);
 	const [currentLocation, setCurrentLocation] = useState('Accra');
 	const [currentCategory, setCurrentCategory] = useState('All');
 
@@ -136,12 +52,12 @@ export default function HomePage({ user }: { user: User | null }) {
 	}, [currentCategory, pathname]);
 
 	const filterEvents = (location: string, category: string) => {
-		let filtered = allEvents;
+		let filtered = events;
 		if (location !== 'Rest of the world') {
 			filtered = filtered.filter((event) => event.location === location);
 		}
 		if (category !== 'All') {
-			filtered = filtered.filter((event) => event.category === category);
+			filtered = filtered.filter((event) => event?.type === category);
 		}
 		setFilteredEvents(filtered);
 	};
@@ -161,7 +77,7 @@ export default function HomePage({ user }: { user: User | null }) {
 
 	const availableCategories = [
 		'All',
-		...new Set(filteredEvents.map((event) => event.category)),
+		...new Set(filteredEvents.map((event) => event.type)),
 	];
 
 	return (
@@ -191,7 +107,14 @@ export default function HomePage({ user }: { user: User | null }) {
 					</div>
 					<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 						{filteredEvents.map((event) => (
-							<EventCard key={event.title} {...event} />
+							<EventCard
+								members={0}
+								category={event.type}
+								date={formatDate(event.dateTime, 'dd//mm/yyyy')}
+								time={''}
+								key={event.id}
+								{...event}
+							/>
 						))}
 					</div>
 				</section>

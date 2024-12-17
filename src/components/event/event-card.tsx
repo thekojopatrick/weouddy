@@ -15,13 +15,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 interface EventCardProps {
-	title: string;
+	name: string;
 	type: string;
-	image: string;
-	isPublic: boolean;
+	coverImage: string | null;
+	isPrivate: boolean;
 	host: {
 		name: string;
-		avatar: string;
+		avatarUrl: string;
 	};
 	location: string;
 	members: number;
@@ -33,12 +33,12 @@ interface EventCardProps {
 }
 
 export function EventCard({
-	title,
+	name,
 	type,
-	image,
-	isPublic,
+	coverImage,
+	isPrivate,
 	host,
-	location,
+	location = 'Accra,Ghana',
 	members,
 	category,
 	date,
@@ -59,18 +59,25 @@ export function EventCard({
 				<CardHeader className='p-0'>
 					<div className='relative aspect-[4/3]'>
 						<Badge
-							variant={isPublic ? 'secondary' : 'outline'}
+							variant={!isPrivate ? 'secondary' : 'outline'}
 							className='absolute left-4 top-4 z-10'
 						>
-							{isPublic ? 'Public' : 'Private'}
+							{!isPrivate ? 'Public' : 'Private'}
 						</Badge>
-						<Image src={image} alt={title} fill className='object-cover' />
+						<Image
+							src={coverImage ?? '/place-holder.svg'}
+							alt={name}
+							fill
+							className='object-cover'
+						/>
 					</div>
 				</CardHeader>
 				<CardContent className='grid gap-2.5 p-4'>
-					<h3 className='font-semibold leading-none tracking-tight'>{title}</h3>
+					<h3 className='font-semibold leading-none tracking-tight'>{name}</h3>
 					<div className='flex flex-wrap gap-2'>
-						<Badge variant='secondary'>{type}</Badge>
+						<Badge variant='secondary' className='capitalize'>
+							{type}
+						</Badge>
 						<Badge variant='outline'>{category}</Badge>
 					</div>
 				</CardContent>
@@ -78,7 +85,7 @@ export function EventCard({
 					<div className='flex items-center space-x-4 text-sm text-muted-foreground'>
 						<div className='flex items-center space-x-2'>
 							<Avatar className='h-8 w-8'>
-								<AvatarImage src={host.avatar} />
+								<AvatarImage src={host.avatarUrl} />
 								<AvatarFallback>{host.name[0]}</AvatarFallback>
 							</Avatar>
 							<span>{host.name}</span>
@@ -99,14 +106,14 @@ export function EventCard({
 				isOpen={isModalOpen}
 				onCloseAction={() => setIsModalOpen(false)}
 				event={{
-					title,
+					name,
 					type,
-					coverImage: image,
+					coverImage: coverImage ?? '/place-holder.svg',
 					host,
 					date,
 					time,
 					location: {
-						name: 'East Legon hills',
+						name: location,
 						city,
 						country,
 					},
