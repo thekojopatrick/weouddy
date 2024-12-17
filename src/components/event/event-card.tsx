@@ -15,13 +15,14 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 interface EventCardProps {
+	id?: string;
 	name: string;
 	type: string;
 	coverImage: string | null;
 	isPrivate: boolean;
 	host: {
 		name: string;
-		avatarUrl: string;
+		avatarUrl: string | null;
 	};
 	location: string;
 	members: number;
@@ -38,7 +39,7 @@ export function EventCard({
 	coverImage,
 	isPrivate,
 	host,
-	location = 'Accra,Ghana',
+	location,
 	members,
 	category,
 	date,
@@ -82,7 +83,7 @@ export function EventCard({
 					<div className='flex items-center space-x-4 text-sm text-muted-foreground'>
 						<div className='flex items-center space-x-2'>
 							<Avatar className='h-8 w-8'>
-								<AvatarImage src={host.avatarUrl} />
+								<AvatarImage src={host.avatarUrl ?? undefined} />
 								<AvatarFallback>{host.name[0]}</AvatarFallback>
 							</Avatar>
 							<span>{host.name}</span>
@@ -106,13 +107,16 @@ export function EventCard({
 					name,
 					type,
 					coverImage: coverImage ?? '/place-holder.svg',
-					host,
+					host: {
+						name,
+						avatarUrl: host.avatarUrl ?? '',
+					},
 					date,
 					time,
 					location: {
 						name: location,
-						city,
-						country,
+						city: city || 'Unknown',
+						country: country || 'Unknown',
 					},
 					members,
 					description,

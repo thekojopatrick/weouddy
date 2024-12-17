@@ -13,6 +13,10 @@ export type EventData = Event & {
     name: string;
     avatarUrl: string;
   };
+  _count: {
+    members: number;
+    posts: number;
+  };
 };
 
 export type PostData = Post & {

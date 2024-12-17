@@ -6,149 +6,66 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
 import { EventCard } from '@/components/event/event-card';
+import { EventData } from '@/types/event';
 import { LocationFilters } from '@/components/location-filters';
-import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
+import { formatDate } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 
-const allEvents = [
-	{
-		title: 'Sweet 16 Birthday',
-		type: 'Birthday',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Kojo Patrick',
-			avatar: '/placeholder.svg',
-		},
-		location: 'accra',
-		members: 0,
-		category: 'House Party',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing sweet 16 celebration!',
-	},
-	{
-		title: 'Bachelor Party',
-		type: 'Party',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'Lila Anderson',
-			avatar: '/placeholder.svg',
-		},
-		location: 'gh',
-		members: 5,
-		category: 'Club',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing bachelor party!',
-	},
-	{
-		title: 'Company Retreat',
-		type: 'Retreat',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Sophie Lee',
-			avatar: '/placeholder.svg',
-		},
-		location: 'africa',
-		members: 20,
-		category: 'Outdoor Event',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing company retreat!',
-	},
-	{
-		title: 'Family Reunion',
-		type: 'Reunion',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'James Smith',
-			avatar: '/placeholder.svg',
-		},
-		location: 'world',
-		members: 10,
-		category: 'House Party',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing family reunion!',
-	},
-	{
-		title: 'Sunday Service',
-		type: 'Religious',
-		image: '/placeholder.svg',
-		isPublic: true,
-		host: {
-			name: 'Pastor Johnson',
-			avatar: '/placeholder.svg',
-		},
-		location: 'accra',
-		members: 100,
-		category: 'Church',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing Sunday service!',
-	},
-	{
-		title: 'Beach Wedding',
-		type: 'Wedding',
-		image: '/placeholder.svg',
-		isPublic: false,
-		host: {
-			name: 'Emma and John',
-			avatar: '/placeholder.svg',
-		},
-		location: 'gh',
-		members: 50,
-		category: 'Weddings',
-		date: '2024-03-20',
-		time: '14:00',
-		description: 'Join us for an amazing beach wedding!',
-	},
-];
-
-export default function DiscoverPage({ user }: { user: User | null }) {
-	const [filteredEvents, setFilteredEvents] = useState(allEvents);
+export default function DiscoverPage({
+	events,
+}: {
+	user?: User | null;
+	events: EventData[];
+}) {
+	const [filteredEvents, setFilteredEvents] = useState(events);
 	const [currentCategory, setCurrentCategory] = useState('All');
+	const [currentLocation, setCurrentLocation] = useState('accra');
 	const searchParams = useSearchParams();
 
 	useEffect(() => {
 		const location = searchParams.get('location') || 'accra';
+		setCurrentLocation(location);
 		filterEvents(location, currentCategory);
 	}, [searchParams, currentCategory]);
 
 	const filterEvents = (location: string, category: string) => {
-		let filtered = allEvents;
+		let filtered = events;
+
+		// Filter by location
 		if (location !== 'world') {
-			filtered = filtered.filter((event) => event.location === location);
+			filtered = filtered.filter((event) =>
+				event?.location?.toLowerCase().includes(location.toLowerCase())
+			);
 		}
+
+		// Filter by category
 		if (category !== 'All') {
-			filtered = filtered.filter((event) => event.category === category);
+			filtered = filtered.filter(
+				(event) => event.type.toLowerCase() === category.toLowerCase()
+			);
 		}
+
 		setFilteredEvents(filtered);
 	};
 
 	const handleLocationChange = (location: string) => {
+		setCurrentLocation(location);
 		filterEvents(location, currentCategory);
 	};
 
 	const handleCategoryChange = (category: string) => {
 		setCurrentCategory(category);
-		const location = searchParams.get('location') || 'accra';
-		filterEvents(location, category);
+		filterEvents(currentLocation, category);
 	};
 
 	const availableCategories = [
 		'All',
-		...new Set(filteredEvents.map((event) => event.category)),
+		...new Set(events.map((event) => event.type)),
 	];
 
 	return (
 		<div className='flex min-h-screen flex-col'>
-			<SiteHeader user={user} />
 			<main className='flex-1'>
 				<section className='max-w-7xl px-6 py-8 '>
 					<div className='flex flex-col gap-4'>
@@ -162,7 +79,7 @@ export default function DiscoverPage({ user }: { user: User | null }) {
 					</div>
 					<div className='mt-8'>
 						<LocationFilters
-							currentLocation={searchParams.get('location') || 'accra'}
+							currentLocation={currentLocation}
 							onLocationChangeAction={handleLocationChange}
 						/>
 						<CategoryFilters
@@ -172,8 +89,21 @@ export default function DiscoverPage({ user }: { user: User | null }) {
 						/>
 					</div>
 					<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-						{filteredEvents.map((event) => (
-							<EventCard key={event.title} {...event} />
+						{filteredEvents?.map((event) => (
+							<EventCard
+								key={event.id}
+								name={event.name}
+								type={event.type}
+								coverImage={event.coverImage}
+								isPrivate={event.isPrivate}
+								host={event.host}
+								location={event.location!}
+								members={event?._count?.members}
+								category={event.type}
+								date={formatDate(new Date(event.dateTime), 'dd/MM/yyyy')}
+								time={formatDate(new Date(event.dateTime), 'HH:mm')}
+								description={event.description!}
+							/>
 						))}
 					</div>
 				</section>

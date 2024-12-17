@@ -16,20 +16,37 @@ export function CategoryFilters({
 	currentCategory,
 	categories,
 }: CategoryFiltersProps) {
+	// Filter out duplicate categories and ensure 'All' is always first
+	const uniqueCategories = [
+		'All',
+		...new Set(categories.filter((cat) => cat !== 'All')),
+	];
+
 	return (
 		<div className='flex items-center justify-between py-4'>
 			<ScrollArea className='w-full whitespace-nowrap'>
 				<div className='flex space-x-2'>
-					{categories.map((category) => (
-						<Button
-							key={category}
-							variant={currentCategory === category ? 'default' : 'secondary'}
-							className='rounded-full capitalize'
-							onClick={() => onCategoryChangeAction(category)}
-						>
-							{category}
-						</Button>
-					))}
+					{uniqueCategories.map((category) => {
+						// Hide other categories when a specific category is selected
+						if (
+							currentCategory !== 'All' &&
+							category !== currentCategory &&
+							category !== 'All'
+						) {
+							return null;
+						}
+
+						return (
+							<Button
+								key={category}
+								variant={currentCategory === category ? 'default' : 'secondary'}
+								className='rounded-full capitalize'
+								onClick={() => onCategoryChangeAction(category)}
+							>
+								{category}
+							</Button>
+						);
+					})}
 				</div>
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>

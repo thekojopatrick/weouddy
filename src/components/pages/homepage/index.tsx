@@ -101,12 +101,18 @@ export default function HomePage({
 					<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 						{filteredEvents.map((event) => (
 							<EventCard
-								members={0}
-								category={event.type}
-								date={formatDate(event.dateTime, 'dd//mm/yyyy')}
-								time={''}
 								key={event.id}
-								{...event}
+								name={event.name}
+								type={event.type}
+								coverImage={event.coverImage}
+								isPrivate={event.isPrivate}
+								host={event.host}
+								location={event.location!}
+								members={event?._count?.members}
+								category={event.type}
+								date={formatDate(new Date(event.dateTime), 'dd/MM/yyyy')}
+								time={formatDate(new Date(event.dateTime), 'HH:mm')}
+								description={event.description!}
 							/>
 						))}
 					</div>
