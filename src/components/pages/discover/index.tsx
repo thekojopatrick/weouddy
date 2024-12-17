@@ -1,12 +1,13 @@
 'use client';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, Plus, UserPlus } from 'lucide-react';
+import { AlertTriangle, UserPlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
+import { CreateEventButton } from '@/components/create-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
@@ -124,10 +125,7 @@ export default function DiscoverPage({ events }: { events: EventData[] }) {
 					<UserPlus className='mr-2 h-5 w-5' />
 					Join Event
 				</Button>
-				<Button size='lg' className='rounded-full shadow-lg'>
-					<Plus className='mr-2 h-5 w-5' />
-					Create Event
-				</Button>
+				<CreateEventButton />
 			</div>
 		</div>
 	);
