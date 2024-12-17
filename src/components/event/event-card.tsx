@@ -108,7 +108,7 @@ export function EventCard({
 					type,
 					coverImage: coverImage ?? '/place-holder.svg',
 					host: {
-						name,
+						name: host.name,
 						avatarUrl: host.avatarUrl ?? '',
 					},
 					date,
