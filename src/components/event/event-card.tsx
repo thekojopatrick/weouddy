@@ -63,7 +63,7 @@ export function EventCard({
 						</Badge>
 						<Image
 							src={coverImage ?? '/place-holder.svg'}
-							alt={name}
+							alt={`Event ${name}`}
 							fill
 							className='object-cover'
 						/>

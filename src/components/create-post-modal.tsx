@@ -45,7 +45,7 @@ export function CreatePostModal({
 		if (uploadState.isUploading) return;
 
 		try {
-			const mediaFiles = await uploadFiles();
+			const mediaFiles = await uploadFiles(eventId);
 
 			const validMediaFiles = mediaFiles.filter(
 				(

@@ -10,5 +10,7 @@ export default async function page() {
 
 	const events = await getAllEvents(user?.id);
 
+	console.log({ events });
+
 	return <HomePage user={user} events={events as []} />;
 }

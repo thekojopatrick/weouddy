@@ -41,7 +41,7 @@ export function useUploadFiles() {
     }));
   };
 
-  const uploadFiles = async () => {
+  const uploadFiles = async (eventId: string) => {
     setUploadState((prev) => ({ ...prev, isUploading: true }));
 
     const uploads = uploadState.files.map(async (fileWithPreview, index) => {
@@ -49,20 +49,27 @@ export function useUploadFiles() {
         const { file, mediaType } = fileWithPreview;
         const fileExt = file.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
+        //const filePath = `${eventId}/${fileName}`;
 
         // Determine storage bucket based on media type
-        const bucket = mediaType === "VIDEO" ? "videos" : "posts";
+        const filePath = mediaType === "VIDEO"
+          ? `${eventId}/videos/${fileName}`
+          : `${eventId}/images/${fileName}`;
 
         // Upload file to Supabase Storage
         const { error: uploadError, data } = await supabase.storage
-          .from(bucket)
+          .from("posts")
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
+        console.log("Upload File", data);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("posts").getPublicUrl(filePath);
+
         return {
-          url: data.path,
+          url: publicUrl,
           type: mediaType,
           order: index,
         };
