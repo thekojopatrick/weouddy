@@ -1,3 +1,5 @@
+export type RegionType = "Africa" | "world" | "Europe" | "Asia" | "Americas";
+
 export interface LocationDetails {
   name: string;
   country?: string;

@@ -1,106 +1,74 @@
 'use client';
 
-import { Plus, UserPlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle, Plus, UserPlus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
 import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
+import { EventListShimmer } from '@/components/event/shimmer-loading';
 import { LocationFilters } from '@/components/location-filters';
-import { User } from '@supabase/supabase-js';
-import { categorizeLocation } from '@/lib/location-mapping';
 import { formatEventDateTime } from '@/lib/formatters';
-import { useSearchParams } from 'next/navigation';
+import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
 
-export default function DiscoverPage({
-	events,
-}: {
-	user?: User | null;
-	events: EventData[];
-}) {
-	const [filteredEvents, setFilteredEvents] = useState(events);
-	const [currentCategory, setCurrentCategory] = useState('All');
-	const [currentLocation, setCurrentLocation] = useState('accra');
+export default function DiscoverPage({ events }: { events: EventData[] }) {
 	const searchParams = useSearchParams();
+	const router = useRouter();
 
-	useEffect(() => {
-		const location = searchParams.get('location') || 'accra';
-		setCurrentLocation(location);
-		filterEvents(location, currentCategory);
-	}, [searchParams, currentCategory]);
+	const [currentLocation, setCurrentLocation] = useState(
+		searchParams.get('location') || 'accra'
+	);
+	const [currentCategory, setCurrentCategory] = useState('All');
 
-	// const filterEvents = (location: string, category: string) => {
-	// 	let filtered = events;
+	const { filterEvents, isLoading, error } = useOptimizedEventFiltering(events);
 
-	// 	// Filter by location
-	// 	if (location !== 'world') {
-	// 		filtered = filtered.filter((event) =>
-	// 			event?.location?.toLowerCase().includes(location.toLowerCase())
-	// 		);
-	// 	}
+	// Compute filtered events
+	const { data: filteredEvents, isLoading: filterLoading } = useMemo(
+		() => filterEvents(currentLocation, currentCategory),
+		[currentLocation, currentCategory, filterEvents]
+	);
 
-	// 	// Filter by category
-	// 	if (category !== 'All') {
-	// 		filtered = filtered.filter(
-	// 			(event) => event.type.toLowerCase() === category.toLowerCase()
-	// 		);
-	// 	}
-
-	// 	setFilteredEvents(filtered);
-	// };
-
-	const filterEvents = (location: string, category: string) => {
-		let filtered = events;
-
-		// If location is not 'world', filter events
-		if (location !== 'world') {
-			filtered = filtered.filter((event) => {
-				const categorizedLocation = categorizeLocation(event.location!);
-
-				// Match based on different location levels
-				switch (location) {
-					case 'accra':
-						return categorizedLocation.city === 'Accra';
-					case 'gh':
-						return categorizedLocation.country === 'Ghana';
-					case 'africa':
-						return categorizedLocation.region === 'Africa';
-					default:
-						return categorizedLocation.region === 'world';
-				}
-			});
-		}
-
-		// Filter by category if not 'All'
-		if (category !== 'All') {
-			filtered = filtered.filter(
-				(event) => event.type.toLowerCase() === category.toLowerCase()
-			);
-		}
-
-		setFilteredEvents(filtered);
-	};
-
+	// Handle location change
 	const handleLocationChange = (location: string) => {
 		setCurrentLocation(location);
-		filterEvents(location, currentCategory);
+		router.push(`/discover?location=${location}`, { scroll: false });
 	};
 
-	const handleCategoryChange = (category: string) => {
-		setCurrentCategory(category);
-		filterEvents(currentLocation, category);
-	};
+	// Compute available categories
+	const availableCategories = useMemo(
+		() => ['All', ...new Set(events.map((event) => event.type))],
+		[events]
+	);
 
-	const availableCategories = [
-		'All',
-		...new Set(events.map((event) => event.type)),
-	];
+	// Render error state
+	if (error) {
+		return (
+			<Alert variant='destructive' className='m-4'>
+				<AlertTriangle className='h-4 w-4' />
+				<AlertTitle>Error</AlertTitle>
+				<AlertDescription>
+					{error.message || 'An unexpected error occurred'}
+				</AlertDescription>
+			</Alert>
+		);
+	}
+
+	// Render loading state
+	if (isLoading || filterLoading) {
+		return (
+			<div className='container mx-auto px-4 py-8'>
+				<EventListShimmer />
+			</div>
+		);
+	}
 
 	return (
 		<div className='flex min-h-screen flex-col'>
 			<main className='flex-1'>
-				<section className='max-w-7xl px-6 py-8 '>
+				<section className='max-w-7xl px-6 py-8'>
 					<div className='flex flex-col gap-4'>
 						<h1 className='text-3xl font-bold tracking-tighter'>
 							Discover Events
@@ -116,34 +84,39 @@ export default function DiscoverPage({
 							onLocationChangeAction={handleLocationChange}
 						/>
 						<CategoryFilters
-							onCategoryChangeAction={handleCategoryChange}
+							onCategoryChangeAction={setCurrentCategory}
 							currentCategory={currentCategory}
 							categories={availableCategories}
 						/>
 					</div>
-					<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-						{filteredEvents?.map((event) => {
-							const { date, time } = formatEventDateTime(
-								event.dateTime as never
-							);
-							return (
-								<EventCard
-									key={event.id}
-									name={event.name}
-									type={event.type}
-									coverImage={event.coverImage}
-									isPrivate={event.isPrivate}
-									host={event.host}
-									location={event.location!}
-									members={event._count.members}
-									category={event.type}
-									date={date}
-									time={time}
-									description={event.description!}
-								/>
-							);
-						})}
-					</div>
+
+					{filteredEvents.length === 0 ? (
+						<div className='text-center py-8'>
+							<p className='text-muted-foreground'>
+								No events found for the selected filters.
+							</p>
+						</div>
+					) : (
+						<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+							{filteredEvents.map((event) => {
+								const { date, time } = formatEventDateTime(
+									event.dateTime as never
+								);
+								return (
+									<EventCard
+										key={event.id}
+										{...event}
+										date={date}
+										time={time}
+										members={event._count.members}
+										category={event.type}
+										location={event.location!}
+										description={event.description!}
+									/>
+								);
+							})}
+						</div>
+					)}
 				</section>
 			</main>
 			<div className='fixed bottom-8 right-8 flex flex-col gap-4'>
