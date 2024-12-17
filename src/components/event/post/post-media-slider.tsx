@@ -62,7 +62,7 @@ export function PostMediaSlider({
 				console.error('Autoplay was prevented:', error);
 			});
 
-			setIsPlaying(true);
+			setIsPlaying(isHovered);
 		} else {
 			// Stop all videos when not hovered
 			if (currentVideo) {
