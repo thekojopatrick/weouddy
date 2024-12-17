@@ -76,14 +76,18 @@ export function PostMediaSlider({
 
 	const handleNext = () => {
 		setCurrentMediaIndex((prev) => (prev + 1) % media.length);
+		// Reset play state when manually changing media
+		setIsPlaying(false);
 	};
 
 	const handlePrev = () => {
 		setCurrentMediaIndex((prev) => (prev - 1 + media.length) % media.length);
+		// Reset play state when manually changing media
+		setIsPlaying(false);
 	};
 
 	const togglePlayPause = () => {
-		//setIsHovered((prev) => !prev);
+		setIsPlaying((prev) => !prev);
 	};
 
 	const toggleMute = () => {
@@ -119,6 +123,10 @@ export function PostMediaSlider({
 						className='w-full h-full object-cover rounded-lg'
 						muted={isMuted}
 						playsInline
+						onEnded={() => {
+							// Optional: Add behavior when video ends
+							setIsPlaying(false);
+						}}
 					/>
 				)}
 			</AspectRatio>
@@ -142,32 +150,35 @@ export function PostMediaSlider({
 						<ChevronRight className='h-6 w-6' />
 					</button>
 
-					{/* Play/Pause button */}
-					{isHovered && currentMedia.type === 'VIDEO' && (
+					{/* Play/Pause and Mute controls */}
+					{isHovered && (
 						<div className='absolute bottom-2 right-2 flex space-x-2'>
-							<button
-								onClick={togglePlayPause}
-								className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
-							>
-								{isPlaying ? (
-									<Pause className='h-5 w-5' />
-								) : (
-									<Play className='h-5 w-5' />
-								)}
-							</button>
-
-							{/* Mute/Unmute button */}
 							{currentMedia.type === 'VIDEO' && (
-								<button
-									onClick={toggleMute}
-									className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
-								>
-									{isMuted ? (
-										<VolumeX className='h-5 w-5' />
-									) : (
-										<Volume2 className='h-5 w-5' />
-									)}
-								</button>
+								<>
+									<button
+										onClick={togglePlayPause}
+										className='bg-black/50 text-white p-1 rounded-full 
+                      hover:bg-black/70 transition-colors z-50'
+									>
+										{isPlaying ? (
+											<Pause className='h-5 w-5' />
+										) : (
+											<Play className='h-5 w-5' />
+										)}
+									</button>
+
+									<button
+										onClick={toggleMute}
+										className='bg-black/50 text-white p-1 rounded-full 
+                      hover:bg-black/70 transition-colors z-50'
+									>
+										{isMuted ? (
+											<VolumeX className='h-5 w-5' />
+										) : (
+											<Volume2 className='h-5 w-5' />
+										)}
+									</button>
+								</>
 							)}
 						</div>
 					)}
