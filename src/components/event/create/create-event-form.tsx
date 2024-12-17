@@ -14,6 +14,7 @@ import { SuccessStep } from './steps/success';
 import { WelcomeStep } from './steps/welcome';
 import { CoverUploadStep } from './steps/cover-upload';
 import { EventDetailsStep } from './steps/event-details';
+import { QRCodeType } from '@/lib/qr/types';
 
 interface CreateEventFormProps {
 	onCloseAction: () => void;
@@ -30,6 +31,9 @@ type Step =
 export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 	const [step, setStep] = useState<Step>('welcome');
 	const [eventUrl, setEventUrl] = useState('');
+	const [eventName, setEventName] = useState('');
+	const [qrCode, setQrCode] = useState<QRCodeType>();
+	const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 	const { toast } = useToast();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,6 +67,9 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 
 				// Generate the event URL using the returned event data
 				setEventUrl(`${window.location.origin}/events/${event.slug}`);
+				setQrCodeUrl(event.qrCodeUrl);
+				setQrCode(event.qrCode);
+				setEventName(event.name);
 				setStep('success');
 			}
 		} catch (error) {
@@ -131,7 +138,13 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 						/>
 					)}
 					{step === 'success' && (
-						<SuccessStep eventUrl={eventUrl} onClose={onCloseAction} />
+						<SuccessStep
+							eventUrl={eventUrl}
+							qrCode={qrCode!}
+							qrCodeUrl={qrCodeUrl}
+							eventName={eventName}
+							onCloseAction={onCloseAction}
+						/>
 					)}
 				</form>
 			</Form>

@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "public.blob.vercel-storage.com" },
+      { hostname: "tuffqbszruravurjwsei.supabase.co" },
       { hostname: "res.cloudinary.com" },
       { hostname: "abs.twimg.com" },
       { hostname: "pbs.twimg.com" },

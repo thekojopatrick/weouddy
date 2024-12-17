@@ -4,7 +4,7 @@ import { generateSlug } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 import { storeQRCode } from "@/lib/qr/storage";
 
-export async function createEvent(data: EventFormValues, userId: string) {
+export async function createEventAction(data: EventFormValues, userId: string) {
   const [hours, minutes] = data.time.split(":");
   const dateTime = new Date(data.date);
   dateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10));
@@ -34,7 +34,7 @@ export async function createEvent(data: EventFormValues, userId: string) {
   const publicUrl = await storeQRCode(event.id, qrCode);
 
   // Update event with QR code URL
-  const updatedevent = await prisma.event.update({
+  const updatedEvent = await prisma.event.update({
     where: { id: event.id },
     data: { qrCodeUrl: publicUrl },
     include: {
@@ -52,7 +52,8 @@ export async function createEvent(data: EventFormValues, userId: string) {
   });
 
   return {
-    ...updatedevent,
+    ...updatedEvent,
+    qrCodeUrl: publicUrl,
     qrCode: {
       ...qrCode,
       publicUrl,
