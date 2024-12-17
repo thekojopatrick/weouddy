@@ -94,18 +94,32 @@ model ChatSettings {
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  mediaUrl  String?
-  mediaType String?
+  id        String      @id @default(cuid())
   caption   String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  media     PostMedia[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   userId    String
   eventId   String
-  user      User      @relation(fields: [userId], references: [id])
-  event     Event     @relation(fields: [eventId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+  event     Event       @relation(fields: [eventId], references: [id])
   comments  Comment[]
   likes     Like[]
+}
+
+model PostMedia {
+  id        String    @id @default(cuid())
+  postId    String
+  url       String
+  type      MediaType // Enum to specify media type
+  order     Int       @default(0) // To maintain order of media in a post
+  createdAt DateTime  @default(now())
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
 }
 
 model Comment {
