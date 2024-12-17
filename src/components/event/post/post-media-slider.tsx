@@ -143,7 +143,7 @@ export function PostMediaSlider({
 					</button>
 
 					{/* Play/Pause button */}
-					{isHovered && (
+					{isHovered && currentMedia.type === 'VIDEO' && (
 						<div className='absolute bottom-2 right-2 flex space-x-2'>
 							<button
 								onClick={togglePlayPause}
