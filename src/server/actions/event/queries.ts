@@ -24,6 +24,23 @@ export async function getEventById(eventId: string) {
   });
 }
 
+export async function getEventBySlug(slug: string) {
+  return prisma.event.findUnique({
+    where: { slug },
+    include: {
+      host: true,
+      members: true,
+      posts: {
+        include: {
+          user: true,
+          comments: true,
+          likes: true,
+        },
+      },
+    },
+  });
+}
+
 export async function getAllEvents(userId?: string) {
   if (userId) {
     // For authenticated users, return all events

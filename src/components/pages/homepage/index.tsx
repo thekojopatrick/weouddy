@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
 import { CreateEventButton } from '@/components/create-button';
-import { Event } from '@prisma/client';
 import { EventCard } from '@/components/event/event-card';
+import { EventData } from '@/types/event';
 import { LocationFilters } from '@/components/location-filters';
 import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
@@ -20,13 +20,6 @@ const locations = [
 	{ name: 'Africa', href: 'africa' },
 	{ name: 'Rest of the world', href: 'world' },
 ];
-
-type EventData = Event & {
-	host: {
-		name: string;
-		avatarUrl: string;
-	};
-};
 
 export default function HomePage({
 	user,
