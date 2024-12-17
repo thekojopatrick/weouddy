@@ -9,6 +9,7 @@ import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
 import { LocationFilters } from '@/components/location-filters';
 import { User } from '@supabase/supabase-js';
+import { categorizeLocation } from '@/lib/location-mapping';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useSearchParams } from 'next/navigation';
 
@@ -29,17 +30,49 @@ export default function DiscoverPage({
 		filterEvents(location, currentCategory);
 	}, [searchParams, currentCategory]);
 
+	// const filterEvents = (location: string, category: string) => {
+	// 	let filtered = events;
+
+	// 	// Filter by location
+	// 	if (location !== 'world') {
+	// 		filtered = filtered.filter((event) =>
+	// 			event?.location?.toLowerCase().includes(location.toLowerCase())
+	// 		);
+	// 	}
+
+	// 	// Filter by category
+	// 	if (category !== 'All') {
+	// 		filtered = filtered.filter(
+	// 			(event) => event.type.toLowerCase() === category.toLowerCase()
+	// 		);
+	// 	}
+
+	// 	setFilteredEvents(filtered);
+	// };
+
 	const filterEvents = (location: string, category: string) => {
 		let filtered = events;
 
-		// Filter by location
+		// If location is not 'world', filter events
 		if (location !== 'world') {
-			filtered = filtered.filter((event) =>
-				event?.location?.toLowerCase().includes(location.toLowerCase())
-			);
+			filtered = filtered.filter((event) => {
+				const categorizedLocation = categorizeLocation(event.location!);
+
+				// Match based on different location levels
+				switch (location) {
+					case 'accra':
+						return categorizedLocation.city === 'Accra';
+					case 'gh':
+						return categorizedLocation.country === 'Ghana';
+					case 'africa':
+						return categorizedLocation.region === 'Africa';
+					default:
+						return categorizedLocation.region === 'world';
+				}
+			});
 		}
 
-		// Filter by category
+		// Filter by category if not 'All'
 		if (category !== 'All') {
 			filtered = filtered.filter(
 				(event) => event.type.toLowerCase() === category.toLowerCase()
