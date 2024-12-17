@@ -5,6 +5,7 @@ import { Calendar, MapPin, MessageCircle, Plus, Users } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { CreatePostModal } from '@/components/create-post-modal';
 import { EventWithFullData } from '@/types/event';
 import Image from 'next/image';
 import { SiteHeader } from '@/components/site-header';
@@ -21,6 +22,7 @@ export default function EventRoom({
 	event: EventWithFullData;
 }) {
 	const [hoveredPost, setHoveredPost] = useState<string | null>(null);
+	const [open, setOpen] = useState(false);
 
 	return (
 		<div className='flex min-h-screen flex-col'>
@@ -108,11 +110,16 @@ export default function EventRoom({
 					<MessageCircle className='mr-2 h-5 w-5' />
 					Join Chatroom
 				</Button>
-				<Button size='lg' className='rounded-full shadow-lg'>
+				<Button
+					size='lg'
+					className='rounded-full shadow-lg'
+					onClick={() => setOpen(true)}
+				>
 					<Plus className='mr-2 h-5 w-5' />
 					Create Post
 				</Button>
 			</div>
+			<CreatePostModal open={open} onOpenChangeAction={setOpen} />
 		</div>
 	);
 }
