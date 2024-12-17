@@ -13,13 +13,14 @@ import {
 	DrawerTitle,
 } from '@/components/ui/drawer';
 import { ImagePlus, Loader2, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { FileWithPreview } from '@/types/upload';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useState } from 'react';
 import { useUploadFiles } from '../hooks/use-upload-files';
 
 interface CreatePostModalProps {
@@ -31,17 +32,10 @@ export function CreatePostModal({
 	open,
 	onOpenChangeAction,
 }: CreatePostModalProps) {
-	const [isMobile, setIsMobile] = useState(false);
+	const isMobile = useMediaQuery('only screen and (max-width : 768px)');
 	const { uploadState, handleFiles, uploadFiles, removeFile } =
 		useUploadFiles();
 	const [content, setContent] = useState('');
-
-	useEffect(() => {
-		const checkMobile = () => setIsMobile(window.innerWidth < 768);
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-		return () => window.removeEventListener('resize', checkMobile);
-	}, []);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

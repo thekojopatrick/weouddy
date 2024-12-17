@@ -31,7 +31,7 @@ export default function EventRoom({
 				<div className='max-w-7xl px-6 py-6'>
 					<div className='mb-8'>
 						<h1 className='text-2xl font-bold'>{event.name}</h1>
-						<div className='flex items-center gap-6 mt-4 text-sm'>
+						<div className='flex flex-wrap items-center gap-6 mt-4 text-sm'>
 							<div className='flex items-center gap-2'>
 								<Calendar className='h-4 w-4' />
 								<span>{formatDate(event.dateTime, 'dd/mm/yyyy')}</span>
