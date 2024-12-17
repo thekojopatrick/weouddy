@@ -9,7 +9,7 @@ import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
 import { LocationFilters } from '@/components/location-filters';
 import { User } from '@supabase/supabase-js';
-import { formatDate } from 'date-fns';
+import { formatEventDateTime } from '@/lib/formatters';
 import { useSearchParams } from 'next/navigation';
 
 export default function DiscoverPage({
@@ -89,22 +89,27 @@ export default function DiscoverPage({
 						/>
 					</div>
 					<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-						{filteredEvents?.map((event) => (
-							<EventCard
-								key={event.id}
-								name={event.name}
-								type={event.type}
-								coverImage={event.coverImage}
-								isPrivate={event.isPrivate}
-								host={event.host}
-								location={event.location!}
-								members={event?._count?.members}
-								category={event.type}
-								date={formatDate(new Date(event.dateTime), 'dd/MM/yyyy')}
-								time={formatDate(new Date(event.dateTime), 'HH:mm')}
-								description={event.description!}
-							/>
-						))}
+						{filteredEvents?.map((event) => {
+							const { date, time } = formatEventDateTime(
+								event.dateTime as never
+							);
+							return (
+								<EventCard
+									key={event.id}
+									name={event.name}
+									type={event.type}
+									coverImage={event.coverImage}
+									isPrivate={event.isPrivate}
+									host={event.host}
+									location={event.location!}
+									members={event._count.members}
+									category={event.type}
+									date={date}
+									time={time}
+									description={event.description!}
+								/>
+							);
+						})}
 					</div>
 				</section>
 			</main>
