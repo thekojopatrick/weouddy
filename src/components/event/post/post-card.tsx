@@ -28,7 +28,11 @@ export function EventPostCard({ post, currentUser }: EventPostCardProps) {
 					{post.userId === currentUser?.id ? 'Your post' : 'Member'}
 				</Badge>
 
-				<PostMediaSlider media={post.media} alt={post.caption || ''} />
+				<PostMediaSlider
+					media={post.media}
+					alt={post.caption || ''}
+					isHovered={isHovered}
+				/>
 			</div>
 
 			<div

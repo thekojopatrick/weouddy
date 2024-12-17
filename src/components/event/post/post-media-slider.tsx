@@ -1,11 +1,18 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+	ChevronLeft,
+	ChevronRight,
+	Pause,
+	Play,
+	Volume2,
+	VolumeX,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 
 interface PostMediaSliderProps {
 	media: Array<{
@@ -14,13 +21,79 @@ interface PostMediaSliderProps {
 		type: 'IMAGE' | 'VIDEO';
 	}>;
 	alt?: string;
+	isHovered: boolean;
 }
 
-export function PostMediaSlider({ media, alt = '' }: PostMediaSliderProps) {
+export function PostMediaSlider({
+	media,
+	alt = '',
+	isHovered,
+}: PostMediaSliderProps) {
 	const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+	const [isPlaying, setIsPlaying] = useState(false);
 
-	// No slider needed if only one media item
-	if (media.length === 0) return null;
+	const [isMuted, setIsMuted] = useState(true);
+	const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+	//const autoplayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+	// Reset refs when media changes
+	useEffect(() => {
+		videoRefs.current = media.map(() => null);
+	}, [media]);
+
+	// Cleanup interval on unmount
+	// useEffect(() => {
+	// 	return () => {
+	// 		if (autoplayIntervalRef.current) {
+	// 			clearInterval(autoplayIntervalRef.current);
+	// 		}
+	// 	};
+	// }, []);
+
+	// Manage video playback when media or hover state changes
+	useEffect(() => {
+		const currentVideo = videoRefs.current[currentMediaIndex];
+
+		if (
+			isHovered &&
+			currentVideo &&
+			media[currentMediaIndex].type === 'VIDEO'
+		) {
+			// Reset all videos
+			videoRefs.current.forEach((video) => {
+				if (video) {
+					video.pause();
+					video.currentTime = 0;
+					video.muted = isMuted;
+				}
+			});
+
+			// Play current video
+			currentVideo.play().catch((error) => {
+				console.error('Autoplay was prevented:', error);
+			});
+
+			// Start autoplay interval for multiple media
+			// if (media.length > 1) {
+			// 	autoplayIntervalRef.current = setInterval(() => {
+			// 		setCurrentMediaIndex((prev) => (prev + 1) % media.length);
+			// 	}, 3000);
+			// }
+
+			setIsPlaying(true);
+		} else {
+			// Stop all videos when not hovered
+			if (currentVideo) {
+				currentVideo.pause();
+				currentVideo.currentTime = 0;
+			}
+
+			// if (autoplayIntervalRef.current) {
+			// 	clearInterval(autoplayIntervalRef.current);
+			// }
+			setIsPlaying(false);
+		}
+	}, [isHovered, currentMediaIndex, media, isMuted]);
 
 	const handleNext = () => {
 		setCurrentMediaIndex((prev) => (prev + 1) % media.length);
@@ -30,12 +103,28 @@ export function PostMediaSlider({ media, alt = '' }: PostMediaSliderProps) {
 		setCurrentMediaIndex((prev) => (prev - 1 + media.length) % media.length);
 	};
 
+	const togglePlayPause = () => {
+		//setIsHovered((prev) => !prev);
+	};
+
+	const toggleMute = () => {
+		setIsMuted((prev) => !prev);
+
+		// Apply mute/unmute to current video
+		const currentVideo = videoRefs.current[currentMediaIndex];
+		if (currentVideo && media[currentMediaIndex].type === 'VIDEO') {
+			currentVideo.muted = !isMuted;
+		}
+	};
+
 	const currentMedia = media[currentMediaIndex];
 
-	console.log(media, currentMedia);
-
 	return (
-		<div className='relative w-full'>
+		<div
+			className='relative w-full'
+			//onMouseEnter={() => setIsHovered(true)}
+			//onMouseLeave={() => setIsHovered(false)}
+		>
 			<AspectRatio ratio={1}>
 				{currentMedia.type === 'IMAGE' ? (
 					<Image
@@ -46,9 +135,15 @@ export function PostMediaSlider({ media, alt = '' }: PostMediaSliderProps) {
 					/>
 				) : (
 					<video
+						ref={(el) => {
+							if (videoRefs.current) {
+								videoRefs.current[currentMediaIndex] = el;
+							}
+						}}
 						src={currentMedia.url}
-						controls
 						className='w-full h-full object-cover rounded-lg'
+						muted={isMuted}
+						playsInline
 					/>
 				)}
 			</AspectRatio>
@@ -67,10 +162,40 @@ export function PostMediaSlider({ media, alt = '' }: PostMediaSliderProps) {
 					{/* Next button */}
 					<button
 						onClick={handleNext}
-						className='absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+						className='absolute right-2 top-1/2 -translate-y-1/2  bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
 					>
 						<ChevronRight className='h-6 w-6' />
 					</button>
+
+					{/* Play/Pause button */}
+					{isHovered && (
+						<div className='absolute bottom-2 right-2 flex space-x-2'>
+							<button
+								onClick={togglePlayPause}
+								className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+							>
+								{isPlaying ? (
+									<Pause className='h-5 w-5' />
+								) : (
+									<Play className='h-5 w-5' />
+								)}
+							</button>
+
+							{/* Mute/Unmute button */}
+							{currentMedia.type === 'VIDEO' && (
+								<button
+									onClick={toggleMute}
+									className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+								>
+									{isMuted ? (
+										<VolumeX className='h-5 w-5' />
+									) : (
+										<Volume2 className='h-5 w-5' />
+									)}
+								</button>
+							)}
+						</div>
+					)}
 
 					{/* Media indicator */}
 					<div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2'>
