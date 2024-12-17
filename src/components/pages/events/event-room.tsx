@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, MessageCircle, Plus, Users } from 'lucide-react';
 
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CreatePostModal } from '@/components/create-post-modal';
@@ -67,13 +68,24 @@ export default function EventRoom({
 									>
 										{post.userId === user?.id ? 'Your post' : 'Member'}
 									</Badge>
-
-									<Image
-										src={post.mediaUrl ?? '/placeholder.svg'}
-										alt={post.caption ?? 'Post image'}
-										fill
-										className='object-cover rounded-lg'
-									/>
+									{post.media.map((media) => (
+										<AspectRatio ratio={1} key={media.id}>
+											{media.type === 'IMAGE' ? (
+												<Image
+													src={media.url}
+													alt={post.caption || ''}
+													fill
+													className='object-cover rounded-lg'
+												/>
+											) : (
+												<video
+													src={media.url}
+													controls
+													className='w-full h-full object-cover'
+												/>
+											)}
+										</AspectRatio>
+									))}
 								</div>
 								<div
 									className={cn(
@@ -119,7 +131,11 @@ export default function EventRoom({
 					Create Post
 				</Button>
 			</div>
-			<CreatePostModal open={open} onOpenChangeAction={setOpen} />
+			<CreatePostModal
+				open={open}
+				onOpenChangeAction={setOpen}
+				eventId={event.id}
+			/>
 		</div>
 	);
 }

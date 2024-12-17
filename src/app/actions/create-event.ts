@@ -26,7 +26,7 @@ export async function createEvent(data: EventFormValues) {
     // Add logging for the created event
     console.log("Event created:", event);
 
-    revalidatePath("/events");
+    revalidatePath("/");
     return event;
   } catch (error) {
     // More detailed error logging

@@ -22,14 +22,18 @@ export function useUploadFiles() {
     }
 
     // Create preview and initial state for each file
-    const newFiles: FileWithPreview[] = Array.from(incomingFiles).map((
-      file,
-    ) => ({
-      file,
-      preview: URL.createObjectURL(file),
-      progress: 0,
-      uploading: false,
-    }));
+    const newFiles: FileWithPreview[] = Array.from(incomingFiles).map(
+      (file) => {
+        const mediaType = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
+        return {
+          file,
+          preview: URL.createObjectURL(file),
+          progress: 0,
+          uploading: false,
+          mediaType,
+        };
+      },
+    );
 
     setUploadState((prev) => ({
       ...prev,
@@ -42,19 +46,26 @@ export function useUploadFiles() {
 
     const uploads = uploadState.files.map(async (fileWithPreview, index) => {
       try {
-        const { file } = fileWithPreview;
+        const { file, mediaType } = fileWithPreview;
         const fileExt = file.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
 
+        // Determine storage bucket based on media type
+        const bucket = mediaType === "VIDEO" ? "videos" : "posts";
+
         // Upload file to Supabase Storage
         const { error: uploadError, data } = await supabase.storage
-          .from("posts")
+          .from(bucket)
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        return data.path;
+        return {
+          url: data.path,
+          type: mediaType,
+          order: index,
+        };
       } catch (error) {
         setUploadState((prev) => {
           const newFiles = [...prev.files];
@@ -69,9 +80,9 @@ export function useUploadFiles() {
       }
     });
 
-    const paths = await Promise.all(uploads);
+    const mediaFiles = await Promise.all(uploads);
     setUploadState((prev) => ({ ...prev, isUploading: false }));
-    return paths.filter(Boolean);
+    return mediaFiles.filter(Boolean);
   };
 
   const removeFile = (index: number) => {

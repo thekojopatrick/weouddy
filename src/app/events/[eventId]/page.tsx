@@ -12,7 +12,9 @@ export default async function EventRoomPage({
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	const event = await getEventBySlug(params.eventId);
+	const eventId = await params?.eventId;
+
+	const event = await getEventBySlug(eventId);
 
 	console.log({ event });
 

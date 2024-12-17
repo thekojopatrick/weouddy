@@ -32,6 +32,7 @@ export async function getEventBySlug(slug: string) {
       members: true,
       posts: {
         include: {
+          media: true,
           user: true,
           comments: true,
           likes: true,

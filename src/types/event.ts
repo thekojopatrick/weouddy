@@ -1,4 +1,12 @@
-import { Attendee, Comment, Event, Like, Post, User } from "@prisma/client";
+import {
+  Attendee,
+  Comment,
+  Event,
+  Like,
+  Post,
+  PostMedia,
+  User,
+} from "@prisma/client";
 
 export type EventData = Event & {
   host: {
@@ -14,6 +22,7 @@ export type PostData = Post & {
   };
   comments: Comment[];
   likes: Like[];
+  media: PostMedia[];
 };
 
 export type EventWithFullData = Event & {
