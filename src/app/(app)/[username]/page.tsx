@@ -43,7 +43,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 		id: viewedUserProfile.id,
 		name: viewedUserProfile.name ?? '',
 		username: viewedUserProfile.username ?? '',
-		avatarUrl: viewedUserProfile.avatarUrl ?? '/placeholder.svg',
+		avatarUrl:
+			viewedUserProfile.avatarUrl ??
+			session.user.user_metadata.avatar_url ??
+			'/placeholder.svg',
 		stats: {
 			following: stats?.followingCount ?? 0,
 			followers: stats?.followersCount ?? 0,
