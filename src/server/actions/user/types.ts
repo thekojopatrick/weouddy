@@ -14,3 +14,36 @@ export interface FollowStats {
   followersCount: number;
   followingCount: number;
 }
+
+export interface RequestorInfo {
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatarUrl: string | null;
+}
+
+// export interface FollowRequest {
+//   id: string;
+//   targetUserId: string;
+//   requestorId: string;
+//   createdAt: Date;
+//   requestor: RequestorInfo;
+// }
+
+export interface FollowRequestResult {
+  success: boolean;
+  action: "accept" | "decline";
+}
+
+export interface FollowRequest {
+  id: string;
+  requestorId: string;
+  targetUserId: string;
+  createdAt: Date;
+  requestor: {
+    id: string;
+    name: string | null;
+    username: string | null;
+    avatarUrl: string | null;
+  };
+}

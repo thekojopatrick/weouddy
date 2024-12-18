@@ -18,7 +18,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-	const { username } = params;
+	const { username } = await params;
 
 	const session = await getSession();
 
