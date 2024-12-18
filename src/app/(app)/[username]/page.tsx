@@ -1,7 +1,15 @@
+import {
+	getFollowStats,
+	getUserFollowers,
+	getUserFollowing,
+	getUserProfile,
+} from '@/server/actions/user/queries';
+
 import { EmptyEvents } from '@/components/profile/empty-states';
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
 import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 interface ProfilePageProps {
 	params: {
@@ -14,12 +22,25 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
 	const session = await getSession();
 
+	if (!session) {
+		redirect('/auth');
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [profileData, followers, following, stats] = await Promise.all([
+		getUserProfile(session.userId),
+		getUserFollowers(session.userId),
+		getUserFollowing(session.userId),
+		session ? getFollowStats(session.userId, session.userId) : null,
+	]);
+
 	const profile = {
-		name: session?.user.user_metadata.full_name,
+		name: session?.user.user_metadata.full_name ?? profileData.name,
 		username: `${username}`,
+		avaterUrl: session?.user.user_metadata.avatar_url ?? profileData.avatarUrl,
 		stats: {
-			following: 0,
-			followers: 0,
+			following: stats?.followingCount ?? 0,
+			followers: stats?.followersCount ?? 0,
 			events: 0,
 			posts: 0,
 			requests: 0,
@@ -32,6 +53,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 			<main>
 				<ProfileHeader
 					name={profile.name}
+					avatarUrl={profile.avaterUrl}
 					username={profile.username}
 					stats={profile.stats}
 					isOwnProfile={params.username === session?.user.username}

@@ -6,6 +6,7 @@ import Link from 'next/link';
 interface ProfileHeaderProps {
 	name: string;
 	username: string;
+	avatarUrl: string;
 	stats: {
 		following: number;
 		followers: number;
@@ -17,6 +18,7 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({
 	name,
+	avatarUrl,
 	username,
 	stats,
 	isOwnProfile = false,
@@ -24,8 +26,8 @@ export function ProfileHeader({
 	return (
 		<div className='container mx-auto px-4 py-6'>
 			<div className='flex flex-col items-center md:items-start md:flex-row md:gap-6'>
-				<Avatar className='w-24 h-24 md:w-32 md:h-32'>
-					<AvatarImage src='/placeholder.svg' />
+				<Avatar className='w-24 h-24'>
+					<AvatarImage src={avatarUrl ?? '/placeholder.svg'} />
 					<AvatarFallback>{name[0]}</AvatarFallback>
 				</Avatar>
 
@@ -35,7 +37,7 @@ export function ProfileHeader({
 						<p className='text-muted-foreground'>@{username}</p>
 					</div>
 
-					<div className='mt-4 flex justify-center md:justify-start gap-6 text-sm'>
+					<div className='mt-2 flex justify-center md:justify-start gap-3 text-sm'>
 						<div>
 							<span className='font-medium'>{stats.following}</span>{' '}
 							<span className='text-muted-foreground'>Following</span>
