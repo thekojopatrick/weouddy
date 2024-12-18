@@ -6,7 +6,6 @@ import { UserEvents } from './user-events';
 import { UserFollowers } from './user-followers';
 import { UserFollowing } from './user-following';
 import { UserPosts } from './user-posts';
-import { useState } from 'react';
 
 interface ProfileTabsProps {
 	stats: {
@@ -19,8 +18,6 @@ interface ProfileTabsProps {
 }
 
 export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
-	const [activeTab, setActiveTab] = useState('posts');
-
 	const tabItems: TabItem[] = [
 		{
 			value: 'posts',
