@@ -1,7 +1,9 @@
+"use server";
+
 import { EventSettings } from "./types";
 import { prisma } from "@/lib/prisma";
 
-export async function toggleeventStatus(eventId: string, isDisabled: boolean) {
+export async function toggleEventStatus(eventId: string, isDisabled: boolean) {
   return prisma.event.update({
     where: { id: eventId },
     data: {

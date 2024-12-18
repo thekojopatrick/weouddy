@@ -70,6 +70,7 @@ export interface BaseEvent {
   allowLikes: boolean;
   allowChat: boolean;
   allowPosts: boolean;
+  requiresApproval: boolean;
   createdAt: Date;
   updatedAt: Date;
   hostId: string;
