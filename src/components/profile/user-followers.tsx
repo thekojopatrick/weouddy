@@ -4,20 +4,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Follow } from '@/types/prisma.types';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { fetchFollowers } from '@/server/actions/user/queries';
 import { toast } from 'sonner';
 import { toggleFollow } from '@/server/actions/user/follow';
 
-// Server action for fetching followers
-
 interface UserFollowersProps {
 	userId: string;
 }
 
 export function UserFollowers({ userId }: UserFollowersProps) {
-	const [followers, setFollowers] = useState([]);
+	const [followers, setFollowers] = useState<Follow[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +60,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
 			);
 		} catch (error) {
 			toast.error('Failed to toggle follow');
+			console.error(error);
 		}
 	};
 

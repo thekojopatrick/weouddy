@@ -1,11 +1,11 @@
 export * from "@/types/prisma.types";
 export interface UserProfile {
   id: string;
-  name: string;
-  username: string;
+  name: string | null;
+  username: string | null;
   email?: string;
-  avatarUrl: string;
-  bio: string;
+  avatarUrl: string | null;
+  bio: string | null;
   allowFollowers: boolean;
 }
 

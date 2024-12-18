@@ -50,6 +50,7 @@ export interface Follow {
     username: string;
     avatarUrl: string;
   };
+  isFollowing?: boolean;
 }
 
 // Event-related Types

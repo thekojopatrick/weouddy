@@ -1,11 +1,18 @@
 "use server";
 
+import {
+  EventWithDetails,
+  Follow,
+  PostWithDetails,
+  UserProfile,
+} from "./types";
+
 import { prisma } from "@/lib/prisma";
 
 export async function getUserProfile(
   usernameOrId: string,
-) {
-  return prisma.user.findFirst({
+): Promise<UserProfile | null> {
+  const user = await prisma.user.findFirst({
     where: {
       OR: [
         { username: usernameOrId },
@@ -21,6 +28,10 @@ export async function getUserProfile(
       allowFollowers: true,
     },
   });
+
+  if (!user) return null;
+
+  return user;
 }
 
 export async function getFollowStats(
@@ -48,7 +59,9 @@ export async function getFollowStats(
   };
 }
 
-export async function getUserFollowers(usernameOrId: string) {
+export async function getUserFollowers(
+  usernameOrId: string,
+): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
     where: {
       OR: [
@@ -73,10 +86,12 @@ export async function getUserFollowers(usernameOrId: string) {
         },
       },
     },
-  });
+  }) as Promise<Follow[]>;
 }
 
-export async function getUserFollowing(usernameOrId: string) {
+export async function getUserFollowing(
+  usernameOrId: string,
+): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
     where: {
       OR: [
@@ -101,13 +116,13 @@ export async function getUserFollowing(usernameOrId: string) {
         },
       },
     },
-  });
+  }) as Promise<Follow[]>;
 }
 
 export async function checkIfFollowing(
   currentUserId: string,
   targetUsername: string,
-) {
+): Promise<boolean> {
   const targetUser = await prisma.user.findUnique({
     where: { username: targetUsername },
   });
@@ -130,8 +145,8 @@ export async function fetchUserEvents(
   userId: string,
   page: number = 1,
   limit: number = 10,
-) {
-  const events = await prisma.event.findMany({
+): Promise<EventWithDetails[]> {
+  return prisma.event.findMany({
     where: {
       OR: [
         { hostId: userId }, // Events hosted by user
@@ -155,17 +170,21 @@ export async function fetchUserEvents(
     orderBy: { dateTime: "desc" },
     take: limit,
     skip: (page - 1) * limit,
-  });
-
-  return events;
+  }).then((events) =>
+    events.map((event) => ({
+      ...event,
+      memberCount: event._count.members,
+      attendeeCount: event._count.attendees,
+    }))
+  ) as Promise<EventWithDetails[]>;
 }
 
 export async function fetchFollowers(
   userId: string,
   page: number = 1,
   limit: number = 20,
-) {
-  const followers = await prisma.follow.findMany({
+): Promise<Follow[]> {
+  return prisma.follow.findMany({
     where: { followingId: userId },
     include: {
       follower: {
@@ -180,17 +199,15 @@ export async function fetchFollowers(
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
-  });
-
-  return followers;
+  }) as Promise<Follow[]>;
 }
 
 export async function fetchUserPosts(
   userId: string,
   page: number = 1,
   limit: number = 10,
-) {
-  const posts = await prisma.post.findMany({
+): Promise<PostWithDetails[]> {
+  return prisma.post.findMany({
     where: { userId },
     include: {
       media: true,
@@ -211,19 +228,15 @@ export async function fetchUserPosts(
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
-  });
-
-  return posts;
+  }) as Promise<PostWithDetails[]>;
 }
 
 export async function fetchFollowing(
   userId: string,
   page: number = 1,
   limit: number = 20,
-) {
-  "use server";
-
-  const following = await prisma.follow.findMany({
+): Promise<Follow[]> {
+  return prisma.follow.findMany({
     where: { followerId: userId },
     include: {
       following: {
@@ -238,7 +251,5 @@ export async function fetchFollowing(
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
-  });
-
-  return following;
+  }) as Promise<Follow[]>;
 }

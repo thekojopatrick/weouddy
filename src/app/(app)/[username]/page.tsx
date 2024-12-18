@@ -1,13 +1,12 @@
 import {
 	checkIfFollowing,
 	getFollowStats,
-	getUserFollowers,
-	getUserFollowing,
 	getUserProfile,
 } from '@/server/actions/user/queries';
 
 import { EmptyEvents } from '@/components/profile/empty-states';
 import { ProfileHeader } from '@/components/profile/profile-header';
+import { ProfilePageData } from '@/server/actions/user/types';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -28,16 +27,19 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 	}
 
 	// Fetch profile data for the viewed profile
-	const [viewedUserProfile, followers, following, stats, isFollowing] =
-		await Promise.all([
-			getUserProfile(username),
-			getUserFollowers(username),
-			getUserFollowing(username),
-			getFollowStats(username),
-			checkIfFollowing(session.userId, username),
-		]);
+	const [viewedUserProfile, stats, isFollowing] = await Promise.all([
+		getUserProfile(username),
+		//getUserFollowers(username),
+		//getUserFollowing(username),
+		getFollowStats(username),
+		checkIfFollowing(session.userId, username),
+	]);
 
-	const profile = {
+	if (!viewedUserProfile) {
+		redirect('/404');
+	}
+
+	const profile: ProfilePageData = {
 		id: viewedUserProfile.id,
 		name: viewedUserProfile.name ?? '',
 		username: viewedUserProfile.username ?? '',

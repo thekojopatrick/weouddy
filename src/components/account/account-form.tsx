@@ -105,7 +105,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 						{!isEditing ? (
 							<TooltipProvider>
 								<Tooltip>
-									<TooltipTrigger>
+									<TooltipTrigger asChild>
 										<Button
 											variant='ghost'
 											size='sm'

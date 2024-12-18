@@ -34,13 +34,13 @@ export function ProfileHeader({
 	isFollowing = false,
 	allowFollowers = true,
 }: ProfileHeaderProps) {
-	const [following, setFollowing] = useState(isFollowing);
+	const [following, setFollowing] = useState<boolean>(isFollowing);
 	const [followersCount, setFollowersCount] = useState(stats.followers);
 
 	const handleFollow = async () => {
 		try {
 			const result = await toggleFollow(id);
-			setFollowing(result.isFollowing);
+			setFollowing(result.isFollowing!);
 			setFollowersCount((prev) => (result.isFollowing ? prev + 1 : prev - 1));
 
 			toast.success(

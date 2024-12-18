@@ -4,7 +4,14 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function toggleFollow(targetUserId: string) {
+interface FollowResult {
+  success: boolean;
+  isFollowing?: boolean;
+}
+
+export async function toggleFollow(
+  targetUserId: string,
+): Promise<FollowResult> {
   const session = await getSession();
 
   if (!session) {
@@ -55,7 +62,9 @@ export async function toggleFollow(targetUserId: string) {
   }
 }
 
-export async function updateFollowSettings(allowFollowers: boolean) {
+export async function updateFollowSettings(
+  allowFollowers: boolean,
+): Promise<{ success: boolean }> {
   const session = await getSession();
 
   if (!session) {

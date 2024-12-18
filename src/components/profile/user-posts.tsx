@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { PostWithDetails } from '@/types/prisma.types';
 import { fetchUserPosts } from '@/server/actions/user/queries';
 
 interface UserPostsProps {
@@ -13,7 +14,7 @@ interface UserPostsProps {
 }
 
 export function UserPosts({ userId }: UserPostsProps) {
-	const [posts, setPosts] = useState([]);
+	const [posts, setPosts] = useState<PostWithDetails[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [isLoading, setIsLoading] = useState(false);
