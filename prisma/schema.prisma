@@ -9,59 +9,72 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  email          String?         @unique
-  username       String?         @unique
-  name           String?
-  avatarUrl      String?
-  bio            String?
-  dob            DateTime? //Date of birth
-  role           UserRole        @default(USER)
-  isAnonymous    Boolean         @default(false)
-  allowFollowers Boolean         @default(true)
-  lastActive     DateTime        @default(now())
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  posts          Post[]
-  comments       Comment[]
-  likes          Like[]
-  hostedEvents   Event[]         @relation("HostedEvents")
-  joinedEvents   Event[]         @relation("JoinedEvents")
-  following      Follow[]        @relation("Following")
-  followers      Follow[]        @relation("Followers")
-  roles          EventRole[]
-  attendees      Attendee[]
-  chats          ChatMessage[]
-  eventLogs      EventActivity[]
+  id               String    @id @default(cuid())
+  email            String?   @unique
+  username         String?   @unique
+  name             String?
+  avatarUrl        String?
+  bio              String?
+  dob              DateTime? //Date of birth
+  role             UserRole  @default(USER)
+  isAnonymous      Boolean   @default(false)
+  allowFollowers   Boolean   @default(true)
+  isPrivateProfile Boolean   @default(false)
+  lastActive       DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  //Relations
+  posts                  Post[]
+  comments               Comment[]
+  likes                  Like[]
+  hostedEvents           Event[]         @relation("HostedEvents")
+  joinedEvents           Event[]         @relation("JoinedEvents")
+  following              Follow[]        @relation("Following")
+  followers              Follow[]        @relation("Followers")
+  roles                  EventRole[]
+  attendees              Attendee[]
+  chats                  ChatMessage[]
+  eventLogs              EventActivity[]
+  sentFollowRequests     FollowRequest[] @relation("Requestor")
+  receivedFollowRequests FollowRequest[] @relation("Target")
 }
 
 model Event {
-  id            String          @id @default(cuid())
-  name          String
-  type          String
-  description   String?
-  location      String?
-  dateTime      DateTime
-  qrCodeUrl     String?
-  coverImage    String?
-  slug          String?         @unique
-  isPrivate     Boolean         @default(false)
-  isDisabled    Boolean         @default(false)
-  allowComments Boolean         @default(true)
-  allowLikes    Boolean         @default(true)
-  allowChat     Boolean         @default(false)
-  allowPosts    Boolean         @default(true)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  hostId        String
-  host          User            @relation("HostedEvents", fields: [hostId], references: [id])
-  members       User[]          @relation("JoinedEvents")
-  attendees     Attendee[]
-  posts         Post[]
-  chats         ChatMessage[]
-  chatSettings  ChatSettings?
-  roles         EventRole[]
-  eventLogs     EventActivity[]
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  description String?
+  location    String?
+  dateTime    DateTime
+  qrCodeUrl   String?
+  coverImage  String?
+  slug        String?  @unique
+  pinCode     String?  @unique // Optional field to store PIN code (if accessType = PIN_REQUIRED)
+
+  // Settings
+  isPrivate        Boolean    @default(false)
+  requiresApproval Boolean    @default(false)
+  isDisabled       Boolean    @default(false)
+  allowComments    Boolean    @default(true)
+  allowLikes       Boolean    @default(true)
+  allowChat        Boolean    @default(false)
+  allowPosts       Boolean    @default(true)
+  accessType       AccessType @default(LINK_ONLY)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  hostId    String
+  host      User     @relation("HostedEvents", fields: [hostId], references: [id])
+
+  // Relations
+  members      User[]          @relation("JoinedEvents")
+  attendees    Attendee[]
+  posts        Post[]
+  chats        ChatMessage[]
+  chatSettings ChatSettings?
+  roles        EventRole[]
+  eventLogs    EventActivity[]
 }
 
 model EventActivity {
@@ -155,6 +168,17 @@ model Follow {
   @@unique([followerId, followingId])
 }
 
+model FollowRequest {
+  id           String   @id @default(cuid())
+  requestorId  String
+  targetUserId String
+  createdAt    DateTime @default(now())
+  requestor    User     @relation("Requestor", fields: [requestorId], references: [id])
+  target       User     @relation("Target", fields: [targetUserId], references: [id])
+
+  @@unique([requestorId, targetUserId])
+}
+
 model Attendee {
   id        String   @id @default(cuid())
   userId    String
@@ -208,4 +232,10 @@ enum EventActivityType {
   COMMENT
   DELETE
   REPORT
+}
+
+enum AccessType {
+  LINK_ONLY // Invite through direct links or QR codes
+  PIN_REQUIRED // Requires entering a PIN code to access
+  APPROVAL_REQUIRED // Requires host approval for access
 }
