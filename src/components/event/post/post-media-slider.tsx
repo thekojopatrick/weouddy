@@ -104,7 +104,7 @@ export function PostMediaSlider({
 
 	return (
 		<div className='relative w-full'>
-			<AspectRatio ratio={1 / 1.5}>
+			<AspectRatio ratio={1 / 1.3}>
 				{currentMedia.type === 'IMAGE' ? (
 					<Image
 						src={currentMedia.url}
