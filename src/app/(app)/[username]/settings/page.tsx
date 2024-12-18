@@ -1,4 +1,4 @@
-import AccountForm from '@/components/account/account-form';
+import AccountForm from '@/components/account/new-account-form';
 import { getSession } from '@/lib/auth';
 
 export default async function Account() {
@@ -8,5 +8,5 @@ export default async function Account() {
 		return null;
 	}
 
-	return <AccountForm user={session.user} />;
+	return <AccountForm user={session.user as never} />;
 }

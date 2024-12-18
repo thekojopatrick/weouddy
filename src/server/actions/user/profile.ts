@@ -10,6 +10,7 @@ const updateProfileSchema = z.object({
   name: z.string().min(2),
   username: z.string().min(3),
   bio: z.string().max(500).optional(),
+  avatarUrl: z.string().optional(),
 });
 
 export async function updateProfile(
@@ -44,11 +45,12 @@ export async function updateProfile(
         name: validatedData.name,
         username: validatedData.username,
         bio: validatedData.bio,
+        avatarUrl: validatedData.avatarUrl,
       },
     });
 
     // Revalidate the profile page
-    revalidatePath(`/profile/${updatedUser.username}`);
+    revalidatePath(`/${updatedUser.username}`);
 
     return updatedUser;
   } catch (error) {

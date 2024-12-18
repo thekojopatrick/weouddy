@@ -25,7 +25,13 @@ export const getSession = async () => {
 
     return {
       userId: userData.id,
-      user: { ...user, username: userData.username },
+      user: {
+        ...user,
+        name: userData.name ?? user.user_metadata.full_name,
+        bio: userData.bio ?? "",
+        username: userData.username,
+        avatarUrl: userData.avatarUrl ?? user.user_metadata.avatar_url,
+      },
     };
   } catch (error) {
     console.error("Error retrieving session:", error);
