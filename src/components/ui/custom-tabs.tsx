@@ -1,8 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-import { LucideIcon } from 'lucide-react';
 import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import { type LucideIcon } from 'lucide-react';
 
 export interface TabItem {
 	value: string;
@@ -22,12 +21,14 @@ interface CustomTabsProps {
 		| 'underline-leading-icon'
 		| 'underline-trailing-icon';
 	defaultValue?: string;
+	onValueChange?: (value: string) => void;
 }
 
 export function CustomTabs({
 	items,
 	variant = 'pill',
 	defaultValue = items[0]?.value,
+	onValueChange,
 }: CustomTabsProps) {
 	const getTabListClassName = () => {
 		switch (variant) {
@@ -38,7 +39,7 @@ export function CustomTabs({
 			case 'underline':
 			case 'underline-leading-icon':
 			case 'underline-trailing-icon':
-				return 'h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground';
+				return 'h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground grid w-full grid-cols-4';
 			case 'icon':
 				return 'h-auto rounded-none border-b border-border bg-transparent p-0';
 			default:
@@ -65,6 +66,7 @@ export function CustomTabs({
 
 	const renderTabContent = (item: TabItem) => {
 		const IconComponent = item.icon;
+		const [label, count] = item.label.split(' ');
 
 		switch (variant) {
 			case 'pill-leading-icon':
@@ -74,14 +76,20 @@ export function CustomTabs({
 						{IconComponent && (
 							<IconComponent className='mr-2 h-4 w-4' aria-hidden='true' />
 						)}
-						{item.label}
+						{label}{' '}
+						{count && (
+							<span className='ml-2 text-muted-foreground'>{count}</span>
+						)}
 					</>
 				);
 			case 'pill-trailing-icon':
 			case 'underline-trailing-icon':
 				return (
 					<>
-						{item.label}
+						{label}{' '}
+						{count && (
+							<span className='ml-2 text-muted-foreground'>{count}</span>
+						)}
 						{IconComponent && (
 							<IconComponent className='ml-2 h-4 w-4' aria-hidden='true' />
 						)}
@@ -96,16 +104,27 @@ export function CustomTabs({
 								aria-hidden='true'
 							/>
 						)}
-						{item.label}
+						{label}
 					</>
 				);
 			default:
-				return item.label;
+				return (
+					<>
+						{label}{' '}
+						{count && (
+							<span className='ml-2 text-muted-foreground'>{count}</span>
+						)}
+					</>
+				);
 		}
 	};
 
 	return (
-		<Tabs defaultValue={defaultValue}>
+		<Tabs
+			defaultValue={defaultValue}
+			onValueChange={onValueChange}
+			className='container mx-auto px-4 py-6'
+		>
 			<TabsList className={cn(getTabListClassName())}>
 				{items.map((item) => (
 					<TabsTrigger

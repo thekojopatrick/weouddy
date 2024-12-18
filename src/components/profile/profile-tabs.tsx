@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CustomTabs, TabItem } from '@/components/ui/custom-tabs';
 
 import { UserEvents } from './user-events';
 import { UserFollowers } from './user-followers';
@@ -21,42 +21,30 @@ interface ProfileTabsProps {
 export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
 	const [activeTab, setActiveTab] = useState('posts');
 
+	const tabItems: TabItem[] = [
+		{
+			value: 'posts',
+			label: `Posts ${stats.posts}`,
+			content: <UserPosts userId={userId} />,
+		},
+		{
+			value: 'events',
+			label: `Events ${stats.events}`,
+			content: <UserEvents userId={userId} />,
+		},
+		{
+			value: 'followers',
+			label: `Followers ${stats.followers}`,
+			content: <UserFollowers userId={userId} />,
+		},
+		{
+			value: 'following',
+			label: `Following ${stats.following}`,
+			content: <UserFollowing userId={userId} />,
+		},
+	];
+
 	return (
-		<Tabs
-			defaultValue='posts'
-			className='container mx-auto px-4 py-6'
-			onValueChange={setActiveTab}
-		>
-			<TabsList className='grid w-full grid-cols-4'>
-				<TabsTrigger value='posts'>
-					Posts{' '}
-					<span className='ml-2 text-muted-foreground'>{stats.posts}</span>
-				</TabsTrigger>
-				<TabsTrigger value='events'>
-					Events{' '}
-					<span className='ml-2 text-muted-foreground'>{stats.events}</span>
-				</TabsTrigger>
-				<TabsTrigger value='followers'>
-					Followers{' '}
-					<span className='ml-2 text-muted-foreground'>{stats.followers}</span>
-				</TabsTrigger>
-				<TabsTrigger value='following'>
-					Following{' '}
-					<span className='ml-2 text-muted-foreground'>{stats.following}</span>
-				</TabsTrigger>
-			</TabsList>
-			<TabsContent value='posts'>
-				<UserPosts userId={userId} />
-			</TabsContent>
-			<TabsContent value='events'>
-				<UserEvents userId={userId} />
-			</TabsContent>
-			<TabsContent value='followers'>
-				<UserFollowers userId={userId} />
-			</TabsContent>
-			<TabsContent value='following'>
-				<UserFollowing userId={userId} />
-			</TabsContent>
-		</Tabs>
+		<CustomTabs items={tabItems} variant='underline' defaultValue='posts' />
 	);
 }
