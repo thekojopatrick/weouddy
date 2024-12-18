@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useEffect, useState } from 'react';
 
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 
 export function NavUser({
@@ -20,6 +21,7 @@ export function NavUser({
 }: {
 	user: {
 		name: string;
+		username: string;
 		email: string;
 		avatar: string;
 	};
@@ -75,24 +77,29 @@ export function NavUser({
 						</div>
 					</div>
 				</DropdownMenuLabel>
+				<Link href={`/${user.username}`}>
+					<DropdownMenuItem className='text-center justify-center rounded-full bg-accent focus:bg-gray-200/70 focus:cursor-pointer mt-1 mb-2'>
+						View Profile
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem>
 						<Sparkles />
-						Upgrade to Pro
+						For Business
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem>
 						<BadgeCheck />
-						Account
+						Account Settings
 					</DropdownMenuItem>
-					<DropdownMenuItem>
+					<DropdownMenuItem className='hidden'>
 						<CreditCard />
 						Billing
 					</DropdownMenuItem>
-					<DropdownMenuItem>
+					<DropdownMenuItem className='hidden'>
 						<Bell />
 						Notifications
 					</DropdownMenuItem>
@@ -102,7 +109,7 @@ export function NavUser({
 					<form action='/auth/signout' method='post'>
 						<button className='flex gap-2 items-center' type='submit'>
 							<LogOut className='size-4' />
-							Log out
+							Sign out
 						</button>
 					</form>
 				</DropdownMenuItem>

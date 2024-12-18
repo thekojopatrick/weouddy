@@ -61,6 +61,8 @@ export function SiteHeader({ user }: { user: User | null }) {
 								name: `${accountData.fullname || 'Anonymous'}`,
 								email: accountData.email ?? 'unknown@email.com',
 								avatar: accountData.avatarUrl ?? '',
+								username:
+									accountData.username! ?? accountData.email?.split('@')[0],
 							}}
 						/>
 					) : (

@@ -1,6 +1,7 @@
 import { EmptyEvents } from '@/components/profile/empty-states';
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
+import { getSession } from '@/lib/auth';
 
 interface ProfilePageProps {
 	params: {
@@ -8,11 +9,14 @@ interface ProfilePageProps {
 	};
 }
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-	// In a real app, you would fetch this data from your database
+export default async function ProfilePage({ params }: ProfilePageProps) {
+	const { username } = params;
+
+	const session = await getSession();
+
 	const profile = {
-		name: 'Kojo Patrick',
-		username: '@kojopatrick',
+		name: session?.user.user_metadata.full_name,
+		username: `${username}`,
 		stats: {
 			following: 0,
 			followers: 0,
@@ -30,7 +34,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 					name={profile.name}
 					username={profile.username}
 					stats={profile.stats}
-					isOwnProfile={params.username === 'kojopatrick'}
+					isOwnProfile={params.username === session?.user.username}
 				/>
 				<ProfileTabs stats={profile.stats} />
 				<EmptyEvents />

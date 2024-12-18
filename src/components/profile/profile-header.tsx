@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface ProfileHeaderProps {
 	name: string;
@@ -31,7 +32,7 @@ export function ProfileHeader({
 				<div className='mt-4 md:mt-0 flex-1'>
 					<div className='text-center md:text-left'>
 						<h1 className='text-2xl font-bold'>{name}</h1>
-						<p className='text-muted-foreground'>{username}</p>
+						<p className='text-muted-foreground'>@{username}</p>
 					</div>
 
 					<div className='mt-4 flex justify-center md:justify-start gap-6 text-sm'>
@@ -48,7 +49,9 @@ export function ProfileHeader({
 
 				<div className='mt-4 md:mt-0 flex gap-2'>
 					{isOwnProfile ? (
-						<Button variant='outline'>Edit Profile</Button>
+						<Button variant='outline'>
+							<Link href={`/${username}/settings`}>Edit Profile</Link>
+						</Button>
 					) : (
 						<Button>Follow</Button>
 					)}
