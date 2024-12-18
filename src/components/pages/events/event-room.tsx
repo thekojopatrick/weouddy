@@ -51,7 +51,11 @@ export default function EventRoom({
 					{/* Posts Grid */}
 					<div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 						{event?.posts.map((post) => (
-							<EventPostCard key={post.id} post={post} currentUser={user} />
+							<EventPostCard
+								key={post.id}
+								post={post}
+								userId={user?.id as never}
+							/>
 						))}
 					</div>
 				</div>

@@ -8,6 +8,8 @@ import {
   User,
 } from "@prisma/client";
 
+import { PostWithDetails } from "./prisma.types";
+
 export type EventData = Event & {
   host: {
     name: string;
@@ -31,7 +33,7 @@ export type PostData = Post & {
 
 export type EventWithFullData = Event & {
   host: User;
-  posts: PostData[];
+  posts: PostWithDetails[];
   attendees: Attendee[];
   members: User[];
 };

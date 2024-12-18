@@ -3,19 +3,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
-import { PostData } from '@/types/event';
 import { PostMediaSlider } from './post-media-slider';
-import { User } from '@supabase/supabase-js';
+import { PostWithDetails } from '@/types/prisma.types';
 import { cn } from '@/lib/utils';
+import { formatEventDateTime } from '@/lib/formatters';
 import { useState } from 'react';
 
 interface EventPostCardProps {
-	post: PostData;
-	currentUser: User | null;
+	post: PostWithDetails;
+	userId: string;
 }
 
-export function EventPostCard({ post, currentUser }: EventPostCardProps) {
+export function EventPostCard({ post, userId }: EventPostCardProps) {
 	const [isHovered, setIsHovered] = useState(false);
+
+	const { time } = formatEventDateTime(post.createdAt as never);
 
 	return (
 		<div
@@ -25,7 +27,7 @@ export function EventPostCard({ post, currentUser }: EventPostCardProps) {
 		>
 			<div className='relative'>
 				<Badge variant='secondary' className='absolute left-4 top-4 z-10'>
-					{post.userId === currentUser?.id ? 'Your post' : 'Member'}
+					{post.userId === userId ? 'Your post' : 'Member'}
 				</Badge>
 
 				<PostMediaSlider
@@ -44,23 +46,26 @@ export function EventPostCard({ post, currentUser }: EventPostCardProps) {
 				<div className='flex items-center gap-2 text-white'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={post.user.avatarUrl || undefined} />
-						<AvatarFallback>{post.user.name[0]}</AvatarFallback>
+						<AvatarFallback className='text-black'>
+							{post.user.name[0]}
+						</AvatarFallback>
 					</Avatar>
 					<span>{post.user.name}</span>
 				</div>
 
 				{post.caption && <p className='text-white mt-2'>{post.caption}</p>}
 
-				<div className='flex items-center gap-4 mt-4'>
+				<div className='flex items-center gap-4 mt-2'>
 					<div className='flex items-center gap-1 text-white'>
-						<span>{post.likes.length}</span>
+						<span>{post._count.likes}</span>
 						<span>likes</span>
 					</div>
 					<div className='flex items-center gap-1 text-white'>
-						<span>{post.comments.length}</span>
+						<span>{post._count.comments}</span>
 						<span>comments</span>
 					</div>
 				</div>
+				<p className='text-sm text-muted-foreground'>{time}</p>
 			</div>
 		</div>
 	);
