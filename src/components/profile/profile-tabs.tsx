@@ -1,49 +1,62 @@
 'use client';
 
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import { UserEvents } from './user-events';
+import { UserFollowers } from './user-followers';
+import { UserFollowing } from './user-following';
+import { UserPosts } from './user-posts';
+import { useState } from 'react';
 
 interface ProfileTabsProps {
 	stats: {
+		following: number;
+		followers: number;
 		events: number;
 		posts: number;
-		requests: number;
 	};
+	userId: string;
 }
 
-export function ProfileTabs({ stats }: ProfileTabsProps) {
-	const pathname = usePathname();
-
-	const tabs = [
-		{ name: 'Events', href: '/events', count: stats.events },
-		{ name: 'Posts', href: '/posts', count: stats.posts },
-		{ name: 'Request', href: '/requests', count: stats.requests },
-	];
+export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
+	const [activeTab, setActiveTab] = useState('posts');
 
 	return (
-		<div className='border-b'>
-			<div className='container mx-auto px-4'>
-				<nav className='flex gap-4'>
-					{tabs.map((tab) => (
-						<Link
-							key={tab.name}
-							href={tab.href}
-							className={cn(
-								'px-2 py-4 text-sm font-medium border-b-2 transition-colors flex items-center',
-								pathname.includes(tab.href)
-									? 'border-primary text-primary'
-									: 'border-transparent text-muted-foreground hover:text-foreground'
-							)}
-						>
-							{tab.name}
-							<span className='ml-2 rounded-full bg-muted px-2 py-0.5 text-xs font-medium'>
-								{tab.count}
-							</span>
-						</Link>
-					))}
-				</nav>
-			</div>
-		</div>
+		<Tabs
+			defaultValue='posts'
+			className='container mx-auto px-4 py-6'
+			onValueChange={setActiveTab}
+		>
+			<TabsList className='grid w-full grid-cols-4'>
+				<TabsTrigger value='posts'>
+					Posts{' '}
+					<span className='ml-2 text-muted-foreground'>{stats.posts}</span>
+				</TabsTrigger>
+				<TabsTrigger value='events'>
+					Events{' '}
+					<span className='ml-2 text-muted-foreground'>{stats.events}</span>
+				</TabsTrigger>
+				<TabsTrigger value='followers'>
+					Followers{' '}
+					<span className='ml-2 text-muted-foreground'>{stats.followers}</span>
+				</TabsTrigger>
+				<TabsTrigger value='following'>
+					Following{' '}
+					<span className='ml-2 text-muted-foreground'>{stats.following}</span>
+				</TabsTrigger>
+			</TabsList>
+			<TabsContent value='posts'>
+				<UserPosts userId={userId} />
+			</TabsContent>
+			<TabsContent value='events'>
+				<UserEvents userId={userId} />
+			</TabsContent>
+			<TabsContent value='followers'>
+				<UserFollowers userId={userId} />
+			</TabsContent>
+			<TabsContent value='following'>
+				<UserFollowing userId={userId} />
+			</TabsContent>
+		</Tabs>
 	);
 }

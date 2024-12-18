@@ -1,4 +1,5 @@
 import {
+	checkIfFollowing,
 	getFollowStats,
 	getUserFollowers,
 	getUserFollowing,
@@ -26,40 +27,48 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 		redirect('/auth');
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [profileData, followers, following, stats] = await Promise.all([
-		getUserProfile(session.userId),
-		getUserFollowers(session.userId),
-		getUserFollowing(session.userId),
-		session ? getFollowStats(session.userId, session.userId) : null,
-	]);
+	// Fetch profile data for the viewed profile
+	const [viewedUserProfile, followers, following, stats, isFollowing] =
+		await Promise.all([
+			getUserProfile(username),
+			getUserFollowers(username),
+			getUserFollowing(username),
+			getFollowStats(username),
+			checkIfFollowing(session.userId, username),
+		]);
 
 	const profile = {
-		name: session?.user.user_metadata.full_name ?? profileData.name,
-		username: `${username}`,
-		avaterUrl: session?.user.user_metadata.avatar_url ?? profileData.avatarUrl,
+		id: viewedUserProfile.id,
+		name: viewedUserProfile.name ?? '',
+		username: viewedUserProfile.username ?? '',
+		avatarUrl: viewedUserProfile.avatarUrl ?? '/placeholder.svg',
 		stats: {
 			following: stats?.followingCount ?? 0,
 			followers: stats?.followersCount ?? 0,
 			events: 0,
 			posts: 0,
-			requests: 0,
 		},
+		isOwnProfile: username === session?.user.username,
+		isFollowing: isFollowing,
+		allowFollowers: viewedUserProfile.allowFollowers ?? true,
 	};
 
 	return (
 		<div className='min-h-screen bg-background'>
-			{/* <Header /> */}
 			<main>
-				<ProfileHeader
-					name={profile.name}
-					avatarUrl={profile.avaterUrl}
-					username={profile.username}
-					stats={profile.stats}
-					isOwnProfile={params.username === session?.user.username}
-				/>
-				<ProfileTabs stats={profile.stats} />
-				<EmptyEvents />
+				<ProfileHeader {...profile} />
+				<ProfileTabs stats={profile.stats} userId={profile.id} />
+				{/* Conditionally render content based on profile type */}
+				{profile.isOwnProfile || profile.isFollowing ? (
+					<div>
+						{/* Render events, posts, etc. */}
+						<EmptyEvents />
+					</div>
+				) : (
+					<div className='text-center text-muted-foreground p-4'>
+						This profile is private. Follow to view content.
+					</div>
+				)}
 			</main>
 		</div>
 	);

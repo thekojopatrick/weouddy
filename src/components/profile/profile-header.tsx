@@ -1,9 +1,15 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import { toggleFollow } from '@/server/actions/user/follow';
+import { useState } from 'react';
 
 interface ProfileHeaderProps {
+	id: string;
 	name: string;
 	username: string;
 	avatarUrl: string;
@@ -14,15 +20,38 @@ interface ProfileHeaderProps {
 		posts: number;
 	};
 	isOwnProfile?: boolean;
+	isFollowing?: boolean;
+	allowFollowers?: boolean;
 }
 
 export function ProfileHeader({
+	id,
 	name,
 	avatarUrl,
 	username,
 	stats,
 	isOwnProfile = false,
+	isFollowing = false,
+	allowFollowers = true,
 }: ProfileHeaderProps) {
+	const [following, setFollowing] = useState(isFollowing);
+	const [followersCount, setFollowersCount] = useState(stats.followers);
+
+	const handleFollow = async () => {
+		try {
+			const result = await toggleFollow(id);
+			setFollowing(result.isFollowing);
+			setFollowersCount((prev) => (result.isFollowing ? prev + 1 : prev - 1));
+
+			toast.success(
+				result.isFollowing ? 'Followed successfully' : 'Unfollowed successfully'
+			);
+		} catch (error) {
+			toast.error('Failed to toggle follow');
+			console.error(error);
+		}
+	};
+
 	return (
 		<div className='container mx-auto px-4 py-6'>
 			<div className='flex flex-col items-center md:items-start md:flex-row md:gap-6'>
@@ -43,7 +72,7 @@ export function ProfileHeader({
 							<span className='text-muted-foreground'>Following</span>
 						</div>
 						<div>
-							<span className='font-medium'>{stats.followers}</span>{' '}
+							<span className='font-medium'>{followersCount}</span>{' '}
 							<span className='text-muted-foreground'>Followers</span>
 						</div>
 					</div>
@@ -54,9 +83,14 @@ export function ProfileHeader({
 						<Button variant='outline'>
 							<Link href={`/${username}/settings`}>Edit Profile</Link>
 						</Button>
-					) : (
-						<Button>Follow</Button>
-					)}
+					) : allowFollowers ? (
+						<Button
+							onClick={handleFollow}
+							variant={following ? 'outline' : 'default'}
+						>
+							{following ? 'Unfollow' : 'Follow'}
+						</Button>
+					) : null}
 				</div>
 			</div>
 		</div>

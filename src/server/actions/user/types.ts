@@ -1,17 +1,16 @@
+export * from "@/types/prisma.types";
 export interface UserProfile {
   id: string;
-  name: string | null;
-  email: string | null;
-  avatarUrl: string | null;
+  name: string;
+  username: string;
+  email?: string;
+  avatarUrl: string;
+  bio: string;
   allowFollowers: boolean;
-  _count: {
-    followers: number;
-    following: number;
-  };
 }
 
 export interface FollowStats {
-  isFollowing: boolean;
+  isFollowing?: boolean;
   followersCount: number;
   followingCount: number;
 }
