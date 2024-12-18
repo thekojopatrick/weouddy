@@ -4,10 +4,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { FollowRequest } from '@/server/actions/user/types';
 import { fetchFollowRequests } from '@/server/actions/user/follow';
-import { manageFollowRequest } from '@/server/actions/user/follow';
+import { manageFollowRequest } from '@/server/actions/user/privacy';
 import { toast } from 'sonner';
+
+// Define types
+interface RequestorInfo {
+	id: string;
+	name: string | null;
+	username: string | null;
+	avatarUrl: string | null;
+}
+
+interface FollowRequest {
+	id: string;
+	targetUserId: string;
+	requestorId: string;
+	createdAt: Date;
+	requestor: RequestorInfo;
+}
 
 // Props interface
 interface FollowRequestsProps {

@@ -41,43 +41,40 @@ export async function manageFollowRequest(
   }
 
   try {
-    // You'll need to create a FollowRequest model in your Prisma schema
-    const request = await prisma.followRequest.findUnique({
-      where: {
-        id: requestId,
-        targetUserId: session.userId,
-      },
+    // Find the follow request
+    const followRequest = await prisma.followRequest.findUnique({
+      where: { id: requestId },
+      select: { targetUserId: true, requestorId: true },
     });
 
-    if (!request) {
+    if (!followRequest) {
       throw new Error("Follow request not found");
+    }
+
+    // Ensure the current user is the target of the request
+    if (followRequest.targetUserId !== session.userId) {
+      throw new Error("Unauthorized to manage this request");
     }
 
     if (action === "accept") {
       // Create a follow relationship
       await prisma.follow.create({
         data: {
-          followerId: request.requestorId,
-          followingId: session.userId,
+          followerId: followRequest.requestorId,
+          followingId: followRequest.targetUserId,
         },
       });
     }
 
-    // Remove the follow request
+    // Delete the follow request
     await prisma.followRequest.delete({
       where: { id: requestId },
     });
 
-    // Revalidate relevant paths
-    revalidatePath(`/profile/${session.user.username}/followers`);
-
-    return {
-      success: true,
-      action: action,
-    };
+    return { success: true, action };
   } catch (error) {
-    console.error("Follow request management error:", error);
-    throw error;
+    console.error("Error managing follow request:", error);
+    throw new Error(`Failed to ${action} follow request`);
   }
 }
 
