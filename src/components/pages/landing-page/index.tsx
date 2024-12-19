@@ -1,11 +1,12 @@
-import HeroSection from '@/components/marketing/hero-section';
+import AboutUsSection from '@/components/marketing/about-us';
+import HeroSection from '@/components/marketing/hero';
 import React from 'react';
 
 const LandingPage = () => {
 	return (
-		<div>
+		<div className='bg-[#FCFBF7]'>
 			<HeroSection />
-			<div className='span'>Hero Section</div>
+			<AboutUsSection />
 			<div className='span'>About Us</div>
 			<div className='span'>Services</div>
 			<div className='span'>Upcoming Events/Past Events</div>

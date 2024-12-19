@@ -32,7 +32,7 @@ export default function HeroSection() {
 				<div className='flex justify-center'>
 					<Image
 						src='/logo.svg'
-						alt='People connecting'
+						alt='WeOuddy'
 						className='w-48 h-full object-cover'
 						width={200}
 						height={200}
