@@ -1,20 +1,10 @@
-import './globals.css';
+import './styles/globals.css';
+
+import { cabinetGrotesk, geistMono, geistSans } from '@/components/ui/fonts';
 
 import type { Metadata } from 'next';
 import { Toaster as SonnerToaster } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
-import localFont from 'next/font/local';
-
-const geistSans = localFont({
-	src: './fonts/GeistVF.woff',
-	variable: '--font-geist-sans',
-	weight: '100 900',
-});
-const geistMono = localFont({
-	src: './fonts/GeistMonoVF.woff',
-	variable: '--font-geist-mono',
-	weight: '100 900',
-});
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -31,7 +21,7 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} ${cabinetGrotesk.variable} antialiased`}
 			>
 				<>
 					{children}

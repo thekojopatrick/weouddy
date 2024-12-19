@@ -7,8 +7,7 @@ const LandingPage = () => {
 		<div className='bg-[#FCFBF7]'>
 			<HeroSection />
 			<AboutUsSection />
-			<div className='span'>About Us</div>
-			<div className='span'>Services</div>
+			<div className='span font-display'>Services</div>
 			<div className='span'>Upcoming Events/Past Events</div>
 			<div className='span'>Contact Us</div>
 		</div>

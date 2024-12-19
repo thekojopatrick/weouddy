@@ -5,7 +5,8 @@ const AboutUsSection = () => {
 		<section className='flex flex-col w-full justify-center items-center py-16'>
 			<div className='flex flex-col gap-8 max-w-2xl my-20'>
 				<h1 className='text-xl font-semibold text-center tracking-tight'>
-					WeOuddy connects people to moments instead of events
+					<span className='font-display'>WeOuddy</span> connects people to
+					moments instead of events
 				</h1>
 				<p className='text-xl font-semibold text-center tracking-tight'>
 					it’s a new way to get informations, memories about events, businesses
@@ -13,7 +14,7 @@ const AboutUsSection = () => {
 				</p>
 			</div>
 			<div className='flex flex-col gap-6 max-w-4xl mt-6'>
-				<h2 className='text-xl font-bold text-center tracking-tight'>
+				<h2 className='text-xl font-display text-center tracking-normal'>
 					See us in action
 				</h2>
 				<div className='flex gap-3'>

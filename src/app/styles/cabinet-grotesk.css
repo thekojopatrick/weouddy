@@ -1,0 +1,68 @@
+/**
+* @license
+*
+* Font Family: Cabinet Grotesk
+* Designed by: ITF
+* URL: https://www.fontshare.com/fonts/cabinet-grotesk
+* © 2024 Indian Type Foundry
+*
+* Cabinet Grotesk Thin 
+* Cabinet Grotesk Extralight 
+* Cabinet Grotesk Light 
+* Cabinet Grotesk Regular 
+* Cabinet Grotesk Medium 
+* Cabinet Grotesk Bold 
+* Cabinet Grotesk Extrabold 
+* Cabinet Grotesk Black 
+* Cabinet Grotesk Variable (Variable font)
+
+*
+*/
+
+@font-face {
+	font-family: 'CabinetGrotesk-Bold';
+	src:
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Bold.woff2') format('woff2'),
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Bold.woff') format('woff');
+
+	font-weight: 700;
+	font-display: swap;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'CabinetGrotesk-Extrabold';
+	src:
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Extrabold.woff2')
+			format('woff2'),
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Extrabold.woff') format('woff');
+	font-weight: 800;
+	font-display: swap;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'CabinetGrotesk-Black';
+	src:
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Black.woff2') format('woff2'),
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Black.woff') format('woff');
+	font-weight: 900;
+	font-display: swap;
+	font-style: normal;
+}
+/**
+* This is a variable font
+* You can control variable axes as shown below:
+* font-variation-settings: wght 900.0;
+*
+* available axes:
+'wght' (range from 100.0 to 900.0
+*/
+@font-face {
+	font-family: 'CabinetGrotesk-Variable';
+	src:
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Variable.woff2')
+			format('woff2'),
+		url('../fonts/cabinet-grotesk/CabinetGrotesk-Variable.woff') format('woff');
+	font-weight: 700 900;
+	font-display: swap;
+	font-style: normal;
+}

@@ -52,7 +52,7 @@ export default function HeroSection() {
 						aria-label='Work with us'
 						className='rounded-full h-12 font-semibold'
 					>
-						Work with us
+						Vibe with us
 					</Button>
 					<Button
 						size='icon'
