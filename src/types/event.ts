@@ -37,3 +37,15 @@ export type EventWithFullData = Event & {
   attendees: Attendee[];
   members: User[];
 };
+
+export interface JoinEventData {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  isPrivate: boolean; // This will determine the initial flow
+  requiresApproval: boolean;
+  accessType: "LINK_ONLY" | "PIN_REQUIRED";
+  pinCode?: string;
+}
