@@ -30,10 +30,22 @@ export const eventType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "time",
+      title: "Time",
+      type: "string",
+      description: "eg 1:30 PM or 1:300 AM",
+    }),
+    defineField({
       name: "location",
       title: "Location",
       type: "string",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      title: "Event URL",
+      name: "eventUrl",
+      type: "url",
+      description: "Paste event url here",
     }),
     defineField({
       name: "isPast",
