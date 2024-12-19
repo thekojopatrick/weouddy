@@ -247,6 +247,8 @@ model Forms {
   email     String
   name      String?
   phone     String?
+  subject   String?
+  message   String?
   type      FormsType         @default(CONTACT)
   status    NewsletterStatus?
   userId    String?
