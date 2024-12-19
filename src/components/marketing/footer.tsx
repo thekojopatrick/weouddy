@@ -8,15 +8,15 @@ const Footer = () => {
 		<footer className='flex flex-col w-full justify-center items-center py-16 px-6 bg-black'>
 			<div className='max-w-6xl flex flex-col items-center gap-10 justify-center mb-10'>
 				<Image
-					src='/logomark-black-yellow-short.png'
+					src='/brand/logomark-white-black-short.png'
 					alt='WeOuddy logo mark'
-					className='w-24 h-full object-cover'
+					className='w-20 h-full object-cover'
 					width={200}
 					height={200}
 				/>
 				<div className='flex flex-col gap-6 max-w-md justify-center items-center'>
 					<div className='space-y-6 text-center'>
-						<h2 className='text-6xl font-display tracking-tight text-[#F9EDC0]'>
+						<h2 className='text-6xl font-display tracking-tight text-[#efcc4e]'>
 							You dey outside,
 						</h2>
 						<p className='text-white'>
