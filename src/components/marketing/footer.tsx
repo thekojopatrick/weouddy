@@ -64,11 +64,11 @@ const Footer = () => {
 			role='contentinfo'
 		>
 			<div className='max-w-6xl flex flex-col items-center gap-10 justify-center mb-10'>
-				<div className='relative w-20 h-20'>
+				<div className='relative w-24 h-24'>
 					<Image
 						src='/brand/logomark-white-black-short.png'
 						alt='WeOuddy logo'
-						className='object-cover'
+						className='object-contain'
 						fill
 						priority
 						sizes='(max-width: 80px) 100vw, 80px'
