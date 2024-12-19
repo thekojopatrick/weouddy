@@ -1,5 +1,6 @@
 import LandingPage from '@/components/pages/landing-page';
 import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
 export default async function page() {
 	const supabase = await createClient();
@@ -7,7 +8,9 @@ export default async function page() {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	console.log({ user });
+	if (user) {
+		redirect('/discover');
+	}
 
 	return <LandingPage />;
 }
