@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       { hostname: "pbs.twimg.com" },
       { hostname: "avatar.vercel.sh" },
       { hostname: "avatars.githubusercontent.com" },
-      { hostname: "g-odxgj0zkpuk.vusercontent.net" },
+      { hostname: "images.unsplash.com" },
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
