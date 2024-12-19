@@ -1,17 +1,17 @@
 import {
-	Dialog,
 	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
+	MotionDialog,
+} from '@/components/ui/custom-motion-dialog';
 
-export function DialogBasic() {
+export function JoinWaitList() {
 	return (
-		<Dialog>
-			<DialogTrigger className='bg-zinc-950 px-4 py-2 text-sm text-white hover:bg-zinc-900 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100'>
+		<MotionDialog>
+			<DialogTrigger className='bg-zinc-950 px-4 py-2 text-sm text-white hover:bg-zinc-900 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 rounded-full'>
 				Join the waitlist
 			</DialogTrigger>
 			<DialogContent className='w-full max-w-md bg-white p-6 dark:bg-zinc-900'>
@@ -42,6 +42,6 @@ export function DialogBasic() {
 				</div>
 				<DialogClose />
 			</DialogContent>
-		</Dialog>
+		</MotionDialog>
 	);
 }

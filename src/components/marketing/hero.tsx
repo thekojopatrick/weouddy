@@ -8,6 +8,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { JoinWaitList } from './join-waitlist';
 import { motion } from 'motion/react';
 
 export default function HeroSection() {
@@ -54,6 +55,7 @@ export default function HeroSection() {
 					>
 						Vibe with us
 					</Button>
+					<JoinWaitList />
 					<Button
 						size='icon'
 						variant='outline'
