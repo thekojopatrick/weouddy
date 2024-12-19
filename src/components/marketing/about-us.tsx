@@ -71,14 +71,14 @@ const AboutUsSection = () => {
 					<Image
 						src='/images/social-post-1.png'
 						alt='WeOuddy instagram social post'
-						className='w-64 h-full object-cover'
+						className='w-40 md:w-64 h-full object-cover animate-in fade-in slide-in-from-bottom-3 duration-500'
 						width={600}
 						height={600}
 					/>
 					<Image
 						src='/images/social-post-2.png'
 						alt='WeOuddy instagram social post'
-						className='w-64 h-full object-cover'
+						className='w-40 md:w-64 h-full object-cover animate-in fade-in slide-in-from-bottom-5 duration-500'
 						width={600}
 						height={600}
 					/>
