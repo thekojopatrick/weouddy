@@ -4,7 +4,7 @@ import React from 'react';
 
 const JoinUsSection = () => {
 	return (
-		<section className='flex w-full justify-center items-center py-16 px-6 bg-black'>
+		<section className='flex w-full justify-center items-center py-20 md:py-16 px-6 bg-black'>
 			<div className='max-w-6xl flex flex-wrap gap-20 items-center'>
 				<div className='flex flex-col gap-6 max-w-md'>
 					<Image
@@ -15,7 +15,7 @@ const JoinUsSection = () => {
 						height={600}
 					/>
 				</div>
-				<div className='flex flex-col gap-6 my-20 max-w-md justify-start items-start'>
+				<div className='flex flex-col gap-6 md:my-20 max-w-md justify-start items-start'>
 					<div className='space-y-6 text-white'>
 						<h2 className='text-6xl font-display tracking-tight text-left text-[#efcc4e]'>
 							Show them something

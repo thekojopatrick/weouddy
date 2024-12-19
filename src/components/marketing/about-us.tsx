@@ -2,8 +2,8 @@ import Image from 'next/image';
 import React from 'react';
 const AboutUsSection = () => {
 	return (
-		<section className='flex flex-col w-full justify-center items-center py-16'>
-			<div className='flex flex-col gap-8 max-w-2xl my-20'>
+		<section className='flex flex-col w-full justify-center items-center py-12 pb-20 md:py-16'>
+			<div className='flex flex-col gap-8 max-w-2xl my-5 mb-10 md:my-20'>
 				<h1 className='text-xl font-semibold text-center tracking-tight'>
 					<span className='font-display'>WeOuddy</span> connects people to
 					moments instead of events
