@@ -24,14 +24,23 @@ const Footer = () => {
 								then me make we know the occasion, send location!.
 							</p>
 						</div>
-						<Button
-							variant='outline'
-							size={'lg'}
-							className='rounded-full w-auto'
-						>
-							<CopyIcon />
-							Contact us
-						</Button>
+						<div className='flex gap-3 justify-center'>
+							<Button
+								variant='outline'
+								size={'lg'}
+								className='rounded-full w-auto'
+							>
+								<CopyIcon />
+								Contact us
+							</Button>
+							<Button
+								variant='outline'
+								size={'lg'}
+								className='rounded-full w-auto bg-[#efcc4e] border-[#efcc4e]'
+							>
+								Sponsor us
+							</Button>
+						</div>
 					</div>
 				</div>
 			</div>
