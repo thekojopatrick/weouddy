@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/custom-motion-dialog';
 import React, { useActionState } from 'react';
 
-import { Loader2 } from 'lucide-react';
+import { LoadingButton } from '../ui/button';
 import { submitWaitlistForm } from '@/server/actions/forms/waitlist';
 import { useFormStatus } from 'react-dom';
 
@@ -30,19 +30,13 @@ function SubmitButton() {
 	const { pending } = useFormStatus();
 
 	return (
-		<button
-			className='inline-flex items-center justify-center self-end rounded-lg bg-black px-4 py-2 text-sm font-medium text-zinc-50 dark:bg-white dark:text-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed'
+		<LoadingButton
+			className='self-end dark:bg-white dark:text-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed'
 			disabled={pending}
+			loading={pending}
 		>
-			{pending ? (
-				<>
-					<Loader2 className='mr-2 h-4 w-4 animate-spin' />
-					Joining...
-				</>
-			) : (
-				'Join now'
-			)}
-		</button>
+			{pending ? 'Joining...' : 'Join now'}
+		</LoadingButton>
 	);
 }
 
