@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CategoryFilters } from '@/components/category-filters';
-import { CreateEventButton } from '@/components/create-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
 import { LocationFilters } from '@/components/location-filters';
@@ -123,7 +122,6 @@ export default function HomePage({
 					<UserPlus className='mr-2 h-5 w-5' />
 					Join Event
 				</Button>
-				<CreateEventButton />
 			</div>
 		</div>
 	);

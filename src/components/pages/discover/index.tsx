@@ -69,6 +69,8 @@ export default function DiscoverPage({ events }: { events: EventData[] }) {
 		);
 	}
 
+	//TODO: CHECK IF USER IS AUTHENTICATED BEFORE THEY CAN CREATE AN EVENT
+
 	return (
 		<div className='flex min-h-screen flex-col'>
 			<main className='flex-1'>
