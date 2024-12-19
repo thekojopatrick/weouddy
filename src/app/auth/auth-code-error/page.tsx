@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 
@@ -50,7 +51,10 @@ export default function AuthCodeErrorPage() {
 					</div>
 
 					<div className='text-center text-xs text-gray-500 mt-4'>
-						<p>If the problem persists, please contact support.</p>
+						<p>
+							If the problem persists, please contact support.
+							<Link href={'/contact'}>Contact us</Link>
+						</p>
 					</div>
 				</CardContent>
 			</Card>
