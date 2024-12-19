@@ -18,14 +18,14 @@ export function SiteHeader({ user }: { user: User | null }) {
 
 	return (
 		<header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-			<div className='flex h-16 items-center max-w-7xl md:px-6 mx-auto gap-x-2'>
+			<div className='flex h-16 items-center max-w-7xl px-5 md:px-6 mx-auto gap-x-2'>
 				<Link href='/'>
 					<Image
-						src={isSmallDevice ? '/logomark.svg' : '/logo.svg'}
+						src={isSmallDevice ? '/brand/logomark.svg' : '/logo.svg'}
 						alt={'WeOuddy'}
 						className='object-cover'
-						width={isSmallDevice ? 150 : 120}
-						height={isSmallDevice ? 150 : 120}
+						width={isSmallDevice ? 60 : 120}
+						height={isSmallDevice ? 60 : 120}
 					/>
 					<span className='text-xl font-bold sr-only'>WeOuddy</span>
 				</Link>
