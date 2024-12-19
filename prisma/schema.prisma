@@ -239,3 +239,28 @@ enum AccessType {
   PIN_REQUIRED // Requires entering a PIN code to access
   APPROVAL_REQUIRED // Requires host approval for access
 }
+
+model Forms {
+  id        String            @id @default(cuid())
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  email     String
+  name      String?
+  phone     String?
+  type      FormsType         @default(CONTACT)
+  status    NewsletterStatus?
+  userId    String?
+
+  @@unique([email, userId])
+}
+
+enum NewsletterStatus {
+  APPROVED
+  UNSUBSCRIBED
+  AUTO_ARCHIVED
+}
+
+enum FormsType {
+  CONTACT
+  NEWSLETTER
+}
