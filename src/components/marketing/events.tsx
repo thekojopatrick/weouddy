@@ -1,18 +1,63 @@
+'use client';
+
 import { getEvents } from '@/sanity/lib/queries';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { type SanityDocument } from 'next-sanity';
 import { client } from '@/sanity/lib/client';
+import { Loader2 } from 'lucide-react';
 //import { formatEventDateTime } from '@/lib/formatters';
 
-const options = { next: { revalidate: 30 } };
+//const options = { next: { revalidate: 30 } };
 
-const EventsSection = async () => {
-	const events = await client.fetch<SanityDocument[]>(getEvents, {}, options);
+const EventsSection = () => {
+	//const events = await client.fetch<SanityDocument[]>(getEvents, {}, options);
+	const [events, setEvents] = useState<SanityDocument[]>([]);
+
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchEvents = async () => {
+			try {
+				setIsLoading(true);
+				const fetchedEvents = await client.fetch<SanityDocument[]>(
+					getEvents,
+					{},
+					{ next: { revalidate: 30 } }
+				);
+				setEvents(fetchedEvents);
+			} catch (err) {
+				setError('Failed to load events. Please try again later.');
+				console.error('Error fetching events:', err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchEvents();
+	}, []);
 
 	const now = new Date();
 	const upcomingEvents = events.filter((event) => new Date(event.date) >= now);
 	const pastEvents = events.filter((event) => new Date(event.date) < now);
+
+	if (isLoading) {
+		return (
+			<div className='flex justify-center items-center min-h-[400px]'>
+				<Loader2 className='w-8 h-8 animate-spin text-gray-500' />
+			</div>
+		);
+	}
+	if (error) {
+		return (
+			<div className='flex justify-center items-center min-h-[400px]'>
+				<p className=''>
+					Error loading events, reload page or contact support.
+				</p>
+			</div>
+		);
+	}
 
 	return (
 		<section className='flex flex-col w-full justify-center items-center py-16'>
@@ -48,7 +93,7 @@ const EventList = ({
 						<Link
 							href={`/${event.title}`}
 							key={event._id}
-							className='group block border-b last:border-b-0 hover:bg-gray-50 transition-colors'
+							className='group block border-b last:border-b-0 hover:bg-gray-50/10 transition-colors'
 						>
 							<div className='py-4 px-3 flex justify-between items-center'>
 								<div className='flex-1'>
@@ -61,12 +106,12 @@ const EventList = ({
 												minute: '2-digit',
 											})}
 										</time>
-										<h3 className='font-medium group-hover:text-blue-600 transition-colors'>
+										<h3 className='font-medium group-hover:text-zinc-900 transition-colors'>
 											{event.title}
 										</h3>
 									</div>
 								</div>
-								<div className='text-right text-sm text-gray-600'>
+								<div className='text-right text-sm text-gray-600 group-hover:text-zinc-900 '>
 									{event.location}
 								</div>
 							</div>
