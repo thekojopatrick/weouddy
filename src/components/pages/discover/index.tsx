@@ -69,7 +69,7 @@ export default function DiscoverPage({ events }: { events: EventData[] }) {
 	return (
 		<div className='flex min-h-screen flex-col'>
 			<main className='flex-1'>
-				<section className='max-w-7xl px-6 py-8'>
+				<section className='max-w-7xl px-6 py-8 mx-auto'>
 					<div className='flex flex-col gap-4'>
 						<h1 className='text-3xl font-bold tracking-tighter'>
 							Discover Events
