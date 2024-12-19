@@ -1,22 +1,34 @@
 'use client';
 
+import { CalendarPlus, Plus } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { CreateEventDialog } from './event//create/create-event-dialog';
-import { Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
-export function CreateEventButton() {
+export function CreateEventButton({
+	isSmallDevice,
+}: {
+	isSmallDevice: boolean;
+}) {
 	const [showDialog, setShowDialog] = useState(false);
 
 	return (
 		<>
 			<Button
-				size='lg'
-				className='rounded-full shadow-lg'
+				variant={'outline'}
+				size={isSmallDevice ? 'icon' : 'lg'}
+				className={cn(
+					'rounded-full shadow-lg',
+					isSmallDevice ? 'size-12' : 'h-12'
+				)}
 				onClick={() => setShowDialog(true)}
 			>
-				<Plus className='mr-2 h-5 w-5' />
-				Create Event
+				{isSmallDevice ? <CalendarPlus /> : <Plus className={'size-6'} />}
+				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
+					Create Event
+				</span>
 			</Button>
 
 			<CreateEventDialog open={showDialog} onOpenChangeAction={setShowDialog} />

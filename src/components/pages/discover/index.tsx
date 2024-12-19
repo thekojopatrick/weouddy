@@ -12,10 +12,13 @@ import { EventCard } from '@/components/event/event-card';
 import { EventData } from '@/types/event';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
 import { LocationFilters } from '@/components/location-filters';
+import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
 
 export default function DiscoverPage({ events }: { events: EventData[] }) {
+	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	const searchParams = useSearchParams();
 	const router = useRouter();
 
@@ -120,12 +123,17 @@ export default function DiscoverPage({ events }: { events: EventData[] }) {
 					)}
 				</section>
 			</main>
-			<div className='fixed bottom-8 right-8 flex flex-col gap-4'>
+			<div
+				className={cn(
+					'fixed bottom-8  flex flex-col gap-4 items-end',
+					isSmallDevice ? 'right-5' : 'right-8'
+				)}
+			>
 				<Button size='lg' className='rounded-full shadow-lg'>
 					<UserPlus className='mr-2 h-5 w-5' />
 					Join Event
 				</Button>
-				<CreateEventButton />
+				<CreateEventButton isSmallDevice={isSmallDevice} />
 			</div>
 		</div>
 	);
