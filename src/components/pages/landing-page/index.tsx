@@ -1,4 +1,5 @@
 import AboutUsSection from '@/components/marketing/about-us';
+import EventsSection from '@/components/marketing/events';
 import HeroSection from '@/components/marketing/hero';
 import JoinUsSection from '@/components/marketing/join-us';
 import React from 'react';
@@ -9,7 +10,7 @@ const LandingPage = () => {
 			<HeroSection />
 			<AboutUsSection />
 			<JoinUsSection />
-			<div className='span'>Upcoming Events/Past Events</div>
+			<EventsSection />
 			<div className='span'>Contact Us</div>
 		</div>
 	);
