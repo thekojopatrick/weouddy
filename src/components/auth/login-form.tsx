@@ -54,7 +54,7 @@ export function LoginForm({
 		<div className='grid gap-6'>
 			<div className='flex flex-col items-center gap-2'>
 				<Image
-					src='/logomark.svg'
+					src='/brand/logomark.svg'
 					alt='WeOuddy'
 					width={48}
 					height={48}

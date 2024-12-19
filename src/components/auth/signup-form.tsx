@@ -52,7 +52,7 @@ export function SignUpForm({
 		<div className='grid gap-6'>
 			<div className='flex flex-col items-center gap-2'>
 				<Image
-					src='/logo.svg'
+					src='/brand/logo.svg'
 					alt='WeOuddy'
 					width={48}
 					height={48}

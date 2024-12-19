@@ -183,7 +183,7 @@ export function AuthForm() {
 
 				<Button
 					variant='outline'
-					className='w-full mt-4'
+					className='w-full mt-4 hidden'
 					onClick={handleGuestAccess}
 					disabled={isLoading}
 				>
