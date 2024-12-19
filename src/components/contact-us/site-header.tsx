@@ -30,7 +30,7 @@ export function SiteHeader() {
 
 				<div className='md:ml-auto flex items-center space-x-3'>
 					<Button variant='default' className='rounded-full' asChild>
-						<Link href='/discore'>Back to WeOuddy</Link>
+						<Link href='/discover'>Back to WeOuddy</Link>
 					</Button>
 					<CountrySelector />
 				</div>
