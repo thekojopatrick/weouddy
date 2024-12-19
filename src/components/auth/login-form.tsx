@@ -51,7 +51,7 @@ export function LoginForm({
 	};
 
 	return (
-		<div className='grid gap-6'>
+		<div className='grid gap-6 px-4'>
 			<div className='flex flex-col items-center gap-2'>
 				<Image
 					src='/brand/logomark.svg'
@@ -63,7 +63,11 @@ export function LoginForm({
 				<h1 className='text-2xl font-semibold tracking-tight'>Welcome Back!</h1>
 			</div>
 
-			<Button variant='outline' className='relative' onClick={onGoogleSignIn}>
+			<Button
+				variant='outline'
+				className='relative rounded-full'
+				onClick={onGoogleSignIn}
+			>
 				<Image
 					src='/brand/google.svg'
 					alt='Google'
@@ -97,6 +101,7 @@ export function LoginForm({
 										type='email'
 										placeholder='Your email address'
 										{...field}
+										className='rounded-full'
 									/>
 								</FormControl>
 								<FormMessage />
@@ -117,6 +122,7 @@ export function LoginForm({
 											type={showPassword ? 'text' : 'password'}
 											placeholder='Your password'
 											{...field}
+											className='rounded-full'
 										/>
 										<Button
 											type='button'
@@ -147,13 +153,17 @@ export function LoginForm({
 						Forgot password?
 					</Button>
 
-					<Button type='submit' className='w-full' disabled={isLoading}>
+					<Button
+						type='submit'
+						className='w-full rounded-full'
+						disabled={isLoading}
+					>
 						Continue
 					</Button>
 				</form>
 			</Form>
 
-			<div className='text-center text-sm'>
+			<div className='text-center text-sm text-zinc-600'>
 				By continuing, you agree to WeOuddy&apos;s{' '}
 				<Button variant='link' className='p-0 text-sm h-auto'>
 					Terms of Service
@@ -165,9 +175,13 @@ export function LoginForm({
 				.
 			</div>
 
-			<div className='text-center'>
+			<div className='text-center text-sm'>
 				{"Don't have an account? "}
-				<Button variant='link' className='p-0' onClick={onSignUpClickAction}>
+				<Button
+					variant='link'
+					className='p-0 font-semibold'
+					onClick={onSignUpClickAction}
+				>
 					Sign up
 				</Button>
 			</div>

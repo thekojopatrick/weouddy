@@ -49,10 +49,10 @@ export function SignUpForm({
 	};
 
 	return (
-		<div className='grid gap-6'>
+		<div className='grid gap-6 px-4'>
 			<div className='flex flex-col items-center gap-2'>
 				<Image
-					src='/brand/logo.svg'
+					src='logo.svg'
 					alt='WeOuddy'
 					width={48}
 					height={48}
@@ -63,7 +63,11 @@ export function SignUpForm({
 				</h1>
 			</div>
 
-			<Button variant='outline' className='relative' onClick={onGoogleSignIn}>
+			<Button
+				variant='outline'
+				className='relative rounded-full'
+				onClick={onGoogleSignIn}
+			>
 				<Image
 					src='/brand/google.svg'
 					alt='Google'
@@ -97,6 +101,7 @@ export function SignUpForm({
 										type='email'
 										placeholder='Your email address'
 										{...field}
+										className='rounded-full'
 									/>
 								</FormControl>
 								<FormMessage />
@@ -117,6 +122,7 @@ export function SignUpForm({
 											type={showPassword ? 'text' : 'password'}
 											placeholder='Your password'
 											{...field}
+											className='rounded-full'
 										/>
 										<Button
 											type='button'
@@ -138,13 +144,17 @@ export function SignUpForm({
 						)}
 					/>
 
-					<Button type='submit' className='w-full' disabled={isLoading}>
+					<Button
+						type='submit'
+						className='w-full rounded-full'
+						disabled={isLoading}
+					>
 						Continue
 					</Button>
 				</form>
 			</Form>
 
-			<div className='text-center text-sm'>
+			<div className='text-center text-sm text-zinc-600'>
 				By continuing, you agree to WeOuddy&apos;s{' '}
 				<Button variant='link' className='p-0 text-sm h-auto'>
 					Terms of Service
@@ -156,9 +166,13 @@ export function SignUpForm({
 				.
 			</div>
 
-			<div className='text-center'>
+			<div className='text-center text-sm'>
 				Already have an account?{' '}
-				<Button variant='link' className='p-0' onClick={onLoginClickAction}>
+				<Button
+					variant='link'
+					className='p-0 font-semibold'
+					onClick={onLoginClickAction}
+				>
 					Log in
 				</Button>
 			</div>
