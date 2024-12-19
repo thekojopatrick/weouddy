@@ -17,7 +17,7 @@ const JoinUsSection = () => {
 				</div>
 				<div className='flex flex-col gap-6 my-20 max-w-md justify-start items-start'>
 					<div className='space-y-6 text-white'>
-						<h2 className='text-6xl font-display tracking-tight text-left'>
+						<h2 className='text-6xl font-display tracking-tight text-left text-[#efcc4e]'>
 							Show them something
 						</h2>
 						<p className='tracking-tight'>
