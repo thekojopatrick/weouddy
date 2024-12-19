@@ -15,13 +15,15 @@ const Footer = () => {
 					height={200}
 				/>
 				<div className='flex flex-col gap-6 max-w-md justify-center items-center'>
-					<div className='space-y-6 text-center'>
-						<h2 className='text-6xl font-display tracking-tight text-[#efcc4e]'>
-							You dey outside,
-						</h2>
-						<p className='text-white'>
-							then me make we know the occasion, send location!.
-						</p>
+					<div className='space-y-10 text-center'>
+						<div className='space-y-2'>
+							<h2 className='text-6xl font-display tracking-tight text-[#efcc4e]'>
+								You dey outside
+							</h2>
+							<p className='text-white'>
+								then me make we know the occasion, send location!.
+							</p>
+						</div>
 						<Button
 							variant='outline'
 							size={'lg'}
