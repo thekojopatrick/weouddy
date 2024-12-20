@@ -1,11 +1,14 @@
 'use client';
 
 import { JoinEventForm, JoinStep } from './join-event-form';
+import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { JoinEventData } from '@/types/event';
-import React from 'react';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
+import { joinEvent } from '@/server/actions/event/join/mutation';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 interface JoinEventDialogProps {
 	event?: JoinEventData;
@@ -20,17 +23,61 @@ const JoinEventDialog = ({
 	open,
 	onOpenChangeAction,
 }: JoinEventDialogProps) => {
+	const [isAutoJoining, setIsAutoJoining] = useState(false);
+	const router = useRouter();
+	const { toast } = useToast();
+
+	// Function to handle auto-join for public events
+	const handleAutoJoin = async () => {
+		if (!event?.id) return;
+
+		setIsAutoJoining(true);
+		try {
+			const result = await joinEvent({
+				identifier: event.id,
+				identifierType: 'id',
+			});
+
+			if (result.success && result.eventSlug) {
+				toast({
+					title: 'Success',
+					description: result.message || 'Successfully joined the event',
+				});
+				onOpenChangeAction(false); // Close the dialog
+				router.push(`/events/${result.eventSlug}`);
+			} else {
+				// If join fails, show the regular join flow
+				setIsAutoJoining(false);
+			}
+		} catch (error) {
+			setIsAutoJoining(false);
+			toast({
+				variant: 'destructive',
+				title: 'Error',
+				description:
+					error instanceof Error ? error.message : 'Failed to join event',
+			});
+		}
+	};
+
+	// Effect to handle auto-join when dialog opens
+	useEffect(() => {
+		if (open && event && !event.isPrivate && !event.requiresApproval) {
+			handleAutoJoin();
+		}
+	}, [open, event]);
+
 	const getInitialStep = (): JoinStep => {
+		if (isAutoJoining) {
+			return 'REDIRECTING';
+		}
+
 		if (!event) {
 			return initialStep ?? 'LINK_PASTE';
 		}
 
 		if (event.isPrivate && event.requiresApproval) {
 			return 'PIN_ENTRY';
-		}
-
-		if (!event.isPrivate && !event.requiresApproval) {
-			return 'REDIRECTING'; // Default step for public events
 		}
 
 		return initialStep ?? 'LINK_PASTE';
@@ -53,6 +100,7 @@ const JoinEventDialog = ({
 				<JoinEventForm
 					initialEventData={event}
 					initialStep={getInitialStep()}
+					onCloseDialog={() => onOpenChangeAction(false)}
 				/>
 			</div>
 		</ResponsiveDialog>
