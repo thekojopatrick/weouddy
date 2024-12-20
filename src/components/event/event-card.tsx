@@ -139,7 +139,7 @@ export function EventCard({
 	return (
 		<div>
 			<Card
-				className='group relative overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow'
+				className='group relative overflow-hidden cursor-pointer shadow-none hover:shadow-md transition-shadow'
 				onClick={handleCardClick}
 			>
 				<CardHeader className='p-0'>
@@ -163,10 +163,12 @@ export function EventCard({
 						/>
 					</div>
 				</CardHeader>
-				<CardContent className='grid gap-2.5 p-4'>
-					<h3 className='font-semibold leading-none tracking-tight'>{name}</h3>
+				<CardContent className='flex items-center gap-2.5 p-4'>
+					<h3 className='font-semibold leading-none tracking-tight max-w-40 truncate'>
+						{name}
+					</h3>
 					<div className='flex flex-wrap gap-2'>
-						<Badge variant='secondary' className='capitalize'>
+						<Badge variant='outline' className='capitalize'>
 							{type}
 						</Badge>
 						<Badge variant='outline' className='hidden'>
@@ -178,7 +180,7 @@ export function EventCard({
 					<div className='flex items-center space-x-4 text-sm text-muted-foreground'>
 						<div className='row flex gap-2'>
 							<div className='col-auto'>
-								<Avatar className='h-8 w-8'>
+								<Avatar className='h-10 w-10'>
 									<AvatarImage
 										src={
 											host.avatarUrl ??
