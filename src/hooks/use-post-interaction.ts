@@ -1,4 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    avatarUrl: string | null;
+  };
+}
 
 interface UsePostInteractionsProps {
   postId: string;
@@ -14,9 +25,28 @@ export function usePostInteractions({
   isLiked = false,
 }: UsePostInteractionsProps) {
   const [likes, setLikes] = useState(initialLikes);
-  const [comments, setComments] = useState(initialComments);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentCount, setCommentCount] = useState(initialComments);
   const [isPostLiked, setIsPostLiked] = useState(isLiked);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`);
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isCommentsOpen) {
+      fetchComments();
+    }
+  }, [isCommentsOpen, postId]);
 
   const handleLike = async () => {
     try {
@@ -44,16 +74,19 @@ export function usePostInteractions({
       });
 
       if (response.ok) {
-        setComments((prev) => prev + 1);
-        // You might want to refetch comments here
+        const newComment = await response.json();
+        setComments((prev) => [newComment, ...prev]);
+        setCommentCount((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Error adding comment:", error);
+      throw error;
     }
   };
 
   return {
     likes,
+    commentCount,
     comments,
     isLiked: isPostLiked,
     isCommentsOpen,

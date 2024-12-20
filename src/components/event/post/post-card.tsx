@@ -28,11 +28,13 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 
 	const {
 		likes,
+		commentCount,
 		comments,
 		isLiked,
 		isCommentsOpen,
 		setIsCommentsOpen,
 		handleLike,
+		handleComment,
 	} = usePostInteractions({
 		postId: post.id,
 		initialLikes: post._count.likes,
@@ -78,7 +80,7 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 						) : (
 							<RiChat1Line className='size-4' />
 						)}
-						<span>{comments}</span>
+						<span>{commentCount}</span>
 					</div>
 				</div>
 
@@ -128,6 +130,8 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 				postId={post.id}
 				open={isCommentsOpen}
 				onOpenChangeAction={setIsCommentsOpen}
+				handleCommentAction={handleComment}
+				comments={comments}
 			/>
 		</div>
 	);

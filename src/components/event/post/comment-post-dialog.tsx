@@ -13,7 +13,6 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 } from '@/components/ui/drawer';
-import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +20,7 @@ import { Send } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/formatters';
 import { getNameInitials } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useState } from 'react';
 
 interface Comment {
 	id: string;
@@ -34,34 +34,23 @@ interface Comment {
 }
 
 interface CommentsProps {
-	postId: string;
+	postId?: string;
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
+	handleCommentAction: (content: string) => Promise<void>;
+	comments: Comment[];
 }
 
-export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
+export function Comments({
+	open,
+	onOpenChangeAction,
+	handleCommentAction,
+	comments,
+}: CommentsProps) {
 	const [comment, setComment] = useState('');
-	const [comments, setComments] = useState<Comment[]>([]);
+	//const [comments, setComments] = useState<Comment[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const isDesktop = useMediaQuery('(min-width: 768px)');
-
-	const fetchComments = async () => {
-		try {
-			const response = await fetch(`/api/posts/${postId}/comments`);
-			if (response.ok) {
-				const data = await response.json();
-				setComments(data);
-			}
-		} catch (error) {
-			console.error('Error fetching comments:', error);
-		}
-	};
-
-	useEffect(() => {
-		if (open) {
-			fetchComments();
-		}
-	}, [open, postId]);
 
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -69,19 +58,8 @@ export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
 
 		setIsLoading(true);
 		try {
-			const response = await fetch(`/api/posts/${postId}/comments`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ content: comment.trim() }),
-			});
-
-			if (response.ok) {
-				const newComment = await response.json();
-				setComments((prev) => [newComment, ...prev]);
-				setComment('');
-			}
+			await handleCommentAction(comment.trim());
+			setComment('');
 		} catch (error) {
 			console.error('Error posting comment:', error);
 		} finally {
@@ -91,7 +69,7 @@ export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
 
 	const CommentList = () => (
 		<div className='space-y-4'>
-			{comments.map((comment) => (
+			{comments?.map((comment) => (
 				<div key={comment.id} className='flex gap-2'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={comment.user.avatarUrl || undefined} />
