@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { JoinEventData } from '@/types/event';
 import { JoinEventForm } from './join-event-form';
 import React from 'react';
@@ -19,9 +20,18 @@ const JoinEventDialog = ({
 		<ResponsiveDialog
 			open={open}
 			onOpenChangeAction={onOpenChangeAction}
-			className='sm:max-w-[620px] p-0 overflow-hidden'
+			className='sm:max-w-[620px] overflow-hidden py-3 px-4'
 		>
-			<JoinEventForm />
+			<div className="'flex flex-col items-center gap-4 justify-center">
+				<Image
+					src='/brand/logomark.svg'
+					alt='WeOuddy'
+					width={48}
+					height={48}
+					className='h-12 w-12 mb-5'
+				/>
+				<JoinEventForm />
+			</div>
 		</ResponsiveDialog>
 	);
 };

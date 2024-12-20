@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 import type { EventData } from '@/types/event';
 import { LinkPasteForm } from './forms/link-paste-form';
@@ -144,5 +145,14 @@ export function JoinEventForm({
 		}
 	};
 
-	return renderContent();
+	return (
+		<>
+			<DialogHeader>
+				<DialogTitle>
+					{currentStep === 'PIN_ENTRY' ? 'Enter Event PIN' : 'Join Event'}
+				</DialogTitle>
+			</DialogHeader>
+			{renderContent()}
+		</>
+	);
 }

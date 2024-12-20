@@ -35,7 +35,7 @@ export function LinkPasteForm({
 					/>
 					<Button
 						size='sm'
-						className='absolute right-1 top-1'
+						className='absolute right-[.12rem] top-[.1rem]'
 						onClick={() => onSubmitAction(link)}
 						disabled={!link || isLoading}
 					>

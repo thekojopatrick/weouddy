@@ -58,7 +58,7 @@ export function LoginForm({
 					alt='WeOuddy'
 					width={48}
 					height={48}
-					className='h-16 w-16'
+					className='h-12 w-12'
 				/>
 				<h1 className='text-2xl font-semibold tracking-tight'>Welcome Back!</h1>
 			</div>
