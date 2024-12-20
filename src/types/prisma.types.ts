@@ -107,6 +107,7 @@ export interface PostWithDetails extends BasePost {
     likes: number;
     comments: number;
   };
+  likes: Array<{ userId: string }>;
 }
 
 export interface PostMedia {

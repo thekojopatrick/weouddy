@@ -41,7 +41,11 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 		initialLikes: post._count.likes,
 		initialComments: post._count.comments,
 		currentUserId: userId,
+		isLiked: post.likes.some((like) => like.userId === userId),
 	});
+
+	const currentUserLiked =
+		post.likes.some((like) => like.userId === userId) || isLiked;
 
 	return (
 		<div
@@ -104,10 +108,10 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 						onClick={handleLike}
 						className={cn(
 							'bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50',
-							isLiked && 'text-red-500'
+							currentUserLiked && 'text-red-500'
 						)}
 					>
-						{isLiked ? (
+						{currentUserLiked ? (
 							<RiHeart3Fill className='h-5 w-5' />
 						) : (
 							<RiHeart3Line className='h-5 w-5' />
