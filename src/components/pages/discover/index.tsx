@@ -8,8 +8,8 @@ import { AlertTriangle } from 'lucide-react';
 import { CategoryFilters } from '@/components/category-filters';
 import { CreateEventButton } from '@/components/create-event-button';
 import { EventCard } from '@/components/event/event-card';
-import { EventData } from '@/types/event';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
+import { EventWithDetails } from '@/types/prisma.types';
 import { JoinEventButton } from '@/components/join-event-button';
 import { LocationFilters } from '@/components/location-filters';
 import { cn } from '@/lib/utils';
@@ -17,7 +17,11 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
 
-export default function DiscoverPage({ events }: { events: EventData[] }) {
+export default function DiscoverPage({
+	events,
+}: {
+	events: EventWithDetails[];
+}) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -114,9 +118,11 @@ export default function DiscoverPage({ events }: { events: EventData[] }) {
 										{...event}
 										date={date}
 										time={time}
-										members={event._count.members}
+										coverImage={event.coverImage!}
+										members={event.memberCount}
 										category={event.type}
 										location={event.location!}
+										slug={event.slug!}
 										description={event.description!}
 									/>
 								);

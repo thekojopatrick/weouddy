@@ -7,21 +7,26 @@ import {
 	CardFooter,
 	CardHeader,
 } from '@/components/ui/card';
-import { MapPin, Users } from 'lucide-react';
+import { MapPin, Share2, Users } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventCardProps {
-	id?: string;
+	id: string;
 	name: string;
 	type: string;
 	coverImage: string | null;
 	isPrivate: boolean;
+	isDisabled: boolean;
+	requiresApproval: boolean;
 	host: {
 		name: string;
+		username: string | null;
 		avatarUrl: string | null;
 	};
 	location: string;
@@ -31,9 +36,13 @@ interface EventCardProps {
 	time: string;
 	description: string;
 	additionalInfo?: string;
+	slug: string | null;
+	memberCount: number;
+	attendeeCount: number;
 }
 
 export function EventCard({
+	id,
 	name,
 	type,
 	coverImage,
@@ -46,27 +55,69 @@ export function EventCard({
 	time,
 	description,
 	additionalInfo,
+	slug,
+	memberCount,
+	attendeeCount,
+	isDisabled,
+	requiresApproval,
 }: EventCardProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
+	const { toast } = useToast();
 	const [city, country] = location.split(', ');
 
+	const handleShare = async (e: React.MouseEvent) => {
+		e.stopPropagation();
+		const eventUrl = `${window.location.origin}/events/${slug}`;
+
+		if (navigator.share) {
+			try {
+				await navigator.share({
+					title: name,
+					text: `Check out this event: ${name}`,
+					url: eventUrl,
+				});
+			} catch (err) {
+				if (err instanceof Error && err.name !== 'AbortError') {
+					copyToClipboard(eventUrl);
+				}
+			}
+		} else {
+			copyToClipboard(eventUrl);
+		}
+	};
+
+	const copyToClipboard = (text: string) => {
+		navigator.clipboard.writeText(text);
+		toast({
+			title: 'Link copied!',
+			description: 'Event link has been copied to clipboard.',
+		});
+	};
+
 	return (
-		<>
+		<div>
 			<Card
-				className='overflow-hidden cursor-pointer shadow-sm'
+				className='group relative overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow'
 				onClick={() => setIsModalOpen(true)}
 			>
 				<CardHeader className='p-0'>
 					<div className='relative aspect-[4/3]'>
-						<Badge variant={'secondary'} className='absolute left-4 top-4 z-10'>
+						<Badge variant='secondary' className='absolute left-4 top-4 z-10'>
 							{!isPrivate ? 'Public' : 'Private'}
 						</Badge>
+						<Button
+							variant='secondary'
+							size='icon'
+							className='absolute right-4 top-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity'
+							onClick={handleShare}
+						>
+							<Share2 className='h-4 w-4' />
+						</Button>
 						<Image
 							src={coverImage ?? '/place-holder.svg'}
 							alt={`Event ${name}`}
 							fill
-							className='object-cover'
+							className='object-cover transition-transform group-hover:scale-105'
 						/>
 					</div>
 				</CardHeader>
@@ -104,11 +155,13 @@ export function EventCard({
 				isOpen={isModalOpen}
 				onCloseAction={() => setIsModalOpen(false)}
 				event={{
+					id,
 					name,
 					type,
 					coverImage: coverImage ?? '/place-holder.svg',
 					host: {
 						name: host.name,
+						username: host.username ?? '',
 						avatarUrl: host.avatarUrl ?? '',
 					},
 					date,
@@ -118,11 +171,17 @@ export function EventCard({
 						city: city || 'Unknown',
 						country: country || 'Unknown',
 					},
+					isPrivate,
 					members,
 					description,
 					additionalInfo,
+					slug,
+					memberCount,
+					attendeeCount,
+					isDisabled,
+					requiresApproval,
 				}}
 			/>
-		</>
+		</div>
 	);
 }

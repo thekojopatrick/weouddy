@@ -59,13 +59,20 @@ export async function getAllEvents(userId?: string) {
           select: {
             members: true,
             posts: true,
+            attendees: true,
           },
         },
       },
       orderBy: {
         createdAt: "desc",
       },
-    });
+    }).then((events) =>
+      events.map((event) => ({
+        ...event,
+        memberCount: event._count.members,
+        attendeeCount: event._count.attendees,
+      }))
+    );
   } else {
     // For unauthenticated users, return only public events
     return prisma.event.findMany({
@@ -78,13 +85,20 @@ export async function getAllEvents(userId?: string) {
           select: {
             members: true,
             posts: true,
+            attendees: true,
           },
         },
       },
       orderBy: {
         createdAt: "desc",
       },
-    });
+    }).then((events) =>
+      events.map((event) => ({
+        ...event,
+        memberCount: event._count.members,
+        attendeeCount: event._count.attendees,
+      }))
+    );
   }
 }
 

@@ -16,7 +16,11 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-type JoinStep =
+type InitialEventData = Pick<
+	EventWithDetails,
+	'id' | 'slug' | 'isPrivate' | 'isDisabled' | 'requiresApproval'
+>;
+export type JoinStep =
 	| 'LINK_PASTE'
 	| 'QR_SCAN'
 	| 'PIN_ENTRY'
@@ -25,7 +29,7 @@ type JoinStep =
 
 interface JoinEventDialogProps {
 	initialStep?: JoinStep;
-	initialEventData?: EventWithDetails;
+	initialEventData?: InitialEventData;
 }
 
 export function JoinEventForm({
@@ -35,7 +39,7 @@ export function JoinEventForm({
 	const [currentStep, setCurrentStep] = useState<JoinStep>(initialStep);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const [eventData, setEventData] = useState<EventWithDetails | undefined>(
+	const [eventData, setEventData] = useState<InitialEventData | undefined>(
 		initialEventData
 	);
 	const { toast } = useToast();

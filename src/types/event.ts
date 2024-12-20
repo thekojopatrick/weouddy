@@ -44,6 +44,7 @@ export interface JoinEventData {
   description: string;
   createdAt: string;
   updatedAt: string;
+  isDisabled: boolean;
   isPrivate: boolean; // This will determine the initial flow
   requiresApproval: boolean;
   accessType: "LINK_ONLY" | "PIN_REQUIRED";

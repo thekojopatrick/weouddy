@@ -79,7 +79,8 @@ export interface BaseEvent {
 export interface EventWithDetails extends BaseEvent {
   host: {
     name: string;
-    username: string;
+    username: string | null;
+    avatarUrl: string | null;
   };
   memberCount: number;
   attendeeCount: number;

@@ -4,10 +4,11 @@ import {
 } from "@/lib/location-mapping";
 import { useCallback, useMemo, useState } from "react";
 
-import { EventData } from "@/types/event";
+//import { EventData } from "@/types/event";
+import { EventWithDetails } from "@/types/prisma.types";
 
 // Define strict types for event and filtering
-export interface EventWithLocationDetails extends EventData {
+export interface EventWithLocationDetails extends EventWithDetails {
   locationDetails: CategorizedLocation;
 }
 
@@ -18,7 +19,7 @@ export interface FilteringResult<T> {
 }
 
 export function useOptimizedEventFiltering(
-  events: EventData[],
+  events: EventWithDetails[],
   initialCategory = "All",
 ) {
   const [isLoading, setIsLoading] = useState(false);

@@ -12,7 +12,9 @@ import {
 } from '@/components/ui/sheet';
 
 interface CustomSheetProps {
-	trigger: ReactNode;
+	isOpen: boolean;
+	onCloseAction: () => void;
+	trigger?: ReactNode;
 	title: string;
 	content: ReactNode;
 	stickyHeader?: boolean;
@@ -25,6 +27,8 @@ interface CustomSheetProps {
 }
 
 export default function CustomSheet({
+	isOpen,
+	onCloseAction,
 	trigger,
 	title,
 	content,
@@ -52,7 +56,7 @@ export default function CustomSheet({
 	};
 
 	return (
-		<Sheet>
+		<Sheet open={isOpen} onOpenChange={onCloseAction}>
 			<SheetTrigger asChild>{trigger}</SheetTrigger>
 			<SheetContent
 				side={side}

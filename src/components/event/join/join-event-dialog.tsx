@@ -1,18 +1,22 @@
 'use client';
 
+import { JoinEventForm, JoinStep } from './join-event-form';
+
 import Image from 'next/image';
 import { JoinEventData } from '@/types/event';
-import { JoinEventForm } from './join-event-form';
 import React from 'react';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 
 interface JoinEventDialogProps {
 	event?: JoinEventData;
+	initialStep?: JoinStep;
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
 }
 
 const JoinEventDialog = ({
+	event,
+	initialStep,
 	open,
 	onOpenChangeAction,
 }: JoinEventDialogProps) => {
@@ -30,7 +34,7 @@ const JoinEventDialog = ({
 					height={48}
 					className='h-12 w-12 mb-5'
 				/>
-				<JoinEventForm />
+				<JoinEventForm initialEventData={event} initialStep={initialStep} />
 			</div>
 		</ResponsiveDialog>
 	);
