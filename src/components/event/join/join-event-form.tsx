@@ -2,12 +2,15 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+	getEventJoinInfo,
+	joinEvent,
+} from '@/server/actions/event/join/mutation';
 
-import type { EventData } from '@/types/event';
+import { EventWithDetails } from '@/types/prisma.types';
 import { LinkPasteForm } from './forms/link-paste-form';
 import { PinEntryForm } from './forms/pin-entry-form';
 import { QRScannerForm } from './forms/qr-scanner-form';
-import { joinEvent } from '@/server/actions/event/join/mutation';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -21,43 +24,47 @@ type JoinStep =
 
 interface JoinEventDialogProps {
 	initialStep?: JoinStep;
-	event?: EventData;
+	initialEventData?: EventWithDetails;
 }
 
 export function JoinEventForm({
 	initialStep = 'LINK_PASTE',
-	event,
+	initialEventData,
 }: JoinEventDialogProps) {
 	const [currentStep, setCurrentStep] = useState<JoinStep>(initialStep);
 	const [isLoading, setIsLoading] = useState(false);
-	const [eventData, setEventData] = useState<EventData | undefined>(event);
+	const [eventData, setEventData] = useState<EventWithDetails | undefined>(
+		initialEventData
+	);
 	const { toast } = useToast();
 	const router = useRouter();
 
 	const handleLinkSubmit = async (link: string) => {
 		setIsLoading(true);
 		try {
-			// Extract event ID from the link
-			const eventId = extractEventIdFromLink(link);
-			if (!eventId) {
+			const identifier = extractIdentifierFromLink(link);
+			if (!identifier) {
 				throw new Error('Invalid event link');
 			}
 
-			// Fetch event data from API
-			const response = await fetch(`/api/events/${eventId}`);
-			if (!response.ok) {
-				throw new Error('Event not found');
+			// Fetch event info using server action
+			const eventInfo = await getEventJoinInfo(identifier);
+
+			if (!eventInfo.success || !eventInfo.event) {
+				throw new Error(eventInfo.error || 'Failed to fetch event');
 			}
 
-			const fetchedEvent = await response.json();
-			setEventData(fetchedEvent);
+			setEventData(eventInfo.event as never);
 
-			if (fetchedEvent.accessType === 'PIN_REQUIRED') {
+			if (eventInfo.event.accessType === 'PIN_REQUIRED') {
 				setCurrentStep('PIN_ENTRY');
 			} else {
 				// Direct join attempt
-				const result = await joinEvent({ eventId });
-				handleJoinResult(result);
+				const result = await joinEvent({
+					identifier,
+					identifierType: isCUID(identifier) ? 'id' : 'slug',
+				});
+				handleJoinResult(result as never);
 			}
 		} catch (error) {
 			toast({
@@ -79,11 +86,12 @@ export function JoinEventForm({
 			}
 
 			const result = await joinEvent({
-				eventId: eventData.id,
+				identifier: eventData.id,
+				identifierType: 'id',
 				pinCode: pin,
 			});
 
-			handleJoinResult(result);
+			handleJoinResult(result as never);
 		} catch (error) {
 			toast({
 				variant: 'destructive',
@@ -117,7 +125,7 @@ export function JoinEventForm({
 				});
 				// Redirect to event page after short delay
 				setTimeout(() => {
-					router.push(`/event/${result.eventSlug}`);
+					router.push(`/events/${result.eventSlug}`);
 				}, 1500);
 			}
 		} else {
@@ -196,24 +204,39 @@ export function JoinEventForm({
 
 // Utility function to extract event ID from link
 
-function extractEventIdFromLink(
-	link: string
-): { type: 'id' | 'slug'; value: string } | null {
+// Helper functions
+function isCUID(str: string): boolean {
+	return /^c[a-zA-Z0-9]{24}$/.test(str);
+}
+
+function extractIdentifierFromLink(link: string): string | null {
 	try {
 		const url = new URL(link);
 		const pathParts = url.pathname.split('/');
-		const lastPart = pathParts[pathParts.length - 1];
-
-		if (!lastPart) return null;
-
-		// Check if it's a CUID (assuming that's what you're using for IDs)
-		const isCUID = /^c[a-zA-Z0-9]{24}$/.test(lastPart);
-
-		return {
-			type: isCUID ? 'id' : 'slug',
-			value: lastPart,
-		};
+		return pathParts[pathParts.length - 1] || null;
 	} catch {
 		return null;
 	}
 }
+
+// function extractEventIdFromLink(
+// 	link: string
+// ): { type: 'id' | 'slug'; value: string } | null {
+// 	try {
+// 		const url = new URL(link);
+// 		const pathParts = url.pathname.split('/');
+// 		const lastPart = pathParts[pathParts.length - 1];
+
+// 		if (!lastPart) return null;
+
+// 		// Check if it's a CUID (assuming that's what you're using for IDs)
+// 		const isCUID = /^c[a-zA-Z0-9]{24}$/.test(lastPart);
+
+// 		return {
+// 			type: isCUID ? 'id' : 'slug',
+// 			value: lastPart,
+// 		};
+// 	} catch {
+// 		return null;
+// 	}
+// }
