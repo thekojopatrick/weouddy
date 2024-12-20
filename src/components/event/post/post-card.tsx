@@ -1,6 +1,12 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+	RiChat1Fill,
+	RiChat1Line,
+	RiHeart3Fill,
+	RiHeart3Line,
+} from '@remixicon/react';
 
 import { Badge } from '@/components/ui/badge';
 import { PostMediaSlider } from '@/components/post-media-slider';
@@ -43,6 +49,16 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 					isHovered || window.innerWidth < 768 ? 'opacity-100' : 'opacity-0'
 				)}
 			>
+				<div className='flex items-center gap-1 mt-2'>
+					<div className='flex items-center gap-1 text-white'>
+						<RiHeart3Fill className='size-4' />
+						<span>{post._count?.likes}</span>
+					</div>
+					<div className='flex items-center gap-1 text-white'>
+						<RiChat1Fill className='size-4' />
+						<span>{post._count?.comments}</span>
+					</div>
+				</div>
 				<div className='flex items-center gap-2 text-white'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={post.user.avatarUrl || undefined} />
@@ -55,17 +71,22 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 
 				{post.caption && <p className='text-white mt-2'>{post.caption}</p>}
 
-				<div className='flex items-center gap-4 mt-2'>
-					<div className='flex items-center gap-1 text-white'>
-						<span>{post._count?.likes}</span>
-						<span>likes</span>
-					</div>
-					<div className='flex items-center gap-1 text-white'>
-						<span>{post._count?.comments}</span>
-						<span>comments</span>
-					</div>
-				</div>
 				<p className='text-sm text-muted-foreground'>{time}</p>
+
+				<div className='absolute flex flex-col gap-3 bottom-12 right-2'>
+					<button
+						onClick={() => console.log('like')}
+						className={`bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50 ${isHovered ? 'text-red-500' : ''}`}
+					>
+						<RiHeart3Line className='h-5 w-5' />
+					</button>
+					<button
+						onClick={() => console.log('comment')}
+						className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+					>
+						<RiChat1Line className='size-5' />
+					</button>
+				</div>
 			</div>
 		</div>
 	);
