@@ -1,13 +1,13 @@
 'use client';
 
-import { Calendar, MapPin, MessageCircle, Plus, Users } from 'lucide-react';
+import { CalendarDays, MapPin, MessageCircle, Plus, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { CreatePostModal } from '@/components/create-post-modal';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventWithFullData } from '@/types/event';
 import { User } from '@supabase/supabase-js';
-import { formatDate } from 'date-fns';
+import { formatEventDateTime } from '@/lib/formatters';
 import { useState } from 'react';
 
 export default function EventRoom({
@@ -19,6 +19,8 @@ export default function EventRoom({
 }) {
 	const [open, setOpen] = useState(false);
 
+	const { date, time } = formatEventDateTime(event.dateTime as never);
+
 	return (
 		<div className='flex min-h-screen flex-col'>
 			<main className='flex-1'>
@@ -28,9 +30,9 @@ export default function EventRoom({
 						<h1 className='text-2xl font-bold'>{event.name}</h1>
 						<div className='flex flex-wrap items-center gap-6 mt-4 text-sm'>
 							<div className='flex items-center gap-2'>
-								<Calendar className='h-4 w-4' />
-								<span>{formatDate(event.dateTime, 'dd/mm/yyyy')}</span>
-								<span className='text-muted-foreground'>9:00 PM</span>
+								<CalendarDays className='h-4 w-4' />
+								<span>{date}</span>
+								<span className='text-muted-foreground'>{time}</span>
 							</div>
 							<div className='flex items-center gap-2'>
 								<MapPin className='h-4 w-4' />
