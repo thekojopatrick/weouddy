@@ -37,7 +37,7 @@ export async function joinEvent(input: JoinEventInput) {
       throw new Error("Event not found");
     }
 
-    // Check if user is already an attendee
+    // Check if user is already an attendee or member
     const existingAttendee = await prisma.attendee.findFirst({
       where: {
         userId: session.user.id,
@@ -45,8 +45,27 @@ export async function joinEvent(input: JoinEventInput) {
       },
     });
 
-    if (existingAttendee) {
-      throw new Error("Already joined this event");
+    const isMember = event.members.some((member) =>
+      member.id === session.user.id
+    );
+
+    // If user is already an approved attendee or member, give them direct access
+    if (existingAttendee?.status === "APPROVED" || isMember) {
+      return {
+        success: true,
+        status: "JOINED",
+        eventSlug: event.slug,
+        message: "Welcome back to the event!",
+      };
+    }
+
+    // If there's a pending request, inform the user
+    if (existingAttendee?.status === "PENDING") {
+      return {
+        success: true,
+        status: "PENDING_APPROVAL",
+        message: "Your join request is still pending approval",
+      };
     }
 
     // Handle PIN validation for PIN_REQUIRED events
@@ -79,7 +98,11 @@ export async function joinEvent(input: JoinEventInput) {
         },
       });
 
-      return { success: true, status: "PENDING_APPROVAL" };
+      return {
+        success: true,
+        status: "PENDING_APPROVAL",
+        message: "Your request to join has been sent",
+      };
     }
 
     // Direct join for events without approval requirement
@@ -113,7 +136,12 @@ export async function joinEvent(input: JoinEventInput) {
     // Revalidate the event page
     revalidatePath(`/event/${event.slug}`);
 
-    return { success: true, status: "JOINED", eventSlug: event.slug };
+    return {
+      success: true,
+      status: "JOINED",
+      eventSlug: event.slug,
+      message: "Successfully joined the event",
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { success: false, error: "Invalid input data" };

@@ -109,19 +109,20 @@ export function JoinEventForm({
 		status?: string;
 		error?: string;
 		eventSlug?: string;
+		message?: string;
 	}) => {
 		if (result.success) {
 			if (result.status === 'PENDING_APPROVAL') {
 				setCurrentStep('WAITING_APPROVAL');
 				toast({
-					title: 'Request Sent',
-					description: 'Waiting for host approval',
+					title: 'Request Status',
+					description: result.message || 'Waiting for host approval',
 				});
 			} else if (result.status === 'JOINED' && result.eventSlug) {
 				setCurrentStep('SUCCESS');
 				toast({
 					title: 'Success',
-					description: 'Successfully joined the event',
+					description: result.message || 'Successfully joined the event',
 				});
 				// Redirect to event page after short delay
 				setTimeout(() => {
