@@ -20,32 +20,45 @@ type InitialEventData = Pick<
 	EventWithDetails,
 	'id' | 'slug' | 'isPrivate' | 'isDisabled' | 'requiresApproval'
 >;
+
 export type JoinStep =
 	| 'LINK_PASTE'
 	| 'QR_SCAN'
 	| 'PIN_ENTRY'
 	| 'WAITING_APPROVAL'
-	| 'SUCCESS';
+	| 'REDIRECTING';
 
-interface JoinEventDialogProps {
+interface JoinEventFormProps {
 	initialStep?: JoinStep;
 	initialEventData?: InitialEventData;
+	onCloseDialog?: () => void;
 }
 
 export function JoinEventForm({
 	initialStep = 'LINK_PASTE',
 	initialEventData,
-}: JoinEventDialogProps) {
+	onCloseDialog,
+}: JoinEventFormProps) {
 	const [currentStep, setCurrentStep] = useState<JoinStep>(initialStep);
 	const [isLoading, setIsLoading] = useState(false);
-
 	const [eventData, setEventData] = useState<InitialEventData | undefined>(
 		initialEventData
 	);
 	const { toast } = useToast();
 	const router = useRouter();
 
+	const handleRedirectToEvent = (slug: string) => {
+		if (onCloseDialog) {
+			onCloseDialog();
+		}
+		router.push(`/events/${slug}`);
+
+		console.log({ slug });
+	};
+
 	const handleLinkSubmit = async (link: string) => {
+		console.log({ link });
+
 		setIsLoading(true);
 		try {
 			const identifier = extractIdentifierFromLink(link);
@@ -61,6 +74,18 @@ export function JoinEventForm({
 			}
 
 			setEventData(eventInfo.event as never);
+
+			// If user is already a member, redirect directly
+			if (eventInfo.userStatus === 'JOINED') {
+				handleRedirectToEvent(eventInfo.event.slug!);
+				return;
+			}
+
+			// If there's a pending request, show waiting screen
+			if (eventInfo.userStatus === 'PENDING') {
+				setCurrentStep('WAITING_APPROVAL');
+				return;
+			}
 
 			if (eventInfo.event.accessType === 'PIN_REQUIRED') {
 				setCurrentStep('PIN_ENTRY');
@@ -125,16 +150,17 @@ export function JoinEventForm({
 					description: result.message || 'Waiting for host approval',
 				});
 			} else if (result.status === 'JOINED' && result.eventSlug) {
-				setCurrentStep('SUCCESS');
+				setCurrentStep('REDIRECTING');
 				toast({
 					title: 'Success',
 					description: result.message || 'Successfully joined the event',
 				});
-				// Redirect to event page after short delay
-				setTimeout(() => {
-					router.push(`/events/${result.eventSlug}`);
-				}, 1500);
+				handleRedirectToEvent(result.eventSlug);
+			} else if (result.status === 'NOT_JOINED' && result.eventSlug) {
+				//Let handle the case of a public event and a user tries to join but their current status is not joined yet. let join them to the event and redirect them to the event page
 			}
+
+			console.log({ result });
 		} else {
 			toast({
 				variant: 'destructive',
@@ -148,7 +174,6 @@ export function JoinEventForm({
 		handleLinkSubmit(result);
 	};
 
-	// Rest of the component remains the same...
 	const renderContent = () => {
 		switch (currentStep) {
 			case 'LINK_PASTE':
@@ -186,11 +211,11 @@ export function JoinEventForm({
 					</Alert>
 				);
 
-			case 'SUCCESS':
+			case 'REDIRECTING':
 				return (
 					<Alert>
 						<AlertDescription>
-							Successfully joined the event! Redirecting to event event...
+							Successfully joined the event! Redirecting...
 						</AlertDescription>
 					</Alert>
 				);
@@ -201,7 +226,13 @@ export function JoinEventForm({
 		<>
 			<DialogHeader>
 				<DialogTitle>
-					{currentStep === 'PIN_ENTRY' ? 'Enter Event PIN' : 'Join Event'}
+					{currentStep === 'PIN_ENTRY'
+						? 'Enter Event PIN'
+						: currentStep === 'WAITING_APPROVAL'
+							? 'Request Pending'
+							: currentStep === 'REDIRECTING'
+								? 'Success!'
+								: 'Join Event'}
 				</DialogTitle>
 			</DialogHeader>
 			{renderContent()}

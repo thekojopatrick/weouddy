@@ -28,7 +28,7 @@ export function LinkPasteForm({
 					<Input
 						id='event-link'
 						type='text'
-						placeholder='weouddy.com/event/...'
+						placeholder='weouddy.com/events/...'
 						value={link}
 						onChange={(e) => setLink(e.target.value)}
 						className='pr-24'

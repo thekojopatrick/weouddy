@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 interface EventCardProps {
@@ -65,6 +66,7 @@ export function EventCard({
 	const [userStatus, setUserStatus] = useState<
 		'NOT_JOINED' | 'PENDING' | 'JOINED'
 	>('NOT_JOINED');
+	const router = useRouter();
 	const { toast } = useToast();
 	const [city, country] = location.split(', ');
 
@@ -113,11 +115,21 @@ export function EventCard({
 		});
 	};
 
+	const handleCardClick = () => {
+		if (userStatus === 'JOINED') {
+			// Directly navigate to event page if user is already a member
+			router.push(`/events/${slug}`);
+		} else {
+			// Show modal for join flow if user hasn't joined
+			setIsModalOpen(true);
+		}
+	};
+
 	return (
 		<div>
 			<Card
 				className='group relative overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow'
-				onClick={() => setIsModalOpen(true)}
+				onClick={handleCardClick}
 			>
 				<CardHeader className='p-0'>
 					<div className='relative aspect-[4/3]'>
@@ -169,39 +181,36 @@ export function EventCard({
 					</div>
 				</CardFooter>
 			</Card>
-
-			<EventModal
-				isOpen={isModalOpen}
-				onCloseAction={() => setIsModalOpen(false)}
-				event={{
-					id,
-					name,
-					type,
-					coverImage: coverImage ?? '/place-holder.svg',
-					host: {
-						name: host.name,
-						username: host.username ?? '',
-						avatarUrl: host.avatarUrl ?? '',
-					},
-					date,
-					time,
-					location: {
-						name: location,
-						city: city || 'Unknown',
-						country: country || 'Unknown',
-					},
-					isPrivate,
-					members,
-					description,
-					additionalInfo,
-					slug,
-					memberCount,
-					attendeeCount,
-					isDisabled,
-					requiresApproval,
-				}}
-				userStatus={userStatus}
-			/>
+			{userStatus !== 'JOINED' && (
+				<EventModal
+					isOpen={isModalOpen}
+					onCloseAction={() => setIsModalOpen(false)}
+					event={{
+						id,
+						name,
+						type,
+						coverImage: coverImage ?? '/place-holder.svg',
+						host,
+						date,
+						time,
+						location: {
+							name: location,
+							city: city || 'Unknown',
+							country: country || 'Unknown',
+						},
+						isPrivate,
+						members,
+						description,
+						additionalInfo,
+						slug,
+						memberCount,
+						attendeeCount,
+						isDisabled,
+						requiresApproval,
+					}}
+					userStatus={userStatus}
+				/>
+			)}
 		</div>
 	);
 }

@@ -57,11 +57,11 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 
 				<div className='flex items-center gap-4 mt-2'>
 					<div className='flex items-center gap-1 text-white'>
-						<span>{post._count.likes}</span>
+						<span>{post._count?.likes}</span>
 						<span>likes</span>
 					</div>
 					<div className='flex items-center gap-1 text-white'>
-						<span>{post._count.comments}</span>
+						<span>{post._count?.comments}</span>
 						<span>comments</span>
 					</div>
 				</div>

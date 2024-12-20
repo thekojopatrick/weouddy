@@ -20,15 +20,22 @@ const JoinEventDialog = ({
 	open,
 	onOpenChangeAction,
 }: JoinEventDialogProps) => {
-	const getInitialStep = () => {
-		if (event?.isPrivate && event.requiresApproval) {
+	const getInitialStep = (): JoinStep => {
+		if (!event) {
+			return initialStep ?? 'LINK_PASTE';
+		}
+
+		if (event.isPrivate && event.requiresApproval) {
 			return 'PIN_ENTRY';
 		}
-		if (!event?.isPrivate && !event?.requiresApproval) {
-			return 'SUCCESS'; // Direct join for public events
+
+		if (!event.isPrivate && !event.requiresApproval) {
+			return 'REDIRECTING'; // Default step for public events
 		}
-		return initialStep;
+
+		return initialStep ?? 'LINK_PASTE';
 	};
+
 	return (
 		<ResponsiveDialog
 			open={open}

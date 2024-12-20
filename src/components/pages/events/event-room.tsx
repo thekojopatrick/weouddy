@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { CreatePostModal } from '@/components/create-post-modal';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventWithFullData } from '@/types/event';
-import { SiteHeader } from '@/components/site-header';
 import { User } from '@supabase/supabase-js';
 import { formatDate } from 'date-fns';
 import { useState } from 'react';
@@ -22,9 +21,8 @@ export default function EventRoom({
 
 	return (
 		<div className='flex min-h-screen flex-col'>
-			<SiteHeader user={user} />
 			<main className='flex-1'>
-				<div className='max-w-7xl px-6 py-6'>
+				<div className='max-w-7xl px-6 py-6 mx-auto'>
 					{/* Event Header */}
 					<div className='mb-8'>
 						<h1 className='text-2xl font-bold'>{event.name}</h1>

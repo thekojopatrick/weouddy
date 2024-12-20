@@ -8,11 +8,17 @@ export async function GET(
 ) {
   try {
     const session = await getSession();
+
+    const { eventId } = await params;
+
     if (!session?.user) {
       return NextResponse.json({ status: "NOT_JOINED" });
     }
 
-    const status = await getUserEventStatus(params.eventId, session.user.id);
+    const status = await getUserEventStatus(eventId, session.user.id);
+
+    console.log({ status });
+
     return NextResponse.json({ status });
   } catch (error) {
     console.error(error);

@@ -159,8 +159,10 @@ function isCUID(str: string): boolean {
 }
 
 // Function to get event data before joining
+// Update the getEventJoinInfo function in mutation.ts
 export async function getEventJoinInfo(identifier: string) {
   try {
+    const session = await getSession();
     const identifierType = isCUID(identifier) ? "id" : "slug";
     const event = identifierType === "id"
       ? await getEventById(identifier)
@@ -168,6 +170,30 @@ export async function getEventJoinInfo(identifier: string) {
 
     if (!event) {
       throw new Error("Event not found");
+    }
+
+    let userStatus: "NOT_JOINED" | "PENDING" | "JOINED" = "NOT_JOINED";
+
+    if (session?.user?.id) {
+      // Check if user is already a member
+      const isMember = event.members.some((member) =>
+        member.id === session.user.id
+      );
+      if (isMember) {
+        userStatus = "JOINED";
+      } else {
+        // Check for pending request
+        const pendingRequest = await prisma.attendee.findFirst({
+          where: {
+            eventId: event.id,
+            userId: session.user.id,
+            status: "PENDING",
+          },
+        });
+        if (pendingRequest) {
+          userStatus = "PENDING";
+        }
+      }
     }
 
     return {
@@ -178,12 +204,14 @@ export async function getEventJoinInfo(identifier: string) {
         description: event.description,
         accessType: event.accessType,
         requiresApproval: event.requiresApproval,
+        slug: event.slug,
         host: {
           name: event.host.name,
           username: event.host.username,
           avatarUrl: event.host.avatarUrl,
         },
       },
+      userStatus,
     };
   } catch (error) {
     return {
