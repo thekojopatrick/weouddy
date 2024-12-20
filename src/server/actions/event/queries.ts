@@ -36,6 +36,12 @@ export async function getEventBySlug(slug: string) {
           user: true,
           comments: true,
           likes: true,
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+            },
+          },
         },
       },
     },
