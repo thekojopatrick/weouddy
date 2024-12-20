@@ -69,19 +69,11 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 			>
 				<div className='flex items-center gap-1 mt-2'>
 					<div className='flex items-center gap-1 text-white'>
-						{isLiked ? (
-							<RiHeart3Fill className='size-4' />
-						) : (
-							<RiHeart3Line className='size-4' />
-						)}
+						<RiHeart3Fill className='size-4' />
 						<span>{likes}</span>
 					</div>
 					<div className='flex items-center gap-1 text-white'>
-						{isCommentsOpen ? (
-							<RiChat1Fill className='size-4' />
-						) : (
-							<RiChat1Line className='size-4' />
-						)}
+						<RiChat1Fill className='size-4' />
 						<span>{commentCount}</span>
 					</div>
 				</div>
