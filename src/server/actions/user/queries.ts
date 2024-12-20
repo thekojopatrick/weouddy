@@ -253,3 +253,29 @@ export async function fetchFollowing(
     skip: (page - 1) * limit,
   }) as Promise<Follow[]>;
 }
+
+export async function getUserEventStatus(eventId: string, userId: string) {
+  const [membership, pendingRequest] = await Promise.all([
+    prisma.event.findFirst({
+      where: {
+        id: eventId,
+        members: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    }),
+    prisma.attendee.findFirst({
+      where: {
+        eventId,
+        userId,
+        status: "PENDING",
+      },
+    }),
+  ]);
+
+  if (membership) return "JOINED";
+  if (pendingRequest) return "PENDING";
+  return "NOT_JOINED";
+}

@@ -1,5 +1,3 @@
-'use client';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Share2, Users } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
@@ -43,9 +41,15 @@ interface EventModalProps {
 		memberCount: number;
 		attendeeCount: number;
 	};
+	userStatus?: 'NOT_JOINED' | 'PENDING' | 'JOINED';
 }
 
-export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
+export function EventModal({
+	isOpen,
+	onCloseAction,
+	event,
+	userStatus = 'NOT_JOINED',
+}: EventModalProps) {
 	const [isMobile, setIsMobile] = useState(false);
 	const [showJoinDialog, setShowJoinDialog] = useState(false);
 	const { toast } = useToast();
@@ -86,6 +90,40 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 			description: 'Event link has been copied to clipboard.',
 		});
 	};
+
+	const getJoinButtonConfig = () => {
+		if (userStatus === 'JOINED') {
+			return {
+				text: 'Already Joined',
+				disabled: true,
+				action: () => {},
+			};
+		}
+
+		if (userStatus === 'PENDING') {
+			return {
+				text: 'Waiting for Approval',
+				disabled: true,
+				action: () => {},
+			};
+		}
+
+		if (event.isPrivate && event.requiresApproval) {
+			return {
+				text: 'Request to Join',
+				disabled: false,
+				action: () => setShowJoinDialog(true),
+			};
+		}
+
+		return {
+			text: 'Join Room',
+			disabled: false,
+			action: () => setShowJoinDialog(true),
+		};
+	};
+
+	const buttonConfig = getJoinButtonConfig();
 
 	const renderContent = (
 		<div className='flex flex-col space-y-6'>
@@ -166,10 +204,18 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 	const renderFooter = (
 		<div className='w-full space-y-4'>
 			<p className='text-sm text-center text-muted-foreground'>
-				Join this event to connect with other attendees and get updates.
+				{userStatus === 'PENDING'
+					? 'Your request is pending approval from the host.'
+					: userStatus === 'JOINED'
+						? 'You are a member of this event.'
+						: 'Join this event to connect with other attendees and get updates.'}
 			</p>
-			<Button className='w-full' onClick={() => setShowJoinDialog(true)}>
-				Request to Join
+			<Button
+				className='w-full'
+				onClick={buttonConfig.action}
+				disabled={buttonConfig.disabled}
+			>
+				{buttonConfig.text}
 			</Button>
 		</div>
 	);
@@ -193,7 +239,7 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 				onOpenChangeAction={setShowJoinDialog}
 				event={event as never}
 				initialStep={
-					event.isPrivate && event.requiresApproval ? 'PIN_ENTRY' : 'SUCCESS'
+					event.isPrivate && event.requiresApproval ? 'PIN_ENTRY' : 'LINK_PASTE'
 				}
 			/>
 		</Fragment>
