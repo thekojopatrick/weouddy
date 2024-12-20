@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { EventCardShimmer } from './shimmer-loading';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
+import { getNameInitials } from '@/lib/utils';
 import { useDebounce } from '@/hooks/useDebounce'; // Path to your useDebounce hook
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -28,6 +29,7 @@ interface EventCardProps {
 	isDisabled: boolean;
 	requiresApproval: boolean;
 	host: {
+		id: string;
 		name: string;
 		username: string | null;
 		avatarUrl: string | null;
@@ -167,25 +169,39 @@ export function EventCard({
 						<Badge variant='secondary' className='capitalize'>
 							{type}
 						</Badge>
-						<Badge variant='outline'>{category}</Badge>
+						<Badge variant='outline' className='hidden'>
+							{category}
+						</Badge>
 					</div>
 				</CardContent>
 				<CardFooter className='p-4 pt-0'>
 					<div className='flex items-center space-x-4 text-sm text-muted-foreground'>
-						<div className='flex items-center space-x-2'>
-							<Avatar className='h-8 w-8'>
-								<AvatarImage src={host.avatarUrl ?? undefined} />
-								<AvatarFallback>{host.name[0]}</AvatarFallback>
-							</Avatar>
-							<span>{host.name}</span>
-						</div>
-						<div className='flex items-center space-x-2'>
-							<MapPin className='h-4 w-4' />
-							<span>{location}</span>
-						</div>
-						<div className='flex items-center space-x-2'>
-							<Users className='h-4 w-4' />
-							<span>{members} members</span>
+						<div className='row flex gap-2'>
+							<div className='col-auto'>
+								<Avatar className='h-8 w-8'>
+									<AvatarImage
+										src={
+											host.avatarUrl ??
+											`https://avatar.vercel.sh/${host.id}.svg?text=${getNameInitials(host.name)}` ??
+											undefined
+										}
+									/>
+									<AvatarFallback>{host.name[0]}</AvatarFallback>
+								</Avatar>
+							</div>
+							<div className='col-auto'>
+								<div className='font-medium text-zinc-950'>{host.name}</div>
+								<div className='row flex items-center gap-2 -mx-1'>
+									<div className='flex items-center space-x-1'>
+										<MapPin className='size-4' />
+										<span className='truncate max-w-20'>{location}</span>
+									</div>
+									<div className='flex items-center space-x-1'>
+										<Users className='size-4' />
+										<span>{members}</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</CardFooter>

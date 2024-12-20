@@ -4,6 +4,7 @@ import { LoginFormValues, SignUpFormValues } from '@/types/validation';
 
 import { PrismaClient } from '@prisma/client';
 import { createClient } from '@/lib/supabase/server';
+import { getNameInitials } from '@/lib/utils';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
@@ -30,20 +31,30 @@ export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
 
 	// Optional: Ensure user exists in Prisma database
 	if (authData.user) {
-		await prisma.user.upsert({
-			where: { email: authData.user.email || '' },
-			update: {
-				name: authData.user.user_metadata.full_name ?? '',
-				avatarUrl: authData.user.user_metadata.avatar_url ?? '',
-			},
-			create: {
+		const checkForExistingUser = await prisma.user.findUnique({
+			where: {
 				id: authData.user.id,
-				email: authData.user.email || '',
-				name: authData.user.user_metadata.full_name ?? '',
-				username: authData.user.email?.split('@')[0] ?? '',
-				isAnonymous: false,
+			},
+			select: {
+				id: true,
 			},
 		});
+
+		if (!checkForExistingUser) {
+			await prisma.user.create({
+				data: {
+					id: authData.user.id,
+					email: authData.user.email || '',
+					name: authData.user.user_metadata.full_name ?? '',
+					username: authData.user.email?.split('@')[0] ?? '',
+					avatarUrl:
+						authData.user.user_metadata.avatar_url ??
+						`https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
+						'',
+					isAnonymous: false,
+				},
+			});
+		}
 	}
 
 	revalidatePath('/', 'layout');
@@ -66,15 +77,30 @@ export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
 
 	// Create user in Prisma database after successful Supabase signup
 	if (authData.user) {
-		await prisma.user.create({
-			data: {
+		const checkForExistingUser = await prisma.user.findUnique({
+			where: {
 				id: authData.user.id,
-				email: authData.user.email || '',
-				name: authData.user.user_metadata.full_name ?? '',
-				username: authData.user.email?.split('@')[0] ?? '',
-				isAnonymous: false,
+			},
+			select: {
+				id: true,
 			},
 		});
+
+		if (!checkForExistingUser) {
+			await prisma.user.create({
+				data: {
+					id: authData.user.id,
+					email: authData.user.email || '',
+					name: authData.user.user_metadata.full_name ?? '',
+					username: authData.user.email?.split('@')[0] ?? '',
+					avatarUrl:
+						authData.user.user_metadata.avatar_url ??
+						`https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
+						'',
+					isAnonymous: false,
+				},
+			});
+		}
 	}
 
 	revalidatePath('/', 'layout');
