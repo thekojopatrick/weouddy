@@ -8,12 +8,12 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import { MapPin, Share2, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface EventCardProps {
@@ -62,8 +62,27 @@ export function EventCard({
 	requiresApproval,
 }: EventCardProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [userStatus, setUserStatus] = useState<
+		'NOT_JOINED' | 'PENDING' | 'JOINED'
+	>('NOT_JOINED');
 	const { toast } = useToast();
 	const [city, country] = location.split(', ');
+
+	useEffect(() => {
+		const fetchUserStatus = async () => {
+			try {
+				const response = await fetch(`/api/events/${id}/status`);
+				const data = await response.json();
+				setUserStatus(data.status);
+			} catch (error) {
+				console.error('Failed to fetch user status:', error);
+			}
+		};
+
+		if (isModalOpen) {
+			fetchUserStatus();
+		}
+	}, [id, isModalOpen]);
 
 	const handleShare = async (e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -181,6 +200,7 @@ export function EventCard({
 					isDisabled,
 					requiresApproval,
 				}}
+				userStatus={userStatus}
 			/>
 		</div>
 	);

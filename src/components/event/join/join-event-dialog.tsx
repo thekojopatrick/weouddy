@@ -20,6 +20,15 @@ const JoinEventDialog = ({
 	open,
 	onOpenChangeAction,
 }: JoinEventDialogProps) => {
+	const getInitialStep = () => {
+		if (event?.isPrivate && event.requiresApproval) {
+			return 'PIN_ENTRY';
+		}
+		if (!event?.isPrivate && !event?.requiresApproval) {
+			return 'SUCCESS'; // Direct join for public events
+		}
+		return initialStep;
+	};
 	return (
 		<ResponsiveDialog
 			open={open}
@@ -34,7 +43,10 @@ const JoinEventDialog = ({
 					height={48}
 					className='h-12 w-12 mb-5'
 				/>
-				<JoinEventForm initialEventData={event} initialStep={initialStep} />
+				<JoinEventForm
+					initialEventData={event}
+					initialStep={getInitialStep()}
+				/>
 			</div>
 		</ResponsiveDialog>
 	);
