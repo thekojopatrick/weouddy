@@ -30,7 +30,11 @@ export function SiteHeader({ user }: { user: User | null }) {
 					<span className='text-xl font-bold sr-only'>WeOuddy</span>
 				</Link>
 				<nav className='hidden md:flex items-center space-x-6 text-sm font-medium'>
-					<Link href='/' className='transition-colors hover:text-foreground/80'>
+					<Link
+						href={user ? '/discover' : '/'}
+						className='transition-colors hover:text-foreground/80'
+						prefetch
+					>
 						Home
 					</Link>
 					<Link
