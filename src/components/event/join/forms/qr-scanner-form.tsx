@@ -18,15 +18,6 @@ export function QRScannerForm({
 }: QRScannerFormProps) {
 	const [isScanning, setIsScanning] = useState(false);
 	const { toast } = useToast();
-	// Simulated QR scanning - in real app, use a proper QR scanner library
-	// const startScanning = () => {
-	// 	setIsScanning(true);
-	// 	// Simulate successful scan after 2 seconds
-	// 	setTimeout(() => {
-	// 		setIsScanning(false);
-	// 		onScanCompleteAction('weouddy.com/event/birthday_party');
-	// 	}, 2000);
-	// };
 
 	const startScanning = async () => {
 		try {
