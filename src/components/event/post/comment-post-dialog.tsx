@@ -113,20 +113,6 @@ export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
 		</div>
 	);
 
-	const CommentForm = () => (
-		<form onSubmit={onSubmit} className='flex gap-2 py-4'>
-			<Input
-				placeholder='Add a comment...'
-				value={comment}
-				onChange={(e) => setComment(e.target.value)}
-				disabled={isLoading}
-			/>
-			<Button type='submit' size='icon' disabled={isLoading}>
-				<Send className='h-4 w-4' />
-			</Button>
-		</form>
-	);
-
 	if (isDesktop) {
 		return (
 			<Dialog open={open} onOpenChange={onOpenChangeAction}>
@@ -137,7 +123,18 @@ export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
 					<div className='h-[400px] overflow-y-auto px-1'>
 						<CommentList />
 					</div>
-					<CommentForm />
+
+					<form onSubmit={onSubmit} className='flex gap-2 py-4'>
+						<Input
+							placeholder='Add a comment...'
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							disabled={isLoading}
+						/>
+						<Button type='submit' size='icon' disabled={isLoading}>
+							<Send className='h-4 w-4' />
+						</Button>
+					</form>
 				</DialogContent>
 			</Dialog>
 		);
@@ -153,7 +150,17 @@ export function Comments({ postId, open, onOpenChangeAction }: CommentsProps) {
 					<div className='h-[50vh] overflow-y-auto px-1'>
 						<CommentList />
 					</div>
-					<CommentForm />
+					<form onSubmit={onSubmit} className='flex gap-2 py-4'>
+						<Input
+							placeholder='Add a comment...'
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							disabled={isLoading}
+						/>
+						<Button type='submit' size='icon' disabled={isLoading}>
+							<Send className='h-4 w-4' />
+						</Button>
+					</form>
 				</div>
 			</DrawerContent>
 		</Drawer>
