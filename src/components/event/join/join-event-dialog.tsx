@@ -65,6 +65,7 @@ const JoinEventDialog = ({
 		if (open && event && !event.isPrivate && !event.requiresApproval) {
 			handleAutoJoin();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open, event]);
 
 	const getInitialStep = (): JoinStep => {
