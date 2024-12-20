@@ -10,9 +10,11 @@ import {
 import { cn, getNameInitials } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
+import { Comments } from './comment-post-dialog';
 import { PostMediaSlider } from '@/components/post-media-slider';
 import { PostWithDetails } from '@/types/prisma.types';
 import { formatEventDateTime } from '@/lib/formatters';
+import { usePostInteractions } from '@/hooks/use-post-interaction';
 import { useState } from 'react';
 
 interface EventPostCardProps {
@@ -22,8 +24,20 @@ interface EventPostCardProps {
 
 export function EventPostCard({ post, userId }: EventPostCardProps) {
 	const [isHovered, setIsHovered] = useState(false);
-
 	const { time } = formatEventDateTime(post.createdAt as never);
+
+	const {
+		likes,
+		comments,
+		isLiked,
+		isCommentsOpen,
+		setIsCommentsOpen,
+		handleLike,
+	} = usePostInteractions({
+		postId: post.id,
+		initialLikes: post._count.likes,
+		initialComments: post._count.comments,
+	});
 
 	return (
 		<div
@@ -51,14 +65,23 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 			>
 				<div className='flex items-center gap-1 mt-2'>
 					<div className='flex items-center gap-1 text-white'>
-						<RiHeart3Fill className='size-4' />
-						<span>{post._count?.likes}</span>
+						{isLiked ? (
+							<RiHeart3Fill className='size-4' />
+						) : (
+							<RiHeart3Line className='size-4' />
+						)}
+						<span>{likes}</span>
 					</div>
 					<div className='flex items-center gap-1 text-white'>
-						<RiChat1Fill className='size-4' />
-						<span>{post._count?.comments}</span>
+						{isCommentsOpen ? (
+							<RiChat1Fill className='size-4' />
+						) : (
+							<RiChat1Line className='size-4' />
+						)}
+						<span>{comments}</span>
 					</div>
 				</div>
+
 				<div className='flex items-start gap-2 text-white'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={post.user.avatarUrl || undefined} />
@@ -80,19 +103,32 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 
 				<div className='absolute flex flex-col gap-3 bottom-12 right-2'>
 					<button
-						onClick={() => console.log('like')}
-						className={`bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50 ${isHovered ? 'text-red-500' : ''}`}
+						onClick={handleLike}
+						className={cn(
+							'bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50',
+							isLiked && 'text-red-500'
+						)}
 					>
-						<RiHeart3Line className='h-5 w-5' />
+						{isLiked ? (
+							<RiHeart3Fill className='h-5 w-5' />
+						) : (
+							<RiHeart3Line className='h-5 w-5' />
+						)}
 					</button>
 					<button
-						onClick={() => console.log('comment')}
+						onClick={() => setIsCommentsOpen(true)}
 						className='bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
 					>
 						<RiChat1Line className='size-5' />
 					</button>
 				</div>
 			</div>
+
+			<Comments
+				postId={post.id}
+				open={isCommentsOpen}
+				onOpenChangeAction={setIsCommentsOpen}
+			/>
 		</div>
 	);
 }
