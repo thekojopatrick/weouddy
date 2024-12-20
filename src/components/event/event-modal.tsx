@@ -192,7 +192,9 @@ export function EventModal({ isOpen, onCloseAction, event }: EventModalProps) {
 				open={showJoinDialog}
 				onOpenChangeAction={setShowJoinDialog}
 				event={event as never}
-				initialStep='PIN_ENTRY'
+				initialStep={
+					event.isPrivate && event.requiresApproval ? 'PIN_ENTRY' : 'SUCCESS'
+				}
 			/>
 		</Fragment>
 	);
