@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { EventCardShimmer } from './shimmer-loading';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -66,6 +67,7 @@ export function EventCard({
 	const [userStatus, setUserStatus] = useState<
 		'NOT_JOINED' | 'PENDING' | 'JOINED'
 	>('NOT_JOINED');
+	//const [isCheckingStatus, setIsCheckingStatus] = useState(false);
 	const router = useRouter();
 	const { toast } = useToast();
 	const [city, country] = location.split(', ');
@@ -81,10 +83,8 @@ export function EventCard({
 			}
 		};
 
-		if (isModalOpen) {
-			fetchUserStatus();
-		}
-	}, [id, isModalOpen]);
+		fetchUserStatus();
+	}, [id]);
 
 	const handleShare = async (e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -117,13 +117,17 @@ export function EventCard({
 
 	const handleCardClick = () => {
 		if (userStatus === 'JOINED') {
-			// Directly navigate to event page if user is already a member
+			// Navigate to the event page
 			router.push(`/events/${slug}`);
 		} else {
-			// Show modal for join flow if user hasn't joined
+			// Open modal for join flow
 			setIsModalOpen(true);
 		}
 	};
+
+	if (!userStatus) {
+		return <EventCardShimmer />;
+	}
 
 	return (
 		<div>
