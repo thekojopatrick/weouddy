@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
-import { PostMediaSlider } from './post-media-slider';
+import { PostMediaSlider } from '@/components/post-media-slider';
 import { PostWithDetails } from '@/types/prisma.types';
 import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
