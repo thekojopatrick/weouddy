@@ -8,13 +8,14 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import { MapPin, Share2, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { EventCardShimmer } from './shimmer-loading';
 import { EventModal } from './event-modal';
 import Image from 'next/image';
+import { useDebounce } from '@/hooks/useDebounce'; // Path to your useDebounce hook
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -63,11 +64,12 @@ export function EventCard({
 	isDisabled,
 	requiresApproval,
 }: EventCardProps) {
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+	const debouncedCheckingStatus = useDebounce(isCheckingStatus, 300); // Debounce state with 300ms delay
 	const [userStatus, setUserStatus] = useState<
 		'NOT_JOINED' | 'PENDING' | 'JOINED'
 	>('NOT_JOINED');
-	//const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const router = useRouter();
 	const { toast } = useToast();
 	const [city, country] = location.split(', ');
@@ -83,26 +85,27 @@ export function EventCard({
 			}
 		};
 
-		fetchUserStatus();
-	}, [id]);
+		if (debouncedCheckingStatus) {
+			fetchUserStatus();
+		}
+	}, [id, debouncedCheckingStatus]);
 
 	const handleShare = async (e: React.MouseEvent) => {
 		e.stopPropagation();
 		const eventUrl = `${window.location.origin}/events/${slug}`;
 
-		if (navigator.share) {
-			try {
+		try {
+			if (navigator.share) {
 				await navigator.share({
 					title: name,
 					text: `Check out this event: ${name}`,
 					url: eventUrl,
 				});
-			} catch (err) {
-				if (err instanceof Error && err.name !== 'AbortError') {
-					copyToClipboard(eventUrl);
-				}
+			} else {
+				copyToClipboard(eventUrl);
 			}
-		} else {
+		} catch (err) {
+			console.error('Failed to share event:', err);
 			copyToClipboard(eventUrl);
 		}
 	};
@@ -116,6 +119,8 @@ export function EventCard({
 	};
 
 	const handleCardClick = () => {
+		setIsCheckingStatus(true);
+
 		if (userStatus === 'JOINED') {
 			// Navigate to the event page
 			router.push(`/events/${slug}`);
@@ -125,7 +130,7 @@ export function EventCard({
 		}
 	};
 
-	if (!userStatus) {
+	if (debouncedCheckingStatus && userStatus === 'NOT_JOINED') {
 		return <EventCardShimmer />;
 	}
 
@@ -138,7 +143,7 @@ export function EventCard({
 				<CardHeader className='p-0'>
 					<div className='relative aspect-[4/3]'>
 						<Badge variant='secondary' className='absolute left-4 top-4 z-10'>
-							{!isPrivate ? 'Public' : 'Private'}
+							{isPrivate ? 'Private' : 'Public'}
 						</Badge>
 						<Button
 							variant='secondary'

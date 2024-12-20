@@ -33,30 +33,27 @@ const JoinEventDialog = ({
 
 		setIsAutoJoining(true);
 		try {
-			const result = await joinEvent({
-				identifier: event.id,
-				identifierType: 'id',
-			});
+			const [result] = await Promise.all([
+				joinEvent({ identifier: event.id, identifierType: 'id' }),
+			]);
 
 			if (result.success && result.eventSlug) {
 				toast({
 					title: 'Success',
 					description: result.message || 'Successfully joined the event',
 				});
-				onOpenChangeAction(false); // Close the dialog
-				router.push(`/events/${result.eventSlug}`);
-			} else {
-				// If join fails, show the regular join flow
-				setIsAutoJoining(false);
+				onOpenChangeAction(false);
+				router.prefetch(`/events/${result.eventSlug}`);
 			}
 		} catch (error) {
-			setIsAutoJoining(false);
 			toast({
 				variant: 'destructive',
 				title: 'Error',
-				description:
-					error instanceof Error ? error.message : 'Failed to join event',
+				description: 'Failed to join event',
 			});
+			console.log({ error });
+		} finally {
+			setIsAutoJoining(false);
 		}
 	};
 
