@@ -100,7 +100,7 @@ export function PostViewModal({
 
 						{/* Comments Section */}
 						<div className='flex-grow overflow-y-auto mb-4'>
-							{post.comments.map((comment) => (
+							{post?.comments?.map((comment) => (
 								<div key={comment.id} className='flex space-x-2 mb-2'>
 									<Avatar size='sm'>
 										<AvatarImage src={comment.user.avatarUrl || ''} />
