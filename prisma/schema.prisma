@@ -180,12 +180,13 @@ model FollowRequest {
 }
 
 model Attendee {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   userId    String
   eventId   String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  event     Event    @relation(fields: [eventId], references: [id])
+  status    AttendeeStatus @default(APPROVED)
+  createdAt DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id])
+  event     Event          @relation(fields: [eventId], references: [id])
 }
 
 model ChatMessage {
@@ -265,4 +266,10 @@ enum NewsletterStatus {
 enum FormsType {
   CONTACT
   NEWSLETTER
+}
+
+enum AttendeeStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
