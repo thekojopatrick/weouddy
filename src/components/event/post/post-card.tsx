@@ -7,11 +7,11 @@ import {
 	RiHeart3Fill,
 	RiHeart3Line,
 } from '@remixicon/react';
+import { cn, getNameInitials } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
 import { PostMediaSlider } from '@/components/post-media-slider';
 import { PostWithDetails } from '@/types/prisma.types';
-import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useState } from 'react';
 
@@ -59,19 +59,24 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 						<span>{post._count?.comments}</span>
 					</div>
 				</div>
-				<div className='flex items-center gap-2 text-white'>
+				<div className='flex items-start gap-2 text-white'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={post.user.avatarUrl || undefined} />
-						<AvatarFallback className='text-black'>
-							{post.user.name[0]}
+						<AvatarFallback className='text-black text-xs'>
+							{getNameInitials(post.user.name)}
 						</AvatarFallback>
 					</Avatar>
-					<span>{post.user.name}</span>
+					<div className='flex flex-col'>
+						<span className='text-sm font-medium'>{post.user.name}</span>
+						<p className='text-xs text-muted-foreground'>{time}</p>
+					</div>
 				</div>
 
-				{post.caption && <p className='text-white mt-2'>{post.caption}</p>}
-
-				<p className='text-sm text-muted-foreground'>{time}</p>
+				{post.caption && (
+					<p className='text-gray-200 font-medium text-xs whitespace-pre-wrap max-w-56 truncate my-1'>
+						{post.caption}
+					</p>
+				)}
 
 				<div className='absolute flex flex-col gap-3 bottom-12 right-2'>
 					<button
