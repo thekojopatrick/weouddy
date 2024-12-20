@@ -4,6 +4,7 @@ interface Comment {
   id: string;
   content: string;
   createdAt: string;
+  userId: string; // Added userId for ownership check
   user: {
     id: string;
     name: string;
@@ -16,6 +17,7 @@ interface UsePostInteractionsProps {
   initialLikes: number;
   initialComments: number;
   isLiked?: boolean;
+  currentUserId: string; // Added to check comment ownership
 }
 
 export function usePostInteractions({
@@ -23,6 +25,7 @@ export function usePostInteractions({
   initialLikes,
   initialComments,
   isLiked = false,
+  currentUserId,
 }: UsePostInteractionsProps) {
   const [likes, setLikes] = useState(initialLikes);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -84,6 +87,27 @@ export function usePostInteractions({
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const response = await fetch(
+        `/api/posts/${postId}/comments/${commentId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (response.ok) {
+        setComments((prev) =>
+          prev.filter((comment) => comment.id !== commentId)
+        );
+        setCommentCount((prev) => prev - 1);
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      throw error;
+    }
+  };
+
   return {
     likes,
     commentCount,
@@ -93,5 +117,7 @@ export function usePostInteractions({
     setIsCommentsOpen,
     handleLike,
     handleComment,
+    handleDeleteComment,
+    currentUserId, // Pass through for ownership checks
   };
 }

@@ -13,10 +13,16 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 } from '@/components/ui/drawer';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { MoreVertical, Send, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/formatters';
 import { getNameInitials } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -26,6 +32,7 @@ interface Comment {
 	id: string;
 	content: string;
 	createdAt: string;
+	userId: string;
 	user: {
 		id: string;
 		name: string;
@@ -38,14 +45,18 @@ interface CommentsProps {
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
 	handleCommentAction: (content: string) => Promise<void>;
+	handleDeleteCommentAction: (commentId: string) => Promise<void>;
 	comments: Comment[];
+	currentUserId: string;
 }
 
 export function Comments({
 	open,
 	onOpenChangeAction,
 	handleCommentAction,
+	handleDeleteCommentAction,
 	comments,
+	currentUserId,
 }: CommentsProps) {
 	const [comment, setComment] = useState('');
 	//const [comments, setComments] = useState<Comment[]>([]);
@@ -69,8 +80,8 @@ export function Comments({
 
 	const CommentList = () => (
 		<div className='space-y-4'>
-			{comments?.map((comment) => (
-				<div key={comment.id} className='flex gap-2'>
+			{comments.map((comment) => (
+				<div key={comment.id} className='flex gap-2 group'>
 					<Avatar className='h-8 w-8'>
 						<AvatarImage src={comment.user.avatarUrl || undefined} />
 						<AvatarFallback className='text-xs'>
@@ -78,11 +89,34 @@ export function Comments({
 						</AvatarFallback>
 					</Avatar>
 					<div className='flex-1'>
-						<div className='flex items-center gap-2'>
-							<span className='font-medium text-sm'>{comment.user.name}</span>
-							<span className='text-xs text-muted-foreground'>
-								{formatTimeAgo(new Date(comment.createdAt))}
-							</span>
+						<div className='flex items-center justify-between'>
+							<div className='flex items-center gap-2'>
+								<span className='font-medium text-sm'>{comment.user.name}</span>
+								<span className='text-xs text-muted-foreground'>
+									{formatTimeAgo(new Date(comment.createdAt))}
+								</span>
+							</div>
+							{comment.userId === currentUserId && (
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button
+											variant='ghost'
+											className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
+										>
+											<MoreVertical className='h-4 w-4' />
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align='end'>
+										<DropdownMenuItem
+											className='text-destructive focus:text-destructive'
+											onClick={() => handleDeleteCommentAction(comment.id)}
+										>
+											<Trash2 className='mr-2 h-4 w-4' />
+											Delete
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							)}
 						</div>
 						<p className='text-sm'>{comment.content}</p>
 					</div>
@@ -90,7 +124,6 @@ export function Comments({
 			))}
 		</div>
 	);
-
 	if (isDesktop) {
 		return (
 			<Dialog open={open} onOpenChange={onOpenChangeAction}>

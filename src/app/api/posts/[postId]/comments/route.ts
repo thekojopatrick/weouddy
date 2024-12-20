@@ -8,6 +8,8 @@ export async function POST(
 ) {
   try {
     const session = await getSession();
+    const { postId } = await params;
+
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -18,7 +20,7 @@ export async function POST(
       data: {
         content,
         userId: session.user.id,
-        postId: params.postId,
+        postId: postId,
       },
       include: {
         user: {
@@ -43,9 +45,11 @@ export async function GET(
   { params }: { params: { postId: string } },
 ) {
   try {
+    const { postId } = await params;
+
     const comments = await prisma.comment.findMany({
       where: {
-        postId: params.postId,
+        postId: postId,
       },
       include: {
         user: {

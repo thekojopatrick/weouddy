@@ -8,6 +8,9 @@ export async function POST(
 ) {
   try {
     const session = await getSession();
+
+    const { postId } = await params;
+
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -15,7 +18,7 @@ export async function POST(
     const like = await prisma.like.create({
       data: {
         userId: session.user.id,
-        postId: params.postId,
+        postId: postId,
       },
     });
 
@@ -32,6 +35,9 @@ export async function DELETE(
 ) {
   try {
     const session = await getSession();
+
+    const { postId } = await params;
+
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -40,7 +46,7 @@ export async function DELETE(
       where: {
         userId_postId: {
           userId: session.user.id,
-          postId: params.postId,
+          postId: postId,
         },
       },
     });

@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Comments } from './comment-post-dialog';
 import { PostMediaSlider } from '@/components/post-media-slider';
 import { PostWithDetails } from '@/types/prisma.types';
-import { formatEventDateTime } from '@/lib/formatters';
+import { formatTimeAgo } from '@/lib/formatters';
 import { usePostInteractions } from '@/hooks/use-post-interaction';
 import { useState } from 'react';
 
@@ -24,7 +24,6 @@ interface EventPostCardProps {
 
 export function EventPostCard({ post, userId }: EventPostCardProps) {
 	const [isHovered, setIsHovered] = useState(false);
-	const { time } = formatEventDateTime(post.createdAt as never);
 
 	const {
 		likes,
@@ -35,10 +34,13 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 		setIsCommentsOpen,
 		handleLike,
 		handleComment,
+		handleDeleteComment,
+		currentUserId,
 	} = usePostInteractions({
 		postId: post.id,
 		initialLikes: post._count.likes,
 		initialComments: post._count.comments,
+		currentUserId: userId,
 	});
 
 	return (
@@ -93,7 +95,9 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 					</Avatar>
 					<div className='flex flex-col'>
 						<span className='text-sm font-medium'>{post.user.name}</span>
-						<p className='text-xs text-muted-foreground'>{time}</p>
+						<p className='text-xs text-muted-foreground'>
+							{formatTimeAgo(new Date(post.createdAt))}
+						</p>
 					</div>
 				</div>
 
@@ -131,7 +135,9 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 				open={isCommentsOpen}
 				onOpenChangeAction={setIsCommentsOpen}
 				handleCommentAction={handleComment}
+				handleDeleteCommentAction={handleDeleteComment}
 				comments={comments}
+				currentUserId={currentUserId}
 			/>
 		</div>
 	);
