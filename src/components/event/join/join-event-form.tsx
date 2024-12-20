@@ -204,27 +204,3 @@ export function JoinEventForm({
 		</>
 	);
 }
-
-// Utility function to extract event ID from link
-
-// function extractEventIdFromLink(
-// 	link: string
-// ): { type: 'id' | 'slug'; value: string } | null {
-// 	try {
-// 		const url = new URL(link);
-// 		const pathParts = url.pathname.split('/');
-// 		const lastPart = pathParts[pathParts.length - 1];
-
-// 		if (!lastPart) return null;
-
-// 		// Check if it's a CUID (assuming that's what you're using for IDs)
-// 		const isCUID = /^c[a-zA-Z0-9]{24}$/.test(lastPart);
-
-// 		return {
-// 			type: isCUID ? 'id' : 'slug',
-// 			value: lastPart,
-// 		};
-// 	} catch {
-// 		return null;
-// 	}
-// }
