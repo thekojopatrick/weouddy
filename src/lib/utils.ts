@@ -1,79 +1,94 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 }
 
 export const getNameInitials = (name: string, count = 2) => {
-	const initials = name
-		.split(' ')
-		.map((n) => n[0])
-		.join('');
-	const filtered = initials.replace(/[^a-zA-Z]/g, '');
-	return filtered.slice(0, count).toUpperCase();
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("");
+  const filtered = initials.replace(/[^a-zA-Z]/g, "");
+  return filtered.slice(0, count).toUpperCase();
 };
 
 export function capitalizeFirstLetter(str: string) {
-	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
+  return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
 }
 
 export function removeTrailingSlash(path: string) {
-	return path.replace(/\/$/, '');
+  return path.replace(/\/$/, "");
 }
 
 export function createURL(
-	href: string,
-	oldParams: Record<string, string>,
-	newParams: Record<string, string | undefined>
+  href: string,
+  oldParams: Record<string, string>,
+  newParams: Record<string, string | undefined>,
 ) {
-	const params = new URLSearchParams(oldParams);
-	Object.entries(newParams).forEach(([key, value]) => {
-		if (value == undefined) {
-			params.delete(key);
-		} else {
-			params.set(key, value);
-		}
-	});
-	return `${href}?${params.toString()}`;
+  const params = new URLSearchParams(oldParams);
+  Object.entries(newParams).forEach(([key, value]) => {
+    if (value == undefined) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  });
+  return `${href}?${params.toString()}`;
 }
 
 export const getMonth = (month: number) => {
-	const months: string[] = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December',
-	];
+  const months: string[] = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-	if (month < 1 || month > 12) {
-		return 'Invalid month number. Please enter a number between 1 and 12.';
-	}
+  if (month < 1 || month > 12) {
+    return "Invalid month number. Please enter a number between 1 and 12.";
+  }
 
-	return months[month - 1];
+  return months[month - 1];
 };
 
 export const duplicateValidation = (arr: string[], el: string) => {
-	if (!arr.find((t) => t === el)) {
-		arr.push(el);
-		return arr;
-	} else {
-		arr = arr.filter((t) => t !== el);
-		return arr;
-	}
+  if (!arr.find((t) => t === el)) {
+    arr.push(el);
+    return arr;
+  } else {
+    arr = arr.filter((t) => t !== el);
+    return arr;
+  }
 };
 
 export function generateSlug(title: string): string {
-	return title
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/(^-|-$)+/g, '');
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
+// Helper functions
+export function isCUID(str: string): boolean {
+  return /^c[a-zA-Z0-9]{24}$/.test(str);
+}
+
+export function extractIdentifierFromLink(link: string): string | null {
+  try {
+    const url = new URL(link);
+    const pathParts = url.pathname.split("/");
+    return pathParts[pathParts.length - 1] || null;
+  } catch {
+    return null;
+  }
 }

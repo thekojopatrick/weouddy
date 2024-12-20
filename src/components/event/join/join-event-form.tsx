@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { extractIdentifierFromLink, isCUID } from '@/lib/utils';
 import {
 	getEventJoinInfo,
 	joinEvent,
@@ -33,6 +34,7 @@ export function JoinEventForm({
 }: JoinEventDialogProps) {
 	const [currentStep, setCurrentStep] = useState<JoinStep>(initialStep);
 	const [isLoading, setIsLoading] = useState(false);
+
 	const [eventData, setEventData] = useState<EventWithDetails | undefined>(
 		initialEventData
 	);
@@ -184,7 +186,7 @@ export function JoinEventForm({
 				return (
 					<Alert>
 						<AlertDescription>
-							Successfully joined the event! Redirecting to event room...
+							Successfully joined the event! Redirecting to event event...
 						</AlertDescription>
 					</Alert>
 				);
@@ -204,21 +206,6 @@ export function JoinEventForm({
 }
 
 // Utility function to extract event ID from link
-
-// Helper functions
-function isCUID(str: string): boolean {
-	return /^c[a-zA-Z0-9]{24}$/.test(str);
-}
-
-function extractIdentifierFromLink(link: string): string | null {
-	try {
-		const url = new URL(link);
-		const pathParts = url.pathname.split('/');
-		return pathParts[pathParts.length - 1] || null;
-	} catch {
-		return null;
-	}
-}
 
 // function extractEventIdFromLink(
 // 	link: string
