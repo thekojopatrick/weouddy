@@ -1,21 +1,18 @@
 import EventRoom from '@/components/pages/events/event-room';
-import { createClient } from '@/lib/supabase/server';
 import { getEventBySlug } from '@/server/actions/event/queries';
+import { getSession } from '@/lib/auth';
 
 export default async function EventRoomPage(props: {
 	params: Promise<{ eventId: string }>;
 }) {
 	const params = await props.params;
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
 	const eventId = await params?.eventId;
+
+	const session = await getSession();
 
 	const event = await getEventBySlug(eventId);
 
-	console.log({ event, eventId });
+	if (!session) return null;
 
-	return <EventRoom user={user} event={event as never} />;
+	return <EventRoom user={session.user} event={event as never} />;
 }

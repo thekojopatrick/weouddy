@@ -14,7 +14,7 @@ export default function EventRoom({
 	user,
 	event,
 }: {
-	user: User | null;
+	user: (User & { username: string | null; avatarUrl: string | null }) | null;
 	event: EventWithFullData;
 }) {
 	const [open, setOpen] = useState(false);
@@ -79,8 +79,10 @@ export default function EventRoom({
 
 			<CreatePostModal
 				open={open}
-				onOpenChangeAction={setOpen}
 				eventId={event.id}
+				onOpenChangeAction={setOpen}
+				userName={user?.user_metadata.full_name ?? ''}
+				userAvatar={user?.avatarUrl ?? ''}
 			/>
 		</div>
 	);
