@@ -58,7 +58,7 @@ export function EmojiPicker({ onEmojiSelectAction }: EmojiPickerProps) {
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger asChild>
-				<Button variant='ghost' size='icon'>
+				<Button variant='ghost' size='icon' className='rounded-full'>
 					<Smile className='h-5 w-5' />
 				</Button>
 			</PopoverTrigger>

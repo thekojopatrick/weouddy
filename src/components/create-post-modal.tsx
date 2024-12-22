@@ -278,7 +278,7 @@ export function CreatePostModal({
 									type='button'
 									variant='ghost'
 									size='icon'
-									className='border-none'
+									className='border-none rounded-full'
 									onClick={() => {
 										const input = document.createElement('input');
 										input.type = 'file';
