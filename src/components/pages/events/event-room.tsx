@@ -18,7 +18,7 @@ export default function EventRoom({
 	event: EventWithFullData;
 }) {
 	const { date, time } = formatEventDateTime(event.dateTime as never);
-	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
+	const isSmallDevice = useMediaQuery('only screen and (max-width : 638px)');
 
 	return (
 		<div className='flex min-h-screen flex-col'>

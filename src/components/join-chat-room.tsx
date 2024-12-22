@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import CustomSheet from './ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
+import { SheetClose } from './ui/sheet';
 import { cn } from '@/lib/utils';
 
 const JoinChatRoom = ({
@@ -19,6 +20,27 @@ const JoinChatRoom = ({
 	userAvatar: string;
 }) => {
 	const [showDialog, setShowDialog] = useState(false);
+
+	const footerContent = (hasReadToBottom: boolean) => (
+		<>
+			{!hasReadToBottom && (
+				<span className='grow text-xs text-muted-foreground max-sm:text-center'>
+					Read all terms before accepting.
+				</span>
+			)}
+			<SheetClose asChild>
+				<Button type='button' variant='outline'>
+					Cancel
+				</Button>
+			</SheetClose>
+			<SheetClose asChild>
+				<Button type='button' disabled={!hasReadToBottom}>
+					I agree
+				</Button>
+			</SheetClose>
+		</>
+	);
+
 	return (
 		<>
 			<Button
@@ -45,7 +67,7 @@ const JoinChatRoom = ({
 				stickyFooter={true}
 				scrollableContent={true}
 				maxHeight={isSmallDevice ? '90vh' : '80vh'}
-				footerContent={`${userAvatar}`}
+				footerContent={footerContent(true)}
 			/>
 		</>
 	);

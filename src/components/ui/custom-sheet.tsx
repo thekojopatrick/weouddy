@@ -21,6 +21,7 @@ interface CustomSheetProps {
 	stickyFooter?: boolean;
 	scrollableContent?: boolean;
 	maxHeight?: string;
+	maxWidth?: string;
 	side?: 'top' | 'right' | 'bottom' | 'left';
 	onScrollToBottom?: () => void;
 	footerContent?: ReactNode;
@@ -35,7 +36,8 @@ export default function CustomSheet({
 	stickyHeader = false,
 	stickyFooter = false,
 	scrollableContent = true,
-	maxHeight = '80vh',
+	maxHeight = 'min(640px,80vh)',
+	maxWidth = 'lg',
 	side = 'right',
 	onScrollToBottom,
 	footerContent,
@@ -60,10 +62,10 @@ export default function CustomSheet({
 			<SheetTrigger asChild>{trigger}</SheetTrigger>
 			<SheetContent
 				side={side}
-				className={`flex flex-col p-0 ${side === 'top' || side === 'bottom' ? `h-[${maxHeight}]` : ''}`}
+				className={`flex flex-col gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
 			>
 				<SheetHeader
-					className={`space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
+					className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
 				>
 					<SheetTitle className='border-b border-border px-6 py-4 text-base'>
 						{title}
@@ -82,7 +84,7 @@ export default function CustomSheet({
 				</div>
 				{footerContent && (
 					<SheetFooter
-						className={`border-t border-border px-6 py-4 ${stickyFooter ? 'sticky bottom-0 z-10 bg-background' : ''}`}
+						className={`border-t border-border px-6 py-4 sm:items-center ${stickyFooter ? 'sticky bottom-0 z-10 bg-background' : ''}`}
 					>
 						{footerContent}
 					</SheetFooter>
