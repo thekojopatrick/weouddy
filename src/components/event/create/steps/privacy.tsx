@@ -1,4 +1,4 @@
-import { Button, LoadingButton } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
 	FormControl,
 	FormDescription,
@@ -6,18 +6,22 @@ import {
 	FormItem,
 } from '@/components/ui/form';
 
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
 interface PrivacyStepProps {
 	onSubmit: () => void;
 	onBack: () => void;
 	isSubmitting: boolean;
+	error?: string | null;
 }
 
 export function PrivacyStep({
 	onSubmit,
 	onBack,
 	isSubmitting,
+	error,
 }: PrivacyStepProps) {
 	return (
 		<div className='space-y-6 py-6'>
@@ -31,6 +35,12 @@ export function PrivacyStep({
 				</p>
 			</div>
 
+			{error && (
+				<Alert variant='destructive'>
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			)}
+
 			<FormField
 				name='isPublic'
 				render={({ field }) => (
@@ -43,7 +53,11 @@ export function PrivacyStep({
 							</FormDescription>
 						</div>
 						<FormControl>
-							<Switch checked={field.value} onCheckedChange={field.onChange} />
+							<Switch
+								checked={field.value}
+								onCheckedChange={field.onChange}
+								disabled={isSubmitting}
+							/>
 						</FormControl>
 					</FormItem>
 				)}
@@ -59,15 +73,21 @@ export function PrivacyStep({
 				>
 					Back
 				</Button>
-				<LoadingButton
+				<Button
 					type='submit'
 					onClick={onSubmit}
 					disabled={isSubmitting}
-					loading={isSubmitting}
 					className='rounded-full'
 				>
-					{isSubmitting ? 'Creating..' : 'Finish'}
-				</LoadingButton>
+					{isSubmitting ? (
+						<>
+							<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+							Creating...
+						</>
+					) : (
+						'Finish'
+					)}
+				</Button>
 			</div>
 		</div>
 	);

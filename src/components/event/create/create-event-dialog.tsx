@@ -16,9 +16,9 @@ export function CreateEventDialog({
 		<ResponsiveDialog
 			open={open}
 			onOpenChangeAction={onOpenChangeAction}
-			className='sm:max-w-[620px] p-0 overflow-hidden'
+			className='sm:max-w-[620px] p-0'
 		>
-			<div className='relative p-4 z-10'>
+			<div className='relative p-4'>
 				<CreateEventForm onCloseAction={() => onOpenChangeAction(false)} />
 			</div>
 		</ResponsiveDialog>

@@ -1,5 +1,6 @@
 'use client';
 
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
 	FormControl,
 	FormField,
@@ -17,30 +18,85 @@ import { useFormContext } from 'react-hook-form';
 interface CoverUploadStepProps {
 	onNextAction: () => void;
 	onBackAction: () => void;
+	maxSize: number;
+	onError: (error: string) => void;
 }
 
 export function CoverUploadStep({
 	onNextAction,
 	onBackAction,
+	maxSize,
+	onError,
 }: CoverUploadStepProps) {
 	const { setValue, watch } = useFormContext();
 	const coverImage = watch('coverImage');
 	const [previewImage, setPreviewImage] = useState<string | null>(coverImage);
+	const [error, setError] = useState<string | null>(null);
+
+	const validateImage = (file: File) => {
+		// Check file size
+		if (file.size > maxSize) {
+			const errorMsg = `Image size (${Math.round(file.size / 1024)}KB) exceeds maximum size of ${Math.round(maxSize / 1024)}KB`;
+			setError(errorMsg);
+			onError(errorMsg);
+			return false;
+		}
+
+		// Check file type
+		if (!file.type.startsWith('image/')) {
+			const errorMsg = 'Please upload a valid image file';
+			setError(errorMsg);
+			onError(errorMsg);
+			return false;
+		}
+
+		setError(null);
+		return true;
+	};
+
+	const processImage = (file: File) => {
+		return new Promise<string>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => {
+				const imageDataUrl = reader.result as string;
+				// Additional validation for base64 size
+				const base64Size = Buffer.from(
+					imageDataUrl.split(',')[1],
+					'base64'
+				).length;
+				if (base64Size > maxSize) {
+					reject(
+						new Error(
+							`Processed image size (${Math.round(base64Size / 1024)}KB) exceeds maximum size`
+						)
+					);
+					return;
+				}
+				resolve(imageDataUrl);
+			};
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	};
 
 	const onDrop = useCallback(
-		(acceptedFiles: File[]) => {
+		async (acceptedFiles: File[]) => {
 			const file = acceptedFiles[0];
-			if (file) {
-				const reader = new FileReader();
-				reader.onload = () => {
-					const imageDataUrl = reader.result as string;
+			if (file && validateImage(file)) {
+				try {
+					const imageDataUrl = await processImage(file);
 					setPreviewImage(imageDataUrl);
 					setValue('coverImage', imageDataUrl);
-				};
-				reader.readAsDataURL(file);
+					setError(null);
+				} catch (err) {
+					const errorMsg =
+						err instanceof Error ? err.message : 'Failed to process image';
+					setError(errorMsg);
+					onError(errorMsg);
+				}
 			}
 		},
-		[setValue]
+		[setValue, maxSize, onError]
 	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -49,11 +105,30 @@ export function CoverUploadStep({
 			'image/*': ['.jpeg', '.png', '.gif', '.jpg', '.webp'],
 		},
 		multiple: false,
+		maxSize,
 	});
 
 	const handleRemoveImage = () => {
 		setPreviewImage(null);
 		setValue('coverImage', null);
+		setError(null);
+	};
+
+	const handleManualUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file && validateImage(file)) {
+			try {
+				const imageDataUrl = await processImage(file);
+				setPreviewImage(imageDataUrl);
+				setValue('coverImage', imageDataUrl);
+				setError(null);
+			} catch (err) {
+				const errorMsg =
+					err instanceof Error ? err.message : 'Failed to process image';
+				setError(errorMsg);
+				onError(errorMsg);
+			}
+		}
 	};
 
 	return (
@@ -64,6 +139,12 @@ export function CoverUploadStep({
 					Turn your gathering into a celebration and let your world shine.
 				</p>
 			</div>
+
+			{error && (
+				<Alert variant='destructive'>
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			)}
 
 			<FormField
 				name='coverImage'
@@ -76,7 +157,9 @@ export function CoverUploadStep({
 									className={`relative aspect-video w-full overflow-hidden rounded-lg border ${
 										isDragActive
 											? 'border-primary bg-primary/10'
-											: 'border-dashed'
+											: error
+												? 'border-destructive'
+												: 'border-dashed'
 									} cursor-pointer`}
 								>
 									<input {...getInputProps()} />
@@ -109,6 +192,9 @@ export function CoverUploadStep({
 													? 'Drop image here'
 													: 'Drag and drop or click to upload'}
 											</span>
+											<span className='text-xs text-muted-foreground'>
+												Maximum size: {Math.round(maxSize / 1024)}KB
+											</span>
 										</div>
 									)}
 								</div>
@@ -117,23 +203,13 @@ export function CoverUploadStep({
 										type='button'
 										variant='outline'
 										onClick={() => {
-											// Trigger file input
 											const input = document.createElement('input');
 											input.type = 'file';
 											input.accept = 'image/*';
-											input.onchange = (e) => {
-												const target = e.target as HTMLInputElement;
-												const file = target.files?.[0];
-												if (file) {
-													const reader = new FileReader();
-													reader.onload = () => {
-														const imageDataUrl = reader.result as string;
-														setPreviewImage(imageDataUrl);
-														setValue('coverImage', imageDataUrl);
-													};
-													reader.readAsDataURL(file);
-												}
-											};
+											input.onchange = (e) =>
+												handleManualUpload(
+													e as unknown as React.ChangeEvent<HTMLInputElement>
+												);
 											input.click();
 										}}
 									>
@@ -159,7 +235,7 @@ export function CoverUploadStep({
 				<Button
 					type='button'
 					onClick={onNextAction}
-					disabled={!previewImage}
+					disabled={!previewImage || !!error}
 					className='rounded-full'
 				>
 					Next

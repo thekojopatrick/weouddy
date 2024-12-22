@@ -7,6 +7,7 @@ import { eventFormSchema, type EventFormValues } from '@/types/validation';
 import { Form } from '@/components/ui/form';
 import { createEvent } from '@/app/actions/create-event';
 import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 import { LocationTimeStep } from './steps/location-time-step';
 import { PrivacyStep } from './steps/privacy';
@@ -28,12 +29,15 @@ type Step =
 	| 'privacy'
 	| 'success';
 
+const MAX_COVER_IMAGE_SIZE = 800 * 1024; // 800KB
+
 export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 	const [step, setStep] = useState<Step>('welcome');
 	const [eventUrl, setEventUrl] = useState('');
 	const [eventName, setEventName] = useState('');
 	const [qrCode, setQrCode] = useState<QRCodeType>();
 	const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+	const [error, setError] = useState<string | null>(null);
 	const { toast } = useToast();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,12 +56,31 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 		mode: 'onChange',
 	});
 
+	const validateCoverImage = (imageData: string) => {
+		// Check if the image is a base64 string
+		if (!imageData.startsWith('data:image')) {
+			throw new Error('Invalid image format');
+		}
+
+		// Check file size
+		const base64Data = imageData.split(',')[1];
+		const sizeInBytes = Buffer.from(base64Data, 'base64').length;
+		if (sizeInBytes > MAX_COVER_IMAGE_SIZE) {
+			throw new Error('Cover image must be less than 800KB');
+		}
+	};
+
 	const onSubmit = async (data: EventFormValues) => {
 		setIsSubmitting(true);
-		try {
-			const event = await createEvent(data);
+		setError(null);
 
-			console.log('Event creation response:', { event });
+		try {
+			// Validate cover image if present
+			if (data.coverImage) {
+				validateCoverImage(data.coverImage);
+			}
+
+			const event = await createEvent(data);
 
 			if (event) {
 				toast({
@@ -65,29 +88,34 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 					description: 'Your event room has been created successfully.',
 				});
 
-				// Generate the event URL using the returned event data
 				setEventUrl(`${window.location.origin}/events/${event.slug}`);
 				setQrCodeUrl(event.qrCodeUrl);
 				setQrCode(event.qrCode);
 				setEventName(event.name);
 				setStep('success');
 			} else {
-				// Add a specific toast for when event is null
-				toast({
-					title: 'Error',
-					description: 'Event creation returned no data. Please try again.',
-					variant: 'destructive',
-				});
+				setError('Failed to create event. Please try again.');
 			}
 		} catch (error) {
-			// More detailed error logging and toasting
-			console.error('Full error during event creation:', error);
+			console.error('Event creation error:', error);
+
+			// Handle specific error cases
+			const errorMessage =
+				error instanceof Error ? error.message : 'An unexpected error occurred';
+
+			if (errorMessage.includes('Please wait')) {
+				setError('Please wait a moment before creating another event');
+			} else if (errorMessage.includes('Cover image')) {
+				setError('Cover image error: ' + errorMessage);
+				// Reset cover image field
+				form.setValue('coverImage', '');
+			} else {
+				setError(`Failed to create event: ${errorMessage}`);
+			}
+
 			toast({
 				title: 'Error',
-				description:
-					error instanceof Error
-						? error.message
-						: 'Failed to create event. Please try again.',
+				description: errorMessage,
 				variant: 'destructive',
 			});
 		} finally {
@@ -96,6 +124,8 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 	};
 
 	const handleStepChange = async (nextStep: Step) => {
+		setError(null);
+
 		const fieldsToValidate = {
 			details: ['title', 'type', 'description'],
 			location: ['location', 'date', 'time'],
@@ -105,49 +135,74 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 			success: [],
 		}[step] as (keyof EventFormValues)[];
 
-		if (fieldsToValidate.length > 0) {
-			const isValid = await form.trigger(fieldsToValidate);
-			if (!isValid) return;
-		}
+		try {
+			if (fieldsToValidate.length > 0) {
+				const isValid = await form.trigger(fieldsToValidate);
+				if (!isValid) {
+					setError('Please fill in all required fields correctly');
+					return;
+				}
+			}
 
-		setStep(nextStep);
+			setStep(nextStep);
+		} catch (error) {
+			console.error('Step change error:', error);
+			setError('Failed to proceed to next step');
+		}
 	};
 
 	return (
 		<div className='max-w-2xl mx-auto'>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
+					{isSubmitting && (
+						<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+							<div className='bg-white p-4 rounded-lg flex items-center gap-2'>
+								<Loader2 className='h-6 w-6 animate-spin' />
+								<span>Creating your event...</span>
+							</div>
+						</div>
+					)}
+
 					{step === 'welcome' && (
 						<WelcomeStep
 							onNext={() => setStep('details')}
 							onSkip={onCloseAction}
 						/>
 					)}
+
 					{step === 'details' && (
 						<EventDetailsStep
 							onNext={() => handleStepChange('location')}
 							onBack={() => setStep('welcome')}
 						/>
 					)}
+
 					{step === 'location' && (
 						<LocationTimeStep
 							onNextAction={() => handleStepChange('cover')}
 							onBackAction={() => setStep('details')}
 						/>
 					)}
+
 					{step === 'cover' && (
 						<CoverUploadStep
 							onNextAction={() => handleStepChange('privacy')}
 							onBackAction={() => setStep('location')}
+							maxSize={MAX_COVER_IMAGE_SIZE}
+							onError={(error) => setError(error)}
 						/>
 					)}
+
 					{step === 'privacy' && (
 						<PrivacyStep
 							onSubmit={form.handleSubmit(onSubmit)}
 							onBack={() => setStep('cover')}
 							isSubmitting={isSubmitting}
+							error={error}
 						/>
 					)}
+
 					{step === 'success' && (
 						<SuccessStep
 							eventUrl={eventUrl}

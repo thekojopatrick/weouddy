@@ -1,5 +1,6 @@
 export interface QRCodeOptions {
   size?: number;
+  quality?: number;
   margin?: number;
   color?: {
     dark: string;
