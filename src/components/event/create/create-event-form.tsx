@@ -89,8 +89,8 @@ export function CreateEventForm({ onCloseAction }: CreateEventFormProps) {
 				});
 
 				setEventUrl(`${window.location.origin}/events/${event.slug}`);
-				setQrCodeUrl(event.qrCodeUrl);
-				setQrCode(event.qrCode);
+				setQrCodeUrl(event.qrCodeUrl!);
+				setQrCode(event.qrCode!);
 				setEventName(event.name);
 				setStep('success');
 			} else {
