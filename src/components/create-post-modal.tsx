@@ -2,6 +2,14 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
+	CircleCheck,
+	ImageIcon,
+	Loader2,
+	Trash2,
+	VideoIcon,
+	X,
+} from 'lucide-react';
+import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
@@ -13,7 +21,6 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 } from '@/components/ui/drawer';
-import { ImageIcon, Loader2, Trash2, VideoIcon, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { EmojiPicker } from './emoji-picker';
@@ -22,6 +29,7 @@ import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { createPost } from '@/app/actions/create-post';
+import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useState } from 'react';
 import { useUploadFiles } from '../hooks/use-upload-files';
@@ -68,11 +76,44 @@ export function CreatePostModal({
 			);
 
 			// Create post with content and media
-			await createPost({
+			const result = await createPost({
 				eventId,
 				caption: content,
 				media: validMediaFiles,
 			});
+
+			if (result) {
+				toast.custom((t) => (
+					<div className='w-[var(--width)] rounded-lg border border-border bg-background px-4 py-3'>
+						<div className='flex gap-2'>
+							<div className='flex grow gap-3'>
+								<CircleCheck
+									className='mt-0.5 shrink-0 text-emerald-500'
+									size={16}
+									strokeWidth={2}
+									aria-hidden='true'
+								/>
+								<div className='flex grow justify-between gap-12'>
+									<p className='text-sm'>Post sent</p>
+								</div>
+							</div>
+							<Button
+								variant='ghost'
+								className='group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent'
+								onClick={() => toast.dismiss(t)}
+								aria-label='Close banner'
+							>
+								<X
+									size={16}
+									strokeWidth={2}
+									className='opacity-60 transition-opacity group-hover:opacity-100'
+									aria-hidden='true'
+								/>
+							</Button>
+						</div>
+					</div>
+				));
+			}
 
 			// Reset form and close modal
 			setContent('');
@@ -80,6 +121,34 @@ export function CreatePostModal({
 		} catch (error) {
 			console.error('Post creation failed:', error);
 			// TODO: Add error handling (toast/alert)
+			toast.custom((t) => (
+				<div className='z-[100] max-w-[400px] rounded-lg border border-border bg-background px-4 py-3 shadow-lg shadow-black/5'>
+					<div className='flex gap-2'>
+						<p className='grow text-sm'>
+							<CircleCheck
+								className='-mt-0.5 me-3 inline-flex text-red-500'
+								size={16}
+								strokeWidth={2}
+								aria-hidden='true'
+							/>
+							Post creation failed!
+						</p>
+						<Button
+							variant='ghost'
+							className='group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent'
+							onClick={() => toast.dismiss(t)}
+							aria-label='Close banner'
+						>
+							<X
+								size={16}
+								strokeWidth={2}
+								className='opacity-60 transition-opacity group-hover:opacity-100'
+								aria-hidden='true'
+							/>
+						</Button>
+					</div>
+				</div>
+			));
 		} finally {
 			setIsSubmitting(false);
 		}
