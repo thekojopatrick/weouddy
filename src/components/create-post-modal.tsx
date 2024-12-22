@@ -49,7 +49,7 @@ export function CreatePostModal({
 	userName,
 	userAvatar,
 }: CreatePostModalProps) {
-	const isMobile = useMediaQuery('only screen and (max-width : 768px)');
+	const isMobile = useMediaQuery('only screen and (max-width : 639px)');
 	const { uploadState, handleFiles, uploadFiles, removeFile } =
 		useUploadFiles();
 	const [content, setContent] = useState('');
@@ -162,22 +162,25 @@ export function CreatePostModal({
 
 	return (
 		<Wrapper open={open} onOpenChange={onOpenChangeAction}>
-			<WrapperContent className='sm:max-w-[425px] p-0 gap-0'>
+			<WrapperContent
+				className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-screen rounded-none' : 'h-fit'}`}
+				closebtnstyle='hidden'
+			>
 				<HeaderWrapper className='p-0'>
 					{/* Header */}
 					<div className='border-b p-4 flex items-center justify-between'>
 						<Button
 							variant='ghost'
 							size='icon'
+							className='rounded-ful'
 							onClick={() => onOpenChangeAction(false)}
 						>
 							<X className='h-5 w-5' />
 						</Button>
 						<TitleWrapper className='text-md'>Create New Post</TitleWrapper>
 						<Button
-							// type='submit'
-							variant='ghost'
-							className='font-semibold text-primary'
+							variant='secondary'
+							className='font-semibold rounded-full'
 							onClick={handleSubmit}
 							disabled={
 								uploadState.isUploading ||
@@ -197,7 +200,9 @@ export function CreatePostModal({
 				</HeaderWrapper>
 				<form onSubmit={handleSubmit} className=''>
 					{/* Content */}
-					<div className='flex flex-col h-[500px]'>
+					<div
+						className={`flex flex-col ${isMobile ? 'h-[80vh]' : 'h-[500px]'}`}
+					>
 						<div className='pt-4 px-4 flex gap-3'>
 							<Avatar className='h-8 w-8'>
 								<AvatarImage src={userAvatar ?? ''} />
