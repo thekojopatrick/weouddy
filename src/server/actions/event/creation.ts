@@ -30,8 +30,8 @@ export async function createEventAction(data: EventFormValues, userId: string) {
     try {
       const imageSize =
         Buffer.from(data.coverImage.split(",")[1], "base64").length;
-      if (imageSize > 800 * 1024) {
-        throw new Error("Cover image exceeds maximum size of 800KB");
+      if (imageSize > 5 * 1024 * 1024) {
+        throw new Error("Cover image exceeds maximum size of 5MB");
       }
       coverImageUrl = await uploadEventCoverImage(data.coverImage, nanoid(8));
     } catch (error) {
