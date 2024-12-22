@@ -2,7 +2,6 @@
 
 import { CustomTabs, TabItem } from '@/components/ui/custom-tabs';
 
-import { FollowRequests } from './follow-request';
 import { UserEvents } from './user-events';
 import { UserPosts } from './user-posts';
 
@@ -30,10 +29,12 @@ export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
 		},
 		{
 			value: 'requests',
-			label: `ApproveRequest ${stats.events}`,
-			content: <FollowRequests userId={userId} />,
+			label: `ApproveRequest`,
+			content: '',
 		},
 	];
+
+	console.log({ userId });
 
 	return (
 		<CustomTabs items={tabItems} variant='underline' defaultValue='posts' />

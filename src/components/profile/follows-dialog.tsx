@@ -55,8 +55,7 @@ export function FollowsDialog({ currentUserId, stats }: FollowsDialogProps) {
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<button className='text-sm text-muted-foreground hover:text-foreground transition-colors'>
-					<span className='font-medium text-foreground'>{stats.followers}</span>{' '}
-					Requests ·{' '}
+					<span className='font-medium text-foreground'>{0}</span> Requests ·{' '}
 					<span className='font-medium text-foreground'>{stats.followers}</span>{' '}
 					Followers ·{' '}
 					<span className='font-medium text-foreground'>{stats.following}</span>{' '}
@@ -75,9 +74,7 @@ export function FollowsDialog({ currentUserId, stats }: FollowsDialogProps) {
 						<TabsTrigger value='following'>
 							Following ({stats.following})
 						</TabsTrigger>
-						<TabsTrigger value='requests'>
-							Follow Request ({stats.followers})
-						</TabsTrigger>
+						<TabsTrigger value='requests'>Follow Request ({0})</TabsTrigger>
 					</TabsList>
 					<TabsContent value='followers'>
 						<ScrollArea className='h-[400px] pr-4'>

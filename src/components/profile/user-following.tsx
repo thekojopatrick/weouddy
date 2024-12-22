@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Follow } from '@/types/prisma.types';
+import FollowButton from './follow-button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { fetchFollowing } from '@/server/actions/user/queries';
@@ -116,13 +117,11 @@ export function UserFollowing({ userId }: UserFollowingProps) {
 									</p>
 								</div>
 							</Link>
-							<Button
-								size='sm'
-								variant='outline'
-								onClick={() => handleFollowToggle(user.id)}
-							>
-								Unfollow
-							</Button>
+
+							<FollowButton
+								isFollowing={true} // Always true since these are people we're following
+								onToggle={() => handleFollowToggle(user.id)}
+							/>
 						</div>
 					);
 				})}
