@@ -81,16 +81,12 @@ export function FollowsDialog({ currentUserId, stats }: FollowsDialogProps) {
 					</TabsList>
 					<TabsContent value='followers'>
 						<ScrollArea className='h-[400px] pr-4'>
-							<div className='space-y-4'>
-								<UserFollowers userId={currentUserId!} />
-							</div>
+							<UserFollowers userId={currentUserId!} />
 						</ScrollArea>
 					</TabsContent>
 					<TabsContent value='following'>
 						<ScrollArea className='h-[400px] pr-4'>
-							<div className='space-y-4'>
-								<UserFollowing userId={currentUserId!} />
-							</div>
+							<UserFollowing userId={currentUserId!} />
 						</ScrollArea>
 					</TabsContent>
 					<TabsContent value='requests'>

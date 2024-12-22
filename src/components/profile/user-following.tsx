@@ -83,7 +83,7 @@ export function UserFollowing({ userId }: UserFollowingProps) {
 	}
 
 	return (
-		<div className='container mx-auto px-4 py-6'>
+		<div className='container mx-auto'>
 			<div className='mb-4'>
 				<Input
 					placeholder='Search following'
@@ -93,7 +93,7 @@ export function UserFollowing({ userId }: UserFollowingProps) {
 				/>
 			</div>
 
-			<div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
+			<div className='grid gap-4'>
 				{filteredFollowing.map((follow) => {
 					const { following: user } = follow;
 					return (
@@ -102,7 +102,7 @@ export function UserFollowing({ userId }: UserFollowingProps) {
 							className='flex items-center justify-between p-4 border rounded-lg'
 						>
 							<Link
-								href={`/profile/${user.username}`}
+								href={`/${user.username}`}
 								className='flex items-center space-x-3 flex-grow'
 							>
 								<Avatar>
