@@ -117,10 +117,11 @@ export function CreatePostModal({
 
 			// Reset form and close modal
 			setContent('');
+
 			onOpenChangeAction(false);
 		} catch (error) {
 			console.error('Post creation failed:', error);
-			// TODO: Add error handling (toast/alert)
+
 			toast.custom((t) => (
 				<div className='z-[100] max-w-[400px] rounded-lg border border-border bg-background px-4 py-3 shadow-lg shadow-black/5'>
 					<div className='flex gap-2'>
