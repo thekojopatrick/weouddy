@@ -1,14 +1,14 @@
 'use client';
 
-import { CalendarDays, MapPin, MessageCircle, Plus, Users } from 'lucide-react';
+import { CalendarDays, MapPin, MessageCircle, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { CreatePostModal } from '@/components/create-post-modal';
+import CreatePostButton from '@/components/create-post-button';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventWithFullData } from '@/types/event';
 import { User } from '@supabase/supabase-js';
 import { formatEventDateTime } from '@/lib/formatters';
-import { useState } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function EventRoom({
 	user,
@@ -17,9 +17,8 @@ export default function EventRoom({
 	user: (User & { username: string | null; avatarUrl: string | null }) | null;
 	event: EventWithFullData;
 }) {
-	const [open, setOpen] = useState(false);
-
 	const { date, time } = formatEventDateTime(event.dateTime as never);
+	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 
 	return (
 		<div className='flex min-h-screen flex-col'>
@@ -62,28 +61,19 @@ export default function EventRoom({
 			</main>
 
 			{/* Action Buttons */}
-			<div className='fixed bottom-8 right-8 flex flex-col gap-4'>
+			<div className='fixed bottom-8 right-8 flex flex-col gap-4 items-end'>
 				<Button size='lg' className='rounded-full shadow-lg'>
 					<MessageCircle className='mr-2 h-5 w-5' />
 					Join Chatroom
 				</Button>
-				<Button
-					size='lg'
-					className='rounded-full shadow-lg'
-					onClick={() => setOpen(true)}
-				>
-					<Plus className='mr-2 h-5 w-5' />
-					Create Post
-				</Button>
-			</div>
 
-			<CreatePostModal
-				open={open}
-				eventId={event.id}
-				onOpenChangeAction={setOpen}
-				userName={user?.user_metadata.full_name ?? ''}
-				userAvatar={user?.avatarUrl ?? ''}
-			/>
+				<CreatePostButton
+					isSmallDevice={isSmallDevice}
+					eventId={event.id}
+					userName={user?.user_metadata.full_name ?? ''}
+					userAvatar={user?.avatarUrl ?? ''}
+				/>
+			</div>
 		</div>
 	);
 }

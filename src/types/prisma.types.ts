@@ -78,6 +78,7 @@ export interface BaseEvent {
 
 export interface EventWithDetails extends BaseEvent {
   host: {
+    id: string;
     name: string;
     username: string | null;
     avatarUrl: string | null;
