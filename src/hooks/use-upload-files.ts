@@ -3,6 +3,7 @@
 import { FileWithPreview, UploadState } from "@/types/upload";
 
 import { supabase } from "@/lib/supabase/client";
+import { toast } from "sonner";
 import { useState } from "react";
 
 export function useUploadFiles() {
@@ -17,7 +18,13 @@ export function useUploadFiles() {
 
     // Check if adding new files would exceed the limit
     if (uploadState.files.length + incomingFiles.length > 5) {
-      alert("You can only upload up to 5 files");
+      //alert("You can only upload up to 5 files");
+
+      toast.warning(
+        "Please can only upload up to 5 files,Image, Videos or Gifs",
+        {},
+      );
+
       return;
     }
 

@@ -267,12 +267,12 @@ export function CreatePostModal({
 					{/* Footer */}
 					<div className='border-t p-4'>
 						<div className='flex justify-between items-center'>
-							<div className='flex gap-2'>
+							<div className='flex gap-2 items-center'>
 								<Button
 									type='button'
-									variant='outline'
+									variant='ghost'
 									size='icon'
-									className='rounded-full'
+									className='border-none'
 									onClick={() => {
 										const input = document.createElement('input');
 										input.type = 'file';
@@ -292,7 +292,7 @@ export function CreatePostModal({
 									}
 								/>
 								{uploadState.files.length >= 5 && (
-									<span className='text-xs text-muted-foreground'>
+									<span className='text-xs text-muted-foreground text-red-400'>
 										Maximum 5 files allowed
 									</span>
 								)}
