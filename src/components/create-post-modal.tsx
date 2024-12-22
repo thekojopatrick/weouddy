@@ -16,6 +16,7 @@ import {
 import { ImageIcon, Loader2, Trash2, VideoIcon, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { EmojiPicker } from './emoji-picker';
 import { FileWithPreview } from '@/types/upload';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
@@ -216,6 +217,11 @@ export function CreatePostModal({
 								>
 									<ImageIcon className='h-4 w-4' />
 								</Button>
+								<EmojiPicker
+									onEmojiSelectAction={(emoji) =>
+										setContent((prev) => prev + emoji)
+									}
+								/>
 								{uploadState.files.length >= 5 && (
 									<span className='text-xs text-muted-foreground'>
 										Maximum 5 files allowed

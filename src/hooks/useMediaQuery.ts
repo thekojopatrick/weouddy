@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Custom hook to monitor media query changes.
@@ -7,24 +7,18 @@ import React from 'react';
  * @returns A boolean indicating whether the media query matches.
  */
 
-export function useMediaQuery(query: string) {
-	const subscribe = React.useCallback(
-		(callback: (event: MediaQueryListEvent) => void) => {
-			const matchMedia = window.matchMedia(query);
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
 
-			matchMedia.addEventListener('change', callback);
-			return () => {
-				matchMedia.removeEventListener('change', callback);
-			};
-		},
-		[query]
-	);
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+    const listener = () => setMatches(media.matches);
+    window.addEventListener("resize", listener);
+    return () => window.removeEventListener("resize", listener);
+  }, [matches, query]);
 
-	const getSnapshot = () => window.matchMedia(query).matches;
-
-	const getServerSnapshot = () => {
-		throw Error('useMediaQuery is a client-only hook');
-	};
-
-	return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  return matches;
 }
