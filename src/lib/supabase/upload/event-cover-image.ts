@@ -41,7 +41,7 @@ export async function uploadEventCoverImage(
 
   // Get public URL
   const { data: publicUrlData } = supabase.storage
-    .from("event-covers")
+    .from("covers")
     .getPublicUrl(filePath);
 
   return publicUrlData.publicUrl;
