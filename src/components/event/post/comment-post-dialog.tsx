@@ -19,12 +19,14 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Send, Trash2 } from 'lucide-react';
+import { MoreVertical, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { EmojiPicker } from '@/components/emoji-picker';
 import { Input } from '@/components/ui/input';
 import { formatTimeAgo } from '@/lib/formatters';
 import { getNameInitials } from '@/lib/utils';
+import useCurrentUser from '@/hooks/account/use-current-user';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useState } from 'react';
 
@@ -59,9 +61,9 @@ export function Comments({
 	currentUserId,
 }: CommentsProps) {
 	const [comment, setComment] = useState('');
-	//const [comments, setComments] = useState<Comment[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const isDesktop = useMediaQuery('(min-width: 768px)');
+	const currentUser = useCurrentUser(currentUserId);
 
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -88,38 +90,40 @@ export function Comments({
 							{getNameInitials(comment.user.name)}
 						</AvatarFallback>
 					</Avatar>
-					<div className='flex-1'>
-						<div className='flex items-center justify-between'>
+					<div className='flex-1 comment'>
+						<div className='flex flex-col justify-between'>
 							<div className='flex items-center gap-2'>
-								<span className='font-medium text-sm'>{comment.user.name}</span>
+								<span className='font-semibold text-xs tracking-tight'>
+									{comment.user.name}
+								</span>
 								<span className='text-xs text-muted-foreground'>
 									{formatTimeAgo(new Date(comment.createdAt))}
 								</span>
 							</div>
-							{comment.userId === currentUserId && (
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button
-											variant='ghost'
-											className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
-										>
-											<MoreVertical className='h-4 w-4' />
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent align='end'>
-										<DropdownMenuItem
-											className='text-destructive focus:text-destructive'
-											onClick={() => handleDeleteCommentAction(comment.id)}
-										>
-											<Trash2 className='mr-2 h-4 w-4' />
-											Delete
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							)}
+							<p className='text-sm'>{comment.content}</p>
 						</div>
-						<p className='text-sm'>{comment.content}</p>
 					</div>
+					{comment.userId === currentUserId && (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant='ghost'
+									className={`h-8 w-8 p-0 ${isDesktop ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
+								>
+									<MoreVertical className='h-4 w-4' />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align='end'>
+								<DropdownMenuItem
+									className='text-destructive focus:text-destructive'
+									onClick={() => handleDeleteCommentAction(comment.id)}
+								>
+									<Trash2 className='mr-2 h-4 w-4' />
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
 				</div>
 			))}
 		</div>
@@ -136,14 +140,35 @@ export function Comments({
 					</div>
 
 					<form onSubmit={onSubmit} className='flex gap-2 py-4'>
-						<Input
-							placeholder='Add a comment...'
-							value={comment}
-							onChange={(e) => setComment(e.target.value)}
+						<Avatar className='h-8 w-8'>
+							<AvatarImage src={currentUser?.avatarUrl ?? ''} />
+							<AvatarFallback className='text-xs'>
+								{getNameInitials(currentUser?.name as string)}
+							</AvatarFallback>
+						</Avatar>
+						<div className='flex-1 flex items-center relative'>
+							<Input
+								placeholder='Add a comment...'
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+								disabled={isLoading}
+								className='rounded-full text-xs pr-10'
+							/>
+							<div className='absolute right-1'>
+								<EmojiPicker
+									onEmojiSelectAction={(emoji) =>
+										setComment((prev) => prev + emoji)
+									}
+								/>
+							</div>
+						</div>
+						<Button
+							type='submit'
+							size='sm'
+							className='rounded-full'
 							disabled={isLoading}
-						/>
-						<Button type='submit' size='icon' disabled={isLoading}>
-							<Send className='h-4 w-4' />
+						>
+							Send
 						</Button>
 					</form>
 				</DialogContent>
@@ -162,14 +187,35 @@ export function Comments({
 						<CommentList />
 					</div>
 					<form onSubmit={onSubmit} className='flex gap-2 py-4'>
-						<Input
-							placeholder='Add a comment...'
-							value={comment}
-							onChange={(e) => setComment(e.target.value)}
+						<Avatar className='h-8 w-8'>
+							<AvatarImage src={currentUser?.avatarUrl ?? ''} />
+							<AvatarFallback className='text-xs'>
+								{getNameInitials(currentUser?.name as string)}
+							</AvatarFallback>
+						</Avatar>
+						<div className='flex-1 flex items-center relative'>
+							<Input
+								placeholder='Add a comment...'
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+								disabled={isLoading}
+								className='rounded-full text-xs pr-10'
+							/>
+							<div className='absolute right-1'>
+								<EmojiPicker
+									onEmojiSelectAction={(emoji) =>
+										setComment((prev) => prev + emoji)
+									}
+								/>
+							</div>
+						</div>
+						<Button
+							type='submit'
+							size='sm'
+							className='rounded-full'
 							disabled={isLoading}
-						/>
-						<Button type='submit' size='icon' disabled={isLoading}>
-							<Send className='h-4 w-4' />
+						>
+							Send
 						</Button>
 					</form>
 				</div>
