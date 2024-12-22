@@ -32,6 +32,7 @@ export async function uploadEventCoverImage(
     .upload(filePath, blob, {
       cacheControl: "3600",
       upsert: false,
+      contentType: blob.type,
     });
 
   if (error) {
