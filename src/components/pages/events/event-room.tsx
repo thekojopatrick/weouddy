@@ -1,11 +1,11 @@
 'use client';
 
-import { CalendarDays, MapPin, MessageCircle, Users } from 'lucide-react';
+import { CalendarDays, MapPin, Users } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import CreatePostButton from '@/components/create-post-button';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventWithFullData } from '@/types/event';
+import JoinChatRoom from '@/components/join-chat-room';
 import { User } from '@supabase/supabase-js';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -62,10 +62,12 @@ export default function EventRoom({
 
 			{/* Action Buttons */}
 			<div className='fixed bottom-8 right-8 flex flex-col gap-4 items-end'>
-				<Button size='lg' className='rounded-full shadow-lg'>
-					<MessageCircle className='mr-2 h-5 w-5' />
-					Join Chatroom
-				</Button>
+				<JoinChatRoom
+					isSmallDevice={isSmallDevice}
+					eventId={event.id}
+					userName={user?.user_metadata.full_name ?? ''}
+					userAvatar={user?.avatarUrl ?? ''}
+				/>
 
 				<CreatePostButton
 					isSmallDevice={isSmallDevice}
