@@ -47,6 +47,9 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 	const currentUserLiked =
 		post.likes?.some((like) => like.userId === userId) || isLiked;
 
+	console.log(post.userId === userId);
+	console.log({ userId }, `${post.userId}`);
+
 	return (
 		<div
 			className='relative group'

@@ -102,7 +102,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
 							className='flex items-center justify-between p-4 border rounded-lg w-full'
 						>
 							<Link
-								href={`/profile/${follower.username}`}
+								href={`/${follower.username}`}
 								className='flex items-center space-x-3 flex-grow'
 							>
 								<Avatar>

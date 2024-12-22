@@ -72,7 +72,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 							This profile is private. Follow to view content.
 						</div>
 					))}
-				<ProfileTabs stats={profile.stats} userId={profile.id} />
+				<ProfileTabs stats={profile.stats} userId={session.userId} />
 			</main>
 		</div>
 	);
