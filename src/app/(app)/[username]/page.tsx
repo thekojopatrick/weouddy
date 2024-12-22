@@ -1,6 +1,8 @@
 import {
 	checkIfFollowing,
 	getFollowStats,
+	getUserFollowers,
+	getUserFollowing,
 	getUserProfile,
 } from '@/server/actions/user/queries';
 
@@ -26,13 +28,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 	}
 
 	// Fetch profile data for the viewed profile
-	const [viewedUserProfile, stats, isFollowing] = await Promise.all([
-		getUserProfile(username),
-		//getUserFollowers(username),
-		//getUserFollowing(username),
-		getFollowStats(username),
-		checkIfFollowing(session.userId, username),
-	]);
+	const [viewedUserProfile, followers, following, stats, isFollowing] =
+		await Promise.all([
+			getUserProfile(username),
+			getUserFollowers(username),
+			getUserFollowing(username),
+			getFollowStats(username),
+			checkIfFollowing(session.userId, username),
+		]);
 
 	if (!viewedUserProfile) {
 		redirect('/404');
@@ -55,6 +58,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 		isOwnProfile: username === session?.user.username,
 		isFollowing: isFollowing,
 		allowFollowers: viewedUserProfile.allowFollowers ?? true,
+		followers: followers as never,
+		following: following as never,
 	};
 
 	return (

@@ -33,23 +33,20 @@ export interface FollowStats {
   followingCount: number;
 }
 
+export interface UserFollow {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string;
+}
+
 export interface Follow {
   id: string;
   followerId: string;
   followingId: string;
   createdAt: Date;
-  follower: {
-    id: string;
-    name: string;
-    username: string;
-    avatarUrl: string;
-  };
-  following: {
-    id: string;
-    name: string;
-    username: string;
-    avatarUrl: string;
-  };
+  follower: UserFollow;
+  following: UserFollow;
   isFollowing?: boolean;
 }
 
@@ -186,4 +183,6 @@ export interface ProfilePageData {
   isOwnProfile: boolean;
   isFollowing?: boolean;
   allowFollowers: boolean;
+  followers: UserFollow[];
+  following: UserFollow[];
 }

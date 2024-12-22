@@ -61,12 +61,13 @@ export function UserEvents({ userId }: UserEventsProps) {
 
 	return (
 		<div className='container mx-auto px-4 py-6'>
-			<div className='flex justify-center space-x-4 mb-6'>
+			<div className='flex items-center space-x-4 mb-6'>
 				{['all', 'hosted', 'joined'].map((type) => (
 					<Button
 						key={type}
 						variant={eventType === type ? 'default' : 'outline'}
 						onClick={() => setEventType(type as 'all' | 'hosted' | 'joined')}
+						className='rounded-full'
 					>
 						{type === 'all'
 							? 'All Events'
@@ -79,7 +80,10 @@ export function UserEvents({ userId }: UserEventsProps) {
 
 			<div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{filteredEvents.map((event) => (
-					<Card key={event.id} className='hover:shadow-lg transition-shadow'>
+					<Card
+						key={event.id}
+						className='shadow-none hover:shadow-md transition-shadow overflow-hidden'
+					>
 						{event.coverImage && (
 							<div className='relative w-full aspect-video'>
 								<Image
@@ -123,7 +127,11 @@ export function UserEvents({ userId }: UserEventsProps) {
 
 			{hasMore && (
 				<div className='flex justify-center mt-6'>
-					<Button onClick={handleLoadMore} disabled={isLoading}>
+					<Button
+						onClick={handleLoadMore}
+						disabled={isLoading}
+						variant={'ghost'}
+					>
 						{isLoading ? 'Loading...' : 'Load More Events'}
 					</Button>
 				</div>

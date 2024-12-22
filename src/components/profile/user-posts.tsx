@@ -58,7 +58,11 @@ export function UserPosts({ userId }: UserPostsProps) {
 
 			{hasMore && (
 				<div className='col-span-full flex justify-center mt-6'>
-					<Button onClick={handleLoadMore} disabled={isLoading}>
+					<Button
+						onClick={handleLoadMore}
+						disabled={isLoading}
+						variant={'ghost'}
+					>
 						{isLoading ? 'Loading...' : 'Load More'}
 					</Button>
 				</div>

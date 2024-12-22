@@ -4,8 +4,6 @@ import { CustomTabs, TabItem } from '@/components/ui/custom-tabs';
 
 import { FollowRequests } from './follow-request';
 import { UserEvents } from './user-events';
-import { UserFollowers } from './user-followers';
-import { UserFollowing } from './user-following';
 import { UserPosts } from './user-posts';
 
 interface ProfileTabsProps {
@@ -32,18 +30,8 @@ export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
 		},
 		{
 			value: 'requests',
-			label: `Requests ${stats.events}`,
+			label: `ApproveRequest ${stats.events}`,
 			content: <FollowRequests userId={userId} />,
-		},
-		{
-			value: 'followers',
-			label: `Followers ${stats.followers}`,
-			content: <UserFollowers userId={userId} />,
-		},
-		{
-			value: 'following',
-			label: `Following ${stats.following}`,
-			content: <UserFollowing userId={userId} />,
 		},
 	];
 

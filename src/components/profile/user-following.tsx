@@ -130,7 +130,11 @@ export function UserFollowing({ userId }: UserFollowingProps) {
 
 			{hasMore && (
 				<div className='flex justify-center mt-6'>
-					<Button onClick={handleLoadMore} disabled={isLoading}>
+					<Button
+						onClick={handleLoadMore}
+						disabled={isLoading}
+						variant={'ghost'}
+					>
 						{isLoading ? 'Loading...' : 'Load More Following'}
 					</Button>
 				</div>

@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Button } from '@/components/ui/button';
+import { FollowsDialog } from './follows-dialog';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { toggleFollow } from '@/server/actions/user/follow';
@@ -53,7 +54,7 @@ export function ProfileHeader({
 	};
 
 	return (
-		<div className='container mx-auto px-4 py-6'>
+		<div className='container mx-auto px-4 py-6 pb-0'>
 			<div className='flex flex-col items-center md:items-start md:flex-row md:gap-6'>
 				<Avatar className='w-24 h-24'>
 					<AvatarImage src={avatarUrl ?? '/placeholder.svg'} />
@@ -67,14 +68,11 @@ export function ProfileHeader({
 					</div>
 
 					<div className='mt-2 flex justify-center md:justify-start gap-3 text-sm'>
-						<div>
-							<span className='font-medium'>{stats.following}</span>{' '}
-							<span className='text-muted-foreground'>Following</span>
-						</div>
-						<div>
-							<span className='font-medium'>{followersCount}</span>{' '}
-							<span className='text-muted-foreground'>Followers</span>
-						</div>
+						<FollowsDialog
+							userId={id}
+							currentUserId={id}
+							stats={{ ...stats, followers: followersCount }}
+						/>
 					</div>
 				</div>
 

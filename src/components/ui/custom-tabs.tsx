@@ -39,7 +39,7 @@ export function CustomTabs({
 			case 'underline':
 			case 'underline-leading-icon':
 			case 'underline-trailing-icon':
-				return 'h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground grid w-full grid-cols-4';
+				return 'h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground grid w-full grid-cols-3 md:grid-cols-4';
 			case 'icon':
 				return 'h-auto rounded-none border-b border-border bg-transparent p-0';
 			default:
