@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { User } from "@supabase/supabase-js";
+import { CurrentUser } from "@/types/prisma.types";
 import { supabase } from "@/lib/supabase/client";
 
 export interface AccountData {
@@ -10,12 +10,12 @@ export interface AccountData {
   email: string | null;
 }
 
-export const useAccount = (user: User | null) => {
+export const useAccount = (user: CurrentUser | null) => {
   const [loading, setLoading] = useState(true);
   const [accountData, setAccountData] = useState<AccountData>({
-    fullname: user?.user_metadata.full_name ?? null,
-    username: null,
-    avatarUrl: user?.user_metadata.avatar_url ?? null,
+    fullname: user?.name ?? null,
+    username: user?.username ?? null,
+    avatarUrl: user?.avatarUrl ?? null,
     email: user?.email ?? null,
   });
 
@@ -41,7 +41,7 @@ export const useAccount = (user: User | null) => {
           ...prev,
           fullname: data.name,
           username: data.username,
-          avatarUrl: data.avatarUrl ?? user.user_metadata.avatar_url,
+          avatarUrl: data.avatarUrl ?? user.avatarUrl ?? "",
         }));
       }
     } catch (error) {

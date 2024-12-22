@@ -2,16 +2,16 @@
 
 import { Button } from '@/components/ui/button';
 import { CountrySelector } from './country-selector';
+import { CurrentUser } from '@/types/prisma.types';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { NavUser } from './nav-user';
 import { Search } from 'lucide-react';
-import { User } from '@supabase/supabase-js';
 import { useAccount } from '@/hooks/account/use-account';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-export function SiteHeader({ user }: { user: User | null }) {
+export function SiteHeader({ user }: { user: CurrentUser | null }) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 
 	const { accountData, loading } = useAccount(user);
@@ -64,9 +64,8 @@ export function SiteHeader({ user }: { user: User | null }) {
 							user={{
 								name: `${accountData.fullname || 'Anonymous'}`,
 								email: accountData.email ?? 'unknown@email.com',
-								avatar: accountData.avatarUrl ?? '',
-								username:
-									accountData.username! ?? accountData.email?.split('@')[0],
+								avatar: accountData.avatarUrl ?? user?.avatarUrl ?? '',
+								username: accountData.username ?? user?.username ?? '',
 							}}
 						/>
 					) : (

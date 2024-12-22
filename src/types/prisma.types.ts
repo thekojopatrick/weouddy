@@ -1,6 +1,15 @@
 import { EventActivityType, MediaType, UserRole } from "./enums";
 
+import { User } from "@supabase/supabase-js";
+
 // User-related Types
+export type CurrentUser = User & {
+  id: string;
+  username?: string | null;
+  name?: string | null;
+  avatarUrl?: string | null;
+};
+
 export interface BaseUser {
   id: string;
   email?: string | null;
