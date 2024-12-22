@@ -41,11 +41,11 @@ export function EventPostCard({ post, userId }: EventPostCardProps) {
 		initialLikes: post._count.likes,
 		initialComments: post._count.comments,
 		currentUserId: userId,
-		isLiked: post.likes.some((like) => like.userId === userId),
+		isLiked: post.likes?.some((like) => like.userId === userId),
 	});
 
 	const currentUserLiked =
-		post.likes.some((like) => like.userId === userId) || isLiked;
+		post.likes?.some((like) => like.userId === userId) || isLiked;
 
 	return (
 		<div

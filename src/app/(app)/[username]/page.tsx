@@ -4,7 +4,6 @@ import {
 	getUserProfile,
 } from '@/server/actions/user/queries';
 
-import { EmptyEvents } from '@/components/profile/empty-states';
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfilePageData } from '@/server/actions/user/types';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
@@ -64,16 +63,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 				<ProfileHeader {...profile} />
 				<ProfileTabs stats={profile.stats} userId={profile.id} />
 				{/* Conditionally render content based on profile type */}
-				{profile.isOwnProfile || profile.isFollowing ? (
-					<div>
-						{/* Render events, posts, etc. */}
-						<EmptyEvents />
-					</div>
-				) : (
-					<div className='text-center text-muted-foreground p-4'>
-						This profile is private. Follow to view content.
-					</div>
-				)}
+				{profile.isOwnProfile ||
+					(profile.isFollowing && (
+						<div className='text-center text-muted-foreground p-4'>
+							This profile is private. Follow to view content.
+						</div>
+					))}
 			</main>
 		</div>
 	);

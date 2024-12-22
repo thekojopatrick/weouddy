@@ -17,7 +17,7 @@ export default function EventRoom({
 	user: (User & { username: string | null; avatarUrl: string | null }) | null;
 	event: EventWithFullData;
 }) {
-	const { date, time } = formatEventDateTime(event.dateTime as never);
+	const { date, time } = formatEventDateTime(event?.dateTime as never);
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 638px)');
 
 	return (

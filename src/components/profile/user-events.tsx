@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { EmptyEvents } from './empty-states';
 import { EventWithDetails } from '@/types/prisma.types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -55,11 +56,7 @@ export function UserEvents({ userId }: UserEventsProps) {
 	});
 
 	if (filteredEvents.length === 0 && !isLoading) {
-		return (
-			<div className='text-center py-10 text-muted-foreground'>
-				No events found
-			</div>
-		);
+		return <EmptyEvents />;
 	}
 
 	return (
@@ -112,7 +109,7 @@ export function UserEvents({ userId }: UserEventsProps) {
 								</div>
 								<div className='flex justify-between items-center mt-4'>
 									<span className='text-sm'>Hosted by {event.host.name}</span>
-									<Link href={`/events/${event.id}`}>
+									<Link href={`/events/${event.slug}`}>
 										<Button variant='outline' size='sm'>
 											View Details
 										</Button>
