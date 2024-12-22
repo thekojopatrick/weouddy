@@ -87,15 +87,17 @@ export function LocationTimeStep({
 				name='location'
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Where is your event taking place?</FormLabel>
+						<FormLabel className='font-medium'>
+							Where is your event taking place?
+						</FormLabel>
 						<FormControl>
 							<Button
 								type='button'
 								variant='outline'
-								className='w-full justify-start truncate '
+								className='w-full justify-start truncate py-5 rounded-full shadow-none bg-zinc-50'
 								onClick={() => setShowLocationModal(true)}
 							>
-								<MapPin className='mr-1 h-4 w-4' />
+								<MapPin className='h-4 w-4 text-zinc-500' />
 								{field.value || 'Select location'}
 							</Button>
 						</FormControl>
@@ -108,15 +110,20 @@ export function LocationTimeStep({
 				name='date'
 				render={({ field }) => (
 					<FormItem className='flex flex-col'>
-						<FormLabel>When is your event happening?</FormLabel>
+						<FormLabel className='font-medium'>
+							When is your event happening?
+						</FormLabel>
 						<div className='flex space-x-2'>
 							<Popover>
-								<PopoverTrigger asChild>
+								<PopoverTrigger
+									asChild
+									className='py-5 bg-zinc-50 shadow-none rounded-full'
+								>
 									<FormControl className='flex-grow'>
 										<Button
 											variant={'outline'}
 											className={cn(
-												'w-full pl-3 text-left font-normal',
+												'w-full pl-4 text-left font-normal',
 												!field.value && 'text-muted-foreground'
 											)}
 										>
@@ -142,8 +149,8 @@ export function LocationTimeStep({
 								</PopoverContent>
 							</Popover>
 							<Select onValueChange={handleTimeQuickSelect}>
-								<SelectTrigger className='w-[120px]'>
-									<SelectValue placeholder='Quick Date' />
+								<SelectTrigger className='w-[120px] rounded-full shadow-none py-5 text-sm'>
+									<SelectValue placeholder='Quick Date' className='text-sm' />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value='now'>Now</SelectItem>
@@ -162,7 +169,9 @@ export function LocationTimeStep({
 				name='time'
 				render={({ field }) => (
 					<FormItem className='flex flex-col'>
-						<FormLabel>What time is your event happening?</FormLabel>
+						<FormLabel className='font-medium'>
+							What time is your event happening?
+						</FormLabel>
 						<div className='flex space-x-2 items-center'>
 							<FormControl className='flex-grow'>
 								<TimeField
@@ -172,9 +181,9 @@ export function LocationTimeStep({
 											: parseTime(format(new Date(), 'HH:mm'))
 									}
 									onChange={handleTimeChange}
-									className='w-full'
+									className='w-full rounded-full bg-zinc-50'
 								>
-									<DateInput className='relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm shadow-black/5 transition-shadow data-[focus-within]:border-ring data-[disabled]:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20'>
+									<DateInput className='relative rounded-full inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap  border border-input bg-zinc-50 px-3 py-5 text-sm shadow-none shadow-black/5 transition-shadow data-[focus-within]:border-ring data-[disabled]:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20'>
 										{(segment) => (
 											<DateSegment
 												segment={segment}
@@ -187,9 +196,10 @@ export function LocationTimeStep({
 							<Button
 								type='button'
 								variant='outline'
+								className='rounded-full py-5'
 								onClick={() => handleTimeQuickSelect('now')}
 							>
-								<Clock className='h-4 w-4 mr-2' /> Now
+								<Clock className='h-4 w-4' /> Now
 							</Button>
 						</div>
 					</FormItem>

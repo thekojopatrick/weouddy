@@ -48,9 +48,15 @@ export function EventDetailsStep({ onNext, onBack }: EventDetailsStepProps) {
 				name='title'
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>What&apos;s the title of your event?</FormLabel>
+						<FormLabel className='font-medium'>
+							What&apos;s the title of your event?
+						</FormLabel>
 						<FormControl>
-							<Input placeholder='E.g., Summer BBQ Bash' {...field} />
+							<Input
+								className='rounded-full shadow-none text-sm py-5 bg-zinc-50'
+								placeholder='E.g., Summer BBQ Bash'
+								{...field}
+							/>
 						</FormControl>
 						<FormMessage />
 					</FormItem>
@@ -61,10 +67,12 @@ export function EventDetailsStep({ onNext, onBack }: EventDetailsStepProps) {
 				name='type'
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Choose the type of event you&apos;re planning</FormLabel>
+						<FormLabel className='font-medium'>
+							Choose the type of event you&apos;re planning
+						</FormLabel>
 						<Select onValueChange={field.onChange} defaultValue={field.value}>
 							<FormControl>
-								<SelectTrigger>
+								<SelectTrigger className='rounded-full shadow-none text-sm py-5 bg-zinc-50'>
 									<SelectValue placeholder='Select event type' />
 								</SelectTrigger>
 							</FormControl>
@@ -85,11 +93,13 @@ export function EventDetailsStep({ onNext, onBack }: EventDetailsStepProps) {
 				name='description'
 				render={({ field }) => (
 					<FormItem>
-						<FormLabel>Tell us a little about your event</FormLabel>
+						<FormLabel className='font-medium text-md'>
+							Tell us a little about your event
+						</FormLabel>
 						<FormControl>
 							<Textarea
 								placeholder='Enter event description'
-								className='min-h-[100px]'
+								className='min-h-[100px] text-sm bg-zinc-50'
 								{...field}
 							/>
 						</FormControl>
