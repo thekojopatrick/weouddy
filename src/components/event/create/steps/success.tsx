@@ -101,10 +101,10 @@ export function SuccessStep({
 	return (
 		<div className='space-y-6 py-6'>
 			<div className='space-y-2 text-center'>
-				<h2 className='text-2xl font-bold tracking-tight'>
+				<h2 className='text-xl font-bold tracking-tight'>
 					Event successfully created
 				</h2>
-				<p className='text-muted-foreground'>
+				<p className='text-muted-foreground text-sm'>
 					Your event has been created successfully! Share it with your friends
 					or publish it to reach a wider audience
 				</p>
@@ -130,13 +130,13 @@ export function SuccessStep({
 				</div>
 
 				<div className='grid gap-2'>
-					<Button className='w-full' onClick={handleShare}>
+					<Button className='w-full rounded-full' onClick={handleShare}>
 						<Share2 className='mr-2 h-4 w-4' />
 						Share Event
 					</Button>
 					<LoadingButton
 						variant='outline'
-						className='w-full'
+						className='w-full rounded-full'
 						loading={isDownloading}
 						disabled={isDownloading}
 						onClick={handleDownload}
@@ -146,7 +146,11 @@ export function SuccessStep({
 					</LoadingButton>
 				</div>
 
-				<Button variant='ghost' className='w-full' onClick={onCloseAction}>
+				<Button
+					variant='ghost'
+					className='w-full rounded-full'
+					onClick={onCloseAction}
+				>
 					Done
 				</Button>
 			</div>

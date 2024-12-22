@@ -35,10 +35,10 @@ export function EventDetailsStep({ onNext, onBack }: EventDetailsStepProps) {
 	return (
 		<div className='space-y-6 py-6'>
 			<div className='space-y-2'>
-				<h2 className='text-2xl font-bold tracking-tight'>
+				<h2 className='text-xl font-bold tracking-tight'>
 					Enter Event or Room Details
 				</h2>
-				<p className='text-muted-foreground'>
+				<p className='text-muted-foreground text-sm'>
 					Big or small, your event, your room deserves the spotlight. Share your
 					vibe, your way!
 				</p>
@@ -99,10 +99,15 @@ export function EventDetailsStep({ onNext, onBack }: EventDetailsStepProps) {
 			/>
 
 			<div className='flex justify-between'>
-				<Button type='button' variant='ghost' onClick={onBack}>
+				<Button
+					type='button'
+					variant='outline'
+					onClick={onBack}
+					className='rounded-full shadow-none'
+				>
 					Back
 				</Button>
-				<Button type='button' onClick={onNext}>
+				<Button type='button' onClick={onNext} className='rounded-full'>
 					Next
 				</Button>
 			</div>

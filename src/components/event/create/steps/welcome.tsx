@@ -9,11 +9,11 @@ interface WelcomeStepProps {
 export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
 	return (
 		<div className='space-y-6 py-6'>
-			<div className='space-y-2 text-center'>
-				<h2 className='text-2xl font-bold tracking-tight'>
+			<div className='space-y-2 text-center max-w-lg mx-auto'>
+				<h2 className='text-xl font-bold tracking-tight'>
 					Create & host your event, your way!
 				</h2>
-				<p className='text-muted-foreground'>
+				<p className='text-muted-foreground text-sm'>
 					Create an event in just a few clicks. Whether it&apos;s for close
 					friends or a public audience, make it memorable by sharing the details
 					instantly
@@ -31,7 +31,11 @@ export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
 			</div>
 
 			<div className='flex justify-between'>
-				<Button variant='outline' className='rounded-full' onClick={onSkip}>
+				<Button
+					variant='outline'
+					className='rounded-full shadow-none'
+					onClick={onSkip}
+				>
 					Skip
 				</Button>
 				<Button className='rounded-full' onClick={onNext}>

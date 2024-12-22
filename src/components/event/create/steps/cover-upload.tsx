@@ -59,8 +59,8 @@ export function CoverUploadStep({
 	return (
 		<div className='space-y-6 py-6'>
 			<div className='space-y-2'>
-				<h2 className='text-2xl font-bold tracking-tight'>Upload Cover</h2>
-				<p className='text-muted-foreground'>
+				<h2 className='text-xl font-bold tracking-tight'>Upload Cover</h2>
+				<p className='text-muted-foreground text-sm'>
 					Turn your gathering into a celebration and let your world shine.
 				</p>
 			</div>
@@ -148,10 +148,20 @@ export function CoverUploadStep({
 			/>
 
 			<div className='flex justify-between'>
-				<Button type='button' variant='ghost' onClick={onBackAction}>
+				<Button
+					type='button'
+					variant='outline'
+					onClick={onBackAction}
+					className='rounded-full shadow-none'
+				>
 					Back
 				</Button>
-				<Button type='button' onClick={onNextAction} disabled={!previewImage}>
+				<Button
+					type='button'
+					onClick={onNextAction}
+					disabled={!previewImage}
+					className='rounded-full'
+				>
 					Next
 				</Button>
 			</div>
