@@ -61,14 +61,13 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 		<div className='min-h-screen bg-background'>
 			<main>
 				<ProfileHeader {...profile} />
-				<ProfileTabs stats={profile.stats} userId={profile.id} />
-				{/* Conditionally render content based on profile type */}
 				{profile.isOwnProfile ||
 					(profile.isFollowing && (
 						<div className='text-center text-muted-foreground p-4'>
 							This profile is private. Follow to view content.
 						</div>
 					))}
+				<ProfileTabs stats={profile.stats} userId={profile.id} />
 			</main>
 		</div>
 	);
