@@ -37,7 +37,7 @@ export default function CustomSheet({
 	stickyFooter = false,
 	scrollableContent = true,
 	maxHeight = 'min(640px,80vh)',
-	maxWidth = 'lg',
+	maxWidth = 'md',
 	side = 'right',
 	onScrollToBottom,
 	footerContent,

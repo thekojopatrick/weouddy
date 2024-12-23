@@ -1,17 +1,26 @@
 'use client';
 
-import { JoinEventForm, JoinStep } from './join-event-form';
 import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { JoinEventData } from '@/types/event';
+import { JoinEventFlow } from './join-event-flow';
+import { JoinStep } from './join-event-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { joinEvent } from '@/server/actions/event/join/mutation';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
+type EventAccessType = 'LINK_ONLY' | 'PIN_REQUIRED';
+interface EventData {
+	id: string;
+	slug: string;
+	isPrivate: boolean;
+	isDisabled: boolean;
+	requiresApproval: boolean;
+	accessType: EventAccessType;
+}
 interface JoinEventDialogProps {
-	event?: JoinEventData;
+	event?: EventData;
 	initialStep?: JoinStep;
 	open: boolean;
 	onOpenChangeAction: (open: boolean) => void;
@@ -85,7 +94,7 @@ const JoinEventDialog = ({
 		<ResponsiveDialog
 			open={open}
 			onOpenChangeAction={onOpenChangeAction}
-			className='sm:max-w-[620px] overflow-hidden py-3 px-4'
+			className='sm:max-w-[420px] overflow-hidden py-3 px-4'
 		>
 			<div className="'flex flex-col items-center gap-4 justify-center">
 				<Image
@@ -95,7 +104,7 @@ const JoinEventDialog = ({
 					height={48}
 					className='h-12 w-12 mb-5'
 				/>
-				<JoinEventForm
+				<JoinEventFlow
 					initialEventData={event}
 					initialStep={getInitialStep()}
 					onCloseDialog={() => onOpenChangeAction(false)}

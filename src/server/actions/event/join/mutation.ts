@@ -205,6 +205,7 @@ export async function getEventJoinInfo(identifier: string) {
         accessType: event.accessType,
         requiresApproval: event.requiresApproval,
         slug: event.slug,
+        isPrivate: event.isPrivate,
         host: {
           name: event.host.name,
           username: event.host.username,

@@ -99,11 +99,6 @@ export function QRScannerForm({
 
 	return (
 		<div className='space-y-6'>
-			<Button variant='ghost' size='sm' onClick={onBackAction} className='mb-2'>
-				<ArrowLeft className='mr-2 h-4 w-4' />
-				Back
-			</Button>
-
 			<div className='aspect-square w-full bg-muted rounded-lg flex items-center justify-center'>
 				{isScanning ? (
 					<div className='space-y-4'>
@@ -121,6 +116,15 @@ export function QRScannerForm({
 					</Button>
 				)}
 			</div>
+			<Button
+				variant='outline'
+				size='lg'
+				onClick={onBackAction}
+				className='mb-2 w-full rounded-full'
+			>
+				<ArrowLeft className='h-4 w-4' />
+				Go Back
+			</Button>
 		</div>
 	);
 }

@@ -127,12 +127,13 @@ export function EventCard({
 			// Navigate to the event page
 			router.push(`/events/${slug}`);
 		} else {
+			setIsCheckingStatus(false);
 			// Open modal for join flow
 			setIsModalOpen(true);
 		}
 	};
 
-	if (debouncedCheckingStatus && userStatus === 'NOT_JOINED') {
+	if (debouncedCheckingStatus) {
 		return <EventCardShimmer />;
 	}
 

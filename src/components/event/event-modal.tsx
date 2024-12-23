@@ -126,7 +126,7 @@ export function EventModal({
 	const buttonConfig = getJoinButtonConfig();
 
 	const renderContent = (
-		<div className='flex flex-col space-y-6'>
+		<div className='flex flex-col space-y-6 pb-4'>
 			<div className='relative h-48'>
 				<Image
 					src={event.coverImage}
@@ -231,7 +231,7 @@ export function EventModal({
 				stickyHeader={true}
 				stickyFooter={true}
 				scrollableContent={true}
-				maxHeight={isMobile ? '90vh' : '80vh'}
+				maxHeight={''}
 				footerContent={renderFooter}
 			/>
 			<JoinEventDialog
