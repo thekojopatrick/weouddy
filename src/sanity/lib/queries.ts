@@ -52,4 +52,4 @@ export const postSlugsQuery = groq`*[_type == "post"] {
   date
 }`;
 
-export const getEvents = groq`*[_type == "event"] | order(date asc) [0...5]`;
+export const getEvents = groq`*[_type == "event"] | order(date asc) [0...10]`;

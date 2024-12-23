@@ -99,12 +99,7 @@ const EventList = ({
 								<div className='flex-1'>
 									<div className='flex items-center gap-4'>
 										<time className='text-sm text-gray-600 w-32'>
-											{new Date(event.date).toLocaleDateString('en-US', {
-												month: 'short',
-												day: 'numeric',
-												hour: 'numeric',
-												minute: '2-digit',
-											})}
+											{event.time}
 										</time>
 										<h3 className='font-medium group-hover:text-zinc-900 transition-colors'>
 											{event.title}
