@@ -5,11 +5,9 @@ import { cabinetGrotesk, geistMono, geistSans } from '@/components/ui/fonts';
 import type { Metadata } from 'next';
 import { Toaster as SonnerToaster } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
+import { siteMeta } from '@/config/metadata';
 
-export const metadata: Metadata = {
-	title: 'WeOutside',
-	description: 'connects to moments instead of events',
-};
+export const metadata: Metadata = siteMeta;
 
 export default function RootLayout({
 	children,
