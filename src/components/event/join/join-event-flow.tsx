@@ -102,6 +102,9 @@ export function JoinEventFlow({
 						identifier: eventData.id,
 						identifierType: 'id',
 					});
+
+					console.log({ joinResult });
+
 					handleJoinResult(joinResult as never);
 				}
 				break;

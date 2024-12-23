@@ -52,7 +52,7 @@ const JoinEventDialog = ({
 					description: result.message || 'Successfully joined the event',
 				});
 				onOpenChangeAction(false);
-				router.prefetch(`/events/${result.eventSlug}`);
+				router.push(`/events/${result.eventSlug}`);
 			}
 		} catch (error) {
 			toast({
