@@ -8,6 +8,7 @@ import {
 } from '@/server/actions/event/join/mutation';
 import { useCallback, useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import JoinEventSuccess from './forms/success';
 import { LinkPasteForm } from './forms/link-paste-form';
 import { PinEntryForm } from './forms/pin-entry-form';
@@ -50,6 +51,7 @@ export function JoinEventFlow({
 	const [eventData, setEventData] = useState<EventData | undefined>(
 		initialEventData
 	);
+	const [isRedirecting, setIsRedirecting] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 
@@ -129,11 +131,14 @@ export function JoinEventFlow({
 				setEventData(eventInfo.event as never);
 
 				if (eventInfo.userStatus === 'JOINED') {
+					console.log('Redirecting 2');
 					setCurrentStep('REDIRECTING');
-					setTimeout(() => {
+					setIsRedirecting(true);
+					const redirectTimeout = setTimeout(() => {
 						handleRedirectToEvent(eventInfo.event.slug);
-					}, 500);
-					return;
+					}, 1000);
+
+					return () => clearTimeout(redirectTimeout);
 				}
 
 				if (eventInfo.userStatus === 'PENDING') {
@@ -144,7 +149,10 @@ export function JoinEventFlow({
 				const event = eventInfo.event;
 
 				if (!event.isPrivate) {
+					console.log('Redirecting 1');
 					setCurrentStep('REDIRECTING');
+					setIsRedirecting(true);
+
 					const result = await joinEvent({
 						identifier,
 						identifierType: /^c[a-zA-Z0-9]{24}$/.test(identifier)
@@ -224,6 +232,12 @@ export function JoinEventFlow({
 		[eventData?.id, handleEventAccess]
 	);
 
+	const handleCancelRedirect = () => {
+		setIsRedirecting(false);
+		setCurrentStep('LINK_PASTE');
+		onCloseDialog?.();
+	};
+
 	const renderContent = () => {
 		switch (currentStep) {
 			case 'LINK_PASTE':
@@ -263,12 +277,23 @@ export function JoinEventFlow({
 
 			case 'REDIRECTING':
 				return (
-					<JoinEventSuccess
-						isLoading={isLoading}
-						onManualRedirect={() =>
-							eventData?.slug && handleRedirectToEvent(eventData.slug)
-						}
-					/>
+					<div className='relative space-y-4'>
+						<JoinEventSuccess
+							isLoading={isLoading}
+							onManualRedirect={() =>
+								eventData?.slug && handleRedirectToEvent(eventData.slug)
+							}
+						/>
+						{isRedirecting && (
+							<Button
+								variant='secondary'
+								className='w-full'
+								onClick={handleCancelRedirect}
+							>
+								Cancel
+							</Button>
+						)}
+					</div>
 				);
 		}
 	};
