@@ -14,7 +14,7 @@ export default function NotFound() {
 				</div>
 				<div className='flex gap-x-3'>
 					<Button variant={'default'}>
-						<Link href={'/discover'}>Go back to home</Link>
+						<Link href={'/'}>Go back to home</Link>
 					</Button>
 					<Button variant={'secondary'} asChild>
 						<Link href={'/contact'}>Contact Support</Link>

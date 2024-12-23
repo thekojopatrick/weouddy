@@ -41,8 +41,8 @@ export async function updateSession(request: NextRequest) {
 
   // Allow access public page without authentication
   if (
-    !user && request.nextUrl.pathname.startsWith("/home") ||
-    request.nextUrl.pathname.startsWith("/discover")
+    !user && request.nextUrl.pathname.startsWith("/") ||
+    request.nextUrl.pathname.startsWith("/contact")
   ) {
     return supabaseResponse;
   }
