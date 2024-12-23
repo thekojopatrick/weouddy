@@ -166,8 +166,8 @@ export function EventCard({
 						/>
 					</div>
 				</CardHeader>
-				<CardContent className='flex items-center gap-2.5 p-4'>
-					<h3 className='font-semibold leading-none tracking-tight max-w-40 truncate'>
+				<CardContent className='flex items-center gap-2.5 p-4 pb-2'>
+					<h3 className='font-semibold text-sm leading-none tracking-tight max-w-40 truncate'>
 						{name}
 					</h3>
 					<div className='flex flex-wrap gap-2'>
@@ -183,7 +183,7 @@ export function EventCard({
 					<div className='flex items-center space-x-4 text-sm text-muted-foreground'>
 						<div className='row flex gap-2'>
 							<div className='col-auto'>
-								<Avatar className='h-10 w-10'>
+								<Avatar className='h-8 w-8'>
 									<AvatarImage
 										src={
 											host.avatarUrl ??
@@ -195,14 +195,16 @@ export function EventCard({
 								</Avatar>
 							</div>
 							<div className='col-auto'>
-								<div className='font-medium text-zinc-950'>{host.name}</div>
-								<div className='row flex items-center gap-2 -mx-1'>
+								<div className='font-[600] text-xs text-zinc-950'>
+									{host.name}
+								</div>
+								<div className='row flex items-center gap-2 -mx-1 text-xs'>
 									<div className='flex items-center space-x-1'>
-										<MapPin className='size-4' />
+										<MapPin className='size-3' />
 										<span className='truncate max-w-20'>{location}</span>
 									</div>
 									<div className='flex items-center space-x-1'>
-										<Users className='size-4' />
+										<Users className='size-3' />
 										<span>{members}</span>
 									</div>
 								</div>
