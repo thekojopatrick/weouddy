@@ -80,7 +80,7 @@ const EventList = ({
 }) => {
 	return (
 		<div className='w-full max-w-4xl mx-auto mb-12'>
-			<h2 className='text-xl font-bold mb-6 border-b pb-2 font-display'>
+			<h2 className='text-2xl font-bold mb-6 border-b pb-2 font-display'>
 				{title}
 			</h2>
 			{events.length === 0 ? (
