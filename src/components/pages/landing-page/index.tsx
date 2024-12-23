@@ -10,8 +10,8 @@ const LandingPage = () => {
 		<main className='bg-[#FCFBF7]'>
 			<HeroSection />
 			<AboutUsSection />
-			<JoinUsSection />
 			<EventsSection />
+			<JoinUsSection />
 			<Footer />
 		</main>
 	);

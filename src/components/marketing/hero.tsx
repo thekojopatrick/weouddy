@@ -51,7 +51,7 @@ export default function HeroSection() {
 						variant='outline'
 						size={'lg'}
 						aria-label='Work with us'
-						className='rounded-full h-12 font-semibold'
+						className='rounded-full h-12 font-semibold hidden'
 					>
 						Vibe with us
 					</Button>

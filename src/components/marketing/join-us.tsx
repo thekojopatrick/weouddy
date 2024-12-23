@@ -1,5 +1,5 @@
-import { Button } from '../ui/button';
 import Image from 'next/image';
+import JoinWaitList from './join-waitlist';
 import React from 'react';
 
 const JoinUsSection = () => {
@@ -31,9 +31,7 @@ const JoinUsSection = () => {
 							word (we oudy)).
 						</p>
 					</div>
-					<Button variant='outline' size={'lg'} className='rounded-full w-auto'>
-						Join us
-					</Button>
+					<JoinWaitList />
 				</div>
 			</div>
 		</section>

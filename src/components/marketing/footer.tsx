@@ -115,7 +115,7 @@ const Footer = () => {
 							<Button
 								variant='outline'
 								size='lg'
-								className='rounded-full w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors'
+								className='rounded-full hidden w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors'
 								onClick={() => window.open('/sponsor', '_blank')}
 								aria-label='Open sponsorship page'
 							>
