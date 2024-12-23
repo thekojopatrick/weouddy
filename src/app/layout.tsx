@@ -13,24 +13,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-	modal,
 }: Readonly<{
 	children: React.ReactNode;
-	modal: React.ReactNode;
 }>) {
 	return (
 		<html lang='en'>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} ${cabinetGrotesk.variable} antialiased`}
 			>
-				<>
-					{children}
-					{modal}
-				</>
+				<>{children}</>
 				<Toaster />
 				<SonnerToaster />
 				<script
-					async
+					defer
 					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`}
 				></script>
 			</body>
