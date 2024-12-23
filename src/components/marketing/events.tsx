@@ -91,7 +91,7 @@ const EventList = ({
 				<div className='space-y-1'>
 					{events.map((event) => (
 						<Link
-							href={`${event.eventUrl}`}
+							href={`${event.eventUrl ?? '#'}`}
 							key={event._id}
 							className='group block border-b last:border-b-0 hover:bg-gray-50/10 transition-colors'
 						>
