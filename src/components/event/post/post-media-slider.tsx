@@ -150,39 +150,6 @@ export function PostMediaSlider({
 						<ChevronRight className='h-6 w-6' />
 					</button>
 
-					{/* Play/Pause and Mute controls */}
-					{isHovered && (
-						<div className='absolute bottom-2 right-2 flex space-x-2'>
-							{currentMedia.type === 'VIDEO' && (
-								<>
-									<button
-										onClick={togglePlayPause}
-										className='bg-black/50 text-white p-1 rounded-full 
-                      hover:bg-black/70 transition-colors z-50'
-									>
-										{isPlaying ? (
-											<Pause className='h-5 w-5' />
-										) : (
-											<Play className='h-5 w-5' />
-										)}
-									</button>
-
-									<button
-										onClick={toggleMute}
-										className='bg-black/50 text-white p-1 rounded-full 
-                      hover:bg-black/70 transition-colors z-50'
-									>
-										{isMuted ? (
-											<VolumeX className='h-5 w-5' />
-										) : (
-											<Volume2 className='h-5 w-5' />
-										)}
-									</button>
-								</>
-							)}
-						</div>
-					)}
-
 					{/* Media indicator */}
 					<div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2'>
 						{media.map((_, index) => (
@@ -196,6 +163,39 @@ export function PostMediaSlider({
 						))}
 					</div>
 				</>
+			)}
+
+			{/* Play/Pause and Mute controls */}
+			{isHovered && (
+				<div className='absolute bottom-2 right-2 flex space-x-2'>
+					{currentMedia.type === 'VIDEO' && (
+						<>
+							<button
+								onClick={togglePlayPause}
+								className='bg-black/50 text-white p-1 rounded-full 
+                      hover:bg-black/70 transition-colors z-50'
+							>
+								{isPlaying ? (
+									<Pause className='h-5 w-5' />
+								) : (
+									<Play className='h-5 w-5' />
+								)}
+							</button>
+
+							<button
+								onClick={toggleMute}
+								className='bg-black/50 text-white p-1 rounded-full 
+                      hover:bg-black/70 transition-colors z-50'
+							>
+								{isMuted ? (
+									<VolumeX className='h-5 w-5' />
+								) : (
+									<Volume2 className='h-5 w-5' />
+								)}
+							</button>
+						</>
+					)}
+				</div>
 			)}
 		</div>
 	);

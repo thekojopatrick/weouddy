@@ -31,22 +31,35 @@ export function MediaControls({
 	onMute,
 	isVideo,
 }: MediaControlsProps) {
-	if (mediaCount <= 1) return null;
-
 	return (
 		<>
-			<button
-				onClick={onPrev}
-				className='absolute left-2 top-1/2 -translate-y-1/4 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
-			>
-				<ChevronLeft className='h-6 w-6' />
-			</button>
-			<button
-				onClick={onNext}
-				className='absolute right-2 top-1/2 -translate-y-1/4 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
-			>
-				<ChevronRight className='h-6 w-6' />
-			</button>
+			{mediaCount > 1 && (
+				<>
+					<button
+						onClick={onPrev}
+						className='absolute left-2 top-1/2 -translate-y-1/4 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+					>
+						<ChevronLeft className='h-6 w-6' />
+					</button>
+					<button
+						onClick={onNext}
+						className='absolute right-2 top-1/2 -translate-y-1/4 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors z-50'
+					>
+						<ChevronRight className='h-6 w-6' />
+					</button>
+
+					<div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2'>
+						{Array.from({ length: mediaCount }).map((_, index) => (
+							<div
+								key={index}
+								className={`h-2 w-2 rounded-full ${
+									index === currentIndex ? 'bg-white' : 'bg-white/50'
+								}`}
+							/>
+						))}
+					</div>
+				</>
+			)}
 			{isHovered && isVideo && (
 				<div className='absolute bottom-2 right-2 flex space-x-2'>
 					<button
@@ -71,16 +84,6 @@ export function MediaControls({
 					</button>
 				</div>
 			)}
-			<div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2'>
-				{Array.from({ length: mediaCount }).map((_, index) => (
-					<div
-						key={index}
-						className={`h-2 w-2 rounded-full ${
-							index === currentIndex ? 'bg-white' : 'bg-white/50'
-						}`}
-					/>
-				))}
-			</div>
 		</>
 	);
 }
