@@ -6,11 +6,15 @@ import { getSession } from '@/lib/auth';
 const AppLayout = async ({ children }: { children: ReactNode }) => {
 	const session = await getSession();
 
+	if (!session) {
+		return null;
+	}
+
 	return (
-		<div>
+		<main>
 			<SiteHeader user={session?.user ?? null} />
-			<main>{children}</main>
-		</div>
+			<section>{children}</section>
+		</main>
 	);
 };
 
