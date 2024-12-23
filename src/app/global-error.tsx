@@ -24,16 +24,18 @@ export default function GlobalError({
 			<body>
 				<div className='w-full h-screen flex flex-col justify-center items-center gap-y-6'>
 					<div className='space-y-4 text-center max-w-xl'>
-						<h1 className='text-3xl font-bold'>
-							Sorry,something went wrong.we still dey outside!
-						</h1>
+						<h1 className='text-3xl font-bold'>Something went wrong!</h1>
 						<p>Refresh the page or contact support if this problem persists</p>
 					</div>
 					<div className='flex gap-x-3'>
-						<Button variant={'default'} onClick={() => () => reset()}>
+						<Button
+							variant={'default'}
+							className='rounded-full'
+							onClick={() => () => reset()}
+						>
 							Let&apos;s try again
 						</Button>
-						<Button variant={'secondary'} asChild>
+						<Button variant={'secondary'} className='rounded-full' asChild>
 							<Link href={'/contact'}>Contact Support</Link>
 						</Button>
 					</div>
