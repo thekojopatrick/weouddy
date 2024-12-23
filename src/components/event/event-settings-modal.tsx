@@ -52,8 +52,8 @@ export function EventSettingsModal({
 				<div className='space-y-4'>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center gap-2'>
-							<Lock className='h-5 w-5' />
-							<span>Private Event</span>
+							<Lock className='size-4' />
+							<span className='text-sm'>Is Private</span>
 						</div>
 						<Switch
 							checked={settings.isPrivate}
@@ -65,8 +65,8 @@ export function EventSettingsModal({
 
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center gap-2'>
-							<UserCheck className='h-5 w-5' />
-							<span>Requires Approval</span>
+							<UserCheck className='size-4' />
+							<span className='text-sm'>Requires Approval</span>
 						</div>
 						<Switch
 							checked={settings.requiresApproval}
@@ -78,8 +78,8 @@ export function EventSettingsModal({
 
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center gap-2'>
-							<MessageCircle className='h-5 w-5' />
-							<span>Allow Comments</span>
+							<MessageCircle className='size-4' />
+							<span className='text-sm'>Allow Comments</span>
 						</div>
 						<Switch
 							checked={settings.allowComments}
