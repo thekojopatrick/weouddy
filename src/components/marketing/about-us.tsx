@@ -49,7 +49,7 @@ const AboutUsSection = () => {
 				<TextEffect
 					per='char'
 					delay={2.5}
-					className='text-xl font-semibold text-center tracking-tight'
+					className='text-xl font-medium text-center tracking-tight'
 					preset='blur'
 				>
 					Discover real-time moments, stories, and insights about events,
