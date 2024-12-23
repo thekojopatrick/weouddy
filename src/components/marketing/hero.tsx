@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { JoinWaitList } from './join-waitlist';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 
 export default function HeroSection() {
@@ -56,37 +57,41 @@ export default function HeroSection() {
 						Vibe with us
 					</Button>
 					<JoinWaitList />
+					<Link href={'https://x.com/OfficialWeouddy'}>
+						<Button
+							size='icon'
+							variant='outline'
+							aria-label='Share on Twitter'
+							className='rounded-full size-12'
+						>
+							<RiTwitterXFill
+								size={20}
+								strokeWidth={1}
+								aria-hidden='true'
+								className='[&&]:size-5'
+							/>
+						</Button>
+					</Link>
+					<Link href={'https://www.instagram.com/weouddy/'}>
+						<Button
+							size='icon'
+							variant='outline'
+							aria-label='Embed'
+							className='rounded-full size-12'
+						>
+							<RiInstagramLine
+								size={20}
+								strokeWidth={1}
+								aria-hidden='true'
+								className='[&&]:size-5'
+							/>
+						</Button>
+					</Link>
 					<Button
 						size='icon'
 						variant='outline'
-						aria-label='Share on Twitter'
-						className='rounded-full size-12'
-					>
-						<RiTwitterXFill
-							size={20}
-							strokeWidth={1}
-							aria-hidden='true'
-							className='[&&]:size-5'
-						/>
-					</Button>
-					<Button
-						size='icon'
-						variant='outline'
-						aria-label='Embed'
-						className='rounded-full size-12'
-					>
-						<RiInstagramLine
-							size={20}
-							strokeWidth={1}
-							aria-hidden='true'
-							className='[&&]:size-5'
-						/>
-					</Button>
-					<Button
-						size='icon'
-						variant='outline'
-						aria-label='Share on Facebook'
-						className='rounded-full size-12'
+						aria-label='Share on Snapchat'
+						className='rounded-full size-12 hidden'
 					>
 						<RiSnapchatLine
 							size={20}

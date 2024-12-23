@@ -48,7 +48,7 @@ export function JoinWaitList() {
 
 	return (
 		<MotionDialog>
-			<DialogTrigger className='dark:bg-zinc-950 px-4 py-2 text-sm font-semibold dark:text-white dark:hover:bg-zinc-900 bg-white text-zinc-900 hover:bg-zinc-100 rounded-full'>
+			<DialogTrigger className='dark:bg-zinc-950 px-6 py-2 text-sm font-semibold dark:text-white dark:hover:bg-zinc-900 bg-white text-zinc-900 hover:bg-zinc-100 rounded-full'>
 				Join waitlist
 			</DialogTrigger>
 			<DialogContent className='w-full max-w-md bg-white p-6 dark:bg-zinc-900'>
