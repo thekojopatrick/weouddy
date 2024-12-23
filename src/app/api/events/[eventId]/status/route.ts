@@ -11,13 +11,11 @@ export async function GET(
 
     const { eventId } = await params;
 
-    if (!session?.user) {
-      return NextResponse.json({ status: "NOT_JOINED" });
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const status = await getUserEventStatus(eventId, session.user.id);
-
-    console.log({ status });
 
     return NextResponse.json({ status });
   } catch (error) {
