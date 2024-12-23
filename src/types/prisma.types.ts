@@ -77,6 +77,7 @@ export interface BaseEvent {
   allowChat: boolean;
   allowPosts: boolean;
   requiresApproval: boolean;
+  accessType: string;
   createdAt: Date;
   updatedAt: Date;
   hostId: string;

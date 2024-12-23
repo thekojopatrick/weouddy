@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const locations = [
 	{ name: 'Accra', param: 'accra' },
+	{ name: 'Takoradi', param: 'takoradi' },
 	{ name: 'Ghana', param: 'gh' },
 	{ name: 'Africa', param: 'africa' },
 	{ name: 'Rest of the world', param: 'world' },

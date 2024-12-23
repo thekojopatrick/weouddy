@@ -7,5 +7,7 @@ export default async function Page() {
 
 	const events = await getAllEvents(session?.user?.id);
 
+	// console.log({ events });
+
 	return <DiscoverPage events={events as []} />;
 }

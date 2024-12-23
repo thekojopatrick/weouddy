@@ -27,7 +27,7 @@ export default function DiscoverPage({
 	const router = useRouter();
 
 	const [currentLocation, setCurrentLocation] = useState(
-		searchParams.get('location') || 'accra'
+		searchParams.get('location') || 'world'
 	);
 	const [currentCategory, setCurrentCategory] = useState('All');
 
@@ -123,6 +123,7 @@ export default function DiscoverPage({
 										category={event.type}
 										location={event.location!}
 										slug={event.slug!}
+										accessType={event.accessType as never}
 										description={event.description!}
 									/>
 								);
