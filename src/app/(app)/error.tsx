@@ -26,14 +26,18 @@ export default function Error({
 			<div className='flex gap-x-3'>
 				<Button
 					variant={'default'}
-					onClick={() => () => window.location.reload()}
+					className='rounded-full'
+					onClick={() => window.location.reload()}
 				>
 					Let&apos;s try again
 				</Button>
-				<Button variant={'secondary'} asChild>
+				<Button variant={'secondary'} className='rounded-full' asChild>
 					<Link href={'/contact'}>Contact Support</Link>
 				</Button>
 			</div>
 		</div>
 	);
 }
+
+//router.push(window.location.href);
+//router.refresh()

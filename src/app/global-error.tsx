@@ -28,10 +28,14 @@ export default function GlobalError({
 						<p>Refresh the page or contact support if this problem persists</p>
 					</div>
 					<div className='flex gap-x-3'>
-						<Button variant={'default'} onClick={() => () => reset()}>
+						<Button
+							variant={'default'}
+							className='rounded-full'
+							onClick={() => () => reset()}
+						>
 							Let&apos;s try again
 						</Button>
-						<Button variant={'secondary'} asChild>
+						<Button variant={'secondary'} className='rounded-full' asChild>
 							<Link href={'/contact'}>Contact Support</Link>
 						</Button>
 					</div>
