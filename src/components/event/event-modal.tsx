@@ -221,7 +221,7 @@ export function EventModal({
 	);
 
 	return (
-		<Fragment key={event.id}>
+		<>
 			<CustomSheet
 				isOpen={isOpen}
 				onCloseAction={onCloseAction}
@@ -242,6 +242,6 @@ export function EventModal({
 					event.isPrivate && event.requiresApproval ? 'PIN_ENTRY' : 'LINK_PASTE'
 				}
 			/>
-		</Fragment>
+		</>
 	);
 }
