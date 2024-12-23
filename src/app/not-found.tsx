@@ -13,10 +13,10 @@ export default function NotFound() {
 					</p>
 				</div>
 				<div className='flex gap-x-3'>
-					<Button variant={'default'}>
+					<Button variant={'default'} className='rounded-full'>
 						<Link href={'/'}>Go back to home</Link>
 					</Button>
-					<Button variant={'secondary'} asChild>
+					<Button variant={'secondary'} className='rounded-full' asChild>
 						<Link href={'/contact'}>Contact Support</Link>
 					</Button>
 				</div>
