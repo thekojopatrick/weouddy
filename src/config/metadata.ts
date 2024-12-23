@@ -42,7 +42,7 @@ export const siteMeta = {
     title: "WeOuddy - Moments That Matter",
     description:
       "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
-    creator: "@WeOuddy",
+    creator: "@OfficialWeOuddy",
   },
   manifest: "/manifest.json",
   icons: {
