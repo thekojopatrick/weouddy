@@ -142,8 +142,12 @@ const EventModal = memo(
 
 					<div className='px-6 space-y-6'>
 						<div>
-							<Badge variant='secondary'>{event.type}</Badge>
-							<h2 className='text-2xl font-bold mt-2'>{event.name}</h2>
+							<Badge variant='secondary' className='capitalize'>
+								{event.type}
+							</Badge>
+							<h2 className='text-xl font-bold mt-2 text-primary/80'>
+								{event.name}
+							</h2>
 							<div className='flex items-center gap-2 mt-2'>
 								<Avatar className='h-6 w-6'>
 									<AvatarImage src={event.host.avatarUrl ?? undefined} />
@@ -256,16 +260,18 @@ const EventDetails = memo(
 			<div className='flex items-center gap-4'>
 				<Calendar className='h-5 w-5 text-muted-foreground' />
 				<div>
-					<div className='font-medium'>{event.date}</div>
-					<div className='text-sm text-muted-foreground'>{event.time}</div>
+					<div className='font-medium text-primary/80'>{event.date}</div>
+					<div className='text-xs text-muted-foreground'>{event.time}</div>
 				</div>
 			</div>
 
 			<div className='flex items-center gap-4'>
 				<MapPin className='h-5 w-5 text-muted-foreground' />
 				<div>
-					<div className='font-medium'>{event.location.name}</div>
-					<div className='text-sm text-muted-foreground'>
+					<div className='font-medium text-primary/80'>
+						{event.location.name}
+					</div>
+					<div className='text-xs text-muted-foreground'>
 						{event.location.city}, {event.location.country}
 					</div>
 				</div>
@@ -273,7 +279,9 @@ const EventDetails = memo(
 
 			<div className='flex items-center gap-4'>
 				<Users className='h-5 w-5 text-muted-foreground' />
-				<div className='font-medium'>{event.members} members</div>
+				<div className='font-medium text-primary/80'>
+					{event.members} members
+				</div>
 			</div>
 		</div>
 	)
