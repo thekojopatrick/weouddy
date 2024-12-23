@@ -28,6 +28,7 @@ interface EventCardProps {
 	isPrivate: boolean;
 	isDisabled: boolean;
 	requiresApproval: boolean;
+	accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
 	host: {
 		id: string;
 		name: string;
@@ -61,6 +62,7 @@ export function EventCard({
 	description,
 	additionalInfo,
 	slug,
+	accessType,
 	memberCount,
 	attendeeCount,
 	isDisabled,
@@ -227,14 +229,15 @@ export function EventCard({
 							country: country || 'Unknown',
 						},
 						isPrivate,
+						isDisabled,
+						requiresApproval,
+						accessType,
 						members,
 						description,
 						additionalInfo,
 						slug,
 						memberCount,
 						attendeeCount,
-						isDisabled,
-						requiresApproval,
 					}}
 					userStatus={userStatus}
 				/>

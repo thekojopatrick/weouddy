@@ -22,7 +22,6 @@ interface EventModalProps {
 			username: string | null;
 			avatarUrl: string | null;
 		};
-		hostId?: string;
 		dateTime?: string;
 		date?: string;
 		time?: string;
@@ -34,6 +33,7 @@ interface EventModalProps {
 		isPrivate: boolean;
 		isDisabled: boolean;
 		requiresApproval: boolean;
+		accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
 		members: number;
 		description: string;
 		additionalInfo?: string;
@@ -66,20 +66,20 @@ export function EventModal({
 	const handleShare = async () => {
 		const eventUrl = `${window.location.origin}/events/${event.slug}`;
 
-		if (navigator.share) {
-			try {
+		try {
+			if (navigator.share) {
 				await navigator.share({
 					title: event.name,
 					text: `Check out this event: ${event.name}`,
 					url: eventUrl,
 				});
-			} catch (err) {
-				if (err instanceof Error && err.name !== 'AbortError') {
-					copyToClipboard(eventUrl);
-				}
+			} else {
+				copyToClipboard(eventUrl);
 			}
-		} else {
-			copyToClipboard(eventUrl);
+		} catch (err) {
+			if (err instanceof Error && err.name !== 'AbortError') {
+				copyToClipboard(eventUrl);
+			}
 		}
 	};
 
@@ -116,8 +116,13 @@ export function EventModal({
 			};
 		}
 
+		const buttonText =
+			event.isPrivate && event.accessType === 'PIN_REQUIRED'
+				? 'Enter PIN to Join'
+				: 'Join Room';
+
 		return {
-			text: 'Join Room',
+			text: buttonText,
 			disabled: false,
 			action: () => setShowJoinDialog(true),
 		};
@@ -231,15 +236,24 @@ export function EventModal({
 				stickyHeader={true}
 				stickyFooter={true}
 				scrollableContent={true}
-				maxHeight={''}
+				maxHeight={'80vh'}
 				footerContent={renderFooter}
 			/>
 			<JoinEventDialog
 				open={showJoinDialog}
 				onOpenChangeAction={setShowJoinDialog}
-				event={event as never}
+				event={{
+					id: event.id,
+					slug: event.slug!,
+					isPrivate: event.isPrivate,
+					isDisabled: event.isDisabled,
+					requiresApproval: event.requiresApproval,
+					accessType: event.accessType,
+				}}
 				initialStep={
-					event.isPrivate && event.requiresApproval ? 'PIN_ENTRY' : 'LINK_PASTE'
+					event.isPrivate && event.accessType === 'PIN_REQUIRED'
+						? 'PIN_ENTRY'
+						: 'LINK_PASTE'
 				}
 			/>
 		</>

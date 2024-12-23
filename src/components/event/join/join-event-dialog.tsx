@@ -1,29 +1,28 @@
 'use client';
 
+import { JoinEventFlow, JoinStep } from './join-event-flow';
 import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { JoinEventFlow } from './join-event-flow';
-import { JoinStep } from './join-event-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { joinEvent } from '@/server/actions/event/join/mutation';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
-type EventAccessType = 'LINK_ONLY' | 'PIN_REQUIRED';
+interface JoinEventDialogProps {
+	event?: EventData;
+	initialStep?: JoinStep;
+	open: boolean;
+	onOpenChangeAction: (open: boolean) => void;
+}
+
 interface EventData {
 	id: string;
 	slug: string;
 	isPrivate: boolean;
 	isDisabled: boolean;
 	requiresApproval: boolean;
-	accessType: EventAccessType;
-}
-interface JoinEventDialogProps {
-	event?: EventData;
-	initialStep?: JoinStep;
-	open: boolean;
-	onOpenChangeAction: (open: boolean) => void;
+	accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
 }
 
 const JoinEventDialog = ({
@@ -36,15 +35,15 @@ const JoinEventDialog = ({
 	const router = useRouter();
 	const { toast } = useToast();
 
-	// Function to handle auto-join for public events
 	const handleAutoJoin = async () => {
 		if (!event?.id) return;
 
 		setIsAutoJoining(true);
 		try {
-			const [result] = await Promise.all([
-				joinEvent({ identifier: event.id, identifierType: 'id' }),
-			]);
+			const result = await joinEvent({
+				identifier: event.id,
+				identifierType: 'id',
+			});
 
 			if (result.success && result.eventSlug) {
 				toast({
@@ -66,7 +65,6 @@ const JoinEventDialog = ({
 		}
 	};
 
-	// Effect to handle auto-join when dialog opens
 	useEffect(() => {
 		if (open && event && !event.isPrivate && !event.requiresApproval) {
 			handleAutoJoin();
@@ -83,7 +81,7 @@ const JoinEventDialog = ({
 			return initialStep ?? 'LINK_PASTE';
 		}
 
-		if (event.isPrivate && event.requiresApproval) {
+		if (event.isPrivate && event.accessType === 'PIN_REQUIRED') {
 			return 'PIN_ENTRY';
 		}
 
@@ -96,7 +94,7 @@ const JoinEventDialog = ({
 			onOpenChangeAction={onOpenChangeAction}
 			className='sm:max-w-[420px] overflow-hidden py-3 px-4'
 		>
-			<div className="'flex flex-col items-center gap-4 justify-center">
+			<div className='flex flex-col gap-4 justify-center'>
 				<Image
 					src='/brand/logomark.svg'
 					alt='WeOuddy'
