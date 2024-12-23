@@ -43,7 +43,7 @@ const AboutUsSection = () => {
 						WeOuddy
 					</TextEffect>
 					<TextEffect as='span' per='char' delay={1.5}>
-						connects people to moments instead of events
+						connecting people to moments that matter.
 					</TextEffect>
 				</h1>
 				<TextEffect
@@ -52,8 +52,9 @@ const AboutUsSection = () => {
 					className='text-xl font-semibold text-center tracking-tight'
 					preset='blur'
 				>
-					it&apos;s a new way to get informations, memories about events,
-					businesses , startups & creatives
+					Discover real-time moments, stories, and insights about events,
+					businesses, startups, and creatives. It&apos;s your space to connect
+					and share memories.
 				</TextEffect>
 			</div>
 			<div className='flex flex-col gap-6 max-w-4xl mt-6'>
