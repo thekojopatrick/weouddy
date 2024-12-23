@@ -1,12 +1,15 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Share2, Users } from 'lucide-react';
-import { Fragment, useEffect, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
 import Image from 'next/image';
 import JoinEventDialog from './join/join-event-dialog';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useToast } from '@/hooks/use-toast';
 
 interface EventModalProps {
@@ -44,218 +47,239 @@ interface EventModalProps {
 	userStatus?: 'NOT_JOINED' | 'PENDING' | 'JOINED';
 }
 
-export function EventModal({
-	isOpen,
-	onCloseAction,
-	event,
-	userStatus = 'NOT_JOINED',
-}: EventModalProps) {
-	const [isMobile, setIsMobile] = useState(false);
-	const [showJoinDialog, setShowJoinDialog] = useState(false);
-	const { toast } = useToast();
+const EventModal = memo(
+	({
+		isOpen,
+		onCloseAction,
+		event,
+		userStatus = 'NOT_JOINED',
+	}: EventModalProps) => {
+		const [showJoinDialog, setShowJoinDialog] = useState(false);
+		const { toast } = useToast();
+		const isMobile = useMediaQuery('only screen and (max-width : 638px)');
 
-	useEffect(() => {
-		const checkMobile = () => {
-			setIsMobile(window.innerWidth < 768);
-		};
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-		return () => window.removeEventListener('resize', checkMobile);
-	}, []);
+		const handleShare = useCallback(async () => {
+			const eventUrl = `${window.location.origin}/events/${event.slug}`;
 
-	const handleShare = async () => {
-		const eventUrl = `${window.location.origin}/events/${event.slug}`;
-
-		try {
-			if (navigator.share) {
-				await navigator.share({
-					title: event.name,
-					text: `Check out this event: ${event.name}`,
-					url: eventUrl,
-				});
-			} else {
-				copyToClipboard(eventUrl);
+			try {
+				if (navigator.share) {
+					await navigator.share({
+						title: event.name,
+						text: `Check out this event: ${event.name}`,
+						url: eventUrl,
+					});
+				} else {
+					throw new Error('Share API not available');
+				}
+			} catch (err) {
+				if (err instanceof Error && err.name !== 'AbortError') {
+					navigator.clipboard.writeText(eventUrl);
+					toast({
+						title: 'Link copied!',
+						description: 'Event link has been copied to clipboard.',
+					});
+				}
 			}
-		} catch (err) {
-			if (err instanceof Error && err.name !== 'AbortError') {
-				copyToClipboard(eventUrl);
+		}, [event.name, event.slug, toast]);
+
+		const buttonConfig = useMemo(() => {
+			switch (userStatus) {
+				case 'JOINED':
+					return {
+						text: 'Already Joined',
+						disabled: true,
+						action: () => {},
+					};
+				case 'PENDING':
+					return {
+						text: 'Waiting for Approval',
+						disabled: true,
+						action: () => {},
+					};
+				default:
+					const buttonText =
+						event.isPrivate && event.accessType === 'PIN_REQUIRED'
+							? 'Enter PIN to Join'
+							: 'Join Room';
+					if (event.isPrivate && event.accessType === 'PIN_REQUIRED') {
+						return {
+							text: buttonText,
+							disabled: false,
+							action: () => setShowJoinDialog(true),
+						};
+					}
+					return {
+						text:
+							event.isPrivate && event.requiresApproval
+								? 'Request to Join'
+								: 'Join Room',
+						disabled: false,
+						action: () => setShowJoinDialog(true),
+					};
 			}
-		}
-	};
+		}, [event.accessType, event.isPrivate, event.requiresApproval, userStatus]);
 
-	const copyToClipboard = (text: string) => {
-		navigator.clipboard.writeText(text);
-		toast({
-			title: 'Link copied!',
-			description: 'Event link has been copied to clipboard.',
-		});
-	};
-
-	const getJoinButtonConfig = () => {
-		if (userStatus === 'JOINED') {
-			return {
-				text: 'Already Joined',
-				disabled: true,
-				action: () => {},
-			};
-		}
-
-		if (userStatus === 'PENDING') {
-			return {
-				text: 'Waiting for Approval',
-				disabled: true,
-				action: () => {},
-			};
-		}
-
-		if (event.isPrivate && event.requiresApproval) {
-			return {
-				text: 'Request to Join',
-				disabled: false,
-				action: () => setShowJoinDialog(true),
-			};
-		}
-
-		const buttonText =
-			event.isPrivate && event.accessType === 'PIN_REQUIRED'
-				? 'Enter PIN to Join'
-				: 'Join Room';
-
-		return {
-			text: buttonText,
-			disabled: false,
-			action: () => setShowJoinDialog(true),
-		};
-	};
-
-	const buttonConfig = getJoinButtonConfig();
-
-	const renderContent = (
-		<div className='flex flex-col space-y-6 pb-4'>
-			<div className='relative h-48'>
-				<Image
-					src={event.coverImage}
-					alt={event.name}
-					fill
-					className='object-cover'
-				/>
-				<Button
-					variant='secondary'
-					size='icon'
-					className='absolute top-4 right-4 bg-background/80 backdrop-blur-sm hover:bg-background/90'
-					onClick={handleShare}
-				>
-					<Share2 className='h-4 w-4' />
-				</Button>
-			</div>
-
-			<div className='px-6 space-y-6'>
-				<div>
-					<Badge variant='secondary'>{event.type}</Badge>
-					<h2 className='text-2xl font-bold mt-2'>{event.name}</h2>
-					<div className='flex items-center gap-2 mt-2'>
-						<Avatar className='h-6 w-6'>
-							<AvatarImage src={event.host.avatarUrl ?? ''} />
-							<AvatarFallback>{event.host.name[0]}</AvatarFallback>
-						</Avatar>
-						<span className='text-sm text-muted-foreground'>
-							Hosted by {event.host.name}
-						</span>
-					</div>
-				</div>
-
-				<div className='space-y-4'>
-					<div className='flex items-center gap-4'>
-						<Calendar className='h-5 w-5 text-muted-foreground' />
-						<div>
-							<div className='font-medium'>{event.date}</div>
-							<div className='text-sm text-muted-foreground'>{event.time}</div>
-						</div>
+		const renderContent = useMemo(
+			() => (
+				<div className='flex flex-col space-y-6 pb-4'>
+					<div className='relative h-48'>
+						<Image
+							src={event.coverImage}
+							alt={event.name}
+							fill
+							className='object-cover'
+							priority
+						/>
+						<Button
+							variant='secondary'
+							size='icon'
+							className='absolute top-4 right-4 bg-background/80 backdrop-blur-sm hover:bg-background/90'
+							onClick={handleShare}
+						>
+							<Share2 className='h-4 w-4' />
+						</Button>
 					</div>
 
-					<div className='flex items-center gap-4'>
-						<MapPin className='h-5 w-5 text-muted-foreground' />
+					<div className='px-6 space-y-6'>
 						<div>
-							<div className='font-medium'>{event.location.name}</div>
-							<div className='text-sm text-muted-foreground'>
-								{event.location.city}, {event.location.country}
+							<Badge variant='secondary'>{event.type}</Badge>
+							<h2 className='text-2xl font-bold mt-2'>{event.name}</h2>
+							<div className='flex items-center gap-2 mt-2'>
+								<Avatar className='h-6 w-6'>
+									<AvatarImage src={event.host.avatarUrl ?? undefined} />
+									<AvatarFallback>{event.host.name[0]}</AvatarFallback>
+								</Avatar>
+								<span className='text-sm text-muted-foreground'>
+									Hosted by {event.host.name}
+								</span>
 							</div>
 						</div>
-					</div>
 
-					<div className='flex items-center gap-4'>
-						<Users className='h-5 w-5 text-muted-foreground' />
-						<div className='font-medium'>{event.members} members</div>
+						{/* Event details */}
+						<EventDetails event={event} />
+
+						<div className='space-y-2'>
+							<h3 className='font-semibold'>About event</h3>
+							<p className='text-sm text-muted-foreground'>
+								{event.description}
+							</p>
+						</div>
+
+						{event.additionalInfo && (
+							<div className='space-y-2'>
+								<h3 className='font-semibold'>Additional information</h3>
+								<p className='text-sm text-muted-foreground'>
+									{event.additionalInfo}
+								</p>
+							</div>
+						)}
 					</div>
 				</div>
+			),
+			[event, handleShare]
+		);
 
-				<div className='space-y-2'>
-					<h3 className='font-semibold'>About event</h3>
-					<p className='text-sm text-muted-foreground'>{event.description}</p>
+		const renderFooter = useMemo(
+			() => (
+				<div className='w-full space-y-4'>
+					<p className='text-sm text-center text-muted-foreground'>
+						{userStatus === 'PENDING'
+							? 'Your request is pending approval from the host.'
+							: userStatus === 'JOINED'
+								? 'You are a member of this event.'
+								: 'Join this event to connect with other attendees and get updates.'}
+					</p>
+					<Button
+						className='w-full'
+						onClick={buttonConfig.action}
+						disabled={buttonConfig.disabled}
+					>
+						{buttonConfig.text}
+					</Button>
 				</div>
+			),
+			[buttonConfig, userStatus]
+		);
 
-				{event.additionalInfo && (
-					<div className='space-y-2'>
-						<h3 className='font-semibold'>Additional information</h3>
-						<p className='text-sm text-muted-foreground'>
-							{event.additionalInfo}
-						</p>
+		return (
+			<>
+				<CustomSheet
+					isOpen={isOpen}
+					onCloseAction={onCloseAction}
+					side={isMobile ? 'bottom' : 'right'}
+					title={event.name}
+					content={renderContent}
+					stickyHeader={true}
+					stickyFooter={true}
+					scrollableContent={true}
+					maxHeight={''}
+					footerContent={renderFooter}
+				/>
+				<JoinEventDialog
+					open={showJoinDialog}
+					onOpenChangeAction={setShowJoinDialog}
+					event={{
+						id: event.id,
+						slug: event.slug!,
+						isPrivate: event.isPrivate,
+						isDisabled: event.isDisabled,
+						requiresApproval: event.requiresApproval,
+						accessType: event.accessType,
+					}}
+					initialStep={
+						event.isPrivate && event.accessType === 'PIN_REQUIRED'
+							? 'PIN_ENTRY'
+							: 'REDIRECTING'
+					}
+				/>
+			</>
+		);
+	}
+);
+
+const EventDetails = memo(
+	({
+		event,
+	}: {
+		event: {
+			date?: string;
+			time?: string;
+			members: number;
+			location: {
+				name: string;
+				city: string;
+				country: string;
+			};
+		};
+	}) => (
+		<div className='space-y-4'>
+			<div className='flex items-center gap-4'>
+				<Calendar className='h-5 w-5 text-muted-foreground' />
+				<div>
+					<div className='font-medium'>{event.date}</div>
+					<div className='text-sm text-muted-foreground'>{event.time}</div>
+				</div>
+			</div>
+
+			<div className='flex items-center gap-4'>
+				<MapPin className='h-5 w-5 text-muted-foreground' />
+				<div>
+					<div className='font-medium'>{event.location.name}</div>
+					<div className='text-sm text-muted-foreground'>
+						{event.location.city}, {event.location.country}
 					</div>
-				)}
+				</div>
+			</div>
+
+			<div className='flex items-center gap-4'>
+				<Users className='h-5 w-5 text-muted-foreground' />
+				<div className='font-medium'>{event.members} members</div>
 			</div>
 		</div>
-	);
+	)
+);
 
-	const renderFooter = (
-		<div className='w-full space-y-4'>
-			<p className='text-sm text-center text-muted-foreground'>
-				{userStatus === 'PENDING'
-					? 'Your request is pending approval from the host.'
-					: userStatus === 'JOINED'
-						? 'You are a member of this event.'
-						: 'Join this event to connect with other attendees and get updates.'}
-			</p>
-			<Button
-				className='w-full'
-				onClick={buttonConfig.action}
-				disabled={buttonConfig.disabled}
-			>
-				{buttonConfig.text}
-			</Button>
-		</div>
-	);
+EventDetails.displayName = 'EventDetails';
+EventModal.displayName = 'EventModal';
 
-	return (
-		<>
-			<CustomSheet
-				isOpen={isOpen}
-				onCloseAction={onCloseAction}
-				side={isMobile ? 'bottom' : 'right'}
-				title={event.name}
-				content={renderContent}
-				stickyHeader={true}
-				stickyFooter={true}
-				scrollableContent={true}
-				maxHeight={'80vh'}
-				footerContent={renderFooter}
-			/>
-			<JoinEventDialog
-				open={showJoinDialog}
-				onOpenChangeAction={setShowJoinDialog}
-				event={{
-					id: event.id,
-					slug: event.slug!,
-					isPrivate: event.isPrivate,
-					isDisabled: event.isDisabled,
-					requiresApproval: event.requiresApproval,
-					accessType: event.accessType,
-				}}
-				initialStep={
-					event.isPrivate && event.accessType === 'PIN_REQUIRED'
-						? 'PIN_ENTRY'
-						: 'LINK_PASTE'
-				}
-			/>
-		</>
-	);
-}
+export default EventModal;

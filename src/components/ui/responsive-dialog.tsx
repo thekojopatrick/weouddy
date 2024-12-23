@@ -49,7 +49,7 @@ export function ResponsiveDialog({
 		<Dialog open={open} onOpenChange={onOpenChangeAction}>
 			<DialogContent
 				className={cn('sm:max-w-[425px]', className)}
-				closebtnstyle='border p-2 rounded-full hover:border-zinc-600'
+				closebtnstyle='border p-1.5 rounded-full hover:border-zinc-600'
 			>
 				<DialogTitle className='sr-only'>Modal</DialogTitle>
 				{children}

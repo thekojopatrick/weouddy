@@ -43,7 +43,7 @@ export function LinkPasteForm({
 							<Loader2 className='h-4 w-4 animate-spin' />
 						) : (
 							<>
-								<LinkIcon className='mr-2 h-4 w-4' />
+								<LinkIcon className='h-4 w-4' />
 								Join
 							</>
 						)}

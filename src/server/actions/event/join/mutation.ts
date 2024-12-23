@@ -16,40 +16,47 @@ const joinEventSchema = z.object({
 
 type JoinEventInput = z.infer<typeof joinEventSchema>;
 
+// Cached event info lookup
+const eventInfoCache = new Map();
+
 export async function joinEvent(input: JoinEventInput) {
   try {
     const { identifier, identifierType, pinCode } = joinEventSchema.parse(
       input,
     );
 
-    // Get current user from auth session
-    const session = await getSession();
-    if (!session?.user?.id) {
-      throw new Error("Unauthorized");
-    }
+    // Parallel fetch of session and event data
+    const [session, event] = await Promise.all([
+      getSession(),
+      identifierType === "id"
+        ? getEventById(identifier)
+        : getEventBySlug(identifier),
+    ]);
 
-    // Fetch event data using existing queries
-    const event = identifierType === "id"
-      ? await getEventById(identifier)
-      : await getEventBySlug(identifier);
+    if (!session?.user?.id) throw new Error("Unauthorized");
+    if (!event) throw new Error("Event not found");
 
-    if (!event) {
-      throw new Error("Event not found");
-    }
+    // Check existing membership status in a single query
+    const [existingAttendee, isMember] = await Promise.all([
+      prisma.attendee.findFirst({
+        where: {
+          userId: session.user.id,
+          eventId: event.id,
+        },
+        select: { status: true },
+      }),
+      prisma.event.findFirst({
+        where: {
+          id: event.id,
+          members: {
+            some: { id: session.user.id },
+          },
+        },
+        select: { id: true },
+      }),
+    ]);
 
-    // Check if user is already an attendee or member
-    const existingAttendee = await prisma.attendee.findFirst({
-      where: {
-        userId: session.user.id,
-        eventId: event.id,
-      },
-    });
-
-    const isMember = event.members.some((member) =>
-      member.id === session.user.id
-    );
-
-    // If user is already an approved attendee or member, give them direct access
+    // Early returns for existing states
     if (existingAttendee?.status === "APPROVED" || isMember) {
       return {
         success: true,
@@ -59,7 +66,6 @@ export async function joinEvent(input: JoinEventInput) {
       };
     }
 
-    // If there's a pending request, inform the user
     if (existingAttendee?.status === "PENDING") {
       return {
         success: true,
@@ -68,35 +74,30 @@ export async function joinEvent(input: JoinEventInput) {
       };
     }
 
-    // Handle PIN validation for PIN_REQUIRED events
+    // PIN validation
     if (event.accessType === AccessType.PIN_REQUIRED) {
-      if (!pinCode) {
-        throw new Error("PIN code is required");
-      }
-      if (event.pinCode !== pinCode) {
-        throw new Error("Invalid PIN code");
-      }
+      if (!pinCode) throw new Error("PIN code is required");
+      if (event.pinCode !== pinCode) throw new Error("Invalid PIN code");
     }
 
-    // Handle approval required events
+    // Handle approval flow
     if (event.requiresApproval) {
-      // Create a pending attendance request
-      await prisma.attendee.create({
-        data: {
-          userId: session.user.id,
-          eventId: event.id,
-          status: "PENDING",
-        },
-      });
-
-      // Log the join request activity
-      await prisma.eventActivity.create({
-        data: {
-          eventId: event.id,
-          userId: session.user.id,
-          type: "JOIN",
-        },
-      });
+      await prisma.$transaction([
+        prisma.attendee.create({
+          data: {
+            userId: session.user.id,
+            eventId: event.id,
+            status: "PENDING",
+          },
+        }),
+        prisma.eventActivity.create({
+          data: {
+            eventId: event.id,
+            userId: session.user.id,
+            type: "JOIN",
+          },
+        }),
+      ]);
 
       return {
         success: true,
@@ -105,36 +106,33 @@ export async function joinEvent(input: JoinEventInput) {
       };
     }
 
-    // Direct join for events without approval requirement
-    await prisma.attendee.create({
-      data: {
-        userId: session.user.id,
-        eventId: event.id,
-        status: "APPROVED",
-      },
-    });
-
-    // Add user to event members
-    await prisma.event.update({
-      where: { id: event.id },
-      data: {
-        members: {
-          connect: { id: session.user.id },
+    // Direct join flow with transaction
+    await prisma.$transaction([
+      prisma.attendee.create({
+        data: {
+          userId: session.user.id,
+          eventId: event.id,
+          status: "APPROVED",
         },
-      },
-    });
+      }),
+      prisma.event.update({
+        where: { id: event.id },
+        data: {
+          members: {
+            connect: { id: session.user.id },
+          },
+        },
+      }),
+      prisma.eventActivity.create({
+        data: {
+          eventId: event.id,
+          userId: session.user.id,
+          type: "JOIN",
+        },
+      }),
+    ]);
 
-    // Log the join activity
-    await prisma.eventActivity.create({
-      data: {
-        eventId: event.id,
-        userId: session.user.id,
-        type: "JOIN",
-      },
-    });
-
-    // Revalidate the event page
-    revalidatePath(`/event/${event.slug}`);
+    revalidatePath(`/events/${event.slug}`);
 
     return {
       success: true,
@@ -146,57 +144,60 @@ export async function joinEvent(input: JoinEventInput) {
     if (error instanceof z.ZodError) {
       return { success: false, error: "Invalid input data" };
     }
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
+    if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "Something went wrong" };
   }
 }
 
-// Helper function to determine if a string is a CUID
-function isCUID(str: string): boolean {
-  return /^c[a-zA-Z0-9]{24}$/.test(str);
-}
-
-// Function to get event data before joining
-// Update the getEventJoinInfo function in mutation.ts
 export async function getEventJoinInfo(identifier: string) {
   try {
-    const session = await getSession();
-    const identifierType = isCUID(identifier) ? "id" : "slug";
-    const event = identifierType === "id"
-      ? await getEventById(identifier)
-      : await getEventBySlug(identifier);
-
-    if (!event) {
-      throw new Error("Event not found");
+    // Check cache first
+    const cacheKey = `event-${identifier}`;
+    if (eventInfoCache.has(cacheKey)) {
+      return eventInfoCache.get(cacheKey);
     }
+
+    const identifierType = /^c[a-zA-Z0-9]{24}$/.test(identifier)
+      ? "id"
+      : "slug";
+
+    // Parallel fetch of session and event
+    const [session, event] = await Promise.all([
+      getSession(),
+      identifierType === "id"
+        ? getEventById(identifier)
+        : getEventBySlug(identifier),
+    ]);
+
+    if (!event) throw new Error("Event not found");
 
     let userStatus: "NOT_JOINED" | "PENDING" | "JOINED" = "NOT_JOINED";
 
     if (session?.user?.id) {
-      // Check if user is already a member
-      const isMember = event.members.some((member) =>
-        member.id === session.user.id
-      );
-      if (isMember) {
-        userStatus = "JOINED";
-      } else {
-        // Check for pending request
-        const pendingRequest = await prisma.attendee.findFirst({
+      // Single query to check both member and attendee status
+      const [memberStatus, attendeeStatus] = await Promise.all([
+        prisma.event.findFirst({
+          where: {
+            id: event.id,
+            members: { some: { id: session.user.id } },
+          },
+          select: { id: true },
+        }),
+        prisma.attendee.findFirst({
           where: {
             eventId: event.id,
             userId: session.user.id,
             status: "PENDING",
           },
-        });
-        if (pendingRequest) {
-          userStatus = "PENDING";
-        }
-      }
+          select: { id: true },
+        }),
+      ]);
+
+      if (memberStatus) userStatus = "JOINED";
+      else if (attendeeStatus) userStatus = "PENDING";
     }
 
-    return {
+    const result = {
       success: true,
       event: {
         id: event.id,
@@ -214,6 +215,12 @@ export async function getEventJoinInfo(identifier: string) {
       },
       userStatus,
     };
+
+    // Cache the result
+    eventInfoCache.set(cacheKey, result);
+    setTimeout(() => eventInfoCache.delete(cacheKey), 30000); // Cache for 30 seconds
+
+    return result;
   } catch (error) {
     return {
       success: false,

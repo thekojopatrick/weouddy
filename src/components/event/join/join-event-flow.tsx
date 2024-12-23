@@ -2,17 +2,18 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { extractIdentifierFromLink, isCUID } from '@/lib/utils';
 import {
 	getEventJoinInfo,
 	joinEvent,
 } from '@/server/actions/event/join/mutation';
+import { useCallback, useEffect, useState } from 'react';
 
+import JoinEventSuccess from './forms/success';
 import { LinkPasteForm } from './forms/link-paste-form';
 import { PinEntryForm } from './forms/pin-entry-form';
 import { QRScannerForm } from './forms/qr-scanner-form';
+import { extractIdentifierFromLink } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 type EventAccessType = 'LINK_ONLY' | 'PIN_REQUIRED';
@@ -52,149 +53,176 @@ export function JoinEventFlow({
 	const { toast } = useToast();
 	const router = useRouter();
 
-	const handleRedirectToEvent = (slug: string) => {
-		if (onCloseDialog) {
-			onCloseDialog();
-		}
-		router.push(`/events/${slug}`);
-	};
+	const handleRedirectToEvent = useCallback(
+		(slug: string) => {
+			if (!slug) return;
+			onCloseDialog?.();
+			router.push(`/events/${slug}`);
+		},
+		[onCloseDialog, router]
+	);
 
-	const handleJoinResult = async (result: {
-		success: boolean;
-		status?: string;
-		error?: string;
-		eventSlug?: string;
-		message?: string;
-	}) => {
-		if (!result.success) {
-			toast({
-				variant: 'destructive',
-				title: 'Error',
-				description: result.error || 'Failed to join event',
-			});
-			return;
-		}
-
-		switch (result.status) {
-			case 'PENDING_APPROVAL':
-				setCurrentStep('WAITING_APPROVAL');
+	const handleJoinResult = useCallback(
+		async (result: {
+			success: boolean;
+			status?: string;
+			error?: string;
+			eventSlug?: string;
+			message?: string;
+		}) => {
+			if (!result.success) {
 				toast({
-					title: 'Request Status',
-					description: result.message || 'Waiting for host approval',
+					variant: 'destructive',
+					title: 'Error',
+					description: result.error || 'Failed to join event',
 				});
-				break;
+				return;
+			}
 
-			case 'JOINED':
-				if (result.eventSlug) {
-					setCurrentStep('REDIRECTING');
+			switch (result.status) {
+				case 'PENDING_APPROVAL':
+					setCurrentStep('WAITING_APPROVAL');
 					toast({
-						title: 'Success',
-						description: result.message || 'Successfully joined the event',
+						title: 'Request Status',
+						description: result.message || 'Waiting for host approval',
 					});
-					handleRedirectToEvent(result.eventSlug);
-				}
-				break;
+					break;
 
-			case 'NOT_JOINED':
-				if (result.eventSlug && eventData && !eventData.isPrivate) {
-					// Auto-join for public events
-					const joinResult = await joinEvent({
-						identifier: eventData.id,
-						identifierType: 'id',
+				case 'JOINED':
+					if (result.eventSlug) {
+						setCurrentStep('REDIRECTING');
+						toast({
+							title: 'Success',
+							description: result.message || 'Successfully joined the event',
+						});
+						// Add a small delay before redirect
+						setTimeout(() => {
+							handleRedirectToEvent(result.eventSlug!);
+						}, 1500);
+					}
+					break;
+
+				case 'NOT_JOINED':
+					if (result.eventSlug && eventData && !eventData.isPrivate) {
+						const joinResult = await joinEvent({
+							identifier: eventData.id,
+							identifierType: 'id',
+						});
+						handleJoinResult(joinResult as never);
+					}
+					break;
+			}
+		},
+		[eventData, handleRedirectToEvent, toast]
+	);
+
+	const handleEventAccess = useCallback(
+		async (identifier: string, pin?: string) => {
+			setIsLoading(true);
+			try {
+				const eventInfo = await getEventJoinInfo(identifier);
+
+				if (!eventInfo.success || !eventInfo.event) {
+					throw new Error(eventInfo.error || 'Failed to fetch event');
+				}
+
+				setEventData(eventInfo.event as never);
+
+				if (eventInfo.userStatus === 'JOINED') {
+					setCurrentStep('REDIRECTING');
+					setTimeout(() => {
+						handleRedirectToEvent(eventInfo.event.slug);
+					}, 500);
+					return;
+				}
+
+				if (eventInfo.userStatus === 'PENDING') {
+					setCurrentStep('WAITING_APPROVAL');
+					return;
+				}
+
+				const event = eventInfo.event;
+
+				if (!event.isPrivate) {
+					setCurrentStep('REDIRECTING');
+					const result = await joinEvent({
+						identifier,
+						identifierType: /^c[a-zA-Z0-9]{24}$/.test(identifier)
+							? 'id'
+							: 'slug',
 					});
 
-					console.log({ joinResult });
-
-					handleJoinResult(joinResult as never);
+					if (result.success) {
+						setTimeout(() => {
+							handleRedirectToEvent(event.slug);
+						}, 500);
+					} else {
+						throw new Error(result.error || 'Failed to join event');
+					}
+					return;
 				}
-				break;
-		}
-	};
 
-	const handleEventAccess = async (identifier: string, pin?: string) => {
-		try {
-			const eventInfo = await getEventJoinInfo(identifier);
+				if (event.accessType === 'PIN_REQUIRED' && !pin) {
+					setCurrentStep('PIN_ENTRY');
+					return;
+				}
 
-			if (!eventInfo.success || !eventInfo.event) {
-				throw new Error(eventInfo.error || 'Failed to fetch event');
-			}
-
-			setEventData(eventInfo.event as never);
-
-			// Handle existing member status
-			if (eventInfo.userStatus === 'JOINED') {
-				handleRedirectToEvent(eventInfo.event.slug!);
-				return;
-			}
-
-			// Handle pending requests
-			if (eventInfo.userStatus === 'PENDING') {
-				setCurrentStep('WAITING_APPROVAL');
-				return;
-			}
-
-			const event = eventInfo.event;
-
-			// Public event flow
-			if (!event.isPrivate) {
 				const result = await joinEvent({
 					identifier,
-					identifierType: isCUID(identifier) ? 'id' : 'slug',
+					identifierType: /^c[a-zA-Z0-9]{24}$/.test(identifier) ? 'id' : 'slug',
+					pinCode: pin,
 				});
 				handleJoinResult(result as never);
-				return;
+			} catch (error) {
+				toast({
+					variant: 'destructive',
+					title: 'Error',
+					description:
+						error instanceof Error ? error.message : 'Failed to access event',
+				});
+			} finally {
+				setIsLoading(false);
 			}
+		},
+		[handleJoinResult, handleRedirectToEvent, toast]
+	);
 
-			// Private event flow
-			if (event.accessType === 'PIN_REQUIRED' && !pin) {
-				setCurrentStep('PIN_ENTRY');
-				return;
-			}
-
-			const result = await joinEvent({
-				identifier,
-				identifierType: isCUID(identifier) ? 'id' : 'slug',
-				pinCode: pin,
-			});
-			handleJoinResult(result as never);
-		} catch (error) {
-			toast({
-				variant: 'destructive',
-				title: 'Error',
-				description:
-					error instanceof Error ? error.message : 'Failed to access event',
-			});
+	useEffect(() => {
+		if (initialStep === 'REDIRECTING' && initialEventData?.id) {
+			handleEventAccess(initialEventData.id);
 		}
-	};
+	}, [initialStep, initialEventData, handleEventAccess]);
 
-	const handleLinkSubmit = async (link: string) => {
-		setIsLoading(true);
-		try {
-			const identifier = extractIdentifierFromLink(link);
-			if (!identifier) {
-				throw new Error('Invalid event link');
+	const handleLinkSubmit = useCallback(
+		async (link: string) => {
+			setIsLoading(true);
+			try {
+				const identifier = extractIdentifierFromLink(link);
+				if (!identifier) {
+					throw new Error('Invalid event link');
+				}
+				await handleEventAccess(identifier);
+			} finally {
+				setIsLoading(false);
 			}
-			await handleEventAccess(identifier);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+		},
+		[handleEventAccess]
+	);
 
-	const handlePinSubmit = async (pin: string) => {
-		setIsLoading(true);
-		try {
-			if (!eventData?.id) {
-				throw new Error('Event data not found');
+	const handlePinSubmit = useCallback(
+		async (pin: string) => {
+			setIsLoading(true);
+			try {
+				if (!eventData?.id) {
+					throw new Error('Event data not found');
+				}
+				await handleEventAccess(eventData.id, pin);
+			} finally {
+				setIsLoading(false);
 			}
-			await handleEventAccess(eventData.id, pin);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleQRScanComplete = (result: string) => {
-		handleLinkSubmit(result);
-	};
+		},
+		[eventData?.id, handleEventAccess]
+	);
 
 	const renderContent = () => {
 		switch (currentStep) {
@@ -210,7 +238,7 @@ export function JoinEventFlow({
 			case 'QR_SCAN':
 				return (
 					<QRScannerForm
-						onScanCompleteAction={handleQRScanComplete}
+						onScanCompleteAction={handleLinkSubmit}
 						onBackAction={() => setCurrentStep('LINK_PASTE')}
 					/>
 				);
@@ -235,11 +263,12 @@ export function JoinEventFlow({
 
 			case 'REDIRECTING':
 				return (
-					<Alert>
-						<AlertDescription>
-							Successfully joined the event! Redirecting...
-						</AlertDescription>
-					</Alert>
+					<JoinEventSuccess
+						isLoading={isLoading}
+						onManualRedirect={() =>
+							eventData?.slug && handleRedirectToEvent(eventData.slug)
+						}
+					/>
 				);
 		}
 	};
@@ -253,7 +282,7 @@ export function JoinEventFlow({
 						: currentStep === 'WAITING_APPROVAL'
 							? 'Request Pending'
 							: currentStep === 'REDIRECTING'
-								? 'Success!'
+								? undefined
 								: 'Ready to join an event'}
 				</DialogTitle>
 			</DialogHeader>

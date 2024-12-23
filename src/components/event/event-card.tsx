@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { EventCardShimmer } from './shimmer-loading';
-import { EventModal } from './event-modal';
+import EventModal from './event-modal';
 import Image from 'next/image';
 import { getNameInitials } from '@/lib/utils';
 import { useDebounce } from '@/hooks/useDebounce'; // Path to your useDebounce hook
