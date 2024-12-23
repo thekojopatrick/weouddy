@@ -4,11 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Follow } from '@/types/prisma.types';
+import { Follow } from '@/server/actions/user/types';
 import FollowButton from './follow-button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { fetchFollowers } from '@/server/actions/user/queries';
+import { getUserFollowers } from '@/server/actions/user/queries';
 import { toast } from 'sonner';
 import { toggleFollow } from '@/server/actions/user/follow';
 
@@ -26,7 +26,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
 	const loadFollowers = async () => {
 		setIsLoading(true);
 		try {
-			const newFollowers = await fetchFollowers(userId, page);
+			const newFollowers = await getUserFollowers(userId);
 
 			if (newFollowers.length === 0) {
 				setHasMore(false);
@@ -119,6 +119,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
 							</Link>
 							<FollowButton
 								isFollowing={follow.isFollowing!}
+								isMutual={follow.isMutual}
 								onToggle={() => handleFollowToggle(follower.id)}
 							/>
 						</div>

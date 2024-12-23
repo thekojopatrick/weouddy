@@ -1,11 +1,7 @@
 "use server";
 
-import {
-  EventWithDetails,
-  Follow,
-  PostWithDetails,
-  UserProfile,
-} from "./types";
+import { EventWithDetails, PostWithDetails } from "@/types/prisma.types";
+import { Follow, UserProfile } from "./types";
 
 import { prisma } from "@/lib/prisma";
 
@@ -74,7 +70,7 @@ export async function getUserFollowers(
 
   if (!user) return [];
 
-  return prisma.follow.findMany({
+  const followers = await prisma.follow.findMany({
     where: { followingId: user.id },
     include: {
       follower: {
@@ -86,7 +82,26 @@ export async function getUserFollowers(
         },
       },
     },
-  }) as Promise<Follow[]>;
+  });
+
+  // Check if the user follows back each follower
+  const followersWithMutual = await Promise.all(
+    followers.map(async (follow) => {
+      const isFollowingBack = await prisma.follow.findFirst({
+        where: {
+          followerId: user.id,
+          followingId: follow.follower.id,
+        },
+      });
+
+      return {
+        ...follow,
+        isMutual: !!isFollowingBack,
+      };
+    }),
+  );
+
+  return followersWithMutual as Follow[];
 }
 
 export async function getUserFollowing(
@@ -104,7 +119,7 @@ export async function getUserFollowing(
 
   if (!user) return [];
 
-  return prisma.follow.findMany({
+  const following = await prisma.follow.findMany({
     where: { followerId: user.id },
     include: {
       following: {
@@ -116,7 +131,26 @@ export async function getUserFollowing(
         },
       },
     },
-  }) as Promise<Follow[]>;
+  });
+
+  // Check if each followed user follows back
+  const followingWithMutual = await Promise.all(
+    following.map(async (follow) => {
+      const isFollowedBack = await prisma.follow.findFirst({
+        where: {
+          followerId: follow.following.id,
+          followingId: user.id,
+        },
+      });
+
+      return {
+        ...follow,
+        isMutual: !!isFollowedBack,
+      };
+    }),
+  );
+
+  return followingWithMutual as Follow[];
 }
 
 export async function checkIfFollowing(

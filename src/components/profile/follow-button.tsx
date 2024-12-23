@@ -1,15 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+'use client';
 
-interface FollowButtonProps {
-	isFollowing: boolean;
-	onToggle: () => void;
-	size?: 'default' | 'sm' | 'lg' | 'icon';
-	disabled?: boolean;
-}
+import { Button } from '@/components/ui/button';
+import { FollowButtonProps } from '@/server/actions/user/types';
+import { useState } from 'react';
 
 export default function FollowButton({
 	isFollowing: initialIsFollowing,
+
 	onToggle,
 	size = 'sm',
 	disabled = false,
@@ -30,9 +27,9 @@ export default function FollowButton({
 			disabled={disabled}
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
-			className='min-w-[90px]'
+			className='min-w-[90px] flex items-center gap-1'
 		>
-			{isFollowing ? (isHovering ? 'Unfollow' : 'Following') : 'Follow'}
+			{isFollowing ? (isHovering ? 'Unfollow' : 'Following') : 'Remove'}
 		</Button>
 	);
 }
