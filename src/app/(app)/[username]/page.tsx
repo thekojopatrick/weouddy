@@ -41,8 +41,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 		redirect('/404');
 	}
 
-	console.log({ followers, following });
-
 	const profile: ProfilePageData = {
 		id: viewedUserProfile.id,
 		name: viewedUserProfile.name ?? '',
