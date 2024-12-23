@@ -40,7 +40,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Allow access public page without authentication
-  if (request.nextUrl.pathname.startsWith("/discover")) {
+  if (
+    !user && request.nextUrl.pathname.startsWith("/home") ||
+    request.nextUrl.pathname.startsWith("/discover")
+  ) {
     return supabaseResponse;
   }
 
