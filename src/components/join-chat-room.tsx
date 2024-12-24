@@ -11,15 +11,22 @@ import { cn } from '@/lib/utils';
 const JoinChatRoom = ({
 	isSmallDevice,
 	eventId,
-	userName,
-	userAvatar,
+	user,
 }: {
 	isSmallDevice: boolean;
 	eventId: string;
-	userName: string;
-	userAvatar: string;
+	user: {
+		id: string;
+		userName: string;
+		userAvatar: string;
+	};
 }) => {
 	const [showDialog, setShowDialog] = useState(false);
+
+	const handleClick = () => {
+		if (!user) return null;
+		setShowDialog(true);
+	};
 
 	const footerContent = (hasReadToBottom: boolean) => (
 		<>
@@ -50,7 +57,7 @@ const JoinChatRoom = ({
 					'rounded-full shadow-lg',
 					isSmallDevice ? 'size-12' : 'h-12'
 				)}
-				onClick={() => setShowDialog(true)}
+				onClick={handleClick}
 			>
 				{isSmallDevice ? <RiChat1Fill /> : <RiChat1Fill className={'size-6'} />}
 				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
@@ -62,7 +69,7 @@ const JoinChatRoom = ({
 				onCloseAction={() => setShowDialog(false)}
 				side={isSmallDevice ? 'bottom' : 'right'}
 				title={`Chatroom ${eventId}`}
-				content={`${userName}`}
+				content={`${user.userName}`}
 				stickyHeader={true}
 				stickyFooter={true}
 				scrollableContent={true}

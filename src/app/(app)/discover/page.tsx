@@ -9,5 +9,5 @@ export default async function Page() {
 
 	// console.log({ events });
 
-	return <DiscoverPage events={events as []} />;
+	return <DiscoverPage events={events as []} user={session?.user as never} />;
 }

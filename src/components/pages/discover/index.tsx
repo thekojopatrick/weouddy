@@ -12,19 +12,24 @@ import { EventListShimmer } from '@/components/event/shimmer-loading';
 import { EventWithDetails } from '@/types/prisma.types';
 import { JoinEventButton } from '@/components/join-event-button';
 import { LocationFilters } from '@/components/location-filters';
+import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
+import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
 
 export default function DiscoverPage({
 	events,
+	user,
 }: {
 	events: EventWithDetails[];
+	user: User & { username: string | null; avatarUrl: string | null };
 }) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const { protectAction } = useAuthProtection();
 
 	const [currentLocation, setCurrentLocation] = useState(
 		searchParams.get('location') || 'world'
@@ -132,14 +137,52 @@ export default function DiscoverPage({
 					)}
 				</section>
 			</main>
+			{/*CALL TO ACTION */}
+
 			<div
 				className={cn(
-					'fixed bottom-8  flex flex-col gap-4 items-end',
+					'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
 					isSmallDevice ? 'right-5' : 'right-8'
 				)}
 			>
-				<JoinEventButton isSmallDevice={isSmallDevice} />
-				<CreateEventButton isSmallDevice={isSmallDevice} />
+				{/* Wrap JoinEventButton with auth protection */}
+				<div
+					onClick={() =>
+						protectAction(
+							user,
+							() => (
+								<JoinEventButton
+									isSmallDevice={isSmallDevice}
+									user={user as never}
+								/>
+							),
+							'join an event'
+						)
+					}
+				>
+					<JoinEventButton isSmallDevice={isSmallDevice} user={user as never} />
+				</div>
+
+				{/* Wrap CreateEventButton with auth protection */}
+				<div
+					onClick={() =>
+						protectAction(
+							user,
+							() => (
+								<CreateEventButton
+									isSmallDevice={isSmallDevice}
+									user={user as never}
+								/>
+							),
+							'create an event'
+						)
+					}
+				>
+					<CreateEventButton
+						isSmallDevice={isSmallDevice}
+						user={user as never}
+					/>
+				</div>
 			</div>
 		</div>
 	);

@@ -10,15 +10,25 @@ import { cn } from '@/lib/utils';
 const CreatePostButton = ({
 	isSmallDevice,
 	eventId,
-	userName,
-	userAvatar,
+	user,
 }: {
 	isSmallDevice: boolean;
 	eventId: string;
-	userName: string;
-	userAvatar: string;
+	user: {
+		id?: string;
+		userName: string;
+		userAvatar: string;
+	};
 }) => {
 	const [showDialog, setShowDialog] = useState(false);
+
+	const handleClick = () => {
+		if (!user) return null;
+		setShowDialog(true);
+	};
+
+	console.log({ user });
+
 	return (
 		<>
 			<Button
@@ -39,8 +49,8 @@ const CreatePostButton = ({
 				open={showDialog}
 				eventId={eventId}
 				onOpenChangeAction={setShowDialog}
-				userName={userName ?? ''}
-				userAvatar={userAvatar ?? ''}
+				userName={user.userName ?? ''}
+				userAvatar={user.userAvatar ?? ''}
 			/>
 		</>
 	);

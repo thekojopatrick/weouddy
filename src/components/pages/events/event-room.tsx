@@ -32,6 +32,7 @@ import React from 'react';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
+import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function EventRoom({
@@ -46,6 +47,7 @@ export default function EventRoom({
 	const [showSettings, setShowSettings] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const inputRef = React.useRef<HTMLInputElement>(null);
+	const { protectAction } = useAuthProtection();
 
 	const handleCopy = () => {
 		if (inputRef.current) {
@@ -281,23 +283,59 @@ export default function EventRoom({
 				{/* Action Buttons */}
 				<div
 					className={cn(
-						'fixed bottom-8  flex flex-col gap-4 items-end',
+						'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
 						isSmallDevice ? 'right-5' : 'right-8'
 					)}
 				>
-					<JoinChatRoom
-						isSmallDevice={isSmallDevice}
-						eventId={event.id}
-						userName={user?.user_metadata.full_name ?? ''}
-						userAvatar={user?.avatarUrl ?? ''}
-					/>
+					{/* Wrap JoinChatRoom with auth protection */}
+					<div
+						onClick={() =>
+							protectAction(
+								user,
+								() => (
+									<JoinChatRoom
+										isSmallDevice={isSmallDevice}
+										eventId={event.id}
+										user={user as never}
+									/>
+								),
+								'join chat room'
+							)
+						}
+					>
+						<JoinChatRoom
+							isSmallDevice={isSmallDevice}
+							eventId={event.id}
+							user={user as never}
+						/>
+					</div>
 
-					<CreatePostButton
-						isSmallDevice={isSmallDevice}
-						eventId={event.id}
-						userName={user?.user_metadata.full_name ?? ''}
-						userAvatar={user?.avatarUrl ?? ''}
-					/>
+					{/* Wrap CreatePostButton with auth protection */}
+					<div
+						onClick={() =>
+							protectAction(
+								user,
+								() => (
+									<CreatePostButton
+										isSmallDevice={isSmallDevice}
+										eventId={event.id}
+										user={user as never}
+									/>
+								),
+								'create a post'
+							)
+						}
+					>
+						<CreatePostButton
+							isSmallDevice={isSmallDevice}
+							eventId={event.id}
+							user={{
+								id: user?.id,
+								userName: user?.user_metadata.full_name ?? '',
+								userAvatar: user?.avatarUrl ?? '',
+							}}
+						/>
+					</div>
 				</div>
 
 				<EventSettingsModal

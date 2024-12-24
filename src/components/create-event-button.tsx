@@ -4,15 +4,23 @@ import { CalendarPlus, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { CreateEventDialog } from './event/create/create-event-dialog';
+import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
 export function CreateEventButton({
 	isSmallDevice,
+	user,
 }: {
 	isSmallDevice: boolean;
+	user: User;
 }) {
 	const [showDialog, setShowDialog] = useState(false);
+
+	const handleClick = () => {
+		if (!user) return null;
+		setShowDialog(true);
+	};
 
 	return (
 		<>
@@ -23,7 +31,7 @@ export function CreateEventButton({
 					'rounded-full shadow-lg',
 					isSmallDevice ? 'size-12' : 'h-12'
 				)}
-				onClick={() => setShowDialog(true)}
+				onClick={handleClick}
 			>
 				{isSmallDevice ? <CalendarPlus /> : <Plus className={'size-6'} />}
 				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
