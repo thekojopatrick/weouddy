@@ -6,7 +6,7 @@ import {
 	getEventJoinInfo,
 	joinEvent,
 } from '@/server/actions/event/join/mutation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import JoinEventSuccess from './forms/success';
@@ -51,19 +51,9 @@ export function JoinEventFlow({
 	const [eventData, setEventData] = useState<EventData | undefined>(
 		initialEventData
 	);
-	const redirectTimeoutRef = useRef<NodeJS.Timeout>(null);
 	const [isRedirecting, setIsRedirecting] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
-
-	// Cleanup on unmount
-	useEffect(() => {
-		return () => {
-			if (redirectTimeoutRef.current) {
-				clearTimeout(redirectTimeoutRef.current);
-			}
-		};
-	}, []);
 
 	const handleRedirectToEvent = useCallback(
 		(slug: string) => {
@@ -108,13 +98,12 @@ export function JoinEventFlow({
 							title: 'Success',
 							description: result.message || 'Successfully joined the event',
 						});
-						// Store timeout reference so we can cancel it
-						redirectTimeoutRef.current = setTimeout(() => {
+						// Add a small delay before redirect
+						setTimeout(() => {
 							if (isRedirecting) {
-								// Only redirect if not cancelled
 								handleRedirectToEvent(result.eventSlug!);
 							}
-						}, 1500);
+						}, 300);
 					}
 					break;
 
@@ -145,15 +134,17 @@ export function JoinEventFlow({
 				setEventData(eventInfo.event as never);
 
 				if (eventInfo.userStatus === 'JOINED') {
+					console.log('Redirecting 2');
 					setCurrentStep('REDIRECTING');
 					setIsRedirecting(true);
-					redirectTimeoutRef.current = setTimeout(() => {
+					const redirectTimeout = setTimeout(() => {
 						if (isRedirecting) {
 							// Only redirect if not cancelled
 							handleRedirectToEvent(eventInfo.event.slug);
 						}
 					}, 500);
-					return;
+
+					return () => clearTimeout(redirectTimeout);
 				}
 
 				if (eventInfo.userStatus === 'PENDING') {
@@ -248,9 +239,6 @@ export function JoinEventFlow({
 	);
 
 	const handleCancelRedirect = () => {
-		if (redirectTimeoutRef.current) {
-			clearTimeout(redirectTimeoutRef.current);
-		}
 		setIsRedirecting(false);
 		setCurrentStep('LINK_PASTE');
 		onCloseDialog?.();
