@@ -1,19 +1,25 @@
 'use client';
 
-import { ArrowLeft, Search } from 'lucide-react';
+import { CurrentUser, EventWithDetails } from '@/types/prisma.types';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CountrySelector } from './country-selector';
-import { CurrentUser } from '@/types/prisma.types';
 import Image from 'next/image';
-import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { NavUser } from './nav-user';
+import SearchDialog from './event/search-dialog';
 import { useAccount } from '@/hooks/account/use-account';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-export function SiteHeader({ user }: { user: CurrentUser | null }) {
+export function SiteHeader({
+	user,
+	events,
+}: {
+	user: CurrentUser | null;
+	events: EventWithDetails[] | null;
+}) {
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
 	const pathname = usePathname();
 	const router = useRouter();
@@ -68,12 +74,7 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
 					</Link>
 				</nav>
 				<div className='relative w-full max-w-sm mx-auto'>
-					<Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
-					<Input
-						type='search'
-						placeholder='What are you looking for?'
-						className='pl-8 shadow-none rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100'
-					/>
+					<SearchDialog events={events as never} />
 				</div>
 				<div className='md:ml-auto flex items-center space-x-3'>
 					{!loading && accountData ? (
