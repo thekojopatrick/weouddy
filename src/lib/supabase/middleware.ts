@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+const publicPaths = ["/", "/contact", "/discover"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -39,8 +41,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Allow access public page without authentication
-  if (request.nextUrl.pathname.startsWith("/discover")) {
+  // Check if the current path is in the public paths array
+  const isPublicPath = publicPaths.some((path) =>
+    request.nextUrl.pathname === path ||
+    request.nextUrl.pathname.startsWith("/auth")
+  );
+
+  // Allow access to public paths without authentication
+  if (isPublicPath) {
     return supabaseResponse;
   }
 
