@@ -6,7 +6,7 @@ import {
 	getEventJoinInfo,
 	joinEvent,
 } from '@/server/actions/event/join/mutation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import JoinEventSuccess from './forms/success';
@@ -51,17 +51,27 @@ export function JoinEventFlow({
 	const [eventData, setEventData] = useState<EventData | undefined>(
 		initialEventData
 	);
+	const redirectTimeoutRef = useRef<NodeJS.Timeout>(null);
 	const [isRedirecting, setIsRedirecting] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (redirectTimeoutRef.current) {
+				clearTimeout(redirectTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	const handleRedirectToEvent = useCallback(
 		(slug: string) => {
-			if (!slug) return;
+			if (!slug || !isRedirecting) return;
 			onCloseDialog?.();
 			router.push(`/events/${slug}`);
 		},
-		[onCloseDialog, router]
+		[onCloseDialog, router, isRedirecting]
 	);
 
 	const handleJoinResult = useCallback(
@@ -93,13 +103,17 @@ export function JoinEventFlow({
 				case 'JOINED':
 					if (result.eventSlug) {
 						setCurrentStep('REDIRECTING');
+						setIsRedirecting(true);
 						toast({
 							title: 'Success',
 							description: result.message || 'Successfully joined the event',
 						});
-						// Add a small delay before redirect
-						setTimeout(() => {
-							handleRedirectToEvent(result.eventSlug!);
+						// Store timeout reference so we can cancel it
+						redirectTimeoutRef.current = setTimeout(() => {
+							if (isRedirecting) {
+								// Only redirect if not cancelled
+								handleRedirectToEvent(result.eventSlug!);
+							}
 						}, 1500);
 					}
 					break;
@@ -115,7 +129,7 @@ export function JoinEventFlow({
 					break;
 			}
 		},
-		[eventData, handleRedirectToEvent, toast]
+		[eventData, handleRedirectToEvent, toast, isRedirecting]
 	);
 
 	const handleEventAccess = useCallback(
@@ -131,14 +145,15 @@ export function JoinEventFlow({
 				setEventData(eventInfo.event as never);
 
 				if (eventInfo.userStatus === 'JOINED') {
-					console.log('Redirecting 2');
 					setCurrentStep('REDIRECTING');
 					setIsRedirecting(true);
-					const redirectTimeout = setTimeout(() => {
-						handleRedirectToEvent(eventInfo.event.slug);
-					}, 1000);
-
-					return () => clearTimeout(redirectTimeout);
+					redirectTimeoutRef.current = setTimeout(() => {
+						if (isRedirecting) {
+							// Only redirect if not cancelled
+							handleRedirectToEvent(eventInfo.event.slug);
+						}
+					}, 500);
+					return;
 				}
 
 				if (eventInfo.userStatus === 'PENDING') {
@@ -192,7 +207,7 @@ export function JoinEventFlow({
 				setIsLoading(false);
 			}
 		},
-		[handleJoinResult, handleRedirectToEvent, toast]
+		[handleJoinResult, handleRedirectToEvent, toast, isRedirecting]
 	);
 
 	useEffect(() => {
@@ -233,6 +248,9 @@ export function JoinEventFlow({
 	);
 
 	const handleCancelRedirect = () => {
+		if (redirectTimeoutRef.current) {
+			clearTimeout(redirectTimeoutRef.current);
+		}
 		setIsRedirecting(false);
 		setCurrentStep('LINK_PASTE');
 		onCloseDialog?.();
