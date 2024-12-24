@@ -19,9 +19,14 @@ import { Textarea } from '@/components/ui/textarea';
 
 const eventTypes = [
 	'Birthday',
+	'Anniversary',
+	'Church',
 	'Wedding',
 	'Conference',
-	'Party',
+	'Indoor Party',
+	'Outdoor Party',
+	'Celebration',
+	'Worklife',
 	'Meeting',
 	'Other',
 ];
