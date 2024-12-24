@@ -79,10 +79,11 @@ const Footer = () => {
 					<div className='space-y-10 text-center'>
 						<div className='space-y-2'>
 							<h2 className='text-4xl md:text-6xl font-display tracking-tight text-[#efcc4e] animate-in fade-in slide-in-from-bottom-3 duration-500'>
-								You dey outside
+								We dey outside
 							</h2>
 							<p className='text-white animate-in fade-in slide-in-from-bottom-4 duration-700'>
-								then me make we know the occasion, send location!
+								Let us know the occasion—send the location, and let&apos;s make
+								it a moment to remember!
 							</p>
 						</div>
 
@@ -115,7 +116,7 @@ const Footer = () => {
 							<Button
 								variant='outline'
 								size='lg'
-								className='rounded-full w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors'
+								className='rounded-full hidden w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors'
 								onClick={() => window.open('/sponsor', '_blank')}
 								aria-label='Open sponsorship page'
 							>

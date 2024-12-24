@@ -1,5 +1,5 @@
-import { Button } from '../ui/button';
 import Image from 'next/image';
+import JoinWaitList from './join-waitlist';
 import React from 'react';
 
 const JoinUsSection = () => {
@@ -18,22 +18,21 @@ const JoinUsSection = () => {
 				<div className='flex flex-col gap-6 md:my-20 max-w-md justify-start items-start'>
 					<div className='space-y-6 text-white'>
 						<h2 className='text-6xl font-display tracking-tight text-left text-[#efcc4e]'>
-							Show them something
+							Join the Moment, Share the Vibes
 						</h2>
 						<p className='tracking-tight'>
-							You don’t have to try hard on{' '}
-							<span className='font-display'>WeOuddy</span> . There’s no
-							pressure or need to take it seriously. Just chillax kick back and
-							show them.
+							With WeOuddy, every event comes alive in real time. Whether
+							you&apos;re hosting, attending, or just vibing, this is your space
+							to connect, share, and engage with a community that loves the
+							moment as much as you do. No pressure, no filters,just authentic,
+							real-time fun
 						</p>
 						<p className='tracking-tight'>
-							”We dey outside nor be convention”- Kojo manuel (creator of the
-							word (we oudy)).
+							&quot;We dey outside nor be convention.&quot; – Kojo Manuel,
+							creator of the iconic phrase ‘We Oudy.’
 						</p>
 					</div>
-					<Button variant='outline' size={'lg'} className='rounded-full w-auto'>
-						Join us
-					</Button>
+					<JoinWaitList />
 				</div>
 			</div>
 		</section>
