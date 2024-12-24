@@ -52,9 +52,9 @@ export default function HeroSection() {
 						variant='outline'
 						size={'lg'}
 						aria-label='Work with us'
-						className='rounded-full h-12 font-semibold hidden'
+						className='rounded-full h-12 font-semibold'
 					>
-						Vibe with us
+						Discover more
 					</Button>
 					<JoinWaitList />
 					<Link href={'https://x.com/OfficialWeouddy'}>
