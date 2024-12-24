@@ -1,15 +1,20 @@
 'use client';
 
+import {
+	SignInWithGoogle,
+	signIn,
+	signUp,
+	signUpWithGuest,
+} from '@/app/auth/actions/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
-import { signIn, signUp, signUpWithGuest } from '@/app/auth/actions/actions';
 import { useEffect, useState } from 'react';
 
 import { LoginForm } from './login-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { SignUpForm } from './signup-form';
 import { supabase } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 
 interface AuthDialogProps {
@@ -27,7 +32,6 @@ export function AuthDialog({
 	const [isLoading, setIsLoading] = useState(false);
 
 	const router = useRouter();
-	const { toast } = useToast();
 
 	useEffect(() => {
 		const checkSession = async () => {
@@ -50,8 +54,7 @@ export function AuthDialog({
 			if (error) throw error;
 
 			if (success) {
-				toast({
-					title: 'Account created!',
+				toast.success('Account created!', {
 					description: 'Please check your email to verify your account.',
 				});
 
@@ -60,11 +63,7 @@ export function AuthDialog({
 
 			router.refresh();
 		} catch (error: Error | unknown) {
-			toast({
-				title: 'Error',
-				description: (error as Error).message || 'An unknown error occurred.',
-				variant: 'destructive',
-			});
+			toast.error('An unknown error occurred.');
 			console.error(error);
 		} finally {
 			setIsLoading(false);
@@ -79,8 +78,7 @@ export function AuthDialog({
 			if (error) throw error;
 
 			if (success) {
-				toast({
-					title: 'Welcome back!',
+				toast('Welcome back!', {
 					description: 'You have successfully signed in.',
 				});
 
@@ -89,10 +87,8 @@ export function AuthDialog({
 
 			router.refresh();
 		} catch (error: Error | unknown) {
-			toast({
-				title: 'Error',
-				description: (error as Error).message || 'An unknown error occurred.',
-				variant: 'destructive',
+			toast.error('Authentication Error', {
+				description: 'Invaild login credentials',
 			});
 			console.error(error);
 		} finally {
@@ -109,8 +105,7 @@ export function AuthDialog({
 			if (error) throw error;
 
 			if (data.session) {
-				toast({
-					title: 'Welcome!',
+				toast.info('Welcome!', {
 					description: 'You are now browsing as a guest.',
 				});
 
@@ -119,11 +114,10 @@ export function AuthDialog({
 
 			router.refresh();
 		} catch (error: Error | unknown) {
-			toast({
-				title: 'Error',
-				description: (error as Error).message || 'An unknown error occurred.',
-				variant: 'destructive',
+			toast.error('Error', {
+				description: 'An unknown error occurred.',
 			});
+			console.error(error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -131,11 +125,29 @@ export function AuthDialog({
 
 	const handleForgotPassword = () => {
 		// TODO: Implement forgot password functionality
-		toast({
-			title: 'Forgot Password',
-			description: 'Forgot password functionality coming soon.',
+		toast.info('Forgot Password', {
+			description:
+				'Forgot password functionality coming soon.Contact support for assistance.',
 		});
 	};
+
+	const handleGoogleSignIn = async () => {
+		setIsLoading(true);
+		try {
+			await SignInWithGoogle();
+		} catch (error) {
+			toast.error('Error', {
+				description: 'An unexpected error occurred during Google Sign-In.',
+			});
+			console.error(
+				'An unexpected error occurred during Google Sign-In:',
+				error
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
 			{view === 'login' ? (
@@ -144,12 +156,14 @@ export function AuthDialog({
 					onSubmitAction={handleSignIn}
 					onForgotPassword={handleForgotPassword}
 					isLoading={isLoading}
+					onGoogleSignIn={handleGoogleSignIn}
 				/>
 			) : (
 				<SignUpForm
 					onLoginClickAction={() => setView('login')}
 					onSubmitAction={handleSignUp}
 					isLoading={isLoading}
+					onGoogleSignIn={handleGoogleSignIn}
 				/>
 			)}
 		</ResponsiveDialog>

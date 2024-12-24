@@ -32,7 +32,6 @@ const JoinEventDialog = memo(
 			}
 
 			if (!event.isPrivate) {
-				console.log('Is not private', initialStep);
 				return 'REDIRECTING';
 			}
 
