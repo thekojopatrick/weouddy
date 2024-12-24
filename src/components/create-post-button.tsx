@@ -27,8 +27,6 @@ const CreatePostButton = ({
 		setShowDialog(true);
 	};
 
-	console.log({ user });
-
 	return (
 		<>
 			<Button
@@ -38,7 +36,7 @@ const CreatePostButton = ({
 					'rounded-full shadow-lg',
 					isSmallDevice ? 'size-12' : 'h-12'
 				)}
-				onClick={() => setShowDialog(true)}
+				onClick={handleClick}
 			>
 				{isSmallDevice ? <NotebookPen /> : <Plus className={'size-6'} />}
 				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>

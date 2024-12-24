@@ -184,7 +184,7 @@ export function CreatePostModal({
 							onClick={handleSubmit}
 							disabled={
 								uploadState.isUploading ||
-								(uploadState.files.length === 0 && !content.trim())
+								(!content.trim() && uploadState.files.length === 0)
 							}
 						>
 							{uploadState.isUploading || isSubmitting ? (
