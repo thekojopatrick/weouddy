@@ -28,7 +28,7 @@ const EventMetadata = ({ event, currentUrl }: EventMetadataProps) => {
 			<meta property='og:url' content={currentUrl} />
 			<meta
 				property='og:image'
-				content={event.coverImage || '/default-event-cover.png'}
+				content={event.coverImage || '/assets/default-event-cover.png'}
 			/>
 			<meta property='og:site_name' content='WeOuddy' />
 
@@ -41,7 +41,7 @@ const EventMetadata = ({ event, currentUrl }: EventMetadataProps) => {
 			/>
 			<meta
 				name='twitter:image'
-				content={event.coverImage || '/default-event-cover.png'}
+				content={event.coverImage || '/assests/default-event-cover.png'}
 			/>
 
 			{/* WhatsApp specific meta tags */}
