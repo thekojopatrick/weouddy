@@ -1,17 +1,37 @@
 'use client';
 
-import { CalendarDays, MapPin, Settings, Share2, Users } from 'lucide-react';
+import { CalendarDays, MapPin, Settings, Users } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+	RiCodeFill,
+	RiFacebookFill,
+	RiMailLine,
+	RiTwitterXFill,
+} from '@remixicon/react';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { Button } from '@/components/ui/button';
 import CreatePostButton from '@/components/create-post-button';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
 import { EventWithFullData } from '@/types/event';
+import { Input } from '@/components/ui/input';
 import JoinChatRoom from '@/components/join-chat-room';
+import React from 'react';
 import { User } from '@supabase/supabase-js';
+import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useState } from 'react';
 
 export default function EventRoom({
 	user,
@@ -22,24 +42,31 @@ export default function EventRoom({
 }) {
 	const { date, time } = formatEventDateTime(event?.dateTime as never);
 	const isSmallDevice = useMediaQuery('only screen and (max-width : 638px)');
-	const [showSettings, setShowSettings] = useState(false);
+	const [showSettings, setShowSettings] = React.useState(false);
+	const [copied, setCopied] = React.useState(false);
+	const inputRef = React.useRef<HTMLInputElement>(null);
 
-	const handleShare = async () => {
-		if (navigator.share) {
-			try {
-				await navigator.share({
-					title: event.name,
-					text: `Join me at ${event.name}!`,
-					url: window.location.href,
-				});
-			} catch (error) {
-				// Handle error or user cancellation
-				console.log('Share failed:', error);
-			}
-		} else {
-			// Fallback - copy to clipboard
-			navigator.clipboard.writeText(window.location.href);
+	const handleCopy = () => {
+		if (inputRef.current) {
+			navigator.clipboard.writeText(inputRef.current.value);
+			setCopied(true);
+			setTimeout(() => setCopied(false), 1500);
 		}
+	};
+
+	const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+	const handleSocialShare = (platform: 'twitter' | 'facebook' | 'email') => {
+		const text = `Join me at ${event.name}!`;
+		const url = encodeURIComponent(shareUrl);
+
+		const shareUrls = {
+			twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,
+			facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+			email: `mailto:?subject=${encodeURIComponent(event.name)}&body=${encodeURIComponent(`${text}\n${shareUrl}`)}`,
+		};
+
+		window.open(shareUrls[platform], '_blank');
 	};
 
 	return (
@@ -51,9 +78,125 @@ export default function EventRoom({
 						<div className='flex justify-between items-start'>
 							<h1 className='text-2xl font-bold'>{event.name}</h1>
 							<div className='flex gap-2'>
-								<Button variant='outline' size='icon' onClick={handleShare}>
-									<Share2 className='h-4 w-4' />
-								</Button>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button variant='outline'>Share</Button>
+									</PopoverTrigger>
+									<PopoverContent className='w-72'>
+										<div className='flex flex-col gap-3 text-center'>
+											<div className='text-sm font-medium'>Share event</div>
+											<div className='flex flex-wrap justify-center gap-2'>
+												<Button
+													size='icon'
+													variant='outline'
+													aria-label='Copy embed code'
+													onClick={() => handleCopy()}
+												>
+													<RiCodeFill
+														size={16}
+														strokeWidth={2}
+														aria-hidden='true'
+													/>
+												</Button>
+												<Button
+													size='icon'
+													variant='outline'
+													aria-label='Share on Twitter'
+													onClick={() => handleSocialShare('twitter')}
+												>
+													<RiTwitterXFill
+														size={16}
+														strokeWidth={2}
+														aria-hidden='true'
+													/>
+												</Button>
+												<Button
+													size='icon'
+													variant='outline'
+													aria-label='Share on Facebook'
+													onClick={() => handleSocialShare('facebook')}
+												>
+													<RiFacebookFill
+														size={16}
+														strokeWidth={2}
+														aria-hidden='true'
+													/>
+												</Button>
+												<Button
+													size='icon'
+													variant='outline'
+													aria-label='Share via email'
+													onClick={() => handleSocialShare('email')}
+												>
+													<RiMailLine
+														size={16}
+														strokeWidth={2}
+														aria-hidden='true'
+													/>
+												</Button>
+											</div>
+											<div className='space-y-2'>
+												<div className='relative'>
+													<Input
+														ref={inputRef}
+														className='pe-9'
+														type='text'
+														defaultValue={shareUrl}
+														aria-label='Share link'
+														readOnly
+													/>
+													<TooltipProvider delayDuration={0}>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<button
+																	onClick={handleCopy}
+																	className='absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed'
+																	aria-label={
+																		copied ? 'Copied' : 'Copy to clipboard'
+																	}
+																	disabled={copied}
+																>
+																	<div
+																		className={cn(
+																			'transition-all',
+																			copied
+																				? 'scale-100 opacity-100'
+																				: 'scale-0 opacity-0'
+																		)}
+																	>
+																		<Check
+																			className='stroke-emerald-500'
+																			size={16}
+																			strokeWidth={2}
+																			aria-hidden='true'
+																		/>
+																	</div>
+																	<div
+																		className={cn(
+																			'absolute transition-all',
+																			copied
+																				? 'scale-0 opacity-0'
+																				: 'scale-100 opacity-100'
+																		)}
+																	>
+																		<Copy
+																			size={16}
+																			strokeWidth={2}
+																			aria-hidden='true'
+																		/>
+																	</div>
+																</button>
+															</TooltipTrigger>
+															<TooltipContent className='px-2 py-1 text-xs'>
+																Copy to clipboard
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												</div>
+											</div>
+										</div>
+									</PopoverContent>
+								</Popover>
 								<Button
 									variant='outline'
 									size='icon'
@@ -63,6 +206,8 @@ export default function EventRoom({
 								</Button>
 							</div>
 						</div>
+
+						{/* Rest of the header content */}
 						<div className='flex flex-wrap items-center gap-6 mt-4 text-sm'>
 							<div className='flex items-center gap-2'>
 								<CalendarDays className='h-4 w-4' />
@@ -112,11 +257,12 @@ export default function EventRoom({
 					userAvatar={user?.avatarUrl ?? ''}
 				/>
 			</div>
+
 			<EventSettingsModal
 				event={event as never}
 				isOpen={showSettings}
-				onOpenChange={setShowSettings}
-				onSaveSettings={() => {}}
+				onOpenChangeAction={setShowSettings}
+				onSaveSettingsAction={() => {}}
 			/>
 		</div>
 	);

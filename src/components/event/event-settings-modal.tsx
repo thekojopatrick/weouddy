@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	Dialog,
 	DialogContent,
@@ -15,15 +17,15 @@ import { Switch } from '@/components/ui/switch';
 type EventSettingsModalProps = {
 	event: EventWithDetails;
 	isOpen: boolean;
-	onOpenChange: (open: boolean) => void;
-	onSaveSettings: (settings: Partial<EventWithDetails>) => void;
+	onOpenChangeAction: (open: boolean) => void;
+	onSaveSettingsAction: (settings: Partial<EventWithDetails>) => void;
 };
 
 export function EventSettingsModal({
 	event,
 	isOpen,
-	onOpenChange,
-	onSaveSettings,
+	onOpenChangeAction,
+	onSaveSettingsAction,
 }: EventSettingsModalProps) {
 	const [settings, setSettings] = useState({
 		isPrivate: event.isPrivate,
@@ -35,12 +37,12 @@ export function EventSettingsModal({
 	});
 
 	const handleSave = () => {
-		onSaveSettings(settings);
-		onOpenChange(false);
+		onSaveSettingsAction(settings);
+		onOpenChangeAction(false);
 	};
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onOpenChange}>
+		<Dialog open={isOpen} onOpenChange={onOpenChangeAction}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Event Settings</DialogTitle>
@@ -93,7 +95,7 @@ export function EventSettingsModal({
 				</div>
 
 				<div className='mt-4 flex justify-end space-x-2'>
-					<Button variant='outline' onClick={() => onOpenChange(false)}>
+					<Button variant='outline' onClick={() => onOpenChangeAction(false)}>
 						Cancel
 					</Button>
 					<Button onClick={handleSave}>Save Changes</Button>
