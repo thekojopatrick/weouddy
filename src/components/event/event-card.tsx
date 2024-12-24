@@ -1,5 +1,7 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
 	Card,
@@ -86,6 +88,7 @@ export function EventCard({
 				setUserStatus(data.status);
 			} catch (error) {
 				console.error('Failed to fetch user status:', error);
+				Sentry.captureException(error);
 			}
 		};
 
@@ -111,6 +114,7 @@ export function EventCard({
 		} catch (err) {
 			console.error('Failed to share event:', err);
 			copyToClipboard(eventUrl);
+			Sentry.captureException(err);
 		}
 	};
 

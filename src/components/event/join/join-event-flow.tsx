@@ -1,5 +1,7 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -194,6 +196,7 @@ export function JoinEventFlow({
 					description:
 						error instanceof Error ? error.message : 'Failed to access event',
 				});
+				Sentry.captureException(error);
 			} finally {
 				setIsLoading(false);
 			}
