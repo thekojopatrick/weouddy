@@ -23,7 +23,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import CreatePostButton from '@/components/create-post-button';
-import EventMetadata from './event-metadata';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
 import { EventWithFullData } from '@/types/event';
@@ -95,7 +94,6 @@ export default function EventRoom({
 
 	return (
 		<>
-			<EventMetadata event={event} currentUrl={shareUrl} />
 			<div className='flex min-h-screen flex-col'>
 				<main className='flex-1'>
 					<div className='max-w-7xl px-6 py-6 mx-auto'>

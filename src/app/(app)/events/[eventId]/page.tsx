@@ -1,7 +1,42 @@
-import EventMetadata from '@/components/pages/events/event-metadata';
+import type { Metadata, ResolvingMetadata } from 'next';
+
 import EventRoom from '@/components/pages/events/event-room';
+import { formatEventDateTime } from '@/lib/formatters';
 import { getEventBySlug } from '@/server/actions/event/queries';
 import { getSession } from '@/lib/auth';
+
+type Props = {
+	params: Promise<{ eventId: string }>;
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export async function generateMetadata(
+	{ params, searchParams }: Props,
+	parent: ResolvingMetadata
+): Promise<Metadata> {
+	// read route params
+	const id = (await params).eventId;
+
+	// fetch data
+	const event = await getEventBySlug(id);
+
+	// optionally access and extend (rather than replace) parent metadata
+	const previousImages = (await parent).openGraph?.images || [];
+
+	const { date, time } = formatEventDateTime(event?.dateTime as never);
+
+	return {
+		title: `${event?.name} | WeOuddy - Moments That Matter`,
+		description: `Join ${event?.name} on ${date} at ${time}. ${event?.location} : ${event?.description}`,
+		openGraph: {
+			title: `${event?.name} | WeOuddy - Moments That Matter`,
+			description:
+				'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
+			url: `https://www.weoudy.com/events/${event?.slug}`,
+			images: ['/assets/default-event-cover.png', ...previousImages],
+		},
+	};
+}
 
 export default async function EventRoomPage(props: {
 	params: Promise<{ eventId: string }>;
@@ -17,10 +52,6 @@ export default async function EventRoomPage(props: {
 
 	return (
 		<>
-			<EventMetadata
-				event={event as never}
-				currentUrl={`${process.env.NEXT_PUBLIC_APP_URL}/${event?.slug}`}
-			/>
 			<EventRoom user={session.user} event={event as never} />;
 		</>
 	);
