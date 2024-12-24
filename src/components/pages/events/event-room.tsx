@@ -12,6 +12,7 @@ import {
 	RiFacebookFill,
 	RiMailLine,
 	RiTwitterXFill,
+	RiWhatsappFill,
 } from '@remixicon/react';
 import {
 	Tooltip,
@@ -55,18 +56,40 @@ export default function EventRoom({
 	};
 
 	const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+	const shareText = `Join me at ${event.name}!`;
 
-	const handleSocialShare = (platform: 'twitter' | 'facebook' | 'email') => {
-		const text = `Join me at ${event.name}!`;
+	const handleSocialShare = (
+		platform: 'twitter' | 'facebook' | 'email' | 'whatsapp'
+	) => {
 		const url = encodeURIComponent(shareUrl);
+		const text = encodeURIComponent(shareText);
 
 		const shareUrls = {
-			twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,
+			twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
 			facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-			email: `mailto:?subject=${encodeURIComponent(event.name)}&body=${encodeURIComponent(`${text}\n${shareUrl}`)}`,
+			email: `mailto:?subject=${encodeURIComponent(event.name)}&body=${text}%0D%0A${url}`,
+			whatsapp: `https://wa.me/?text=${text}%20${url}`,
 		};
 
-		window.open(shareUrls[platform], '_blank');
+		// Use proper window configurations for social media popups
+		if (
+			platform === 'whatsapp' &&
+			/Android|iPhone/i.test(navigator.userAgent)
+		) {
+			// Open in same window on mobile devices
+			window.location.href = shareUrls[platform];
+		} else {
+			// Open popup on desktop
+			const width = 550;
+			const height = 400;
+			const left = (window.screen.width - width) / 2;
+			const top = (window.screen.height - height) / 2;
+			window.open(
+				shareUrls[platform],
+				'share',
+				`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`
+			);
+		}
 	};
 
 	return (
@@ -93,6 +116,19 @@ export default function EventRoom({
 													onClick={() => handleCopy()}
 												>
 													<RiCodeFill
+														size={16}
+														strokeWidth={2}
+														aria-hidden='true'
+													/>
+												</Button>
+												<Button
+													size='icon'
+													variant='outline'
+													aria-label='Share on WhatsApp'
+													onClick={() => handleSocialShare('whatsapp')}
+													className='bg-[#25D366] hover:bg-[#25D366]/90 text-white hover:text-white border-[#25D366]'
+												>
+													<RiWhatsappFill
 														size={16}
 														strokeWidth={2}
 														aria-hidden='true'
