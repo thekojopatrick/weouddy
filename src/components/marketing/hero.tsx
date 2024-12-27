@@ -48,6 +48,7 @@ export default function HeroSection() {
 				transition={{ duration: 0.8 }}
 			>
 				<div className='flex flex-wrap justify-center gap-2'>
+					<Link href={'/discover'}>
 					<Button
 						variant='outline'
 						size={'lg'}
@@ -56,6 +57,7 @@ export default function HeroSection() {
 					>
 						Discover more
 					</Button>
+					</Link>
 					<JoinWaitList />
 					<Link href={'https://x.com/OfficialWeouddy'}>
 						<Button
