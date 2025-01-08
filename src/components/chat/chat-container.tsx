@@ -10,19 +10,20 @@ import {
 } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-// import { supabase } from '@/lib/supabase';
+
 import type {
   ChatMessage,
   ChatSettings as ChatSettingsType,
 } from '@/types/chat';
-import { sendMessage } from '@/server/actions/chat/mutations';
+
 import { supabase } from '@/lib/supabase/client';
 import { ChatSettings } from './chat-settings';
 import { MessageList } from './message-list';
 import { ChatInput } from './chat-input';
+import { useEventChat } from '@/hooks/use-event-chat';
 
 interface ChatContainerProps {
-  roomId: string;
+  eventId: string;
   userId: string;
   isHost: boolean;
   isGuest: boolean;
@@ -31,7 +32,7 @@ interface ChatContainerProps {
 }
 
 export function ChatContainer({
-  roomId,
+  eventId,
   userId,
   isHost,
   isGuest,
@@ -43,17 +44,23 @@ export function ChatContainer({
   const [settings, setSettings] = useState(initialSettings);
   const [lastMessageTime, setLastMessageTime] = useState<Date>();
   const { toast } = useToast();
-
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    deleteMessage,
+    pinMessage,
+  } = useEventChat(eventId, userId);
   useEffect(() => {
     const channel = supabase
-      .channel(`room:${roomId}:chat`)
+      .channel(`event:${eventId}:chat`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'ChatMessage',
-          filter: `roomId=eq.${roomId}`,
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           const newMessage = payload.new as ChatMessage;
@@ -66,7 +73,7 @@ export function ChatContainer({
           event: 'UPDATE',
           schema: 'public',
           table: 'ChatMessage',
-          filter: `roomId=eq.${roomId}`,
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           const updatedMessage = payload.new as ChatMessage;
@@ -83,7 +90,7 @@ export function ChatContainer({
           event: 'UPDATE',
           schema: 'public',
           table: 'ChatSettings',
-          filter: `roomId=eq.${roomId}`,
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           setSettings(payload.new as ChatSettingsType);
@@ -94,11 +101,11 @@ export function ChatContainer({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId]);
+  }, [eventId]);
 
   const handleSendMessage = async (content: string) => {
     try {
-      await sendMessage(roomId, userId, content);
+      await sendMessage();
       setLastMessageTime(new Date());
 
       if (settings.requireModeration && !isHost) {
@@ -116,7 +123,7 @@ export function ChatContainer({
   return (
     <div className="space-y-4">
       {isHost && (
-        <ChatSettings roomId={roomId} initialSettings={settings} />
+        <ChatSettings eventId={eventId} initialSettings={settings} />
       )}
 
       <Card>
@@ -138,7 +145,7 @@ export function ChatContainer({
             isHost={isHost}
           />
           <ChatInput
-            eventId={roomId}
+            eventId={eventId}
             userId={userId}
             isGuest={isGuest}
             settings={settings}
