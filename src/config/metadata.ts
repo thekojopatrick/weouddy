@@ -13,7 +13,7 @@ export const siteConfig = {
 };
 
 export const siteMeta = {
-  // metadataBase: new URL('https://www.weoudy.com'),
+  // metadataBase: new URL('https://www.weouddy.com'),
   title: "WeOuddy - Real-Time Event Engagement and Community Sharing",
   description:
     "Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.",
@@ -32,7 +32,7 @@ export const siteMeta = {
     title: "WeOuddy - Moments That Matter",
     description:
       "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-    url: "https://www.weoudy.com",
+    url: "https://www.weouddy.com",
     siteName: "WeOuddy",
     locale: "en_US",
     type: "website",
