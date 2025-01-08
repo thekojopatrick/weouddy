@@ -7,7 +7,7 @@ import CustomSheet from './ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
 import { SheetClose } from './ui/sheet';
 import { cn } from '@/lib/utils';
-import { ChatContainer } from './chat/chat-container';
+import EventChatRoom from './event-room-chat';
 
 const JoinChatRoom = ({
   isSmallDevice,
@@ -92,7 +92,7 @@ const JoinChatRoom = ({
         onCloseAction={() => setShowDialog(false)}
         side={isSmallDevice ? 'bottom' : 'right'}
         title={`Chatroom ${eventId}`}
-        content={''}
+        content={<EventChatRoom eventId={eventId} userId={user.id} />}
         stickyHeader={true}
         stickyFooter={true}
         scrollableContent={true}
