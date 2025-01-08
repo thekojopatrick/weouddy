@@ -39,7 +39,10 @@ export async function generateMetadata(
       description:
         'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
       url: `${siteUrl}/${event?.slug}`,
-      images: ['/assets/default-event-cover.png', ...previousImages],
+      images: [
+        `${siteUrl}/assets/default-event-cover.png`,
+        ...previousImages,
+      ],
     },
   };
 }
