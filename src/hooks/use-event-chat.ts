@@ -1,31 +1,15 @@
 import { supabase } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
-
 import { toast } from 'sonner';
-
-export type ChatMessage = {
-  id: string;
-  content: string;
-  isPinned: boolean;
-  createdAt: string;
-  userId: string;
-  eventId: string;
-  user: {
-    username: string;
-    avatarUrl: string;
-    name: string;
-  };
-};
+import type { ChatMessage } from '@/types/chat';
 
 export const useEventChat = (eventId: string, userId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initial fetch of messages
     fetchMessages();
 
-    // Set up real-time subscription
     const channel = supabase
       .channel(`event-chat-${eventId}`)
       .on(
@@ -68,13 +52,15 @@ export const useEventChat = (eventId: string, userId: string) => {
         .select(`
           *,
           user:userId (
+            id,
             username,
-            avatar_url,
-            display_name
+            avatarUrl,
+            name
           )
         `)
         .eq('eventId', eventId)
         .order('createdAt', { ascending: true });
+
       if (error) throw error;
       setMessages(data as []);
     } catch (error) {
@@ -102,6 +88,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         .select(`
           *,
           user:userId (
+            id,
             username,
             avatarUrl,
             name
@@ -124,7 +111,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         .from('ChatMessage')
         .delete()
         .eq('id', messageId)
-        .eq('userId', userId); // Ensure user can only delete their own messages
+        .eq('userId', userId);
 
       if (error) throw error;
       toast.success('Message deleted');

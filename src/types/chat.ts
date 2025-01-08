@@ -1,15 +1,15 @@
 export interface ChatMessage {
     id: string;
     content: string;
+    isPinned: boolean;
+    createdAt: string;
     userId: string;
     eventId: string;
-    isPinned: boolean;
-    // isHidden: boolean;
-    createdAt: Date;
     user: {
       id: string;
+      username: string | null;
+      avatarUrl: string | null;
       name: string | null;
-      isGuest?: boolean;
     };
   }
   

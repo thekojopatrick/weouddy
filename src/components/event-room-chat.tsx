@@ -16,6 +16,7 @@ import {
   AvatarFallback,
 } from '@/components/ui/avatar';
 import { useEventChat } from '@/hooks/use-event-chat';
+import { ChatMessage } from '@/types/chat';
 
 interface EventChatRoomProps {
   eventId: string;
@@ -66,22 +67,7 @@ const EventChatRoom = ({ eventId, userId }: EventChatRoomProps) => {
     }
   };
 
-  const MessageItem = ({
-    message,
-  }: {
-    message: {
-      id: string;
-      userId: string;
-      isPinned: boolean;
-      content: string;
-      user: {
-        name: string;
-        username: string;
-        avatarUrl: string;
-      };
-      createdAt: string;
-    };
-  }) => {
+  const MessageItem = ({ message }: { message: ChatMessage }) => {
     const isOwnMessage = message.userId === userId;
     const displayName =
       message.user?.name || message.user?.username || 'Anonymous';
@@ -91,8 +77,8 @@ const EventChatRoom = ({ eventId, userId }: EventChatRoomProps) => {
         className={`flex gap-2 mb-4 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
       >
         <Avatar className="h-8 w-8">
-          <AvatarImage src={message.user?.avatarUrl} />
-          <AvatarFallback>{displayName?.charAt(0)}</AvatarFallback>
+          <AvatarImage src={message.user?.avatarUrl || undefined} />
+          <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
         </Avatar>
         <div
           className={`flex flex-col ${isOwnMessage ? 'items-end' : ''}`}
