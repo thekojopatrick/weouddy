@@ -65,9 +65,7 @@ export function MessageItem({ message, isHost }: MessageItemProps) {
           <span className="font-medium">
             {message.user.name || 'Anonymous'}
           </span>
-          {message.user.isGuest && (
-            <Badge variant="secondary">Guest</Badge>
-          )}
+          {message.user && <Badge variant="secondary">Guest</Badge>}
           {isPinned && (
             <Badge variant="default">
               <Pin className="h-3 w-3 mr-1" />
