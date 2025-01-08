@@ -13,6 +13,7 @@ export const siteConfig = {
 };
 
 export const siteMeta = {
+  // metadataBase: new URL('https://www.weouddy.com'),
   title: "WeOuddy - Real-Time Event Engagement and Community Sharing",
   description:
     "Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.",
@@ -31,11 +32,11 @@ export const siteMeta = {
     title: "WeOuddy - Moments That Matter",
     description:
       "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-    url: "https://www.weouddy.com/",
+    url: "https://www.weouddy.com",
     siteName: "WeOuddy",
     locale: "en_US",
     type: "website",
-    images: "/assets/og-image.png", // Replace with your hero/banner image path
+    images: "/og-image.png", // Replace with your hero/banner image path
   },
   twitter: {
     card: "summary_large_image",
@@ -43,6 +44,7 @@ export const siteMeta = {
     description:
       "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
     creator: "@OfficialWeOuddy",
+    images: ['/og-image.png']
   },
   manifest: "/manifest.json",
   icons: {
