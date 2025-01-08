@@ -1,4 +1,9 @@
+import { getURL } from "@/lib/utils";
+
+const siteUrl = getURL();
+
 export const siteConfig = {
+   metadataBase: new URL(siteUrl),
   name: "WeOuddy",
   description:
     "WeOuddy connects people to moments that matter with real-time event engagement and community sharing.",
@@ -31,7 +36,7 @@ export const siteMeta = {
     title: "WeOuddy - Moments That Matter",
     description:
       "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-    url: "https://www.weouddy.com/",
+    url: siteUrl,
     siteName: "WeOuddy",
     locale: "en_US",
     type: "website",
@@ -43,6 +48,7 @@ export const siteMeta = {
     description:
       "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
     creator: "@OfficialWeOuddy",
+    images: [`${siteUrl}/og-image.png`]
   },
   manifest: "/manifest.json",
   icons: {
