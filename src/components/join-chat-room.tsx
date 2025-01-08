@@ -7,77 +7,100 @@ import CustomSheet from './ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
 import { SheetClose } from './ui/sheet';
 import { cn } from '@/lib/utils';
+import { ChatContainer } from './chat/chat-container';
 
 const JoinChatRoom = ({
-	isSmallDevice,
-	eventId,
-	user,
+  isSmallDevice,
+  eventId,
+  user,
 }: {
-	isSmallDevice: boolean;
-	eventId: string;
-	user: {
-		id: string;
-		userName: string;
-		userAvatar: string;
-	};
+  isSmallDevice: boolean;
+  eventId: string;
+  user: {
+    id: string;
+    userName: string;
+    userAvatar: string;
+  };
 }) => {
-	const [showDialog, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
-	const handleClick = () => {
-		if (!user) return null;
-		setShowDialog(true);
-	};
+  const handleClick = () => {
+    if (!user) return null;
+    setShowDialog(true);
+  };
 
-	const footerContent = (hasReadToBottom: boolean) => (
-		<>
-			{!hasReadToBottom && (
-				<span className='grow text-xs text-muted-foreground max-sm:text-center'>
-					Read all terms before accepting.
-				</span>
-			)}
-			<SheetClose asChild>
-				<Button type='button' variant='outline'>
-					Cancel
-				</Button>
-			</SheetClose>
-			<SheetClose asChild>
-				<Button type='button' disabled={!hasReadToBottom}>
-					I agree
-				</Button>
-			</SheetClose>
-		</>
-	);
+  //   const mainContent = () => (
+  //     <>
+  //       <div className="container mx-auto px-4 py-8">
+  //         <ChatContainer
+  //           roomId={''}
+  //           userId={user.id}
+  //           isHost={''}
+  //           isGuest={''}
+  //           initialMessages={[]}
+  //           initialSettings={}
+  //         />
+  //         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  //           <div className="lg:col-span-1"></div>
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
 
-	return (
-		<>
-			<Button
-				variant={'outline'}
-				size={isSmallDevice ? 'icon' : 'lg'}
-				className={cn(
-					'rounded-full shadow-lg',
-					isSmallDevice ? 'size-12' : 'h-12'
-				)}
-				onClick={handleClick}
-			>
-				{isSmallDevice ? <RiChat1Fill /> : <RiChat1Fill className={'size-6'} />}
-				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
-					Vibes
-				</span>
-			</Button>
-			<CustomSheet
-				isOpen={showDialog}
-				onCloseAction={() => setShowDialog(false)}
-				side={isSmallDevice ? 'bottom' : 'right'}
-				title={`Chatroom ${eventId}`}
-				content={`${user.userName}`}
-				stickyHeader={true}
-				stickyFooter={true}
-				scrollableContent={true}
-				maxHeight={isSmallDevice ? '90vh' : '80vh'}
-				footerContent={footerContent(true)}
-			/>
-		</>
-	);
+  const footerContent = (hasReadToBottom: boolean) => (
+    <>
+      {!hasReadToBottom && (
+        <span className="grow text-xs text-muted-foreground max-sm:text-center">
+          Read all terms before accepting.
+        </span>
+      )}
+      <SheetClose asChild>
+        <Button type="button" variant="outline">
+          Cancel
+        </Button>
+      </SheetClose>
+      <SheetClose asChild>
+        <Button type="button" disabled={!hasReadToBottom}>
+          I agree
+        </Button>
+      </SheetClose>
+    </>
+  );
+
+  return (
+    <>
+      <Button
+        variant={'outline'}
+        size={isSmallDevice ? 'icon' : 'lg'}
+        className={cn(
+          'rounded-full shadow-lg',
+          isSmallDevice ? 'size-12' : 'h-12'
+        )}
+        onClick={handleClick}
+      >
+        {isSmallDevice ? (
+          <RiChat1Fill />
+        ) : (
+          <RiChat1Fill className={'size-6'} />
+        )}
+        <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
+          Vibes
+        </span>
+      </Button>
+      <CustomSheet
+        isOpen={showDialog}
+        onCloseAction={() => setShowDialog(false)}
+        side={isSmallDevice ? 'bottom' : 'right'}
+        title={`Chatroom ${eventId}`}
+        content={''}
+        stickyHeader={true}
+        stickyFooter={true}
+        scrollableContent={true}
+        maxHeight={isSmallDevice ? '90vh' : '80vh'}
+        footerContent={footerContent(true)}
+      />
+    </>
+  );
 };
 
 export default JoinChatRoom;
