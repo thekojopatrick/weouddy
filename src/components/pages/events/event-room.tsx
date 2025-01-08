@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import FeedbackDialog from '@/components/feedback-dialog';
 
 export default function EventRoom({
   user,
@@ -356,7 +357,7 @@ export default function EventRoom({
             />
           </div>
         </div>
-
+        <FeedbackDialog />
         <EventSettingsModal
           event={event as never}
           isOpen={showSettings}

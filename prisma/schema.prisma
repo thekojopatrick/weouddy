@@ -38,6 +38,7 @@ model User {
   eventLogs              EventActivity[]
   sentFollowRequests     FollowRequest[] @relation("Requestor")
   receivedFollowRequests FollowRequest[] @relation("Target")
+  feedbacks              Feedback[]
 }
 
 model Event {
@@ -272,4 +273,49 @@ enum AttendeeStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model Feedback {
+  id        String           @id @default(cuid())
+  userId    String
+  type      FeedbackType
+  rating    Int
+  message   String?
+  category  FeedbackCategory
+  status    FeedbackStatus   @default(PENDING)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([category])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum FeedbackType {
+  ACCOUNT_SETUP
+  EVENT_EXPERIENCE
+  APP_USABILITY
+  BUG_REPORT
+  FEATURE_REQUEST
+  OTHER
+}
+
+enum FeedbackCategory {
+  UI_UX
+  PERFORMANCE
+  FUNCTIONALITY
+  CONTENT
+  TECHNICAL
+  GENERAL
+}
+
+enum FeedbackStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  ARCHIVED
 }
