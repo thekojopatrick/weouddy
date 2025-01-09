@@ -29,6 +29,10 @@ export type PostData = Post & {
   comments: Comment[];
   likes: Like[];
   media: PostMedia[];
+  _count: {
+    likes: number;
+    comments: number;
+  };
 };
 
 export type EventWithFullData = Event & {

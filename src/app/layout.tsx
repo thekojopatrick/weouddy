@@ -1,37 +1,44 @@
 import './styles/globals.css';
 
-import { cabinetGrotesk, geistMono, geistSans } from '@/components/ui/fonts';
+import {
+  cabinetGrotesk,
+  geistMono,
+  geistSans,
+} from '@/components/ui/fonts';
 
 import type { Metadata } from 'next';
 import { Toaster as SonnerToaster } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { siteMeta } from '@/config/site';
+import Provider from './provider';
 
 export const metadata: Metadata = siteMeta;
 
 export default function RootLayout({
-	children,
-	modal,
+  children,
+  modal,
 }: Readonly<{
-	children: React.ReactNode;
-	modal: React.ReactNode;
+  children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
-	return (
-		<html lang='en'>
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${cabinetGrotesk.variable} antialiased`}
-			>
-				<>
-					{children}
-					{modal}
-				</>
-				<Toaster />
-				<SonnerToaster />
-				<script
-					async
-					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`}
-				></script>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${cabinetGrotesk.variable} antialiased`}
+      >
+        <Provider>
+          <>
+            {children}
+            {modal}
+          </>
+          <Toaster />
+          <SonnerToaster />
+        </Provider>
+        <script
+          async
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`}
+        ></script>
+      </body>
+    </html>
+  );
 }

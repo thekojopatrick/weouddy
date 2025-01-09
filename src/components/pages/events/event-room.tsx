@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button';
 import CreatePostButton from '@/components/create-post-button';
 import { EventPostCard } from '@/components/event/post/post-card';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
-import { EventWithFullData } from '@/types/event';
+import { EventWithFullData, PostData } from '@/types/event';
 import { Input } from '@/components/ui/input';
 import JoinChatRoom from '@/components/join-chat-room';
 import React from 'react';
@@ -35,6 +35,13 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import FeedbackDialog from '@/components/feedback-dialog';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchEventPosts = async (eventId: string) => {
+  const res = await fetch(`/api/events/${eventId}/posts`);
+  if (!res.ok) throw new Error('Failed to fetch posts');
+  return res.json();
+};
 
 export default function EventRoom({
   user,
@@ -55,6 +62,12 @@ export default function EventRoom({
   const [copied, setCopied] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { protectAction } = useAuthProtection();
+
+  const { data: posts } = useQuery({
+    queryKey: ['posts', event.id],
+    queryFn: () => fetchEventPosts(event.id),
+    initialData: event.posts,
+  });
 
   const handleCopy = () => {
     if (inputRef.current) {
@@ -289,7 +302,7 @@ export default function EventRoom({
 
             {/* Posts Grid */}
             <div className="grid h-auto gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {event?.posts.map((post) => (
+              {posts?.map((post: PostData) => (
                 <EventPostCard
                   key={post.id}
                   post={post}
