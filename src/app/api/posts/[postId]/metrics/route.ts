@@ -6,7 +6,7 @@ export async function GET(
   req: Request,
   { params }: { params: { postId: string } }
 ) {
-  const { postId } = params;
+  const { postId } = await params;
 
   try {
     const session = await getSession();

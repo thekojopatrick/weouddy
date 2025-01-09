@@ -1,12 +1,15 @@
-import { db } from "@/server/db/prisma";
-
+import { db } from '@/server/db/prisma';
+import { NextResponse } from 'next/server';
 
 export async function GET(
-    req: Request,
-    { params }: { params: { eventId: string } }
-  ) {
+  req: Request,
+  { params }: { params: { eventId: string } }
+) {
+  const { eventId } = await params;
+
+  try {
     const posts = await db.post.findMany({
-      where: { eventId: params.eventId },
+      where: { eventId },
       include: {
         user: {
           select: {
@@ -23,8 +26,12 @@ export async function GET(
           },
         },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
-  
-    return Response.json(posts);
+
+    return NextResponse.json(posts);
+  } catch (error) {
+    console.error(error);
+    return new NextResponse('Error fetching posts', { status: 500 });
   }
+}

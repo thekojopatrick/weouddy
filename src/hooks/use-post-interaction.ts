@@ -28,8 +28,8 @@ export function usePostInteractions(
   currentUserId: string
 ) {
   const queryClient = useQueryClient();
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-  // Fetch post metrics
   const { data: postMetrics } = useQuery<PostMetrics>({
     queryKey: ['postMetrics', postId],
     queryFn: async () => {
@@ -38,10 +38,8 @@ export function usePostInteractions(
         throw new Error('Failed to fetch post metrics');
       return response.json();
     },
-    initialData: { likes: 0, commentCount: 0, isLiked: false },
   });
 
-  // Fetch comments
   const { data: comments = [], refetch: refetchComments } = useQuery<
     Comment[]
   >({
@@ -51,37 +49,50 @@ export function usePostInteractions(
       if (!response.ok) throw new Error('Failed to fetch comments');
       return response.json();
     },
+    enabled: isCommentsOpen, // Only fetch when comments are visible
   });
 
-  // Like/Unlike Post
   const likeMutation = useMutation({
-    mutationFn: async (isLiked: boolean) => {
+    mutationFn: async () => {
       const response = await fetch(`/api/posts/${postId}/like`, {
-        method: isLiked ? 'DELETE' : 'POST',
+        method: postMetrics?.isLiked ? 'DELETE' : 'POST',
       });
       if (!response.ok) throw new Error('Failed to toggle like');
+      return response.json();
     },
-    onMutate: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ['postMetrics', postId],
+      });
+      const previousMetrics = queryClient.getQueryData([
+        'postMetrics',
+        postId,
+      ]);
+
       queryClient.setQueryData(
         ['postMetrics', postId],
-        (oldMetrics: PostMetrics | undefined) => ({
-          ...(oldMetrics as PostMetrics),
-          likes:
-            (oldMetrics?.likes ?? 0) +
-            (postMetrics?.isLiked ? -1 : 1),
+        (old: PostMetrics | undefined) => ({
+          ...old,
+          likes: (old?.likes ?? 0) + (postMetrics?.isLiked ? -1 : 1),
           isLiked: !postMetrics?.isLiked,
         })
       );
+
+      return { previousMetrics };
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['post', postId] }),
-    onError: () =>
+    onError: (_, __, context) => {
+      queryClient.setQueryData(
+        ['postMetrics', postId],
+        context?.previousMetrics
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['postMetrics', postId],
-      }),
+      });
+    },
   });
 
-  // Add Comment
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
       const response = await fetch(`/api/posts/${postId}/comments`, {
@@ -92,18 +103,60 @@ export function usePostInteractions(
       if (!response.ok) throw new Error('Failed to add comment');
       return response.json();
     },
-    onSuccess: () => {
+    onMutate: async (newContent) => {
+      await queryClient.cancelQueries({
+        queryKey: ['comments', postId],
+      });
+      const previousComments = queryClient.getQueryData([
+        'comments',
+        postId,
+      ]);
+
+      // Optimistically add the new comment
+      const optimisticComment: Comment = {
+        id: 'temp-' + Date.now(),
+        content: newContent,
+        createdAt: new Date().toISOString(),
+        userId: currentUserId,
+        user: {
+          id: currentUserId,
+          name: 'You', // This will be replaced when the real data comes in
+          avatarUrl: null,
+        },
+      };
+
+      queryClient.setQueryData(
+        ['comments', postId],
+        (old: Comment[] = []) => [optimisticComment, ...old]
+      );
+
+      // Update metrics
+      queryClient.setQueryData(
+        ['postMetrics', postId],
+        (old: PostMetrics | undefined) => ({
+          ...old,
+          commentCount: (old?.commentCount ?? 0) + 1,
+        })
+      );
+
+      return { previousComments };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(
+        ['comments', postId],
+        context?.previousComments
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['comments', postId],
       });
       queryClient.invalidateQueries({
         queryKey: ['postMetrics', postId],
       });
-      queryClient.invalidateQueries({ queryKey: ['post', postId] });
     },
   });
 
-  // Delete Comment
   const deleteCommentMutation = useMutation({
     mutationFn: async (commentId: string) => {
       const response = await fetch(
@@ -114,27 +167,61 @@ export function usePostInteractions(
       );
       if (!response.ok) throw new Error('Failed to delete comment');
     },
-    onSuccess: () => {
+    onMutate: async (commentId) => {
+      await queryClient.cancelQueries({
+        queryKey: ['comments', postId],
+      });
+      const previousComments = queryClient.getQueryData([
+        'comments',
+        postId,
+      ]);
+
+      // Optimistically remove the comment
+      queryClient.setQueryData(
+        ['comments', postId],
+        (old: Comment[] = []) =>
+          old.filter((comment) => comment.id !== commentId)
+      );
+
+      // Update metrics
+      queryClient.setQueryData(
+        ['postMetrics', postId],
+        (old: PostMetrics | undefined) => ({
+          ...old,
+          commentCount: Math.max(0, (old?.commentCount ?? 0) - 1),
+        })
+      );
+
+      return { previousComments };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(
+        ['comments', postId],
+        context?.previousComments
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['comments', postId],
       });
-      queryClient.invalidateQueries({ queryKey: ['post', postId] });
+      queryClient.invalidateQueries({
+        queryKey: ['postMetrics', postId],
+      });
     },
   });
 
-  // UI state
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-
   return {
-    ...(postMetrics ?? { likes: 0, commentCount: 0, isLiked: false }),
+    likes: postMetrics?.likes ?? 0,
+    commentCount: postMetrics?.commentCount ?? 0,
+    isLiked: postMetrics?.isLiked ?? false,
     comments,
     isCommentsOpen,
     setIsCommentsOpen,
-    toggleLike: () => likeMutation.mutate(!likeMutation.isPending),
-    addComment: async (content: string) =>
-      await addCommentMutation.mutateAsync(content),
-    deleteComment: async (commentId: string) =>
-      await deleteCommentMutation.mutateAsync(commentId),
+    toggleLike: () => likeMutation.mutateAsync(),
+    addComment: (content: string) =>
+      addCommentMutation.mutateAsync(content),
+    deleteComment: (commentId: string) =>
+      deleteCommentMutation.mutateAsync(commentId),
     refetchComments,
     currentUserId,
   };
