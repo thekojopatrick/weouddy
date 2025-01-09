@@ -50,6 +50,55 @@ export class PostService {
     }
   }
 
+  static async toggleLike(postId: string, userId: string) {
+    const existingLike = await db.like.findUnique({
+      where: {
+        userId_postId: {
+          postId,
+          userId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      await db.like.delete({
+        where: { id: existingLike.id },
+      });
+    } else {
+      await db.like.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+    }
+
+    return this.getPost(postId);
+  }
+
+
+  static async getPost(postId: string) {
+    return db.post.findUnique({
+      where: { id: postId },
+      include: {
+        user: {
+          select: {
+            name: true,
+            avatarUrl: true,
+            username: true,
+          },
+        },
+        media: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+      },
+    });
+  }
+
   private static async validateEventAccess(userId: string, eventId: string) {
     const event = await db.event.findFirst({
       where: {

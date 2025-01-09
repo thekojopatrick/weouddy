@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { PostService } from "@/server/services/post";
 
 export async function POST(
   req: Request,
@@ -15,12 +16,7 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const like = await prisma.like.create({
-      data: {
-        userId: session.user.id,
-        postId: postId,
-      },
-    });
+    const like = PostService.toggleLike(postId,session.userId)
 
     return NextResponse.json(like);
   } catch (error) {

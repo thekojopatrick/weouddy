@@ -34,17 +34,11 @@ export function EventPostWithMedia({
     isLiked,
     isCommentsOpen,
     setIsCommentsOpen,
-    handleLike,
-    handleComment,
-    handleDeleteComment,
+    toggleLike: handleLike,
+    addComment: handleComment,
+    deleteComment: handleDeleteComment,
     currentUserId,
-  } = usePostInteractions({
-    postId: post.id,
-    initialLikes: post._count.likes,
-    initialComments: post._count.comments,
-    currentUserId: userId,
-    isLiked: post.likes?.some((like) => like.userId === userId),
-  });
+  } = usePostInteractions(post.id, userId);
 
   const currentUserLiked =
     post.likes?.some((like) => like.userId === userId) || isLiked;
