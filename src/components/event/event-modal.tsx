@@ -1,24 +1,23 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Calendar, MapPin, Share2, Users } from 'lucide-react';
-import { memo, useCallback, useMemo, useState } from 'react';
-
+import { memo, useCallback, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
 import Image from 'next/image';
 import JoinEventDialog from './join/join-event-dialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useAccount } from '@/hooks/account/use-account';
+import { useRouter } from 'next/navigation';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -62,17 +61,14 @@ const EventModal = memo(
     event,
     userStatus = 'NOT_JOINED',
   }: EventModalProps) => {
-    const [showJoinDialog, setShowJoinDialog] = useState(false);
-    const { toast } = useToast();
     const isMobile = useMediaQuery(
       'only screen and (max-width : 638px)'
     );
-    const { protectAction } = useAuthProtection();
     const { accountData } = useAccount();
+    const router = useRouter();
 
     const handleShare = useCallback(async () => {
       const eventUrl = `${window.location.origin}/events/${event.slug}`;
-
       try {
         if (navigator.share) {
           await navigator.share({
@@ -86,14 +82,43 @@ const EventModal = memo(
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
           navigator.clipboard.writeText(eventUrl);
-          toast({
-            title: 'Link copied!',
+          toast.info('Link copied!', {
             description: 'Event link has been copied to clipboard.',
           });
         }
         Sentry.captureException(err);
       }
     }, [event.name, event.slug, toast]);
+
+    const handleJoinClick = useCallback(() => {
+      if (!accountData?.id) {
+        toast.error('Please sign in to join this event');
+        router.push('/auth');
+        onCloseAction(); // Close the modal before redirecting
+        return;
+      }
+
+      // If user is authenticated, show join dialog
+      return (
+        <JoinEventDialog
+          open={true}
+          onOpenChangeAction={() => {}}
+          event={{
+            id: event.id,
+            slug: event.slug!,
+            isPrivate: event.isPrivate,
+            isDisabled: event.isDisabled,
+            requiresApproval: event.requiresApproval,
+            accessType: event.accessType,
+          }}
+          initialStep={
+            event.isPrivate && event.accessType === 'PIN_REQUIRED'
+              ? 'PIN_ENTRY'
+              : 'REDIRECTING'
+          }
+        />
+      );
+    }, [accountData?.id, event, router, onCloseAction]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
@@ -114,30 +139,21 @@ const EventModal = memo(
             event.isPrivate && event.accessType === 'PIN_REQUIRED'
               ? 'Enter PIN to Join'
               : 'Join Room';
-          if (
-            event.isPrivate &&
-            event.accessType === 'PIN_REQUIRED'
-          ) {
-            return {
-              text: buttonText,
-              disabled: false,
-              action: () => setShowJoinDialog(true),
-            };
-          }
           return {
             text:
               event.isPrivate && event.requiresApproval
                 ? 'Request to Join'
-                : 'Join Room',
+                : buttonText,
             disabled: false,
-            action: () => setShowJoinDialog(true),
+            action: handleJoinClick,
           };
       }
     }, [
-      event.accessType,
       event.isPrivate,
       event.requiresApproval,
+      event.accessType,
       userStatus,
+      handleJoinClick,
     ]);
 
     const renderContent = useMemo(
@@ -220,68 +236,31 @@ const EventModal = memo(
                 ? 'You are a member of this event.'
                 : 'Join this event to connect with other attendees and get updates.'}
           </p>
-          <div
-            onClick={() =>
-              protectAction(
-                accountData,
-                () => (
-                  <Button
-                    className="w-full"
-                    onClick={buttonConfig.action}
-                    disabled={buttonConfig.disabled}
-                  >
-                    {buttonConfig.text}
-                  </Button>
-                ),
-                'join an event'
-              )
-            }
+          <Button
+            className="w-full"
+            onClick={buttonConfig.action}
+            disabled={buttonConfig.disabled}
           >
-            <Button
-              className="w-full"
-              onClick={buttonConfig.action}
-              disabled={buttonConfig.disabled}
-            >
-              {buttonConfig.text}
-            </Button>
-          </div>
+            {buttonConfig.text}
+          </Button>
         </div>
       ),
       [buttonConfig, userStatus]
     );
 
     return (
-      <>
-        <CustomSheet
-          isOpen={isOpen}
-          onCloseAction={onCloseAction}
-          side={isMobile ? 'bottom' : 'right'}
-          title={event.name}
-          content={renderContent}
-          stickyHeader={true}
-          stickyFooter={true}
-          scrollableContent={true}
-          maxHeight={''}
-          footerContent={renderFooter}
-        />
-        <JoinEventDialog
-          open={showJoinDialog}
-          onOpenChangeAction={setShowJoinDialog}
-          event={{
-            id: event.id,
-            slug: event.slug!,
-            isPrivate: event.isPrivate,
-            isDisabled: event.isDisabled,
-            requiresApproval: event.requiresApproval,
-            accessType: event.accessType,
-          }}
-          initialStep={
-            event.isPrivate && event.accessType === 'PIN_REQUIRED'
-              ? 'PIN_ENTRY'
-              : 'REDIRECTING'
-          }
-        />
-      </>
+      <CustomSheet
+        isOpen={isOpen}
+        onCloseAction={onCloseAction}
+        side={isMobile ? 'bottom' : 'right'}
+        title={event.name}
+        content={renderContent}
+        stickyHeader={true}
+        stickyFooter={true}
+        scrollableContent={true}
+        maxHeight={''}
+        footerContent={renderFooter}
+      />
     );
   }
 );
