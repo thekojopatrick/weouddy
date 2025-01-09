@@ -38,7 +38,7 @@ export function usePostInteractions(
         throw new Error('Failed to fetch post metrics');
       return response.json();
     },
-    //staleTime: 30 * 1000, // Keep data fresh for 30 seconds
+    staleTime: 30 * 1000, // Keep data fresh for 30 seconds
   });
 
   const { data: comments = [], refetch: refetchComments } = useQuery<
