@@ -9,37 +9,45 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
 export function CreateEventButton({
-	isSmallDevice,
-	user,
+  isSmallDevice,
+  user,
 }: {
-	isSmallDevice: boolean;
-	user: User;
+  isSmallDevice: boolean;
+  user: User;
 }) {
-	const [showDialog, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
-	const handleClick = () => {
-		if (!user) return null;
-		setShowDialog(true);
-	};
+  const handleClick = () => {
+    if (!user) return null;
+    setShowDialog(true);
+  };
 
-	return (
-		<>
-			<Button
-				variant={'outline'}
-				size={isSmallDevice ? 'icon' : 'lg'}
-				className={cn(
-					'rounded-full shadow-lg',
-					isSmallDevice ? 'size-12' : 'h-12'
-				)}
-				onClick={handleClick}
-			>
-				{isSmallDevice ? <CalendarPlus /> : <Plus className={'size-6'} />}
-				<span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
-					Create Event
-				</span>
-			</Button>
+  return (
+    <>
+      <Button
+        variant={'outline'}
+        size={isSmallDevice ? 'icon' : 'lg'}
+        className={cn(
+          'rounded-full shadow-lg',
+          isSmallDevice ? 'size-12' : 'h-12'
+        )}
+        onClick={handleClick}
+      >
+        {isSmallDevice ? (
+          <CalendarPlus />
+        ) : (
+          <Plus className={'size-6'} />
+        )}
+        <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
+          Create Event
+        </span>
+      </Button>
 
-			<CreateEventDialog open={showDialog} onOpenChangeAction={setShowDialog} />
-		</>
-	);
+      <CreateEventDialog
+        open={showDialog}
+        onOpenChangeAction={setShowDialog}
+        userId={user?.id}
+      />
+    </>
+  );
 }

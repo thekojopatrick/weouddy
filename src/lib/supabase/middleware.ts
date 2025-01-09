@@ -1,7 +1,13 @@
-import { createServerClient } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 
-const publicPaths = ["/", "/contact", "/discover", "/sentry-example-page"];
+const publicPaths = [
+  '/',
+  '/contact',
+  '/discover',
+  '/sentry-example-page',
+  '/api/events',
+];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -28,7 +34,7 @@ export async function updateSession(request: NextRequest) {
           );
         },
       },
-    },
+    }
   );
 
   // Do not run code between createServerClient and
@@ -42,9 +48,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Check if the current path is in the public paths array
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname === path ||
-    request.nextUrl.pathname.startsWith("/auth")
+  const isPublicPath = publicPaths.some(
+    (path) =>
+      request.nextUrl.pathname === path ||
+      request.nextUrl.pathname.startsWith('/auth')
   );
 
   // Allow access to public paths without authentication
@@ -54,12 +61,12 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/auth')
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
-    url.pathname = "/auth";
+    url.pathname = '/auth';
     return NextResponse.redirect(url);
   }
 

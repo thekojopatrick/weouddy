@@ -1,11 +1,11 @@
 import {
   CategorizedLocation,
   categorizeLocation,
-} from "@/lib/location-mapping";
-import { useCallback, useMemo, useState } from "react";
+} from '@/lib/location-mapping';
+import { useCallback, useMemo, useState } from 'react';
 
 //import { EventData } from "@/types/event";
-import { EventWithDetails } from "@/types/prisma.types";
+import { EventWithDetails } from '@/types/prisma.types';
 
 // Define strict types for event and filtering
 export interface EventWithLocationDetails extends EventWithDetails {
@@ -20,7 +20,7 @@ export interface FilteringResult<T> {
 
 export function useOptimizedEventFiltering(
   events: EventWithDetails[],
-  initialCategory = "All",
+  initialCategory = 'All'
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -37,7 +37,9 @@ export function useOptimizedEventFiltering(
       return processedEvents;
     } catch (err) {
       setError(
-        err instanceof Error ? err : new Error("Event processing failed"),
+        err instanceof Error
+          ? err
+          : new Error('Event processing failed')
       );
       setIsLoading(false);
       return [];
@@ -45,15 +47,12 @@ export function useOptimizedEventFiltering(
   }, [events]);
 
   // Memoized filtering function with comprehensive type checking
-  const filterEvents = useCallback((
-    location: string,
-    category: string = initialCategory,
-  ): FilteringResult<EventWithLocationDetails> => {
-    try {
-      setIsLoading(true);
-
+  const filterEvents = useCallback(
+    (
+      location: string,
+      category: string = initialCategory
+    ): FilteringResult<EventWithLocationDetails> => {
       if (!memoizedEvents.length) {
-        setIsLoading(false);
         return {
           data: [],
           isLoading: false,
@@ -61,36 +60,41 @@ export function useOptimizedEventFiltering(
         };
       }
 
-      const filteredEvents = memoizedEvents.filter((event) => {
-        const locationMatch = location === "world" ||
-          location.toLowerCase() ===
-            event.locationDetails.region.toLowerCase() ||
-          location.toLowerCase() ===
-            event.locationDetails.country.toLowerCase() ||
-          location.toLowerCase() === event.locationDetails.city.toLowerCase();
+      try {
+        const filteredEvents = memoizedEvents.filter((event) => {
+          const locationMatch =
+            location === 'world' ||
+            location.toLowerCase() ===
+              event.locationDetails.region.toLowerCase() ||
+            location.toLowerCase() ===
+              event.locationDetails.country.toLowerCase() ||
+            location.toLowerCase() ===
+              event.locationDetails.city.toLowerCase();
 
-        const categoryMatch = category === "All" ||
-          event.type.toLowerCase() === category.toLowerCase();
+          const categoryMatch =
+            category === 'All' ||
+            event.type.toLowerCase() === category.toLowerCase();
 
-        return locationMatch && categoryMatch;
-      });
+          return locationMatch && categoryMatch;
+        });
 
-      setIsLoading(false);
-      return {
-        data: filteredEvents,
-        isLoading: false,
-        error: null,
-      };
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Filtering failed"));
-      setIsLoading(false);
-      return {
-        data: [],
-        isLoading: false,
-        error,
-      };
-    }
-  }, [initialCategory, memoizedEvents, error]);
+        return {
+          data: filteredEvents,
+          isLoading: false,
+          error: null,
+        };
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Filtering failed');
+        return {
+          data: [],
+          isLoading: false,
+          error,
+        };
+      }
+    },
+    [initialCategory, memoizedEvents]
+  );
 
   return {
     filterEvents,

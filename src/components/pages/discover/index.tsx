@@ -1,10 +1,8 @@
 'use client';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { AlertTriangle } from 'lucide-react';
 import { CategoryFilters } from '@/components/category-filters';
 import { CreateEventButton } from '@/components/create-event-button';
 import { EventCard } from '@/components/event/event-card';
@@ -18,172 +16,173 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
+import { useEvents } from '@/hooks/use-event';
 
 export default function DiscoverPage({
-	events,
-	user,
+  user,
 }: {
-	events: EventWithDetails[];
-	user: User & { username: string | null; avatarUrl: string | null };
+  user: User & { username: string | null; avatarUrl: string | null };
 }) {
-	const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
-	const searchParams = useSearchParams();
-	const router = useRouter();
-	const { protectAction } = useAuthProtection();
+  const isSmallDevice = useMediaQuery(
+    'only screen and (max-width : 768px)'
+  );
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { protectAction } = useAuthProtection();
 
-	const [currentLocation, setCurrentLocation] = useState(
-		searchParams.get('location') || 'world'
-	);
-	const [currentCategory, setCurrentCategory] = useState('All');
+  const [currentLocation, setCurrentLocation] = useState(
+    searchParams.get('location') || 'world'
+  );
+  const [currentCategory, setCurrentCategory] = useState('All');
 
-	const { filterEvents, isLoading, error } = useOptimizedEventFiltering(events);
+  const { events, isLoading: DataLoading } = useEvents(
+    currentLocation,
+    currentCategory
+  );
 
-	// Compute filtered events
-	const { data: filteredEvents, isLoading: filterLoading } = useMemo(
-		() => filterEvents(currentLocation, currentCategory),
-		[currentLocation, currentCategory, filterEvents]
-	);
+  const { filterEvents, isLoading } = useOptimizedEventFiltering(
+    events as EventWithDetails[]
+  );
 
-	// Handle location change
-	const handleLocationChange = (location: string) => {
-		setCurrentLocation(location);
-		router.push(`/discover?location=${location}`, { scroll: false });
-	};
+  // Compute filtered events
+  const filteredEvents = useMemo(
+    () => filterEvents(currentLocation, currentCategory),
+    [currentLocation, currentCategory, filterEvents]
+  );
 
-	// Compute available categories
-	const availableCategories = useMemo(
-		() => ['All', ...new Set(events.map((event) => event.type))],
-		[events]
-	);
+  // Handle location change
+  const handleLocationChange = (location: string) => {
+    setCurrentLocation(location);
+    router.push(`/discover?location=${location}`, { scroll: false });
+  };
 
-	// Render error state
-	if (error) {
-		return (
-			<Alert variant='destructive' className='m-4'>
-				<AlertTriangle className='h-4 w-4' />
-				<AlertTitle>Error</AlertTitle>
-				<AlertDescription>
-					{error.message || 'An unexpected error occurred'}
-				</AlertDescription>
-			</Alert>
-		);
-	}
+  // Compute available categories
+  const availableCategories = useMemo(
+    () => [
+      'All',
+      ...new Set(
+        events?.map((event: EventWithDetails) => event.type)
+      ),
+    ],
+    [events]
+  ) as string[];
 
-	// Render loading state
-	if (isLoading || filterLoading) {
-		return (
-			<div className='container mx-auto px-4 py-8'>
-				<EventListShimmer />
-			</div>
-		);
-	}
+  // Render loading state
+  if (isLoading || DataLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <EventListShimmer />
+      </div>
+    );
+  }
 
-	//TODO: CHECK IF USER IS AUTHENTICATED BEFORE THEY CAN CREATE AN EVENT
+  return (
+    <div className="flex min-h-screen flex-col">
+      <main className="flex-1">
+        <section className="max-w-7xl px-6 py-8 mx-auto">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-3xl font-bold tracking-tighter">
+              Discover Events
+            </h1>
+            <p className="text-muted-foreground">
+              Explore events near you, browse by category, or search
+              events by name.
+            </p>
+          </div>
+          <div className="mt-8">
+            <LocationFilters
+              currentLocation={currentLocation}
+              onLocationChangeAction={handleLocationChange}
+            />
+            <CategoryFilters
+              onCategoryChangeAction={setCurrentCategory}
+              currentCategory={currentCategory}
+              categories={availableCategories}
+            />
+          </div>
 
-	return (
-		<div className='flex min-h-screen flex-col'>
-			<main className='flex-1'>
-				<section className='max-w-7xl px-6 py-8 mx-auto'>
-					<div className='flex flex-col gap-4'>
-						<h1 className='text-3xl font-bold tracking-tighter'>
-							Discover Events
-						</h1>
-						<p className='text-muted-foreground'>
-							Explore events near you, browse by category, or search events by
-							name.
-						</p>
-					</div>
-					<div className='mt-8'>
-						<LocationFilters
-							currentLocation={currentLocation}
-							onLocationChangeAction={handleLocationChange}
-						/>
-						<CategoryFilters
-							onCategoryChangeAction={setCurrentCategory}
-							currentCategory={currentCategory}
-							categories={availableCategories}
-						/>
-					</div>
+          {filteredEvents.data.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                No events found for the selected filters.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredEvents.data.map((event) => {
+                const { date, time } = formatEventDateTime(
+                  event.dateTime as never
+                );
+                return (
+                  <EventCard
+                    key={event.id}
+                    {...event}
+                    date={date}
+                    time={time}
+                    coverImage={event.coverImage!}
+                    members={event.memberCount}
+                    category={event.type}
+                    location={event.location!}
+                    slug={event.slug!}
+                    accessType={event.accessType as never}
+                    description={event.description!}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </main>
+      {/*CALL TO ACTION */}
 
-					{filteredEvents.length === 0 ? (
-						<div className='text-center py-8'>
-							<p className='text-muted-foreground'>
-								No events found for the selected filters.
-							</p>
-						</div>
-					) : (
-						<div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-							{filteredEvents.map((event) => {
-								const { date, time } = formatEventDateTime(
-									event.dateTime as never
-								);
-								return (
-									<EventCard
-										key={event.id}
-										{...event}
-										date={date}
-										time={time}
-										coverImage={event.coverImage!}
-										members={event.memberCount}
-										category={event.type}
-										location={event.location!}
-										slug={event.slug!}
-										accessType={event.accessType as never}
-										description={event.description!}
-									/>
-								);
-							})}
-						</div>
-					)}
-				</section>
-			</main>
-			{/*CALL TO ACTION */}
+      <div
+        className={cn(
+          'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
+          isSmallDevice ? 'right-5' : 'right-8'
+        )}
+      >
+        {/* Wrap JoinEventButton with auth protection */}
+        <div
+          onClick={() =>
+            protectAction(
+              user,
+              () => (
+                <JoinEventButton
+                  isSmallDevice={isSmallDevice}
+                  user={user as never}
+                />
+              ),
+              'join an event'
+            )
+          }
+        >
+          <JoinEventButton
+            isSmallDevice={isSmallDevice}
+            user={user as never}
+          />
+        </div>
 
-			<div
-				className={cn(
-					'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
-					isSmallDevice ? 'right-5' : 'right-8'
-				)}
-			>
-				{/* Wrap JoinEventButton with auth protection */}
-				<div
-					onClick={() =>
-						protectAction(
-							user,
-							() => (
-								<JoinEventButton
-									isSmallDevice={isSmallDevice}
-									user={user as never}
-								/>
-							),
-							'join an event'
-						)
-					}
-				>
-					<JoinEventButton isSmallDevice={isSmallDevice} user={user as never} />
-				</div>
-
-				{/* Wrap CreateEventButton with auth protection */}
-				<div
-					onClick={() =>
-						protectAction(
-							user,
-							() => (
-								<CreateEventButton
-									isSmallDevice={isSmallDevice}
-									user={user as never}
-								/>
-							),
-							'create an event'
-						)
-					}
-				>
-					<CreateEventButton
-						isSmallDevice={isSmallDevice}
-						user={user as never}
-					/>
-				</div>
-			</div>
-		</div>
-	);
+        {/* Wrap CreateEventButton with auth protection */}
+        <div
+          onClick={() =>
+            protectAction(
+              user,
+              () => (
+                <CreateEventButton
+                  isSmallDevice={isSmallDevice}
+                  user={user as never}
+                />
+              ),
+              'create an event'
+            )
+          }
+        >
+          <CreateEventButton
+            isSmallDevice={isSmallDevice}
+            user={user as never}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

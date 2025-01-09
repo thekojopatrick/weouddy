@@ -6,9 +6,9 @@ import {
   Post,
   PostMedia,
   User,
-} from "@prisma/client";
+} from '@prisma/client';
 
-import { PostWithDetails } from "./prisma.types";
+import { EventWithDetails, PostWithDetails } from './prisma.types';
 
 export type EventData = Event & {
   host: {
@@ -51,6 +51,11 @@ export interface JoinEventData {
   isDisabled: boolean;
   isPrivate: boolean; // This will determine the initial flow
   requiresApproval: boolean;
-  accessType: "LINK_ONLY" | "PIN_REQUIRED";
+  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
   pinCode?: string;
+}
+
+export interface EventCache {
+  events: EventWithDetails[];
+  timestamp: number;
 }
