@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { CurrentUser } from "@/types/prisma.types";
-import { supabase } from "@/lib/supabase/client";
+import { CurrentUser } from '@/types/prisma.types';
+import { supabase } from '@/lib/supabase/client';
 
 export interface AccountData {
+  id?: string;
   fullname: string | null;
   username: string | null;
   avatarUrl: string | null;
   email: string | null;
 }
 
-export const useAccount = (user: CurrentUser | null) => {
+export const useAccount = (user?: CurrentUser | null) => {
   const [loading, setLoading] = useState(true);
   const [accountData, setAccountData] = useState<AccountData>({
     fullname: user?.name ?? null,
@@ -24,11 +25,14 @@ export const useAccount = (user: CurrentUser | null) => {
 
     try {
       setLoading(true);
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { user } = userData;
 
       const { data, error, status } = await supabase
-        .from("User")
+        .from('User')
         .select(`name, username, avatarUrl`)
-        .eq("email", user.email!)
+        .eq('email', user?.email!)
         .single();
 
       if (error && status !== 406) {
@@ -41,11 +45,12 @@ export const useAccount = (user: CurrentUser | null) => {
           ...prev,
           fullname: data.name,
           username: data.username,
-          avatarUrl: data.avatarUrl ?? user.avatarUrl ?? "",
+          avatarUrl:
+            data.avatarUrl ?? user?.user_metadata.avatar_url ?? '',
         }));
       }
     } catch (error) {
-      console.error("Error loading user data:", error);
+      console.error('Error loading user data:', error);
     } finally {
       setLoading(false);
     }
@@ -66,10 +71,11 @@ export const useAccount = (user: CurrentUser | null) => {
         updatedAt: new Date().toISOString(),
       };
 
-      const { error } = await supabase.from("User").update(updateData).eq(
-        "email",
-        user.email!,
-      ).single();
+      const { error } = await supabase
+        .from('User')
+        .update(updateData)
+        .eq('email', user.email!)
+        .single();
 
       if (error) throw error;
 
@@ -79,12 +85,12 @@ export const useAccount = (user: CurrentUser | null) => {
         ...updates,
       }));
 
-      return { success: true, message: "Profile updated!" };
+      return { success: true, message: 'Profile updated!' };
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error updating profile:', error);
       return {
         success: false,
-        message: "Error updating the data!",
+        message: 'Error updating the data!',
       };
     } finally {
       setLoading(false);
