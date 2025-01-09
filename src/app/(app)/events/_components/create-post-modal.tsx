@@ -1,6 +1,10 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import {
   ImageIcon,
   Loader2,
@@ -22,7 +26,7 @@ import {
 } from '@/components/ui/drawer';
 
 import { Button } from '@/components/ui/button';
-import { EmojiPicker } from './emoji-picker';
+import { EmojiPicker } from '@/components/emoji-picker';
 import { FileWithPreview } from '@/types/upload';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';

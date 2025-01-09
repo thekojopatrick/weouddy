@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 
-import { Button } from './ui/button';
-import CustomSheet from './ui/custom-sheet';
+import { Button } from '@/components/ui/button';
+import CustomSheet from '@/components/ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
-import { SheetClose } from './ui/sheet';
+import { SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import EventChatRoom from './event-room-chat';
 
@@ -28,24 +28,6 @@ const JoinChatRoom = ({
     if (!user) return null;
     setShowDialog(true);
   };
-
-  //   const mainContent = () => (
-  //     <>
-  //       <div className="container mx-auto px-4 py-8">
-  //         <ChatContainer
-  //           roomId={''}
-  //           userId={user.id}
-  //           isHost={''}
-  //           isGuest={''}
-  //           initialMessages={[]}
-  //           initialSettings={}
-  //         />
-  //         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-  //           <div className="lg:col-span-1"></div>
-  //         </div>
-  //       </div>
-  //     </>
-  //   );
 
   const footerContent = (hasReadToBottom: boolean) => (
     <>

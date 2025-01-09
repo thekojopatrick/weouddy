@@ -22,12 +22,12 @@ import {
 } from '@/components/ui/tooltip';
 
 import { Button } from '@/components/ui/button';
-import CreatePostButton from '@/components/create-post-button';
+import CreatePostButton from './../_components/create-post-button';
+import JoinChatRoom from './../_components/join-chat-room';
 import { EventPostCard } from '@/components/post/post-card';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
 import { EventWithFullData, PostData } from '@/types/event';
 import { Input } from '@/components/ui/input';
-import JoinChatRoom from '@/components/join-chat-room';
 import React from 'react';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
