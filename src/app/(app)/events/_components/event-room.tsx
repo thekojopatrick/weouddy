@@ -23,7 +23,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import CreatePostButton from '@/components/create-post-button';
-import { EventPostCard } from '@/components/event/post/post-card';
+import { EventPostCard } from '@/components/post/post-card';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
 import { EventWithFullData, PostData } from '@/types/event';
 import { Input } from '@/components/ui/input';
