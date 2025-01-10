@@ -12,7 +12,25 @@ export async function POST(req: Request) {
       );
     }
 
-    const { identifier, pin } = await req.json();
+    // Validate request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      console.error('Join event bodey error:', e);
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
+
+    const { identifier, pin } = body;
+    if (!identifier) {
+      return NextResponse.json(
+        { success: false, error: 'Event identifier is required' },
+        { status: 400 }
+      );
+    }
 
     const event = await db.event.findFirst({
       where: {
@@ -34,14 +52,19 @@ export async function POST(req: Request) {
       );
     }
 
-    if (
-      event.accessType === 'PIN_REQUIRED' &&
-      pin !== event.pinCode
-    ) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid PIN' },
-        { status: 403 }
-      );
+    if (event.accessType === 'PIN_REQUIRED') {
+      if (!pin) {
+        return NextResponse.json(
+          { success: false, error: 'PIN is required' },
+          { status: 400 }
+        );
+      }
+      if (pin !== event.pinCode) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid PIN' },
+          { status: 403 }
+        );
+      }
     }
 
     // Check existing attendance
@@ -93,7 +116,7 @@ export async function POST(req: Request) {
       event: { slug: event.slug },
     });
   } catch (error) {
-    console.error(error);
+    console.error('Join event error:', error);
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
