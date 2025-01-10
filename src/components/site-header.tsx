@@ -28,7 +28,7 @@ export function SiteHeader({
 
   const showBackButton = !pathname.match(/^\/($|discover)/);
 
-  const { accountData, loading } = useAccount(user);
+  const { accountData, loading } = useAccount();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -84,8 +84,8 @@ export function SiteHeader({
           {!loading && accountData ? (
             <NavUser
               user={{
-                name: `${accountData.fullname || 'Anonymous'}`,
-                email: accountData.email ?? 'unknown@email.com',
+                name: accountData.fullname!,
+                email: accountData.email!,
                 avatar:
                   accountData.avatarUrl ?? user?.avatarUrl ?? '',
                 username:

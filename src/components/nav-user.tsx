@@ -129,7 +129,10 @@ export function NavUser({
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <form action="/auth/signout" method="post">
-            <button className="flex gap-2 items-center" type="submit">
+            <button
+              className="flex gap-2 items-center w-full"
+              type="submit"
+            >
               <LogOut className="size-4" />
               Sign out
             </button>

@@ -11,18 +11,17 @@ interface AccountData {
 
 export const useAccount = () => {
   const [loading, setLoading] = useState(true);
-  const [accountData, setAccountData] = useState<AccountData>({
-    id: '',
-    fullname: null,
-    username: null,
-    avatarUrl: null,
-    email: null,
-  });
+  const [accountData, setAccountData] = useState<AccountData | null>(
+    null
+  );
 
   const fetchProfile = useCallback(async () => {
     try {
       const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user?.email) return;
+      if (!userData.user?.email) {
+        setAccountData(null);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('User')
@@ -46,6 +45,7 @@ export const useAccount = () => {
       }
     } catch (error) {
       console.error('Error loading user data:', error);
+      setAccountData(null);
     } finally {
       setLoading(false);
     }
@@ -55,8 +55,9 @@ export const useAccount = () => {
     async (updates: Partial<AccountData>) => {
       try {
         const { data: userData } = await supabase.auth.getUser();
-        if (!userData.user?.email)
+        if (!userData.user?.email || !accountData) {
           return { success: false, message: 'No user found' };
+        }
 
         setLoading(true);
         const updateData = {
@@ -76,7 +77,16 @@ export const useAccount = () => {
 
         if (error) throw error;
 
-        setAccountData((prev) => ({ ...prev, ...updates }));
+        setAccountData((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            fullname: updates.fullname ?? prev.fullname,
+            username: updates.username ?? prev.username,
+            avatarUrl: updates.avatarUrl ?? prev.avatarUrl,
+            email: prev.email,
+          };
+        });
         return { success: true, message: 'Profile updated!' };
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -93,6 +103,16 @@ export const useAccount = () => {
 
   useEffect(() => {
     fetchProfile();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setAccountData(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [fetchProfile]);
 
   return { accountData, loading, updateProfile, fetchProfile };
