@@ -158,7 +158,7 @@ const EventModal = memo(
 
     const renderContent = useMemo(
       () => (
-        <div className="flex flex-col sm:min-h-screen space-y-6 pb-4">
+        <div className="flex flex-col sm:min-h-[80vh] space-y-6 pb-4">
           <div className="relative h-48">
             <Image
               src={event.coverImage}

@@ -62,7 +62,7 @@ export default function CustomSheet({
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
         side={side}
-        className={`flex flex-col gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
+        className={`flex flex-col rounded-l-lg gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
       >
         <SheetHeader
           className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
