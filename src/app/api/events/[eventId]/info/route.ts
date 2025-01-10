@@ -1,5 +1,6 @@
 import { db } from '@/server/db/prisma';
 import { getSession } from '@/lib/auth';
+import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
@@ -7,9 +8,11 @@ export async function GET(
 ) {
   try {
     const { eventId } = await params;
+
     const session = await getSession();
+
     if (!session?.user) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
@@ -29,7 +32,7 @@ export async function GET(
     });
 
     if (!event) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, error: 'Event not found' },
         { status: 404 }
       );
@@ -37,7 +40,7 @@ export async function GET(
 
     const userStatus = event.attendees[0]?.status || 'NOT_JOINED';
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
       event: {
         id: event.id,
@@ -51,7 +54,7 @@ export async function GET(
     });
   } catch (error) {
     console.error(error);
-    return Response.json(
+    return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
     );

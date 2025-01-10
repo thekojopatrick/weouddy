@@ -1,7 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
-
 import {
   Avatar,
   AvatarFallback,
@@ -13,18 +11,16 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { MapPin, Share2, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { EventCardShimmer } from './shimmer-loading';
-import EventModal from './event-modal';
+import { MapPin, Share2, Users } from 'lucide-react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { getNameInitials } from '@/lib/utils';
-import { useDebounce } from '@/hooks/useDebounce'; // Path to your useDebounce hook
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { getNameInitials } from '@/lib/utils';
+import EventModal from './event-modal';
+import * as Sentry from '@sentry/nextjs';
 
 interface EventCardProps {
   id: string;
@@ -43,7 +39,6 @@ interface EventCardProps {
   };
   location: string;
   members: number;
-  category: string;
   date: string;
   time: string;
   description: string;
@@ -62,7 +57,6 @@ export function EventCard({
   host,
   location,
   members,
-  category,
   date,
   time,
   description,
@@ -74,8 +68,6 @@ export function EventCard({
   isDisabled,
   requiresApproval,
 }: EventCardProps) {
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
-  const debouncedCheckingStatus = useDebounce(isCheckingStatus, 300); // Debounce state with 300ms delay
   const [userStatus, setUserStatus] = useState<
     'NOT_JOINED' | 'PENDING' | 'JOINED'
   >('NOT_JOINED');
@@ -83,23 +75,6 @@ export function EventCard({
   const router = useRouter();
   const { toast } = useToast();
   const [city, country] = location.split(', ');
-
-  useEffect(() => {
-    const fetchUserStatus = async () => {
-      try {
-        const response = await fetch(`/api/events/${id}/status`);
-        const data = await response.json();
-        setUserStatus(data.status);
-      } catch (error) {
-        console.error('Failed to fetch user status:', error);
-        Sentry.captureException(error);
-      }
-    };
-
-    if (debouncedCheckingStatus) {
-      fetchUserStatus();
-    }
-  }, [id, debouncedCheckingStatus]);
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -113,42 +88,38 @@ export function EventCard({
           url: eventUrl,
         });
       } else {
-        copyToClipboard(eventUrl);
+        navigator.clipboard.writeText(eventUrl);
+        toast({
+          title: 'Link copied!',
+          description: 'Event link has been copied to clipboard.',
+        });
       }
     } catch (err) {
-      console.error('Failed to share event:', err);
-      copyToClipboard(eventUrl);
-      Sentry.captureException(err);
+      if (err instanceof Error && err.name !== 'AbortError') {
+        Sentry.captureException(err);
+      }
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: 'Link copied!',
-      description: 'Event link has been copied to clipboard.',
-    });
-  };
+  const handleCardClick = async () => {
+    try {
+      const response = await fetch(`/api/events/${id}/status`);
+      const data = await response.json();
+      setUserStatus(data.status);
 
-  const handleCardClick = () => {
-    setIsCheckingStatus(true);
-
-    if (userStatus === 'JOINED') {
-      // Navigate to the event page
-      router.push(`/events/${slug}`);
-    } else {
-      setIsCheckingStatus(false);
-      // Open modal for join flow
-      setIsModalOpen(true);
+      if (data.status === 'JOINED') {
+        router.push(`/events/${slug}`);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user status:', error);
+      Sentry.captureException(error);
     }
   };
-
-  if (debouncedCheckingStatus) {
-    return <EventCardShimmer />;
-  }
 
   return (
-    <div>
+    <>
       <Card
         className="group relative overflow-hidden cursor-pointer shadow-none hover:shadow-md transition-shadow"
         onClick={handleCardClick}
@@ -171,7 +142,7 @@ export function EventCard({
             </Button>
             <Image
               src={coverImage ?? '/place-holder.svg'}
-              alt={`Event ${name}`}
+              alt={name}
               fill
               className="object-cover transition-transform group-hover:scale-105"
             />
@@ -181,34 +152,24 @@ export function EventCard({
           <h3 className="font-semibold text-sm leading-none tracking-tight max-w-40 truncate">
             {name}
           </h3>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="capitalize">
-              {type}
-            </Badge>
-            <Badge variant="outline" className="hidden">
-              {category}
-            </Badge>
-          </div>
+          <Badge variant="outline" className="capitalize">
+            {type}
+          </Badge>
         </CardContent>
         <CardFooter className="p-4 pt-0">
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <div className="row flex gap-2">
-              <div className="col-auto">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={host.avatarUrl!}
-                    alt={host.name}
-                  />
-                  <AvatarFallback className="text-xs font-semibold">
-                    {getNameInitials(host.name) ?? host.name[0]}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="col-auto">
-                <div className="font-[600] text-xs text-zinc-950">
+            <div className="flex gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={host.avatarUrl!} />
+                <AvatarFallback className="text-xs font-semibold">
+                  {getNameInitials(host.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-semibold text-xs text-zinc-950">
                   {host.name}
                 </div>
-                <div className="row flex items-center gap-2 -mx-1 text-xs">
+                <div className="flex items-center gap-2 text-xs">
                   <div className="flex items-center space-x-1">
                     <MapPin className="size-3" />
                     <span className="truncate max-w-20">
@@ -225,6 +186,7 @@ export function EventCard({
           </div>
         </CardFooter>
       </Card>
+
       {userStatus !== 'JOINED' && (
         <EventModal
           isOpen={isModalOpen}
@@ -241,7 +203,7 @@ export function EventCard({
               name: location,
               city: city || 'Unknown',
               country: country || 'Unknown',
-            } as never,
+            },
             isPrivate,
             isDisabled,
             requiresApproval,
@@ -256,6 +218,6 @@ export function EventCard({
           userStatus={userStatus}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -12,13 +12,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
 import Image from 'next/image';
-import JoinEventDialog from './join/join-event-dialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { toast } from 'sonner';
 import { useAccount } from '@/hooks/account/use-account';
 import { useRouter } from 'next/navigation';
 import { EventWithFullData } from '@/types/event';
 import { getNameInitials } from '@/lib/utils';
+import { JoinEventDialogLinkOnly } from './join/join-event-dialog-link-only';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -198,18 +198,13 @@ const EventModal = memo(
           scrollableContent={true}
           footerContent={renderFooter}
         />
-        <JoinEventDialog
+        <JoinEventDialogLinkOnly
           open={showJoinDialog}
-          onOpenChangeAction={setShowJoinDialog}
+          onOpenChange={setShowJoinDialog}
           eventId={event.id}
           eventSlug={event.slug!}
           accessType={event.accessType as never}
           requiresApproval={event.requiresApproval}
-          initialStep={
-            event.isPrivate && event.accessType === 'PIN_REQUIRED'
-              ? 'PIN_ENTRY'
-              : 'REDIRECTING'
-          }
         />
       </>
     );
