@@ -158,7 +158,7 @@ const EventModal = memo(
 
     const renderContent = useMemo(
       () => (
-        <div className="flex flex-col space-y-6 pb-4">
+        <div className="flex flex-col sm:min-h-screen space-y-6 pb-4">
           <div className="relative h-48">
             <Image
               src={event.coverImage}
@@ -202,24 +202,6 @@ const EventModal = memo(
 
             {/* Event details */}
             <EventDetails event={event} />
-
-            <div className="space-y-2">
-              <h3 className="font-semibold">About event</h3>
-              <p className="text-sm text-muted-foreground">
-                {event.description}
-              </p>
-            </div>
-
-            {event.additionalInfo && (
-              <div className="space-y-2">
-                <h3 className="font-semibold">
-                  Additional information
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {event.additionalInfo}
-                </p>
-              </div>
-            )}
           </div>
         </div>
       ),
@@ -258,7 +240,6 @@ const EventModal = memo(
         stickyHeader={true}
         stickyFooter={true}
         scrollableContent={true}
-        maxHeight={''}
         footerContent={renderFooter}
       />
     );
@@ -273,6 +254,8 @@ const EventDetails = memo(
       date?: string;
       time?: string;
       members: number;
+      description: string;
+      additionalInfo?: string;
       location: {
         name: string;
         city: string;
@@ -311,6 +294,21 @@ const EventDetails = memo(
           {event.members} members
         </div>
       </div>
+      <div className="space-y-2">
+        <h3 className="font-semibold">About event</h3>
+        <p className="text-sm text-muted-foreground">
+          {event.description}
+        </p>
+      </div>
+
+      {event.additionalInfo && (
+        <div className="space-y-2">
+          <h3 className="font-semibold">Additional information</h3>
+          <p className="text-sm text-muted-foreground">
+            {event.additionalInfo}
+          </p>
+        </div>
+      )}
     </div>
   )
 );
