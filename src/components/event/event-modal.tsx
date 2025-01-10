@@ -15,7 +15,6 @@ import Image from 'next/image';
 import JoinEventDialog from './join/join-event-dialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { toast } from 'sonner';
-import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useAccount } from '@/hooks/account/use-account';
 import { useRouter } from 'next/navigation';
 
@@ -88,7 +87,7 @@ const EventModal = memo(
         }
         Sentry.captureException(err);
       }
-    }, [event.name, event.slug, toast]);
+    }, [event.name, event.slug]);
 
     const handleJoinClick = useCallback(() => {
       if (!accountData?.id) {
