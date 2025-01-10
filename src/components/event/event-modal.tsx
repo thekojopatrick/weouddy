@@ -7,7 +7,7 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Calendar, MapPin, Share2, Users } from 'lucide-react';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
@@ -17,39 +17,13 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { toast } from 'sonner';
 import { useAccount } from '@/hooks/account/use-account';
 import { useRouter } from 'next/navigation';
+import { EventWithFullData } from '@/types/event';
+import { getNameInitials } from '@/lib/utils';
 
 interface EventModalProps {
   isOpen: boolean;
   onCloseAction: () => void;
-  event: {
-    id: string;
-    name: string;
-    type: string;
-    coverImage: string;
-    host: {
-      name: string;
-      username: string | null;
-      avatarUrl: string | null;
-    };
-    dateTime?: string;
-    date?: string;
-    time?: string;
-    location: {
-      name: string;
-      city: string;
-      country: string;
-    };
-    isPrivate: boolean;
-    isDisabled: boolean;
-    requiresApproval: boolean;
-    accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
-    members: number;
-    description: string;
-    additionalInfo?: string;
-    slug: string | null;
-    memberCount: number;
-    attendeeCount: number;
-  };
+  event: EventWithFullData;
   userStatus?: 'NOT_JOINED' | 'PENDING' | 'JOINED';
 }
 
@@ -65,6 +39,7 @@ const EventModal = memo(
     );
     const { accountData } = useAccount();
     const router = useRouter();
+    const [showJoinDialog, setShowJoinDialog] = useState(false);
 
     const handleShare = useCallback(async () => {
       const eventUrl = `${window.location.origin}/events/${event.slug}`;
@@ -93,31 +68,12 @@ const EventModal = memo(
       if (!accountData?.id) {
         toast.error('Please sign in to join this event');
         router.push('/auth');
-        onCloseAction(); // Close the modal before redirecting
+        onCloseAction();
         return;
       }
 
-      // If user is authenticated, show join dialog
-      return (
-        <JoinEventDialog
-          open={true}
-          onOpenChangeAction={() => {}}
-          event={{
-            id: event.id,
-            slug: event.slug!,
-            isPrivate: event.isPrivate,
-            isDisabled: event.isDisabled,
-            requiresApproval: event.requiresApproval,
-            accessType: event.accessType,
-          }}
-          initialStep={
-            event.isPrivate && event.accessType === 'PIN_REQUIRED'
-              ? 'PIN_ENTRY'
-              : 'REDIRECTING'
-          }
-        />
-      );
-    }, [accountData?.id, event, router, onCloseAction]);
+      setShowJoinDialog(true);
+    }, [accountData?.id, onCloseAction, router]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
@@ -160,7 +116,7 @@ const EventModal = memo(
         <div className="flex flex-col sm:min-h-[80vh] space-y-6 pb-4">
           <div className="relative h-48">
             <Image
-              src={event.coverImage}
+              src={event.coverImage!}
               alt={event.name}
               fill
               className="object-cover"
@@ -190,7 +146,7 @@ const EventModal = memo(
                     src={event.host.avatarUrl ?? undefined}
                   />
                   <AvatarFallback>
-                    {event.host.name[0]}
+                    {getNameInitials(event?.host?.name as string)}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm text-muted-foreground">
@@ -230,17 +186,32 @@ const EventModal = memo(
     );
 
     return (
-      <CustomSheet
-        isOpen={isOpen}
-        onCloseAction={onCloseAction}
-        side={isMobile ? 'bottom' : 'right'}
-        title={event.name}
-        content={renderContent}
-        stickyHeader={true}
-        stickyFooter={true}
-        scrollableContent={true}
-        footerContent={renderFooter}
-      />
+      <>
+        <CustomSheet
+          isOpen={isOpen}
+          onCloseAction={onCloseAction}
+          side={isMobile ? 'bottom' : 'right'}
+          title={event.name}
+          content={renderContent}
+          stickyHeader={true}
+          stickyFooter={true}
+          scrollableContent={true}
+          footerContent={renderFooter}
+        />
+        <JoinEventDialog
+          open={showJoinDialog}
+          onOpenChangeAction={setShowJoinDialog}
+          eventId={event.id}
+          eventSlug={event.slug!}
+          accessType={event.accessType as never}
+          requiresApproval={event.requiresApproval}
+          initialStep={
+            event.isPrivate && event.accessType === 'PIN_REQUIRED'
+              ? 'PIN_ENTRY'
+              : 'REDIRECTING'
+          }
+        />
+      </>
     );
   }
 );
@@ -252,7 +223,7 @@ const EventDetails = memo(
     event: {
       date?: string;
       time?: string;
-      members: number;
+      members?: number;
       description: string;
       additionalInfo?: string;
       location: {
@@ -290,7 +261,7 @@ const EventDetails = memo(
       <div className="flex items-center gap-4">
         <Users className="h-5 w-5 text-muted-foreground" />
         <div className="font-medium text-primary/80">
-          {event.members} members
+          {event.members ?? 0} members
         </div>
       </div>
       <div className="space-y-2">

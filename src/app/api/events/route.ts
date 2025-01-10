@@ -2,13 +2,12 @@ import { EventService } from '@/server/services/event';
 import { getSession } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getAllEvents } from '@/server/actions/event/queries';
 
 export async function GET() {
   try {
     const session = await getSession();
 
-    const events = await getAllEvents(session?.userId);
+    const events = await EventService.getAll(session?.userId);
 
     return NextResponse.json(events);
   } catch (error) {

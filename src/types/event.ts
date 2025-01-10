@@ -1,14 +1,12 @@
 import {
-  Attendee,
   Comment,
   Event,
   Like,
   Post,
   PostMedia,
-  User,
 } from '@prisma/client';
 
-import { EventWithDetails, PostWithDetails } from './prisma.types';
+import { EventWithDetails } from './prisma.types';
 
 export type EventData = Event & {
   host: {
@@ -35,12 +33,35 @@ export type PostData = Post & {
   };
 };
 
-export type EventWithFullData = Event & {
-  host: User;
-  posts: PostWithDetails[];
-  attendees: Attendee[];
-  members: User[];
-};
+export interface EventWithFullData {
+  id: string;
+  name: string;
+  type: string;
+  coverImage: string;
+  host: {
+    id: string;
+    name: string;
+    username: string | null;
+    avatarUrl: string | null;
+  };
+  date: string;
+  time: string;
+  location: {
+    name: string;
+    city: string;
+    country: string;
+  };
+  isPrivate: boolean;
+  isDisabled: boolean;
+  requiresApproval: boolean;
+  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  members: number;
+  description: string;
+  additionalInfo?: string;
+  slug: string | null;
+  memberCount: number;
+  attendeeCount: number;
+}
 
 export interface JoinEventData {
   id: string;
@@ -59,3 +80,10 @@ export interface EventCache {
   events: EventWithDetails[];
   timestamp: number;
 }
+
+export type JoinStep =
+  | 'LINK_PASTE'
+  | 'QR_SCAN'
+  | 'PIN_ENTRY'
+  | 'WAITING_APPROVAL'
+  | 'REDIRECTING';

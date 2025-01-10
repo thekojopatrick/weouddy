@@ -84,8 +84,6 @@ export function EventCard({
   const { toast } = useToast();
   const [city, country] = location.split(', ');
 
-  console.log({ host });
-
   useEffect(() => {
     const fetchUserStatus = async () => {
       try {
@@ -243,7 +241,7 @@ export function EventCard({
               name: location,
               city: city || 'Unknown',
               country: country || 'Unknown',
-            },
+            } as never,
             isPrivate,
             isDisabled,
             requiresApproval,

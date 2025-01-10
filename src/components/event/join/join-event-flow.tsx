@@ -1,326 +1,131 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
-
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useJoinEvent } from '@/hooks/use-join-event';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-	getEventJoinInfo,
-	joinEvent,
-} from '@/server/actions/event/join/mutation';
-import { useCallback, useEffect, useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import JoinEventSuccess from './forms/success';
+import { extractIdentifierFromLink } from '@/lib/utils';
+import { useState } from 'react';
 import { LinkPasteForm } from './forms/link-paste-form';
 import { PinEntryForm } from './forms/pin-entry-form';
 import { QRScannerForm } from './forms/qr-scanner-form';
-import { extractIdentifierFromLink } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
-
-type EventAccessType = 'LINK_ONLY' | 'PIN_REQUIRED';
-
-interface EventData {
-	id: string;
-	slug: string;
-	isPrivate: boolean;
-	isDisabled: boolean;
-	requiresApproval: boolean;
-	accessType: EventAccessType;
-}
-
-export type JoinStep =
-	| 'LINK_PASTE'
-	| 'QR_SCAN'
-	| 'PIN_ENTRY'
-	| 'WAITING_APPROVAL'
-	| 'REDIRECTING';
+import JoinEventSuccess from './forms/success';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { EventData } from '@/types/event';
 
 interface JoinEventFlowProps {
-	initialStep?: JoinStep;
-	initialEventData?: EventData;
-	onCloseDialog?: () => void;
+  initialEventData?: EventData;
+  onCloseDialog?: () => void;
 }
 
 export function JoinEventFlow({
-	initialStep = 'LINK_PASTE',
-	initialEventData,
-	onCloseDialog,
+  initialEventData,
+  onCloseDialog,
 }: JoinEventFlowProps) {
-	const [currentStep, setCurrentStep] = useState<JoinStep>(initialStep);
-	const [isLoading, setIsLoading] = useState(false);
-	const [eventData, setEventData] = useState<EventData | undefined>(
-		initialEventData
-	);
-	const [isRedirecting, setIsRedirecting] = useState(false);
-	const { toast } = useToast();
-	const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<
+    'LINK_PASTE' | 'QR_SCAN' | 'PIN_ENTRY'
+  >('LINK_PASTE');
+  const { eventQuery, joinMutation, isLoading } = useJoinEvent(
+    initialEventData?.id
+  );
 
-	const handleRedirectToEvent = useCallback(
-		(slug: string) => {
-			if (!slug || !isRedirecting) return;
-			onCloseDialog?.();
-			router.push(`/events/${slug}`);
-		},
-		[onCloseDialog, router, isRedirecting]
-	);
+  const handleLinkSubmit = async (link: string) => {
+    const identifier = extractIdentifierFromLink(link);
+    if (!identifier) return;
 
-	const handleJoinResult = useCallback(
-		async (result: {
-			success: boolean;
-			status?: string;
-			error?: string;
-			eventSlug?: string;
-			message?: string;
-		}) => {
-			if (!result.success) {
-				toast({
-					variant: 'destructive',
-					title: 'Error',
-					description: result.error || 'Failed to join event',
-				});
-				return;
-			}
+    const eventInfo = await eventQuery.refetch();
 
-			switch (result.status) {
-				case 'PENDING_APPROVAL':
-					setCurrentStep('WAITING_APPROVAL');
-					toast({
-						title: 'Request Status',
-						description: result.message || 'Waiting for host approval',
-					});
-					break;
+    if (eventInfo.data?.event?.accessType === 'PIN_REQUIRED') {
+      setCurrentStep('PIN_ENTRY');
+    } else {
+      joinMutation.mutate({ identifier });
+    }
+  };
 
-				case 'JOINED':
-					if (result.eventSlug) {
-						setCurrentStep('REDIRECTING');
-						setIsRedirecting(true);
-						toast({
-							title: 'Success',
-							description: result.message || 'Successfully joined the event',
-						});
-						// Add a small delay before redirect
-						setTimeout(() => {
-							if (isRedirecting) {
-								handleRedirectToEvent(result.eventSlug!);
-							}
-						}, 300);
-					}
-					break;
+  const handlePinSubmit = (pin: string) => {
+    if (!eventQuery.data?.event?.id) return;
 
-				case 'NOT_JOINED':
-					if (result.eventSlug && eventData && !eventData.isPrivate) {
-						const joinResult = await joinEvent({
-							identifier: eventData.id,
-							identifierType: 'id',
-						});
-						handleJoinResult(joinResult as never);
-					}
-					break;
-			}
-		},
-		[eventData, handleRedirectToEvent, toast, isRedirecting]
-	);
+    joinMutation.mutate({
+      identifier: eventQuery.data.event.id,
+      pin,
+    });
+  };
 
-	const handleEventAccess = useCallback(
-		async (identifier: string, pin?: string) => {
-			setIsLoading(true);
-			try {
-				const eventInfo = await getEventJoinInfo(identifier);
+  const handleQRScan = (result: string) => {
+    handleLinkSubmit(result);
+    setCurrentStep('LINK_PASTE');
+  };
 
-				if (!eventInfo.success || !eventInfo.event) {
-					throw new Error(eventInfo.error || 'Failed to fetch event');
-				}
+  const renderContent = () => {
+    if (joinMutation.isPending) {
+      return <JoinEventSuccess isLoading={true} />;
+    }
 
-				setEventData(eventInfo.event as never);
+    if (
+      joinMutation.isSuccess &&
+      joinMutation.data.status === 'PENDING'
+    ) {
+      return (
+        <Alert>
+          <AlertDescription>
+            Your request to join has been sent. Please wait for host
+            approval.
+          </AlertDescription>
+        </Alert>
+      );
+    }
 
-				if (eventInfo.userStatus === 'JOINED') {
-					console.log('Redirecting 2');
-					setCurrentStep('REDIRECTING');
-					setIsRedirecting(true);
-					const redirectTimeout = setTimeout(() => {
-						if (isRedirecting) {
-							// Only redirect if not cancelled
-							handleRedirectToEvent(eventInfo.event.slug);
-						}
-					}, 500);
+    switch (currentStep) {
+      case 'LINK_PASTE':
+        return (
+          <LinkPasteForm
+            onSubmitAction={handleLinkSubmit}
+            onScanQRAction={() => setCurrentStep('QR_SCAN')}
+            isLoading={isLoading}
+          />
+        );
+      case 'QR_SCAN':
+        return (
+          <QRScannerForm
+            onScanCompleteAction={handleQRScan}
+            onBackAction={() => setCurrentStep('LINK_PASTE')}
+          />
+        );
+      case 'PIN_ENTRY':
+        return (
+          <PinEntryForm
+            onSubmitAction={handlePinSubmit}
+            isLoading={isLoading}
+          />
+        );
+    }
+  };
 
-					return () => clearTimeout(redirectTimeout);
-				}
-
-				if (eventInfo.userStatus === 'PENDING') {
-					setCurrentStep('WAITING_APPROVAL');
-					return;
-				}
-
-				const event = eventInfo.event;
-
-				if (!event.isPrivate) {
-					console.log('Redirecting 1');
-					setCurrentStep('REDIRECTING');
-					setIsRedirecting(true);
-
-					const result = await joinEvent({
-						identifier,
-						identifierType: /^c[a-zA-Z0-9]{24}$/.test(identifier)
-							? 'id'
-							: 'slug',
-					});
-
-					if (result.success) {
-						setTimeout(() => {
-							handleRedirectToEvent(event.slug);
-						}, 500);
-					} else {
-						throw new Error(result.error || 'Failed to join event');
-					}
-					return;
-				}
-
-				if (event.accessType === 'PIN_REQUIRED' && !pin) {
-					setCurrentStep('PIN_ENTRY');
-					return;
-				}
-
-				const result = await joinEvent({
-					identifier,
-					identifierType: /^c[a-zA-Z0-9]{24}$/.test(identifier) ? 'id' : 'slug',
-					pinCode: pin,
-				});
-				handleJoinResult(result as never);
-			} catch (error) {
-				toast({
-					variant: 'destructive',
-					title: 'Error',
-					description:
-						error instanceof Error ? error.message : 'Failed to access event',
-				});
-				Sentry.captureException(error);
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[handleJoinResult, handleRedirectToEvent, toast, isRedirecting]
-	);
-
-	useEffect(() => {
-		if (initialStep === 'REDIRECTING' && initialEventData?.id) {
-			handleEventAccess(initialEventData.id);
-		}
-	}, [initialStep, initialEventData, handleEventAccess]);
-
-	const handleLinkSubmit = useCallback(
-		async (link: string) => {
-			setIsLoading(true);
-			try {
-				const identifier = extractIdentifierFromLink(link);
-				if (!identifier) {
-					throw new Error('Invalid event link');
-				}
-				await handleEventAccess(identifier);
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[handleEventAccess]
-	);
-
-	const handlePinSubmit = useCallback(
-		async (pin: string) => {
-			setIsLoading(true);
-			try {
-				if (!eventData?.id) {
-					throw new Error('Event data not found');
-				}
-				await handleEventAccess(eventData.id, pin);
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[eventData?.id, handleEventAccess]
-	);
-
-	const handleCancelRedirect = () => {
-		setIsRedirecting(false);
-		setCurrentStep('LINK_PASTE');
-		onCloseDialog?.();
-	};
-
-	const renderContent = () => {
-		switch (currentStep) {
-			case 'LINK_PASTE':
-				return (
-					<LinkPasteForm
-						onSubmitAction={handleLinkSubmit}
-						onScanQRAction={() => setCurrentStep('QR_SCAN')}
-						isLoading={isLoading}
-					/>
-				);
-
-			case 'QR_SCAN':
-				return (
-					<QRScannerForm
-						onScanCompleteAction={handleLinkSubmit}
-						onBackAction={() => setCurrentStep('LINK_PASTE')}
-					/>
-				);
-
-			case 'PIN_ENTRY':
-				return (
-					<PinEntryForm
-						onSubmitAction={handlePinSubmit}
-						isLoading={isLoading}
-					/>
-				);
-
-			case 'WAITING_APPROVAL':
-				return (
-					<Alert>
-						<AlertDescription>
-							Your request to join has been sent. Please wait for the host to
-							approve your request.
-						</AlertDescription>
-					</Alert>
-				);
-
-			case 'REDIRECTING':
-				return (
-					<div className='relative space-y-4'>
-						<JoinEventSuccess
-							isLoading={isLoading}
-							onManualRedirect={() =>
-								eventData?.slug && handleRedirectToEvent(eventData.slug)
-							}
-						/>
-						{isRedirecting && (
-							<Button
-								variant='secondary'
-								className='w-full'
-								onClick={handleCancelRedirect}
-							>
-								Cancel
-							</Button>
-						)}
-					</div>
-				);
-		}
-	};
-
-	return (
-		<>
-			<DialogHeader>
-				<DialogTitle className='text-left'>
-					{currentStep === 'PIN_ENTRY'
-						? 'Enter Event PIN'
-						: currentStep === 'WAITING_APPROVAL'
-							? 'Request Pending'
-							: currentStep === 'REDIRECTING'
-								? undefined
-								: 'Ready to join an event'}
-				</DialogTitle>
-			</DialogHeader>
-			<div className='py-4'>{renderContent()}</div>
-		</>
-	);
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>
+          {currentStep === 'PIN_ENTRY'
+            ? 'Enter Event PIN'
+            : joinMutation.isSuccess &&
+                joinMutation.data.status === 'PENDING'
+              ? 'Request Pending'
+              : joinMutation.isPending
+                ? undefined
+                : 'Ready to join an event'}
+        </DialogTitle>
+      </DialogHeader>
+      <div className="py-4">
+        {renderContent()}
+        {joinMutation.isPending && onCloseDialog && (
+          <Button
+            variant="secondary"
+            className="w-full mt-4"
+            onClick={onCloseDialog}
+          >
+            Cancel
+          </Button>
+        )}
+      </div>
+    </>
+  );
 }
