@@ -6,11 +6,15 @@ export function useJoinEvent(eventId?: string) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const getEventInfo = async (identifier: string) => {
-    const res = await fetch(`/api/events/${identifier}/info`);
-    if (!res.ok) throw new Error('Failed to fetch event');
-    return res.json();
-  };
+  const eventQuery = useQuery({
+    queryKey: ['event', eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/info`);
+      if (!res.ok) throw new Error('Failed to fetch event');
+      return res.json();
+    },
+    enabled: !!eventId,
+  });
 
   const joinEvent = async ({
     identifier,
@@ -21,21 +25,25 @@ export function useJoinEvent(eventId?: string) {
   }) => {
     const res = await fetch('/api/events/join', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        // Add cache control to prevent duplicate requests
+        'Cache-Control': 'no-cache',
+      },
       body: JSON.stringify({ identifier, pin }),
     });
-    if (!res.ok) throw new Error('Failed to join event');
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Failed to join event');
+    }
     return res.json();
   };
 
-  const eventQuery = useQuery({
-    queryKey: ['event', eventId],
-    queryFn: () => getEventInfo(eventId ?? ''),
-    enabled: !!eventId,
-  });
-
   const joinMutation = useMutation({
     mutationFn: joinEvent,
+    mutationKey: ['join-event', eventId],
+    retry: false,
     onSuccess: (data) => {
       if (data.status === 'PENDING') {
         toast({
@@ -47,14 +55,21 @@ export function useJoinEvent(eventId?: string) {
           title: 'Success',
           description: 'Successfully joined the event',
         });
-        router.push(`/events/${data.event.slug}`);
+        router.replace(`/events/${data.event.slug}`);
       }
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
     },
   });
 
   return {
     eventQuery,
     joinMutation,
-    isLoading: eventQuery.isLoading || joinMutation.isPending,
+    isLoading: joinMutation.isPending || eventQuery.isLoading,
   };
 }
