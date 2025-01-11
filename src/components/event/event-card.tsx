@@ -136,10 +136,10 @@ export function EventCard({
               <Share2 className="h-4 w-4" />
             </Button>
             <Image
-              src={coverImage ?? '/place-holder.svg'}
+              src={coverImage ?? '/placeholder.svg'}
               alt={name}
               fill
-              className="object-cover transition-transform group-hover:scale-105"
+              className="object-cover object-top transition-transform group-hover:scale-105"
             />
           </div>
         </CardHeader>
