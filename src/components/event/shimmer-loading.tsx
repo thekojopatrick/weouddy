@@ -23,7 +23,7 @@ export function EventCardShimmer() {
 export function EventListShimmer() {
   return (
     <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {[...Array(5)].map((_, index) => (
+      {[...Array(6)].map((_, index) => (
         <EventCardShimmer key={index} />
       ))}
     </div>
