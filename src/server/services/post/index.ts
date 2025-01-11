@@ -5,7 +5,10 @@ import { revalidatePath } from 'next/cache';
 export class PostService {
   static async createPost(userId: string, data: CreatePostInput) {
     // Check if user has access to event
-    const hasAccess = await this.validateEventAccess(userId, data.eventId);
+    const hasAccess = await this.validateEventAccess(
+      userId,
+      data.eventId
+    );
     if (!hasAccess) {
       throw new Error('Unauthorized access to event');
     }
@@ -76,7 +79,6 @@ export class PostService {
     return this.getPost(postId);
   }
 
-
   static async getPost(postId: string) {
     return db.post.findUnique({
       where: { id: postId },
@@ -99,15 +101,41 @@ export class PostService {
     });
   }
 
-  private static async validateEventAccess(userId: string, eventId: string) {
+  static async getAllPosts(eventId: string) {
+    return db.post.findMany({
+      where: { eventId },
+      include: {
+        user: {
+          select: {
+            name: true,
+            avatarUrl: true,
+            username: true,
+          },
+        },
+        media: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  private static async validateEventAccess(
+    userId: string,
+    eventId: string
+  ) {
     const event = await db.event.findFirst({
       where: {
         id: eventId,
         OR: [
           { hostId: userId },
-          { members: { some: { id: userId } } }
-        ]
-      }
+          { members: { some: { id: userId } } },
+        ],
+      },
     });
     return !!event;
   }

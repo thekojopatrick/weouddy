@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button, LoadingButton } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -21,10 +23,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { FeedbackCategory, FeedbackType } from '@prisma/client';
 
 const FeedbackDialog = ({
   type = 'ACCOUNT_SETUP',
   metadata = {},
+  title = '',
 }) => {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState('');
@@ -56,8 +60,8 @@ const FeedbackDialog = ({
         body: JSON.stringify({
           rating: parseInt(rating),
           message: feedback,
-          type,
-          category,
+          type: type as FeedbackType,
+          category: category as FeedbackCategory, // Ensure this matches the Prisma enum
           metadata,
         }),
       });
@@ -87,11 +91,15 @@ const FeedbackDialog = ({
       setIsSubmitting(false);
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Rating</Button>
+        <Button
+          variant="outline"
+          className="fixed bottom-10 left-5 font-semibold rounded-full"
+        >
+          Feedback
+        </Button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 p-0 [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
@@ -104,8 +112,8 @@ const FeedbackDialog = ({
             <div className="space-y-4">
               <div>
                 <fieldset className="space-y-4">
-                  <legend className="text-lg font-semibold leading-none text-foreground">
-                    How hard was it to set up your account?
+                  <legend className="text-sm font-semibold leading-none text-foreground">
+                    {title}
                   </legend>
                   <RadioGroup
                     className="flex gap-0 -space-x-px rounded-lg shadow-sm shadow-black/5"
@@ -166,18 +174,19 @@ const FeedbackDialog = ({
                   id="feedback"
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="How can we improve Origin UI?"
+                  placeholder="How can we improve?"
                   aria-label="Send feedback"
                 />
               </div>
             </div>
-            <Button
+            <LoadingButton
               type="submit"
               className="w-full"
+              loading={isSubmitting}
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Sending...' : 'Send feedback'}
-            </Button>
+            </LoadingButton>
           </form>
         </div>
       </DialogContent>

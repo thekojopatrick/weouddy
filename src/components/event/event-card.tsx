@@ -41,6 +41,7 @@ interface EventCardProps {
   members: number;
   date: string;
   time: string;
+  category?: string;
   description: string;
   additionalInfo?: string;
   slug: string | null;

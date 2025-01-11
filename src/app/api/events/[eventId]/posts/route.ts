@@ -1,4 +1,4 @@
-import { db } from '@/server/db/prisma';
+import { PostService } from '@/server/services/post';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -8,26 +8,7 @@ export async function GET(
   const { eventId } = await params;
 
   try {
-    const posts = await db.post.findMany({
-      where: { eventId },
-      include: {
-        user: {
-          select: {
-            name: true,
-            avatarUrl: true,
-            username: true,
-          },
-        },
-        media: true,
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const posts = await PostService.getAllPosts(eventId);
 
     return NextResponse.json(posts);
   } catch (error) {

@@ -18,7 +18,7 @@ import { useAccount } from '@/hooks/account/use-account';
 import { useRouter } from 'next/navigation';
 import { EventWithFullData } from '@/types/event';
 import { getNameInitials } from '@/lib/utils';
-import { JoinEventDialogLinkOnly } from './join/join-event-dialog-link-only';
+import { JoinEventDialogViaEventCard } from './join/join-event-dialog-via-card';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -72,8 +72,23 @@ const EventModal = memo(
         return;
       }
 
-      setShowJoinDialog(true);
-    }, [accountData?.id, onCloseAction, router]);
+      // If PIN is required or approval is needed, show the join dialog
+      if (
+        event.accessType === 'PIN_REQUIRED' ||
+        event.requiresApproval
+      ) {
+        setShowJoinDialog(true);
+      } else {
+        // Direct join for simple cases
+        setShowJoinDialog(true);
+      }
+    }, [
+      accountData?.id,
+      event.accessType,
+      event.requiresApproval,
+      onCloseAction,
+      router,
+    ]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
@@ -91,22 +106,20 @@ const EventModal = memo(
           };
         default:
           const buttonText =
-            event.isPrivate && event.accessType === 'PIN_REQUIRED'
+            event.accessType === 'PIN_REQUIRED'
               ? 'Enter PIN to Join'
               : 'Join Room';
           return {
-            text:
-              event.isPrivate && event.requiresApproval
-                ? 'Request to Join'
-                : buttonText,
+            text: event.requiresApproval
+              ? 'Request to Join'
+              : buttonText,
             disabled: false,
             action: handleJoinClick,
           };
       }
     }, [
-      event.isPrivate,
-      event.requiresApproval,
       event.accessType,
+      event.requiresApproval,
       userStatus,
       handleJoinClick,
     ]);
@@ -198,12 +211,11 @@ const EventModal = memo(
           scrollableContent={true}
           footerContent={renderFooter}
         />
-        <JoinEventDialogLinkOnly
+        <JoinEventDialogViaEventCard
           open={showJoinDialog}
           onOpenChange={setShowJoinDialog}
           eventId={event.id}
-          eventSlug={event.slug!}
-          accessType={event.accessType as never}
+          accessType={event.accessType}
           requiresApproval={event.requiresApproval}
         />
       </>

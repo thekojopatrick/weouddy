@@ -6,7 +6,7 @@ import {
   PostMedia,
 } from '@prisma/client';
 
-import { EventWithDetails } from './prisma.types';
+import { EventWithDetails, PostWithDetails } from './prisma.types';
 
 export type EventData = Event & {
   host: {
@@ -55,12 +55,14 @@ export interface EventWithFullData {
   isDisabled: boolean;
   requiresApproval: boolean;
   accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  posts?: PostWithDetails[];
   members: number;
   description: string;
   additionalInfo?: string;
   slug: string | null;
   memberCount: number;
   attendeeCount: number;
+  dateTime?: Date;
 }
 
 export interface JoinEventData {

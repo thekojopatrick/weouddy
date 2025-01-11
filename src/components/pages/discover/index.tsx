@@ -68,13 +68,13 @@ export default function DiscoverPage({
   ) as string[];
 
   // Render loading state
-  if (isLoading || DataLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <EventListShimmer />
-      </div>
-    );
-  }
+  // if (isLoading || DataLoading) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-8">
+  //       <EventListShimmer />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -89,47 +89,55 @@ export default function DiscoverPage({
               events by name.
             </p>
           </div>
-          <div className="mt-8">
-            <LocationFilters
-              currentLocation={currentLocation}
-              onLocationChangeAction={handleLocationChange}
-            />
-            <CategoryFilters
-              onCategoryChangeAction={setCurrentCategory}
-              currentCategory={currentCategory}
-              categories={availableCategories}
-            />
-          </div>
-
-          {filteredEvents.data.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">
-                No events found for the selected filters.
-              </p>
+          {isLoading || DataLoading ? (
+            <div className="max-w-7xl px-6 py-8 mx-auto">
+              <EventListShimmer />
             </div>
           ) : (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredEvents.data.map((event) => {
-                const { date, time } = formatEventDateTime(
-                  event.dateTime as never
-                );
-                return (
-                  <EventCard
-                    key={event.id}
-                    {...event}
-                    date={date}
-                    time={time}
-                    coverImage={event.coverImage!}
-                    members={event.memberCount}
-                    category={event.type}
-                    location={event.location!}
-                    slug={event.slug!}
-                    accessType={event.accessType as never}
-                    description={event.description!}
-                  />
-                );
-              })}
-            </div>
+            <>
+              <div className="mt-8">
+                <LocationFilters
+                  currentLocation={currentLocation}
+                  onLocationChangeAction={handleLocationChange}
+                />
+                <CategoryFilters
+                  onCategoryChangeAction={setCurrentCategory}
+                  currentCategory={currentCategory}
+                  categories={availableCategories}
+                />
+              </div>
+
+              {filteredEvents.data.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    No events found for the selected filters.
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredEvents.data.map((event) => {
+                    const { date, time } = formatEventDateTime(
+                      event.dateTime as never
+                    );
+                    return (
+                      <EventCard
+                        key={event.id}
+                        {...event}
+                        date={date}
+                        time={time}
+                        coverImage={event.coverImage!}
+                        members={event.memberCount}
+                        category={event.type}
+                        location={event.location!}
+                        slug={event.slug!}
+                        accessType={event.accessType as never}
+                        description={event.description!}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>

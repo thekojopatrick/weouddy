@@ -1,33 +1,12 @@
 'use client';
 
 import { CalendarDays, MapPin, Settings, Users } from 'lucide-react';
-import { Check, Copy } from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  RiCodeFill,
-  RiFacebookFill,
-  RiMailLine,
-  RiTwitterXFill,
-  RiWhatsappFill,
-} from '@remixicon/react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
-import { Button } from '@/components/ui/button';
-import CreatePostButton from './../_components/create-post-button';
-import JoinChatRoom from './../_components/join-chat-room';
-import { EventPostCard } from '@/components/post/post-card';
+import CreatePostButton from './create-post-button';
+import JoinChatRoom from './join-chat-room';
 import { EventSettingsModal } from '@/components/event/event-settings-modal';
-import { EventWithFullData, PostData } from '@/types/event';
-import { Input } from '@/components/ui/input';
+import { EventWithFullData } from '@/types/event';
+
 import React from 'react';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
@@ -35,13 +14,12 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import FeedbackDialog from '@/components/feedback-dialog';
-import { useQuery } from '@tanstack/react-query';
 
-const fetchEventPosts = async (eventId: string) => {
-  const res = await fetch(`/api/events/${eventId}/posts`);
-  if (!res.ok) throw new Error('Failed to fetch posts');
-  return res.json();
-};
+import { usePosts } from '@/hooks/use-post';
+import MasonryPosts from './masonry-posts';
+import ShareEventPopover from './share-event';
+import { Button } from '@/components/ui/button';
+import { SharePlatform } from '@/types/enums';
 
 export default function EventRoom({
   user,
@@ -52,6 +30,8 @@ export default function EventRoom({
     | null;
   event: EventWithFullData;
 }) {
+  const { data: posts } = usePosts(event.id, event.posts as []);
+
   const { date, time } = formatEventDateTime(
     event?.dateTime as never
   );
@@ -62,12 +42,6 @@ export default function EventRoom({
   const [copied, setCopied] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { protectAction } = useAuthProtection();
-
-  const { data: posts } = useQuery({
-    queryKey: ['posts', event.id],
-    queryFn: () => fetchEventPosts(event.id),
-    initialData: event.posts,
-  });
 
   const handleCopy = () => {
     if (inputRef.current) {
@@ -81,9 +55,7 @@ export default function EventRoom({
     typeof window !== 'undefined' ? window.location.href : '';
   const shareText = `Join me at ${event.name}!`;
 
-  const handleSocialShare = (
-    platform: 'twitter' | 'facebook' | 'email' | 'whatsapp'
-  ) => {
+  const handleSocialShare = (platform: SharePlatform) => {
     const url = encodeURIComponent(shareUrl);
     const text = encodeURIComponent(shareText);
 
@@ -94,15 +66,12 @@ export default function EventRoom({
       whatsapp: `https://wa.me/?text=${text}:%0D%0A${url}`,
     };
 
-    // Use proper window configurations for social media popups
     if (
       platform === 'whatsapp' &&
       /Android|iPhone/i.test(navigator.userAgent)
     ) {
-      // Open in same window on mobile devices
       window.location.href = shareUrls[platform];
     } else {
-      // Open popup on desktop
       const width = 550;
       const height = 400;
       const left = (window.screen.width - width) / 2;
@@ -125,148 +94,13 @@ export default function EventRoom({
               <div className="flex justify-between items-start">
                 <h1 className="text-2xl font-bold">{event.name}</h1>
                 <div className="flex gap-2">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline">Share</Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-72">
-                      <div className="flex flex-col gap-3 text-center">
-                        <div className="text-sm font-medium">
-                          Share event
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-2">
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Copy embed code"
-                            onClick={() => handleCopy()}
-                          >
-                            <RiCodeFill
-                              size={16}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Share on WhatsApp"
-                            onClick={() =>
-                              handleSocialShare('whatsapp')
-                            }
-                            className="bg-[#25D366] hover:bg-[#25D366]/90 text-white hover:text-white border-[#25D366]"
-                          >
-                            <RiWhatsappFill
-                              size={16}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Share on Twitter"
-                            onClick={() =>
-                              handleSocialShare('twitter')
-                            }
-                          >
-                            <RiTwitterXFill
-                              size={16}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Share on Facebook"
-                            onClick={() =>
-                              handleSocialShare('facebook')
-                            }
-                          >
-                            <RiFacebookFill
-                              size={16}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            aria-label="Share via email"
-                            onClick={() => handleSocialShare('email')}
-                          >
-                            <RiMailLine
-                              size={16}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="relative">
-                            <Input
-                              ref={inputRef}
-                              className="pe-9"
-                              type="text"
-                              defaultValue={shareUrl}
-                              aria-label="Share link"
-                              readOnly
-                            />
-                            <TooltipProvider delayDuration={0}>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <button
-                                    onClick={handleCopy}
-                                    className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
-                                    aria-label={
-                                      copied
-                                        ? 'Copied'
-                                        : 'Copy to clipboard'
-                                    }
-                                    disabled={copied}
-                                  >
-                                    <div
-                                      className={cn(
-                                        'transition-all',
-                                        copied
-                                          ? 'scale-100 opacity-100'
-                                          : 'scale-0 opacity-0'
-                                      )}
-                                    >
-                                      <Check
-                                        className="stroke-emerald-500"
-                                        size={16}
-                                        strokeWidth={2}
-                                        aria-hidden="true"
-                                      />
-                                    </div>
-                                    <div
-                                      className={cn(
-                                        'absolute transition-all',
-                                        copied
-                                          ? 'scale-0 opacity-0'
-                                          : 'scale-100 opacity-100'
-                                      )}
-                                    >
-                                      <Copy
-                                        size={16}
-                                        strokeWidth={2}
-                                        aria-hidden="true"
-                                      />
-                                    </div>
-                                  </button>
-                                </TooltipTrigger>
-                                <TooltipContent className="px-2 py-1 text-xs">
-                                  Copy to clipboard
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                  <ShareEventPopover
+                    inputRef={inputRef}
+                    handleCopy={handleCopy}
+                    shareUrl={shareUrl}
+                    copied={copied}
+                    handleSocialShare={handleSocialShare}
+                  />
                   <Button
                     variant="outline"
                     size="icon"
@@ -288,28 +122,20 @@ export default function EventRoom({
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span>{event.location}</span>
+                  <span>{event.location.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
-                  <span>{event.members.length} Members</span>
+                  <span>{event.memberCount} Members</span>
                   <span className="text-muted-foreground">
-                    {event.posts.length} posts
+                    {event?.posts?.length} posts
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Posts Grid */}
-            <div className="grid h-auto gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {posts?.map((post: PostData) => (
-                <EventPostCard
-                  key={post.id}
-                  post={post}
-                  userId={user?.id as never}
-                />
-              ))}
-            </div>
+            <MasonryPosts posts={posts} userId={user?.id as string} />
           </div>
         </main>
 
@@ -370,7 +196,10 @@ export default function EventRoom({
             />
           </div>
         </div>
-        <FeedbackDialog />
+        <FeedbackDialog
+          type="EVENT_EXPERIENCE"
+          title="How is your experience with the platform so far?"
+        />
         <EventSettingsModal
           event={event as never}
           isOpen={showSettings}
