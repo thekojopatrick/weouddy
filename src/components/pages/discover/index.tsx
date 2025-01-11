@@ -16,7 +16,7 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
-import { useEvents } from '@/hooks/use-event';
+import { useBatchEventStatuses, useEvents } from '@/hooks/use-event';
 
 export default function DiscoverPage({
   user,
@@ -39,6 +39,10 @@ export default function DiscoverPage({
     currentLocation,
     currentCategory
   );
+
+  const eventIds =
+    events?.map((event: EventWithDetails) => event.id) ?? [];
+  const { data: statuses } = useBatchEventStatuses(eventIds);
 
   const { filterEvents, isLoading } = useOptimizedEventFiltering(
     events as EventWithDetails[]
@@ -66,15 +70,6 @@ export default function DiscoverPage({
     ],
     [events]
   ) as string[];
-
-  // Render loading state
-  // if (isLoading || DataLoading) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-8">
-  //       <EventListShimmer />
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -132,6 +127,7 @@ export default function DiscoverPage({
                         slug={event.slug!}
                         accessType={event.accessType as never}
                         description={event.description!}
+                        userStatus={statuses?.[event.id]}
                       />
                     );
                   })}

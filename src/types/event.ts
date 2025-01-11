@@ -89,3 +89,5 @@ export type JoinStep =
   | 'PIN_ENTRY'
   | 'WAITING_APPROVAL'
   | 'REDIRECTING';
+
+export type UserEventStatus = 'NOT_JOINED' | 'PENDING' | 'JOINED';

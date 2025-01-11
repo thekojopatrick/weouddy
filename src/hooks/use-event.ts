@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEventStore } from './use-event-cache';
 import { useEffect } from 'react';
 import { EventWithDetails } from '@/types/prisma.types';
+import { UserEventStatus } from '@/types/event';
+import * as Sentry from '@sentry/nextjs';
 
 export function useEvents(location = 'world', category = 'All') {
   const queryClient = useQueryClient();
@@ -44,5 +46,56 @@ export const useEventBySlug = (slug: string) => {
       return res.json();
     },
     enabled: !!slug,
+  });
+};
+
+export const useEventStatus = (eventId: string) => {
+  return useQuery({
+    queryKey: ['eventStatus', eventId],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/events/${eventId}/status`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch event status');
+        }
+        const data = await response.json();
+        return data.status as UserEventStatus;
+      } catch (error) {
+        Sentry.captureException(error);
+        throw error;
+      }
+    },
+    // Cache the status for 5 minutes
+    staleTime: 5 * 60 * 1000,
+    // Keep the data in cache for 10 minutes
+    gcTime: 10 * 60 * 1000,
+    // Retry 3 times with exponential backoff
+    retry: 3,
+    retryDelay: (attemptIndex) =>
+      Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+};
+
+export const useBatchEventStatuses = (eventIds: string[]) => {
+  return useQuery({
+    queryKey: ['eventStatuses', eventIds],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/events/batch-status', {
+          method: 'POST',
+          body: JSON.stringify({ eventIds }),
+        });
+        if (!response.ok)
+          throw new Error('Failed to fetch event statuses');
+        return response.json() as Promise<
+          Record<string, UserEventStatus>
+        >;
+      } catch (error) {
+        Sentry.captureException(error);
+        throw error;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
