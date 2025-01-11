@@ -25,6 +25,7 @@ import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useInfiniteEvents } from '@/hooks/event/use-infinite-events';
 import { useVisibleEvents } from '@/hooks/event/use-visible-events';
+import { Container } from '@/components/common/container';
 
 export default function DiscoverPage({
   user,
@@ -77,24 +78,24 @@ export default function DiscoverPage({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <main className="flex-1">
-        <section className="max-w-7xl px-6 py-8 mx-auto">
+      <Container>
+        <main className="flex-1">
           <div className="flex flex-col gap-4">
             <h1 className="text-3xl font-bold tracking-tighter">
-              Discover Events
+              Discover
             </h1>
             <p className="text-muted-foreground">
-              Explore events near you, browse by category, or search
-              events by name.
+              Explore events, moments near you, browse by category, or
+              search events by name.
             </p>
           </div>
           {isLoading ? (
-            <div className="max-w-7xl px-6 py-8 mx-auto">
+            <div className="w-full">
               <EventListShimmer />
             </div>
           ) : (
             <>
-              <div className="mt-8">
+              <div className="mt-4">
                 <LocationFilters
                   currentLocation={currentLocation}
                   onLocationChangeAction={handleLocationChange}
@@ -146,8 +147,8 @@ export default function DiscoverPage({
               )}
             </>
           )}
-        </section>
-      </main>
+        </main>
+      </Container>
       {/*CALL TO ACTION */}
 
       <div

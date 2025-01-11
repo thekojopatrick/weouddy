@@ -52,13 +52,13 @@ export default function SearchDialog({
     <MotionDialog open={isOpen} onOpenChange={setIsOpen}>
       <div
         onClick={() => setIsOpen(true)}
-        className="relative w-full max-w-md mx-auto cursor-pointer"
+        className="relative w-full max-w-md mx-auto  cursor-pointer"
       >
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
           placeholder="What are you looking for?"
-          className="pl-8 shadow-none rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100"
+          className="pl-8 h-[40px] shadow-none rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100"
           readOnly
         />
       </div>

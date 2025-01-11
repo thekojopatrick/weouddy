@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { ScrollArea, ScrollBar } from './ui/scroll-area';
 
 const locations = [
   { name: 'Accra', param: 'accra' },
@@ -31,21 +32,26 @@ export function LocationFilters({
   };
 
   return (
-    <nav className="flex space-x-4 border-b pb-4">
-      {locations.map((location) => (
-        <button
-          key={location.name}
-          onClick={() => handleLocationClick(location.param)}
-          className={cn(
-            'text-sm font-medium transition-colors hover:text-primary',
-            currentLocation === location.param
-              ? 'text-primary underline underline-offset-2'
-              : 'text-muted-foreground'
-          )}
-        >
-          {location.name}
-        </button>
-      ))}
+    <nav className="location-filters">
+      <ScrollArea className="w-full whitespace-nowrap">
+        <div className="flex space-x-4">
+          {locations.map((location) => (
+            <button
+              key={location.name}
+              onClick={() => handleLocationClick(location.param)}
+              className={cn(
+                'text-sm font-medium transition-colors hover:text-primary',
+                currentLocation === location.param
+                  ? 'text-primary underline underline-offset-2'
+                  : 'text-muted-foreground'
+              )}
+            >
+              {location.name}
+            </button>
+          ))}
+          <ScrollBar orientation="horizontal" className="h-1" />
+        </div>
+      </ScrollArea>
     </nav>
   );
 }
