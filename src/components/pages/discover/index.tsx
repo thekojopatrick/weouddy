@@ -2,24 +2,29 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useInView } from 'react-intersection-observer';
 
+//components
 import { CategoryFilters } from '@/components/category-filters';
 import { CreateEventButton } from '@/components/create-event-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
-import { EventWithDetails } from '@/types/prisma.types';
 import { JoinEventButton } from '@/components/join-event-button';
 import { LocationFilters } from '@/components/location-filters';
+
+//types
+import { EventWithDetails } from '@/types/prisma.types';
 import { User } from '@supabase/supabase-js';
+
+//utils
 import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
+
+//hooks
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useOptimizedEventFiltering } from '@/hooks/event/use-optimized-event-location';
-import {
-  useBatchEventStatuses,
-  useEvents,
-} from '@/hooks/event/use-event';
+import { useInfiniteEvents } from '@/hooks/event/use-infinite-events';
+import { useVisibleEvents } from '@/hooks/event/use-visible-events';
 
 export default function DiscoverPage({
   user,
@@ -38,24 +43,20 @@ export default function DiscoverPage({
   );
   const [currentCategory, setCurrentCategory] = useState('All');
 
-  const { events, isLoading: DataLoading } = useEvents(
-    currentLocation,
-    currentCategory
-  );
+  const { events, fetchNextPage, hasNextPage, isLoading } =
+    useInfiniteEvents(currentLocation, currentCategory);
 
   const eventIds =
     events?.map((event: EventWithDetails) => event.id) ?? [];
-  const { data: statuses } = useBatchEventStatuses(eventIds);
+  const { ref, statuses } = useVisibleEvents(eventIds);
 
-  const { filterEvents, isLoading } = useOptimizedEventFiltering(
-    events as EventWithDetails[]
-  );
-
-  // Compute filtered events
-  const filteredEvents = useMemo(
-    () => filterEvents(currentLocation, currentCategory),
-    [currentLocation, currentCategory, filterEvents]
-  );
+  const { ref: loadMoreRef } = useInView({
+    onChange: (inView) => {
+      if (inView && hasNextPage) {
+        fetchNextPage();
+      }
+    },
+  });
 
   // Handle location change
   const handleLocationChange = (location: string) => {
@@ -87,7 +88,7 @@ export default function DiscoverPage({
               events by name.
             </p>
           </div>
-          {isLoading || DataLoading ? (
+          {isLoading ? (
             <div className="max-w-7xl px-6 py-8 mx-auto">
               <EventListShimmer />
             </div>
@@ -105,7 +106,7 @@ export default function DiscoverPage({
                 />
               </div>
 
-              {filteredEvents.data.length === 0 ? (
+              {events.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     No events found for the selected filters.
@@ -113,27 +114,34 @@ export default function DiscoverPage({
                 </div>
               ) : (
                 <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredEvents.data.map((event) => {
+                  {events.map((event) => {
                     const { date, time } = formatEventDateTime(
                       event.dateTime as never
                     );
                     return (
-                      <EventCard
+                      <div
                         key={event.id}
-                        {...event}
-                        date={date}
-                        time={time}
-                        coverImage={event.coverImage!}
-                        members={event.memberCount}
-                        category={event.type}
-                        location={event.location!}
-                        slug={event.slug!}
-                        accessType={event.accessType as never}
-                        description={event.description!}
-                        userStatus={statuses?.[event.id]}
-                      />
+                        ref={ref}
+                        data-event-id={event.id}
+                      >
+                        <EventCard
+                          key={event.id}
+                          {...event}
+                          date={date}
+                          time={time}
+                          coverImage={event.coverImage!}
+                          members={event.memberCount}
+                          category={event.type}
+                          location={event.location!}
+                          slug={event.slug!}
+                          accessType={event.accessType as never}
+                          description={event.description!}
+                          userStatus={statuses?.[event.id]}
+                        />
+                      </div>
                     );
                   })}
+                  <div ref={loadMoreRef} className="h-10" />
                 </div>
               )}
             </>

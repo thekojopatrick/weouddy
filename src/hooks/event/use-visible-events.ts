@@ -1,12 +1,12 @@
-import { EventWithDetails } from '@/types/prisma.types';
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useBatchEventStatuses } from './use-event';
 
-export function useVisibleEvents(events: EventWithDetails[]) {
-  const [visibleEvents, setVisibleEvents] = useState<string[]>([]);
+export function useVisibleEvents(eventIds: string[]) {
+  const [visibleEvents, setVisibleEvents] =
+    useState<string[]>(eventIds);
 
-  const { ref, inView } = useInView({
+  const { ref } = useInView({
     threshold: 0.1,
     onChange: (inView, entry) => {
       if (inView) {

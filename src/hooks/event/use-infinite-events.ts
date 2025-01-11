@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-const EVENTS_PER_PAGE = 12;
+const EVENTS_PER_PAGE = 5;
 
 export function useInfiniteEvents(
   location = 'world',
@@ -18,8 +18,10 @@ export function useInfiniteEvents(
       },
       getNextPageParam: (lastPage) =>
         lastPage.hasMore ? lastPage.nextPage : undefined,
+      initialPageParam: 1, // Specify the initial page parameter
     });
 
+  // Combine pages into a single array of events
   const events = data?.pages.flatMap((page) => page.events) ?? [];
   return { events, fetchNextPage, hasNextPage, isLoading };
 }

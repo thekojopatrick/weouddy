@@ -44,19 +44,31 @@ export class EventService {
     );
   }
 
-  static async getAll(userId?: string) {
-    const where = userId
-      ? {
-          OR: [
-            { isPrivate: false },
-            { hostId: userId },
-            { members: { some: { id: userId } } },
-          ],
-        }
-      : { isPrivate: false };
+  static async getAll(
+    skip: number,
+    limit: number,
+    location: string | null,
+    category: string | null,
+    userId?: string
+  ) {
+    const where = {
+      ...(userId
+        ? {
+            OR: [
+              { isPrivate: false },
+              { hostId: userId },
+              { members: { some: { id: userId } } },
+            ],
+          }
+        : { isPrivate: false }),
+      ...(location && location !== 'world' && { location }),
+      ...(category && category !== 'All' && { type: category }),
+    };
 
     return db.event
       .findMany({
+        take: limit,
+        skip,
         where,
         include: {
           host: true,
@@ -77,6 +89,28 @@ export class EventService {
           attendeeCount: event._count.attendees,
         }))
       );
+  }
+
+  static async count(
+    location: string | null,
+    category: string | null,
+    userId?: string
+  ) {
+    const where = {
+      ...(userId
+        ? {
+            OR: [
+              { isPrivate: false },
+              { hostId: userId },
+              { members: { some: { id: userId } } },
+            ],
+          }
+        : { isPrivate: false }),
+      ...(location && location !== 'world' && { location }),
+      ...(category && category !== 'All' && { type: category }),
+    };
+
+    return db.event.count({ where });
   }
 
   static async getBySlug(slug: string) {
