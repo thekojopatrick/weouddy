@@ -5,15 +5,18 @@ import { getAllEvents } from '@/server/actions/event/queries';
 import { getSession } from '@/lib/auth';
 
 const AppLayout = async ({ children }: { children: ReactNode }) => {
-	const session = await getSession();
+  const session = await getSession();
 
-	const events = await getAllEvents(session?.user?.id);
-	return (
-		<div>
-			<SiteHeader user={session?.user ?? null} events={events as never} />
-			<main>{children}</main>
-		</div>
-	);
+  const events = await getAllEvents(session?.user?.id);
+  return (
+    <main>
+      <SiteHeader
+        user={session?.user ?? null}
+        events={events as never}
+      />
+      <>{children}</>
+    </main>
+  );
 };
 
 export default AppLayout;

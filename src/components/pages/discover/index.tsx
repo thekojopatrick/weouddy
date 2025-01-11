@@ -77,9 +77,9 @@ export default function DiscoverPage({
   ) as string[];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col mt-4">
       <Container>
-        <main className="flex-1">
+        <section className="flex-1">
           <div className="flex flex-col gap-4">
             <h1 className="text-3xl font-bold tracking-tighter">
               Discover
@@ -147,7 +147,7 @@ export default function DiscoverPage({
               )}
             </>
           )}
-        </main>
+        </section>
       </Container>
       {/*CALL TO ACTION */}
 
