@@ -15,8 +15,11 @@ import { cn } from '@/lib/utils';
 import { formatEventDateTime } from '@/lib/formatters';
 import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useOptimizedEventFiltering } from '@/hooks/use-optimized-event-location';
-import { useBatchEventStatuses, useEvents } from '@/hooks/use-event';
+import { useOptimizedEventFiltering } from '@/hooks/event/use-optimized-event-location';
+import {
+  useBatchEventStatuses,
+  useEvents,
+} from '@/hooks/event/use-event';
 
 export default function DiscoverPage({
   user,

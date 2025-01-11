@@ -1,6 +1,6 @@
 'use client';
 
-import { useJoinEvent } from '@/hooks/use-join-event';
+import { useJoinEvent } from '@/hooks/event/use-join-event';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { extractIdentifierFromLink } from '@/lib/utils';
 import { useState } from 'react';

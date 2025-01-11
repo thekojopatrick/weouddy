@@ -52,7 +52,7 @@ const MasonryPosts = ({
   };
 
   const getColumnHeight = (column: PostWithDetails[]): number => {
-    return column.reduce((height, post) => height + 300, 0); // Approximate height calculation
+    return column.reduce((height) => height + 300, 0); // Approximate height calculation
   };
 
   useEffect(() => {

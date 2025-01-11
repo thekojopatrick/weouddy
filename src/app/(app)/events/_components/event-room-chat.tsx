@@ -15,7 +15,7 @@ import {
   AvatarImage,
   AvatarFallback,
 } from '@/components/ui/avatar';
-import { useEventChat } from '@/hooks/use-event-chat';
+import { useEventChat } from '@/hooks/event/use-event-chat';
 import { ChatMessage } from '@/types/chat';
 
 interface EventChatRoomProps {

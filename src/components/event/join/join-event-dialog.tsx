@@ -3,7 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader } from '@/components/ui/dialog';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { useJoinEvent } from '@/hooks/use-join-event';
+import { useJoinEvent } from '@/hooks/event/use-join-event';
 import { extractIdentifierFromLink } from '@/lib/utils';
 import { DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';

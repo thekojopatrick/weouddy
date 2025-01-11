@@ -1,9 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEventStore } from './use-event-cache';
+
 import { useEffect } from 'react';
 import { EventWithDetails } from '@/types/prisma.types';
 import { UserEventStatus } from '@/types/event';
 import * as Sentry from '@sentry/nextjs';
+import { useEventStore } from './use-event-cache';
 
 export function useEvents(location = 'world', category = 'All') {
   const queryClient = useQueryClient();

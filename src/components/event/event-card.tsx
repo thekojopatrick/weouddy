@@ -21,7 +21,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getNameInitials } from '@/lib/utils';
 import EventModal from './event-modal';
 import * as Sentry from '@sentry/nextjs';
-import { useEventStatus } from '@/hooks/use-event';
 import { UserEventStatus } from '@/types/event';
 
 interface BaseEventCardProps {
@@ -76,13 +75,9 @@ export function EventCard({
   requiresApproval,
   userStatus,
 }: EventCardProps) {
-  // const [userStatus, setUserStatus] = useState<
-  //   'NOT_JOINED' | 'PENDING' | 'JOINED'
-  // >('NOT_JOINED');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  // const { data: userStatus, error } = useEventStatus(id);
   const [city, country] = location.split(', ');
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -109,41 +104,6 @@ export function EventCard({
       }
     }
   };
-
-  // const handleCardClick = async () => {
-  //   try {
-  //     const response = await fetch(`/api/events/${id}/status`);
-  //     const data = await response.json();
-  //     setUserStatus(data.status);
-
-  //     if (data.status === 'JOINED') {
-  //       router.push(`/events/${slug}`);
-  //     } else {
-  //       setIsModalOpen(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to fetch user status:', error);
-  //     Sentry.captureException(error);
-  //   }
-  // };
-
-  // const handleCardClick = () => {
-  //   if (error) {
-  //     toast({
-  //       title: 'Error',
-  //       description:
-  //         'Failed to check event status. Please try again.',
-  //       variant: 'destructive',
-  //     });
-  //     return;
-  //   }
-
-  //   if (userStatus === 'JOINED') {
-  //     router.push(`/events/${slug}`);
-  //   } else {
-  //     setIsModalOpen(true);
-  //   }
-  // };
 
   const handleCardClick = () => {
     if (userStatus === 'JOINED') {

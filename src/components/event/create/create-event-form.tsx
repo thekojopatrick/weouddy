@@ -10,7 +10,6 @@ import {
 import { Form } from '@/components/ui/form';
 import { createEvent } from '@/app/actions/create-event';
 import { useToast } from '@/hooks/use-toast';
-import { QRCodeType } from '@/lib/qr/types';
 
 import { LocationTimeStep } from './steps/location-time-step';
 import { PrivacyStep } from './steps/privacy';
@@ -20,7 +19,7 @@ import { CoverUploadStep } from './steps/cover-upload';
 import { EventDetailsStep } from './steps/event-details';
 import LoadingOverlay from '../loading-overlay';
 import { getURL } from '@/lib/utils';
-import { useEvents } from '@/hooks/use-event';
+import { useEvents } from '@/hooks/event/use-event';
 
 interface CreateEventFormProps {
   onCloseAction: () => void;

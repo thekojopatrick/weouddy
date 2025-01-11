@@ -3,7 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { useJoinEvent } from '@/hooks/use-join-event';
+import { useJoinEvent } from '@/hooks/event/use-join-event';
 import { PinEntryForm } from './forms/pin-entry-form';
 import JoinEventSuccess from './forms/success';
 
