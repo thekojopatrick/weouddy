@@ -77,7 +77,7 @@ export function SiteHeader({
             Services
           </Link>
         </nav>
-        <div className="relative w-full max-w-sm mx-auto">
+        <div className="relative w-full">
           <SearchDialog events={events as never} />
         </div>
         <div className="md:ml-auto flex items-center space-x-3">
