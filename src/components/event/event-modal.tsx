@@ -132,8 +132,10 @@ const EventModal = memo(
               src={event.coverImage!}
               alt={event.name}
               fill
-              className="object-cover"
+              className="object-cover object-top"
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={75}
             />
             <Button
               variant="secondary"

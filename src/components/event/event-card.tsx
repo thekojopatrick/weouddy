@@ -140,6 +140,8 @@ export function EventCard({
               alt={name}
               fill
               className="object-cover object-top transition-transform group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={75}
             />
           </div>
         </CardHeader>
