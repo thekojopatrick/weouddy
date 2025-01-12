@@ -6,11 +6,12 @@ import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { useJoinEvent } from '@/hooks/event/use-join-event';
 import { PinEntryForm } from './forms/pin-entry-form';
 import JoinEventSuccess from './forms/success';
+import { useCallback, useEffect } from 'react';
 
 interface JoinEventDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  eventId: string; // Now required since we're only handling card selection
+  eventId: string;
   accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
   requiresApproval?: boolean;
 }
@@ -22,14 +23,37 @@ export function JoinEventDialogViaEventCard({
   accessType,
   requiresApproval,
 }: JoinEventDialogProps) {
-  const { joinMutation } = useJoinEvent();
+  const {
+    joinMutation,
+    handlePinSubmit,
+    handleJoinViaCard,
+    isLoading,
+  } = useJoinEvent();
 
   // Handle PIN submission
-  const handlePinSubmit = (pin: string) => {
-    if (eventId && !joinMutation.isPending) {
-      joinMutation.mutate({ identifier: eventId, pin });
+  const handlePinSubmitWrapper = useCallback(
+    (identifier: string, pin: string) => {
+      handlePinSubmit(identifier, pin);
+    },
+    [handlePinSubmit]
+  );
+
+  // Automatically trigger join for LINK_ONLY events
+  useEffect(() => {
+    if (
+      open &&
+      accessType === 'LINK_ONLY' &&
+      !joinMutation.isPending
+    ) {
+      handleJoinViaCard(eventId);
     }
-  };
+  }, [
+    open,
+    accessType,
+    eventId,
+    handleJoinViaCard,
+    joinMutation.isPending,
+  ]);
 
   // Determine what content to show based on the current state
   const renderContent = () => {
@@ -37,31 +61,36 @@ export function JoinEventDialogViaEventCard({
       return <JoinEventSuccess isLoading={true} />;
     }
 
-    if (
-      joinMutation.isSuccess &&
-      joinMutation.data.status === 'PENDING'
-    ) {
-      return (
-        <Alert>
-          <AlertDescription>
-            {requiresApproval
-              ? 'Request sent. Waiting for host approval.'
-              : 'Joining event...'}
-          </AlertDescription>
-        </Alert>
-      );
+    if (joinMutation.isSuccess) {
+      if (joinMutation.data.status === 'PENDING') {
+        return (
+          <Alert>
+            <AlertDescription>
+              Request sent. Waiting for host approval.
+            </AlertDescription>
+          </Alert>
+        );
+      }
+      return <JoinEventSuccess isLoading={false} />;
     }
 
     if (accessType === 'PIN_REQUIRED') {
       return (
         <PinEntryForm
-          onSubmitAction={handlePinSubmit}
-          isLoading={joinMutation.isPending}
+          onSubmitAction={handlePinSubmitWrapper}
+          isLoading={isLoading}
+          eventId={eventId}
         />
       );
     }
 
-    return null;
+    return (
+      <Alert>
+        <AlertDescription>
+          Processing your request to join...
+        </AlertDescription>
+      </Alert>
+    );
   };
 
   return (
@@ -70,10 +99,11 @@ export function JoinEventDialogViaEventCard({
         <DialogTitle>
           {accessType === 'PIN_REQUIRED'
             ? 'Enter Event PIN'
-            : 'Join Event'}
+            : requiresApproval
+              ? 'Requesting to Join'
+              : 'Joining Event'}
         </DialogTitle>
       </DialogHeader>
-
       {renderContent()}
     </ResponsiveDialog>
   );
