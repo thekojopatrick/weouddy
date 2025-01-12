@@ -5,6 +5,7 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { getEventBySlug } from '@/server/actions/event/queries';
 import { getSession } from '@/lib/auth';
 import { getURL } from '@/lib/utils';
+import { EventService } from '@/server/services/event';
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -21,7 +22,7 @@ export async function generateMetadata(
   const id = (await params).eventId;
 
   // fetch data
-  const event = await getEventBySlug(id);
+  const event = await EventService.getEvent(id);
 
   // optionally access and extend (rather than replace) parent metadata
   const previousImages = (await parent).openGraph?.images || [];
@@ -57,7 +58,7 @@ export default async function EventRoomPage(props: {
 
   if (!session) return null;
 
-  const event = await getEventBySlug(eventId);
+  const event = await EventService.getEvent(eventId);
 
   console.log({ event });
 

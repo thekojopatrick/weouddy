@@ -188,6 +188,8 @@ model Attendee {
   createdAt DateTime       @default(now())
   user      User           @relation(fields: [userId], references: [id])
   event     Event          @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
 }
 
 model ChatMessage {

@@ -1,6 +1,7 @@
 import { EventSettings } from './types';
 import QRCode from 'qrcode';
 import { prisma } from '@/lib/prisma';
+import { cache } from '@/lib/redis';
 
 export async function generateEventQRCode(
   eventId: string,
@@ -28,7 +29,15 @@ export async function getEventById(eventId: string) {
 }
 
 export async function getEventBySlug(slug: string) {
-  return prisma.event
+  const cacheKey = `event:${slug}`;
+
+  // Try cache first
+  const cachedEvent = await cache.get(cacheKey);
+  if (cachedEvent) {
+    return cachedEvent;
+  }
+
+  const event = prisma.event
     .findUnique({
       where: { slug },
       include: {
@@ -63,6 +72,13 @@ export async function getEventBySlug(slug: string) {
       memberCount: event?._count.members,
       attendeeCount: event?._count.attendees,
     }));
+
+  if (event) {
+    // Cache for 1 minute
+    await cache.set(cacheKey, event, 60);
+  }
+
+  return event;
 }
 
 export async function getAllEvents(userId?: string) {

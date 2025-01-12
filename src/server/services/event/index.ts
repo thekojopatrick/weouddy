@@ -6,6 +6,7 @@ import { generateQRCode } from '@/lib/qr/generator';
 import { storeQRCode } from '@/lib/qr/storage';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { getURL } from '@/lib/utils';
+import { cache } from '@/lib/redis';
 
 export class EventService {
   private static RATE_LIMIT_MS = 30000;
@@ -42,6 +43,85 @@ export class EventService {
         timeout: 10000, // default: 5000
       }
     );
+  }
+
+  static async getEvent(identifier: string) {
+    const cacheKey = `event:${identifier}`;
+
+    // Try cache first
+    const cachedEvent = await cache.get(cacheKey);
+    if (cachedEvent) {
+      return cachedEvent;
+    }
+
+    // Optimize select fields
+    const event = await db.event
+      .findFirst({
+        where: {
+          OR: [{ id: identifier }, { slug: identifier }],
+        },
+        include: {
+          host: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          members: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          attendees: {
+            select: {
+              userId: true,
+              status: true,
+            },
+            take: 10, // Limit the number of attendees initially loaded
+          },
+          posts: {
+            include: {
+              media: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  avatarUrl: true,
+                },
+              },
+              comments: true,
+              likes: true,
+              _count: {
+                select: {
+                  likes: true,
+                  comments: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+              posts: true,
+              attendees: true,
+            },
+          },
+        },
+      })
+      .then((event) => ({
+        ...event,
+        memberCount: event?._count.members,
+        attendeeCount: event?._count.attendees,
+      }));
+
+    if (event) {
+      // Cache for 1 minute
+      await cache.set(cacheKey, event, 60);
+    }
+
+    return event;
   }
 
   static async getAll(

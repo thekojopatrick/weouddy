@@ -18,8 +18,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { identifier, pin } = body;
 
-    console.log({ identifier, pin });
-
     if (!identifier) {
       return NextResponse.json(
         { success: false, error: 'Event identifier is required' },
@@ -34,19 +32,34 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Join event error:', error);
+  } catch (error: unknown) {
+    // Safe error logging that handles various error types
+    const errorDetails = {
+      message:
+        error instanceof Error ? error.message : 'Unknown error',
+      code: error instanceof JoinEventError ? error.code : 'UNKNOWN',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : typeof error,
+    };
+
+    console.error(
+      'Join event error:',
+      JSON.stringify(errorDetails, null, 2)
+    );
+
+    // Determine appropriate status code
+    let statusCode = 500;
+    if (error instanceof JoinEventError) {
+      statusCode = 400;
+    }
+
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof JoinEventError
-            ? error.message
-            : 'Server error',
-        code:
-          error instanceof JoinEventError ? error.code : 'UNKNOWN',
+        error: errorDetails.message,
+        code: errorDetails.code,
       },
-      { status: error instanceof JoinEventError ? 400 : 500 }
+      { status: statusCode }
     );
   }
 }

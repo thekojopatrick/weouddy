@@ -1,13 +1,12 @@
 import { db } from '@/server/db/prisma';
 import { z } from 'zod';
+import { cache } from '@/lib/redis'; // Implement a caching solution like Redis or memory cache
 
 const joinEventSchema = z.object({
   identifier: z.string().min(1),
   pin: z.string().optional(),
   userId: z.string().min(1),
 });
-
-type JoinEventInput = z.infer<typeof joinEventSchema>;
 
 interface JoinEventResponse {
   success: boolean;
@@ -35,47 +34,45 @@ export class JoinEventError extends Error {
 }
 
 export class JoinEventService {
+  private static readonly LOCK_KEY_PREFIX = 'event-join-lock:';
+  private static readonly EVENT_CACHE_PREFIX = 'event:';
   private static readonly LOCK_TIMEOUT = 5000;
-  private static locks = new Map<string, number>();
 
-  private static validateInput(input: unknown): JoinEventInput {
-    try {
-      return joinEventSchema.parse(input);
-    } catch (error) {
-      throw new JoinEventError('Invalid input data', 'INVALID_INPUT');
-    }
+  private static async getEventFromCache(identifier: string) {
+    const cacheKey = `${this.EVENT_CACHE_PREFIX}${identifier}`;
+    return cache.get(cacheKey);
   }
 
-  private static acquireLock(
-    userId: string,
-    identifier: string
-  ): boolean {
-    const lockKey = `${userId}-${identifier}`;
-    const existingLock = this.locks.get(lockKey);
-
-    if (
-      existingLock &&
-      Date.now() - existingLock < this.LOCK_TIMEOUT
-    ) {
-      return false;
-    }
-
-    this.locks.set(lockKey, Date.now());
-    return true;
+  private static async setEventCache(
+    identifier: string,
+    data: unknown
+  ) {
+    const cacheKey = `${this.EVENT_CACHE_PREFIX}${identifier}`;
+    await cache.set(cacheKey, data, 60); // Cache for 1 minute
   }
 
-  private static releaseLock(
+  private static async acquireLock(
     userId: string,
     identifier: string
-  ): void {
-    const lockKey = `${userId}-${identifier}`;
-    this.locks.delete(lockKey);
+  ): Promise<boolean> {
+    const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
+    return cache.set(lockKey, Date.now(), this.LOCK_TIMEOUT);
+  }
+
+  private static async releaseLock(
+    userId: string,
+    identifier: string
+  ): Promise<void> {
+    const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
+    await cache.del(lockKey);
   }
 
   static async joinEvent(input: unknown): Promise<JoinEventResponse> {
-    const { identifier, pin, userId } = this.validateInput(input);
+    const startTime = Date.now();
+    const { identifier, pin, userId } = joinEventSchema.parse(input);
 
-    if (!this.acquireLock(userId, identifier)) {
+    // Use optimistic locking instead of pessimistic
+    if (!(await this.acquireLock(userId, identifier))) {
       throw new JoinEventError(
         'A join request is already in progress',
         'LOCK_ERROR'
@@ -83,30 +80,35 @@ export class JoinEventService {
     }
 
     try {
-      const event = await db.event.findFirst({
-        where: {
-          OR: [{ id: identifier }, { slug: identifier }],
-        },
-        select: {
-          id: true,
-          slug: true,
-          requiresApproval: true,
-          isDisabled: true,
-          accessType: true,
-          pinCode: true,
-          hostId: true,
-          members: {
-            where: { id: userId },
-            select: { id: true },
+      // First, try to get event from cache
+      let event = await this.getEventFromCache(identifier);
+
+      if (!event) {
+        // Optimize the query by selecting only needed fields
+        event = await db.event.findFirst({
+          where: {
+            OR: [{ id: identifier }, { slug: identifier }],
           },
-          attendees: {
-            select: {
-              userId: true,
-              status: true,
+          select: {
+            id: true,
+            slug: true,
+            requiresApproval: true,
+            isDisabled: true,
+            accessType: true,
+            pinCode: true,
+            hostId: true,
+            _count: {
+              select: {
+                members: true,
+              },
             },
           },
-        },
-      });
+        });
+
+        if (event) {
+          await this.setEventCache(identifier, event);
+        }
+      }
 
       if (!event) {
         throw new JoinEventError('Event not found', 'NOT_FOUND');
@@ -119,149 +121,104 @@ export class JoinEventService {
         );
       }
 
-      // If user is already a member, return current status
-      if (event.members.length > 0) {
-        return {
-          success: true,
-          status: 'JOINED',
-          event: {
-            id: event.id,
-            slug: event.slug!,
-            accessType: event.accessType as never,
-            requiresApproval: event.requiresApproval,
-            attendees: event.attendees as never,
-          },
-        };
+      // PIN validation
+      if (
+        event.accessType === 'PIN_REQUIRED' &&
+        pin !== event.pinCode
+      ) {
+        throw new JoinEventError(
+          !pin ? 'PIN is required' : 'Invalid PIN',
+          !pin ? 'PIN_REQUIRED' : 'INVALID_PIN'
+        );
       }
 
-      // Check PIN if required
-      if (event.accessType === 'PIN_REQUIRED') {
-        if (!pin) {
-          throw new JoinEventError('PIN is required', 'PIN_REQUIRED');
-        }
-        if (pin !== event.pinCode) {
-          throw new JoinEventError('Invalid PIN', 'INVALID_PIN');
-        }
-      }
+      // Determine status without additional query
 
-      const existingAttendee = await db.attendee.findFirst({
-        where: {
-          userId,
-          eventId: event.id,
-        },
-        select: { id: true, status: true },
-      });
-
-      if (existingAttendee?.status === 'APPROVED') {
-        if (event.members.length === 0) {
-          await db.event.update({
-            where: { id: event.id },
-            data: {
-              members: {
-                connect: { id: userId },
-              },
-            },
-          });
-        }
-
-        return {
-          success: true,
-          status: 'JOINED',
-          event: {
-            id: event.id,
-            slug: event.slug!,
-            accessType: event.accessType as never,
-            requiresApproval: event.requiresApproval,
-            attendees: event.attendees as never,
-          },
-        };
-      }
-
-      if (existingAttendee?.status === 'PENDING') {
-        return {
-          success: true,
-          status: 'PENDING',
-          event: {
-            id: event.id,
-            slug: event.slug!,
-            accessType: event.accessType as never,
-            requiresApproval: event.requiresApproval,
-            attendees: event.attendees as never,
-          },
-        };
-      }
-
-      // Auto-approve if user is the creator or if approval is not required
       const status =
         event.hostId === userId || !event.requiresApproval
           ? 'APPROVED'
           : 'PENDING';
 
-      await db.$transaction(async (tx) => {
-        // Create or update attendee
+      // Combine all database operations into a single transaction
+      const result = await db.$transaction(async (tx) => {
+        // First check for existing attendee
+        const existingAttendee = await tx.attendee.findFirst({
+          where: {
+            AND: [{ userId: userId }, { eventId: event.id }],
+          },
+          select: {
+            id: true,
+            status: true,
+          },
+        });
+
         if (existingAttendee) {
-          await tx.attendee.update({
-            where: { id: existingAttendee.id },
-            data: { status },
-          });
-        } else {
-          await tx.attendee.create({
+          // Only update if status is different
+          if (existingAttendee.status !== status) {
+            return tx.attendee.update({
+              where: { id: existingAttendee.id },
+              data: { status },
+              select: { status: true },
+            });
+          }
+          return existingAttendee;
+        }
+
+        // Create attendee and activity in parallel if possible
+        const [attendee] = await Promise.all([
+          tx.attendee.create({
             data: {
               userId,
               eventId: event.id,
               status,
             },
-          });
-        }
-
-        // Create activity record
-        await tx.eventActivity.create({
-          data: {
-            eventId: event.id,
-            userId,
-            type: 'JOIN',
-          },
-        });
-
-        // If approved, add as member
-        if (status === 'APPROVED') {
-          await tx.event.update({
-            where: { id: event.id },
-            data: {
-              members: {
-                connect: { id: userId },
-              },
-            },
-          });
-        }
-      });
-
-      // Fetch updated attendees list
-      const updatedEvent = await db.event.findUnique({
-        where: { id: event.id },
-        select: {
-          attendees: {
             select: {
-              userId: true,
               status: true,
             },
-          },
-        },
+          }),
+          ,
+          tx.eventActivity.create({
+            data: {
+              eventId: event.id,
+              userId,
+              type: 'JOIN',
+            },
+          }),
+          ...(status === 'APPROVED'
+            ? [
+                tx.event.update({
+                  where: { id: event.id },
+                  data: {
+                    members: {
+                      connect: { id: userId },
+                    },
+                  },
+                }),
+              ]
+            : []),
+        ]);
+
+        return attendee;
       });
+
+      // Invalidate cache
+      await cache.del(`${this.EVENT_CACHE_PREFIX}${identifier}`);
+
+      const executionTime = Date.now() - startTime;
+      console.log(`Join event execution time: ${executionTime}ms`);
 
       return {
         success: true,
-        status: status === 'PENDING' ? 'PENDING' : 'JOINED',
+        status: result.status === 'PENDING' ? 'PENDING' : 'JOINED',
         event: {
           id: event.id,
           slug: event.slug!,
           accessType: event.accessType as never,
           requiresApproval: event.requiresApproval,
-          attendees: (updatedEvent?.attendees as never) || [],
         },
       };
     } finally {
-      this.releaseLock(userId, identifier);
+      await this.releaseLock(userId, identifier);
     }
   }
 }
