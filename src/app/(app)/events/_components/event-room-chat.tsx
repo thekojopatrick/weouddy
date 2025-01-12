@@ -139,7 +139,7 @@ const EventChatRoom = ({ eventId, userId }: EventChatRoomProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md h-[600px] flex flex-col">
+    <Card className="w-full max-w-md min-h-[80vh] flex flex-col">
       <CardHeader className="border-b">
         <h3 className="text-lg font-semibold">Event Chat</h3>
       </CardHeader>

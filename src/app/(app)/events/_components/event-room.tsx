@@ -155,6 +155,7 @@ export default function EventRoom({
                   <JoinChatRoom
                     isSmallDevice={isSmallDevice}
                     eventId={event.id}
+                    eventName={event.name}
                     user={user as never}
                   />
                 ),
@@ -165,6 +166,7 @@ export default function EventRoom({
             <JoinChatRoom
               isSmallDevice={isSmallDevice}
               eventId={event.id}
+              eventName={event.name}
               user={user as never}
             />
           </div>

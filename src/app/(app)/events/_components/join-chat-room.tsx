@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
-import { SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import EventChatRoom from './event-room-chat';
 
@@ -16,6 +15,7 @@ const JoinChatRoom = ({
 }: {
   isSmallDevice: boolean;
   eventId: string;
+  eventName?: string;
   user: {
     id: string;
     userName: string;
@@ -28,26 +28,6 @@ const JoinChatRoom = ({
     if (!user) return null;
     setShowDialog(true);
   };
-
-  const footerContent = (hasReadToBottom: boolean) => (
-    <>
-      {!hasReadToBottom && (
-        <span className="grow text-xs text-muted-foreground max-sm:text-center">
-          Read all terms before accepting.
-        </span>
-      )}
-      <SheetClose asChild>
-        <Button type="button" variant="outline">
-          Cancel
-        </Button>
-      </SheetClose>
-      <SheetClose asChild>
-        <Button type="button" disabled={!hasReadToBottom}>
-          I agree
-        </Button>
-      </SheetClose>
-    </>
-  );
 
   return (
     <>
@@ -66,20 +46,19 @@ const JoinChatRoom = ({
           <RiChat1Fill className={'size-6'} />
         )}
         <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
-          Vibes
+          Vibez
         </span>
       </Button>
       <CustomSheet
         isOpen={showDialog}
         onCloseAction={() => setShowDialog(false)}
         side={isSmallDevice ? 'bottom' : 'right'}
-        title={`Chatroom ${eventId}`}
+        title={`Vibez`}
         content={<EventChatRoom eventId={eventId} userId={user.id} />}
         stickyHeader={true}
         stickyFooter={true}
         scrollableContent={true}
         maxHeight={isSmallDevice ? '90vh' : '80vh'}
-        footerContent={footerContent(true)}
       />
     </>
   );
