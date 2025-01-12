@@ -40,8 +40,14 @@ export function LinkPasteForm({
             disabled={!link || isLoading}
             loading={isLoading}
           >
-            <LinkIcon className="h-4 w-4" />
-            Join
+            {isLoading ? (
+              <span>Joining...</span>
+            ) : (
+              <>
+                <LinkIcon className="h-4 w-4" />
+                Join
+              </>
+            )}
           </LoadingButton>
         </div>
       </div>
@@ -61,6 +67,7 @@ export function LinkPasteForm({
         variant="outline"
         className="w-full"
         onClick={onScanQRAction}
+        disabled={isLoading}
       >
         Scan QR Code
       </Button>

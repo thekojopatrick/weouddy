@@ -11,12 +11,16 @@ type JoinEventInput = z.infer<typeof joinEventSchema>;
 
 interface JoinEventResponse {
   success: boolean;
-  status: 'JOINED' | 'PENDING';
+  status: 'JOINED' | 'PENDING' | 'PENDING_APPROVAL';
   event?: {
     id: string;
     slug: string;
     accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
     requiresApproval: boolean;
+    attendees?: Array<{
+      userId: string;
+      status: 'PENDING' | 'APPROVED';
+    }>;
   };
 }
 
@@ -90,9 +94,16 @@ export class JoinEventService {
           isDisabled: true,
           accessType: true,
           pinCode: true,
+          hostId: true,
           members: {
             where: { id: userId },
             select: { id: true },
+          },
+          attendees: {
+            select: {
+              userId: true,
+              status: true,
+            },
           },
         },
       });
@@ -108,6 +119,7 @@ export class JoinEventService {
         );
       }
 
+      // If user is already a member, return current status
       if (event.members.length > 0) {
         return {
           success: true,
@@ -117,10 +129,12 @@ export class JoinEventService {
             slug: event.slug!,
             accessType: event.accessType as never,
             requiresApproval: event.requiresApproval,
+            attendees: event.attendees as never,
           },
         };
       }
 
+      // Check PIN if required
       if (event.accessType === 'PIN_REQUIRED') {
         if (!pin) {
           throw new JoinEventError('PIN is required', 'PIN_REQUIRED');
@@ -135,55 +149,105 @@ export class JoinEventService {
           userId,
           eventId: event.id,
         },
-        select: { status: true },
+        select: { id: true, status: true },
       });
 
-      if (existingAttendee) {
+      if (existingAttendee?.status === 'APPROVED') {
+        if (event.members.length === 0) {
+          await db.event.update({
+            where: { id: event.id },
+            data: {
+              members: {
+                connect: { id: userId },
+              },
+            },
+          });
+        }
+
         return {
           success: true,
-          status:
-            existingAttendee.status === 'APPROVED'
-              ? 'JOINED'
-              : 'PENDING',
+          status: 'JOINED',
           event: {
             id: event.id,
             slug: event.slug!,
             accessType: event.accessType as never,
             requiresApproval: event.requiresApproval,
+            attendees: event.attendees as never,
           },
         };
       }
 
-      const status = event.requiresApproval ? 'PENDING' : 'APPROVED';
-
-      await db.$transaction([
-        db.attendee.create({
-          data: {
-            userId,
-            eventId: event.id,
-            status,
+      if (existingAttendee?.status === 'PENDING') {
+        return {
+          success: true,
+          status: 'PENDING',
+          event: {
+            id: event.id,
+            slug: event.slug!,
+            accessType: event.accessType as never,
+            requiresApproval: event.requiresApproval,
+            attendees: event.attendees as never,
           },
-        }),
-        db.eventActivity.create({
+        };
+      }
+
+      // Auto-approve if user is the creator or if approval is not required
+      const status =
+        event.hostId === userId || !event.requiresApproval
+          ? 'APPROVED'
+          : 'PENDING';
+
+      await db.$transaction(async (tx) => {
+        // Create or update attendee
+        if (existingAttendee) {
+          await tx.attendee.update({
+            where: { id: existingAttendee.id },
+            data: { status },
+          });
+        } else {
+          await tx.attendee.create({
+            data: {
+              userId,
+              eventId: event.id,
+              status,
+            },
+          });
+        }
+
+        // Create activity record
+        await tx.eventActivity.create({
           data: {
             eventId: event.id,
             userId,
             type: 'JOIN',
           },
-        }),
-        ...(!event.requiresApproval
-          ? [
-              db.event.update({
-                where: { id: event.id },
-                data: {
-                  members: {
-                    connect: { id: userId },
-                  },
-                },
-              }),
-            ]
-          : []),
-      ]);
+        });
+
+        // If approved, add as member
+        if (status === 'APPROVED') {
+          await tx.event.update({
+            where: { id: event.id },
+            data: {
+              members: {
+                connect: { id: userId },
+              },
+            },
+          });
+        }
+      });
+
+      // Fetch updated attendees list
+      const updatedEvent = await db.event.findUnique({
+        where: { id: event.id },
+        select: {
+          attendees: {
+            select: {
+              userId: true,
+              status: true,
+            },
+          },
+        },
+      });
 
       return {
         success: true,
@@ -193,6 +257,7 @@ export class JoinEventService {
           slug: event.slug!,
           accessType: event.accessType as never,
           requiresApproval: event.requiresApproval,
+          attendees: (updatedEvent?.attendees as never) || [],
         },
       };
     } finally {

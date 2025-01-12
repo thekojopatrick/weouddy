@@ -59,7 +59,7 @@ export default async function EventRoomPage(props: {
 
   const event = await getEventBySlug(eventId);
 
-  //console.log({ event });
+  console.log({ event });
 
   return (
     <>
