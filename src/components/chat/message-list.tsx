@@ -1,41 +1,61 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { FC, useRef, useEffect } from 'react';
 import { ChatMessage } from '@/types/chat';
-import { MessageItem } from './message-item';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2 } from 'lucide-react';
+import { ChatMessageItem } from './chat-message';
 
-interface MessageListProps {
+interface ChatMessagesProps {
   messages: ChatMessage[];
   currentUserId: string;
-  isHost: boolean;
+  isLoading?: boolean;
+  onPinMessage: (messageId: string, isPinned: boolean) => void;
+  onDeleteMessage: (messageId: string) => void;
+  onReaction?: (messageId: string, emoji: string) => void;
 }
 
-export function MessageList({
+export const ChatMessages: FC<ChatMessagesProps> = ({
   messages,
   currentUserId,
-  isHost,
-}: MessageListProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  isLoading,
+  onPinMessage,
+  onDeleteMessage,
+  onReaction,
+}) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  return (
-    <ScrollArea ref={scrollRef} className="h-[500px] pr-4">
-      <div className="space-y-4">
-        {messages.map((message) => (
-          <MessageItem
-            key={message.id}
-            message={message}
-            isCurrentUser={message.userId === currentUserId}
-            isHost={isHost}
-          />
-        ))}
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin" />
       </div>
+    );
+  }
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-muted-foreground">
+        No messages yet. Start the conversation!
+      </div>
+    );
+  }
+
+  return (
+    <ScrollArea className="flex-1 p-4">
+      {messages.map((message) => (
+        <ChatMessageItem
+          key={message.id}
+          message={message}
+          isOwnMessage={message.userId === currentUserId}
+          onPinMessage={onPinMessage}
+          onDeleteMessage={onDeleteMessage}
+          onReaction={onReaction}
+        />
+      ))}
+      <div ref={messagesEndRef} />
     </ScrollArea>
   );
-}
+};

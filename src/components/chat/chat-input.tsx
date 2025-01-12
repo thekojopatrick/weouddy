@@ -1,130 +1,66 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import { FC, FormEvent, useState } from 'react';
+import { Send, SmilePlus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { ChatSettings } from '@/types/chat';
+import { Input } from '@/components/ui/input';
 
 interface ChatInputProps {
-  eventId?: string;
-  userId?: string;
-  isGuest: boolean;
-  settings: ChatSettings;
-  onSendMessage: (content: string) => Promise<void>;
-  lastMessageTime?: Date;
+  onSendMessage: (message: string) => Promise<void>;
+  disabled?: boolean;
 }
 
-export function ChatInput({
-  isGuest,
-  settings,
+export const ChatInput: FC<ChatInputProps> = ({
   onSendMessage,
-  lastMessageTime,
-}: ChatInputProps) {
+  disabled,
+}) => {
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-  const { toast } = useToast();
+  const [isSending, setIsSending] = useState(false);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (cooldown > 0) {
-      interval = setInterval(() => {
-        setCooldown((prev) => Math.max(0, prev - 1));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [cooldown]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || isSending) return;
 
-    // Check if chat is enabled
-    if (!settings.isEnabled) {
-      toast({
-        title: 'Chat Disabled',
-        description: 'The chat is currently disabled by the host.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Check guest permissions
-    if (isGuest && !settings.allowGuestMessages) {
-      toast({
-        title: 'Guests Restricted',
-        description: 'Only registered users can send messages.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Check slow mode
-    if (settings.slowMode && lastMessageTime) {
-      const timeSinceLastMessage =
-        Date.now() - lastMessageTime.getTime();
-      const cooldownTime = settings.slowModeInterval * 1000;
-      if (timeSinceLastMessage < cooldownTime) {
-        const remainingTime = Math.ceil(
-          (cooldownTime - timeSinceLastMessage) / 1000
-        );
-        setCooldown(remainingTime);
-        toast({
-          title: 'Slow Mode Active',
-          description: `Please wait ${remainingTime} seconds before sending another message.`,
-          variant: 'destructive',
-        });
-        return;
-      }
-    }
-
-    setIsLoading(true);
+    setIsSending(true);
     try {
-      await onSendMessage(message);
+      await onSendMessage(message.trim());
       setMessage('');
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to send message. Please try again.',
-        variant: 'destructive',
-      });
-      console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <Textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message..."
-        disabled={isLoading || cooldown > 0 || !settings.isEnabled}
-        className="min-h-[80px]"
-      />
-      <div className="flex items-center justify-between">
-        {cooldown > 0 && (
-          <span className="text-sm text-muted-foreground">
-            Wait {cooldown}s to send another message
-          </span>
-        )}
-        <Button
-          type="submit"
-          disabled={
-            isLoading ||
-            cooldown > 0 ||
-            !message.trim() ||
-            !settings.isEnabled
-          }
-          className="ml-auto"
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 border-t flex gap-2 bg-background"
+    >
+      <div className="relative flex-1">
+        <Input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Write a message..."
+          disabled={disabled || isSending}
+          className="pr-10"
+        />
+        <button
+          type="button"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted"
         >
-          <Send className="h-4 w-4 mr-2" />
-          Send
-        </Button>
+          <SmilePlus className="h-5 w-5 text-muted-foreground" />
+        </button>
       </div>
+      <Button
+        type="submit"
+        size="icon"
+        disabled={disabled || isSending || !message.trim()}
+      >
+        {isSending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Send className="h-4 w-4" />
+        )}
+      </Button>
     </form>
   );
-}
+};

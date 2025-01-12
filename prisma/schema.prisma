@@ -28,17 +28,18 @@ model User {
   posts                  Post[]
   comments               Comment[]
   likes                  Like[]
-  hostedEvents           Event[]         @relation("HostedEvents")
-  joinedEvents           Event[]         @relation("JoinedEvents")
-  following              Follow[]        @relation("Following")
-  followers              Follow[]        @relation("Followers")
+  hostedEvents           Event[]           @relation("HostedEvents")
+  joinedEvents           Event[]           @relation("JoinedEvents")
+  following              Follow[]          @relation("Following")
+  followers              Follow[]          @relation("Followers")
   roles                  EventRole[]
   attendees              Attendee[]
   chats                  ChatMessage[]
   eventLogs              EventActivity[]
-  sentFollowRequests     FollowRequest[] @relation("Requestor")
-  receivedFollowRequests FollowRequest[] @relation("Target")
+  sentFollowRequests     FollowRequest[]   @relation("Requestor")
+  receivedFollowRequests FollowRequest[]   @relation("Target")
   feedbacks              Feedback[]
+  messageReactions       MessageReaction[]
 }
 
 model Event {
@@ -163,8 +164,10 @@ model Follow {
   followerId  String
   followingId String
   createdAt   DateTime @default(now())
-  follower    User     @relation("Following", fields: [followerId], references: [id])
-  following   User     @relation("Followers", fields: [followingId], references: [id])
+
+  // Relations
+  follower  User @relation("Following", fields: [followerId], references: [id])
+  following User @relation("Followers", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId])
 }
@@ -174,8 +177,10 @@ model FollowRequest {
   requestorId  String
   targetUserId String
   createdAt    DateTime @default(now())
-  requestor    User     @relation("Requestor", fields: [requestorId], references: [id])
-  target       User     @relation("Target", fields: [targetUserId], references: [id])
+
+  // Relations
+  requestor User @relation("Requestor", fields: [requestorId], references: [id])
+  target    User @relation("Target", fields: [targetUserId], references: [id])
 
   @@unique([requestorId, targetUserId])
 }
@@ -186,21 +191,49 @@ model Attendee {
   eventId   String
   status    AttendeeStatus @default(APPROVED)
   createdAt DateTime       @default(now())
-  user      User           @relation(fields: [userId], references: [id])
-  event     Event          @relation(fields: [eventId], references: [id])
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
 }
 
 model ChatMessage {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   content   String
-  isPinned  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  isPinned  Boolean       @default(false)
+  status    MessageStatus @default(SENT)
+  createdAt DateTime      @default(now())
   userId    String
   eventId   String
-  user      User     @relation(fields: [userId], references: [id])
-  event     Event    @relation(fields: [eventId], references: [id])
+
+  // Relations
+  user      User              @relation(fields: [userId], references: [id])
+  event     Event             @relation(fields: [eventId], references: [id])
+  reactions MessageReaction[]
+
+  @@index([eventId])
+  @@index([userId])
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+model MessageReaction {
+  id        String      @id @default(cuid())
+  emoji     String
+  messageId String
+  userId    String
+  createdAt DateTime    @default(now())
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
 }
 
 model EventRole {
