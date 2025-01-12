@@ -110,7 +110,7 @@ export const useJoinEvent = () => {
     [joinMutation]
   );
 
-  const handleJoinWithPin = useCallback(
+  const handlePinSubmit = useCallback(
     async (identifier: string, pin: string) => {
       return joinMutation.mutate({ identifier, pin });
     },
@@ -121,7 +121,7 @@ export const useJoinEvent = () => {
     joinMutation,
     handleJoinViaLink,
     handleJoinViaCard,
-    handleJoinWithPin,
+    handlePinSubmit,
     isLoading: joinMutation.isPending,
   };
 };

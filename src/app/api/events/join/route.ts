@@ -1,5 +1,8 @@
 import { getSession } from '@/lib/auth';
-import { JoinEventService } from '@/server/services/event/join-event.service';
+import {
+  JoinEventError,
+  JoinEventService,
+} from '@/server/services/event/join-event.service';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -14,6 +17,8 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { identifier, pin } = body;
+
+    console.log({ identifier, pin });
 
     if (!identifier) {
       return NextResponse.json(
@@ -35,9 +40,13 @@ export async function POST(req: Request) {
       {
         success: false,
         error:
-          error instanceof Error ? error.message : 'Server error',
+          error instanceof JoinEventError
+            ? error.message
+            : 'Server error',
+        code:
+          error instanceof JoinEventError ? error.code : 'UNKNOWN',
       },
-      { status: error instanceof Error ? 400 : 500 }
+      { status: error instanceof JoinEventError ? 400 : 500 }
     );
   }
 }

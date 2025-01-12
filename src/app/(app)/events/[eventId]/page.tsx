@@ -59,6 +59,8 @@ export default async function EventRoomPage(props: {
 
   const event = await getEventBySlug(eventId);
 
+  //console.log({ event });
+
   return (
     <>
       <EventRoom user={session.user} event={event as never} />

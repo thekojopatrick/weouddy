@@ -1,10 +1,13 @@
 import { db } from '@/server/db/prisma';
+import { z } from 'zod';
 
-interface JoinEventParams {
-  identifier: string;
-  pin?: string;
-  userId: string;
-}
+const joinEventSchema = z.object({
+  identifier: z.string().min(1),
+  pin: z.string().optional(),
+  userId: z.string().min(1),
+});
+
+type JoinEventInput = z.infer<typeof joinEventSchema>;
 
 interface JoinEventResponse {
   success: boolean;
@@ -17,22 +20,28 @@ interface JoinEventResponse {
   };
 }
 
+export class JoinEventError extends Error {
+  constructor(
+    message: string,
+    public code: string
+  ) {
+    super(message);
+    this.name = 'JoinEventError';
+  }
+}
+
 export class JoinEventService {
-  private static readonly LOCK_TIMEOUT = 5000; // 5 seconds
+  private static readonly LOCK_TIMEOUT = 5000;
   private static locks = new Map<string, number>();
 
-  /**
-   * The lock mechanism prevents race conditions where a user might trigger multiple join requests
-   * simultaneously. This could happen when:
-   * 1. User double-clicks the join button
-   * 2. Network issues cause multiple retries
-   * 3. User tries to join through different UI elements simultaneously
-   *
-   * The lock is user and event specific, meaning:
-   * - Same user can't join same event multiple times simultaneously
-   * - Same user can join different events simultaneously
-   * - Different users can join same event simultaneously
-   */
+  private static validateInput(input: unknown): JoinEventInput {
+    try {
+      return joinEventSchema.parse(input);
+    } catch (error) {
+      throw new JoinEventError('Invalid input data', 'INVALID_INPUT');
+    }
+  }
+
   private static acquireLock(
     userId: string,
     identifier: string
@@ -59,18 +68,17 @@ export class JoinEventService {
     this.locks.delete(lockKey);
   }
 
-  static async joinEvent({
-    identifier,
-    pin,
-    userId,
-  }: JoinEventParams): Promise<JoinEventResponse> {
-    // Try to acquire lock
+  static async joinEvent(input: unknown): Promise<JoinEventResponse> {
+    const { identifier, pin, userId } = this.validateInput(input);
+
     if (!this.acquireLock(userId, identifier)) {
-      throw new Error('A join request is already in progress');
+      throw new JoinEventError(
+        'A join request is already in progress',
+        'LOCK_ERROR'
+      );
     }
 
     try {
-      // Fetch event with minimal required fields
       const event = await db.event.findFirst({
         where: {
           OR: [{ id: identifier }, { slug: identifier }],
@@ -82,32 +90,52 @@ export class JoinEventService {
           isDisabled: true,
           accessType: true,
           pinCode: true,
+          members: {
+            where: { id: userId },
+            select: { id: true },
+          },
         },
       });
 
       if (!event) {
-        throw new Error('Event not found');
+        throw new JoinEventError('Event not found', 'NOT_FOUND');
       }
 
       if (event.isDisabled) {
-        throw new Error('Event is disabled');
+        throw new JoinEventError(
+          'Event is disabled',
+          'EVENT_DISABLED'
+        );
       }
 
-      // Validate PIN if required
+      if (event.members.length > 0) {
+        return {
+          success: true,
+          status: 'JOINED',
+          event: {
+            id: event.id,
+            slug: event.slug!,
+            accessType: event.accessType as never,
+            requiresApproval: event.requiresApproval,
+          },
+        };
+      }
+
       if (event.accessType === 'PIN_REQUIRED') {
-        if (!pin) throw new Error('PIN is required');
-        if (pin !== event.pinCode) throw new Error('Invalid PIN');
+        if (!pin) {
+          throw new JoinEventError('PIN is required', 'PIN_REQUIRED');
+        }
+        if (pin !== event.pinCode) {
+          throw new JoinEventError('Invalid PIN', 'INVALID_PIN');
+        }
       }
 
-      // Check existing attendance
       const existingAttendee = await db.attendee.findFirst({
         where: {
           userId,
           eventId: event.id,
         },
-        select: {
-          status: true,
-        },
+        select: { status: true },
       });
 
       if (existingAttendee) {
@@ -126,8 +154,8 @@ export class JoinEventService {
         };
       }
 
-      // Create new attendance and log activity in a transaction
       const status = event.requiresApproval ? 'PENDING' : 'APPROVED';
+
       await db.$transaction([
         db.attendee.create({
           data: {
@@ -143,6 +171,18 @@ export class JoinEventService {
             type: 'JOIN',
           },
         }),
+        ...(!event.requiresApproval
+          ? [
+              db.event.update({
+                where: { id: event.id },
+                data: {
+                  members: {
+                    connect: { id: userId },
+                  },
+                },
+              }),
+            ]
+          : []),
       ]);
 
       return {
@@ -156,7 +196,6 @@ export class JoinEventService {
         },
       };
     } finally {
-      // Always release the lock, even if there's an error
       this.releaseLock(userId, identifier);
     }
   }
