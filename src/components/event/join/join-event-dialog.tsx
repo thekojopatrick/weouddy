@@ -39,10 +39,27 @@ export function JoinEventDialog({
   const [currentIdentifier, setCurrentIdentifier] =
     useState<string>('');
 
+  const stopCamera = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: false })
+      .then((mediaStream) => {
+        const stream = mediaStream;
+
+        const tracks = stream.getTracks();
+
+        tracks[0].stop();
+
+        tracks.forEach((track) => {
+          track.stop();
+        });
+      });
+  };
+
   // Handle dialog close
   const handleDialogClose = useCallback(
     (isOpen: boolean) => {
       if (!isOpen && step === 'QR_SCAN') {
+        stopCamera();
         setStep('LINK');
       }
       onOpenChangeAction(isOpen);

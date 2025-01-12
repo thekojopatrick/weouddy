@@ -34,6 +34,7 @@ export function QRScannerForm({
   useEffect(() => {
     if (!isDialogOpen) {
       stopCamera();
+      setStream(null);
     }
     // Cleanup when component unmounts
     return () => {
