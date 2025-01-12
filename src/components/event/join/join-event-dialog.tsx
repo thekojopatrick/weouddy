@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { LinkPasteForm } from './forms/link-paste-form';
 import { PinEntryForm } from './forms/pin-entry-form';
+import { QRScannerForm } from './forms/qr-scanner-form';
 import JoinEventSuccess from './forms/success';
 import { JoinStep } from '@/types/event';
 
@@ -35,33 +36,19 @@ export function JoinEventDialog({
   const [step, setStep] = useState<'LINK' | 'PIN' | 'QR_SCAN'>(
     accessType === 'PIN_REQUIRED' ? 'PIN' : 'LINK'
   );
-
   const [currentIdentifier, setCurrentIdentifier] =
-    useState<string>();
+    useState<string>('');
 
-  // const handleJoin = async (link: string) => {
-  //   const identifier = extractIdentifierFromLink(link);
-  //   if (!identifier) {
-  //     toast.error('Error', { description: 'Invalid event link' });
-  //     return;
-  //   }
-
-  //   const eventInfo = await eventQuery.refetch();
-  //   if (eventInfo.data?.event?.accessType === 'PIN_REQUIRED') {
-  //     setStep('PIN');
-  //   } else {
-  //     joinMutation.mutate({ identifier });
-  //   }
-  // };
-
-  // const handlePinSubmit = (pin: string) => {
-  //   if (eventQuery.data?.event?.id) {
-  //     joinMutation.mutate({
-  //       identifier: eventQuery.data.event.id,
-  //       pin,
-  //     });
-  //   }
-  // };
+  // Handle dialog close
+  const handleDialogClose = useCallback(
+    (isOpen: boolean) => {
+      if (!isOpen && step === 'QR_SCAN') {
+        setStep('LINK');
+      }
+      onOpenChangeAction(isOpen);
+    },
+    [step, onOpenChangeAction]
+  );
 
   const handleJoinViaLink = useCallback(
     async (link: string) => {
@@ -71,7 +58,8 @@ export function JoinEventDialog({
         return;
       }
 
-      // Check access type before joining
+      setCurrentIdentifier(identifier);
+
       const res = await fetch(`/api/events/${identifier}`);
       const data = await res.json();
 
@@ -81,50 +69,88 @@ export function JoinEventDialog({
         joinMutation.mutate({ identifier });
       }
     },
-    [joinMutation, setStep]
+    [joinMutation]
   );
 
-  const handleQRScan = () => {
-    // Implement QR scanning logic
-    setStep('QR_SCAN');
-    console.log('QR scan triggered');
-  };
+  const handleQRScanComplete = useCallback(
+    (scannedUrl: string) => {
+      handleJoinViaLink(scannedUrl);
+      setStep('LINK');
+    },
+    [handleJoinViaLink]
+  );
 
-  return (
-    <ResponsiveDialog
-      open={joinMutation.isSuccess ? false : open}
-      onOpenChangeAction={onOpenChangeAction}
-    >
-      <DialogHeader>
-        <DialogTitle>
-          {step === 'PIN' ? 'Enter Event PIN' : 'Join Event'}
-        </DialogTitle>
-      </DialogHeader>
+  const handlePinSubmitWrapper = useCallback(
+    (identifier: string, pin: string) => {
+      handlePinSubmit(identifier, pin);
+    },
+    [handlePinSubmit]
+  );
 
-      {joinMutation.isPending ? (
-        <JoinEventSuccess isLoading={true} />
-      ) : joinMutation.isSuccess &&
-        joinMutation.data.status === 'PENDING' ? (
+  const renderContent = () => {
+    if (joinMutation.isPending) {
+      return <JoinEventSuccess isLoading={true} />;
+    }
+
+    if (
+      joinMutation.isSuccess &&
+      joinMutation.data.status === 'PENDING'
+    ) {
+      return (
         <Alert>
           <AlertDescription>
             Request sent. Waiting for host approval.
           </AlertDescription>
         </Alert>
-      ) : step === 'PIN' ? (
-        <PinEntryForm
-          onSubmitAction={(pin) =>
-            handlePinSubmit(currentIdentifier!, pin)
-          }
-          isLoading={isLoading}
-          eventId={eventId! ?? eventSlug}
-        />
-      ) : (
-        <LinkPasteForm
-          onSubmitAction={handleJoinViaLink}
-          isLoading={isLoading || joinMutation.isPending}
-          onScanQRAction={handleQRScan}
-        />
-      )}
+      );
+    }
+
+    switch (step) {
+      case 'PIN':
+        return (
+          <PinEntryForm
+            onSubmitAction={handlePinSubmitWrapper}
+            isLoading={isLoading}
+            eventId={
+              currentIdentifier || eventId || eventSlug || null
+            }
+          />
+        );
+      case 'QR_SCAN':
+        return (
+          <QRScannerForm
+            onScanCompleteAction={handleQRScanComplete}
+            onBackAction={() => setStep('LINK')}
+            isDialogOpen={open}
+          />
+        );
+      default:
+        return (
+          <LinkPasteForm
+            onSubmitAction={handleJoinViaLink}
+            isLoading={isLoading || joinMutation.isPending}
+            onScanQRAction={() => setStep('QR_SCAN')}
+          />
+        );
+    }
+  };
+
+  return (
+    <ResponsiveDialog
+      open={joinMutation.isSuccess ? false : open}
+      onOpenChangeAction={handleDialogClose}
+    >
+      <DialogHeader>
+        <DialogTitle>
+          {step === 'PIN'
+            ? 'Enter Event PIN'
+            : step === 'QR_SCAN'
+              ? 'Scan QR Code'
+              : 'Join Event'}
+        </DialogTitle>
+      </DialogHeader>
+
+      {renderContent()}
     </ResponsiveDialog>
   );
 }
