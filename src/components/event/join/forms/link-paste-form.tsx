@@ -1,8 +1,8 @@
 'use client';
 
-import { LinkIcon, Loader2 } from 'lucide-react';
+import { LinkIcon } from 'lucide-react';
 
-import { Button, LoadingButton } from '@/components/ui/button';
+import { LoadingButton } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
@@ -63,14 +63,15 @@ export function LinkPasteForm({
         </div>
       </div>
 
-      <Button
+      <LoadingButton
         variant="outline"
         className="w-full"
         onClick={onScanQRAction}
         disabled={isLoading}
+        loading={isLoading}
       >
         Scan QR Code
-      </Button>
+      </LoadingButton>
     </div>
   );
 }
