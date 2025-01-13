@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores/user-store';
 import {
   useMutation,
   useQuery,
@@ -29,6 +30,7 @@ export function usePostInteractions(
 ) {
   const queryClient = useQueryClient();
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const { currentUser } = useUserStore();
 
   const { data: postMetrics } = useQuery<PostMetrics>({
     queryKey: ['postMetrics', postId],
@@ -121,8 +123,8 @@ export function usePostInteractions(
         userId: currentUserId,
         user: {
           id: currentUserId,
-          name: 'You', // This will be replaced when the real data comes in
-          avatarUrl: null,
+          name: currentUser?.name ?? 'You',
+          avatarUrl: currentUser?.avatarUrl ?? null,
         },
       };
 

@@ -2,7 +2,6 @@
 
 import { CurrentUser, EventWithDetails } from '@/types/prisma.types';
 import { usePathname, useRouter } from 'next/navigation';
-
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CountrySelector } from './country-selector';
@@ -26,9 +25,7 @@ export function SiteHeader({
   );
   const pathname = usePathname();
   const router = useRouter();
-
   const showBackButton = !pathname.match(/^\/($|discover)/);
-
   const { accountData, loading } = useAccount();
 
   return (
@@ -62,11 +59,11 @@ export function SiteHeader({
           )}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link
-              href={user ? '/discover' : '/'}
+              href={accountData ? '/discover' : '/'}
               className="transition-colors hover:text-foreground/80"
               prefetch
             >
-              {user ? 'Explore' : 'Home'}
+              {accountData ? 'Explore' : 'Home'}
             </Link>
             <Link
               href="/billboards"

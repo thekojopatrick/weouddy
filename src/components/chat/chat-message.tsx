@@ -13,6 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useUserStore } from '@/stores/user-store';
+import { getNameInitials } from '@/lib/utils';
 
 interface ChatMessageProps {
   message: ChatMessage;
@@ -29,16 +31,25 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
   onDeleteMessage,
   onReaction,
 }) => {
-  const displayName =
-    message.user?.name || message.user?.username || 'Anonymous';
+  const { currentUser } = useUserStore();
+
+  const displayName = isOwnMessage
+    ? currentUser?.name || currentUser?.username
+    : message.user?.name || message.user?.username || 'Anonymous';
+
+  const displayProfilePic = isOwnMessage
+    ? currentUser?.avatarUrl
+    : message.user?.avatarUrl;
 
   return (
     <div
       className={`flex gap-2 mb-4 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
     >
       <Avatar className="h-8 w-8">
-        <AvatarImage src={message.user?.avatarUrl as never} />
-        <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
+        <AvatarImage src={displayProfilePic as never} />
+        <AvatarFallback>
+          {getNameInitials(displayName ?? message.user.name!)}
+        </AvatarFallback>
       </Avatar>
 
       <div

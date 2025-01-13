@@ -1,0 +1,192 @@
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@prisma/client';
+
+// Types
+type UserProfile = Pick<
+  User,
+  'id' | 'name' | 'email' | 'avatarUrl' | 'bio' | 'username'
+>;
+
+interface UserState {
+  currentUser: UserProfile | null;
+  userProfiles: Record<string, UserProfile>;
+  isLoading: boolean;
+  error: string | null;
+  initialize: () => Promise<void>;
+  fetchUserProfile: (userId: string) => Promise<UserProfile | null>;
+  updateCurrentUser: (updates: Partial<UserProfile>) => Promise<void>;
+  clearStore: () => void;
+}
+
+export const useUserStore = create<UserState>()(
+  persist(
+    (set, get) => ({
+      currentUser: null,
+      userProfiles: {},
+      isLoading: true,
+      error: null,
+
+      initialize: async () => {
+        const supabase = createClient();
+
+        try {
+          set({ isLoading: true });
+          const {
+            data: { user },
+            error,
+          } = await supabase.auth.getUser();
+
+          if (error || !user) {
+            set({
+              error: error?.message ?? 'No user found',
+              isLoading: false,
+            });
+            return;
+          }
+
+          const { data } = await supabase
+            .from('User')
+            .select('id, email, name, username, avatarUrl, bio')
+            .eq('id', user.id)
+            .single();
+
+          if (data) {
+            const userData: UserProfile = {
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              username: data.username,
+              avatarUrl: data.avatarUrl,
+              bio: data.bio,
+            };
+
+            set({
+              currentUser: userData,
+              userProfiles: {
+                ...get().userProfiles,
+                [userData.id]: userData,
+              },
+              isLoading: false,
+              error: null,
+            });
+          }
+        } catch (error) {
+          set({ error: (error as Error).message, isLoading: false });
+        }
+      },
+
+      fetchUserProfile: async (userId: string) => {
+        const { userProfiles } = get();
+
+        // Check local storage cache first
+        if (userProfiles[userId]) {
+          return userProfiles[userId];
+        }
+
+        const supabase = createClient();
+
+        try {
+          const { data } = await supabase
+            .from('User')
+            .select('id, email, name, username, avatarUrl, bio')
+            .eq('id', userId)
+            .single();
+
+          if (data) {
+            const userProfile: UserProfile = {
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              username: data.username,
+              avatarUrl: data.avatarUrl,
+              bio: data.bio,
+            };
+
+            // Update store with new profile
+            set((state) => ({
+              userProfiles: {
+                ...state.userProfiles,
+                [userId]: userProfile,
+              },
+            }));
+
+            return userProfile;
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        }
+
+        return null;
+      },
+
+      updateCurrentUser: async (updates: Partial<UserProfile>) => {
+        const { currentUser } = get();
+        const supabase = createClient();
+
+        if (!currentUser) {
+          throw new Error('No current user');
+        }
+
+        try {
+          const { data, error } = await supabase
+            .from('User')
+            .update({
+              ...updates,
+              updatedAt: new Date().toISOString(),
+            })
+            .eq('id', currentUser.id)
+            .single();
+
+          if (error) throw error;
+
+          if (data) {
+            const updatedUser: UserProfile = {
+              ...currentUser,
+              ...updates,
+            };
+
+            set((state) => ({
+              currentUser: updatedUser,
+              userProfiles: {
+                ...state.userProfiles,
+                [currentUser.id]: updatedUser,
+              },
+            }));
+          }
+        } catch (error) {
+          set({ error: (error as Error).message });
+          throw error;
+        }
+      },
+
+      clearStore: () => {
+        set({
+          currentUser: null,
+          userProfiles: {},
+          isLoading: false,
+          error: null,
+        });
+      },
+    }),
+    {
+      name: 'user-storage', // unique name for localStorage key
+      storage: createJSONStorage(() => localStorage),
+      // Only persist these fields:
+      partialize: (state) => ({
+        currentUser: state.currentUser,
+        userProfiles: state.userProfiles,
+      }),
+    }
+  )
+);
+
+// Auth state change listener
+createClient().auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    useUserStore.getState().clearStore();
+  } else if (event === 'SIGNED_IN' && session) {
+    useUserStore.getState().initialize();
+  }
+});
