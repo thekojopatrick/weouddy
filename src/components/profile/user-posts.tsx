@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { EventPostCard } from '../post/post-card';
+
 import { PostWithDetails } from '@/types/prisma.types';
 import { fetchUserPosts } from '@/server/actions/user/queries';
+import MasonryPosts from './masonry-posts';
 
 interface UserPostsProps {
   userId: string;
@@ -53,14 +54,8 @@ export function UserPosts({ userId }: UserPostsProps) {
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {posts.map((post) => (
-        <EventPostCard
-          key={post.id}
-          post={post as never}
-          userId={userId}
-        />
-      ))}
+    <div className="p-4">
+      <MasonryPosts posts={posts} userId={userId} />
 
       {hasMore && (
         <div className="col-span-full flex justify-center mt-6">

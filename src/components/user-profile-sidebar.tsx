@@ -91,7 +91,7 @@ export function UserProfileSidebar({
           </div>
 
           <div className="space-y-2">
-            <Link href={`/${user.username}`}>
+            <Link prefetch href={`/${user.username}`}>
               <Button
                 variant="secondary"
                 className="w-full justify-start"

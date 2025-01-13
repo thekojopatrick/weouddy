@@ -53,7 +53,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
   const handleSave = async () => {
     const result = await updateProfile({
-      fullname: localData.fullname,
+      name: localData.fullname,
       username: localData.username,
     });
 
