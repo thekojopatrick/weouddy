@@ -22,7 +22,10 @@ export const useEventChat = (eventId: string, userId: string) => {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setMessages((prev) => [...prev, payload.new as ChatMessage]);
+            setMessages((prev) => [
+              ...prev,
+              payload.new as ChatMessage,
+            ]);
           } else if (payload.eventType === 'DELETE') {
             setMessages((prev) =>
               prev.filter((message) => message.id !== payload.old.id)
@@ -49,7 +52,8 @@ export const useEventChat = (eventId: string, userId: string) => {
     try {
       const { data, error } = await supabase
         .from('ChatMessage')
-        .select(`
+        .select(
+          `
           *,
           user:userId (
             id,
@@ -57,7 +61,8 @@ export const useEventChat = (eventId: string, userId: string) => {
             avatarUrl,
             name
           )
-        `)
+        `
+        )
         .eq('eventId', eventId)
         .order('createdAt', { ascending: true });
 
@@ -85,7 +90,8 @@ export const useEventChat = (eventId: string, userId: string) => {
             isPinned: false,
           },
         ])
-        .select(`
+        .select(
+          `
           *,
           user:userId (
             id,
@@ -93,8 +99,11 @@ export const useEventChat = (eventId: string, userId: string) => {
             avatarUrl,
             name
           )
-        `)
+        `
+        )
         .single();
+
+      console.log('message:', data);
 
       if (error) throw error;
       return data;

@@ -21,6 +21,22 @@ export interface ChatMessage {
   reactions?: ReactionInfo[];
 }
 
+export interface Reaction {
+  id: string;
+  emoji: string;
+  messageId: string;
+  userId: string;
+  createdAt: string;
+}
+
+export interface MessageStatus {
+  id: string;
+  messageId: string;
+  userId: string;
+  status: 'delivered' | 'read';
+  updatedAt: string;
+}
+
 export interface ChatSettings {
   isEnabled: boolean;
   allowGuestMessages: boolean;
