@@ -42,7 +42,7 @@ export const ChatInput: FC<ChatInputProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Write a message..."
           disabled={disabled || isSending}
-          className="pr-10 rounded-full h-[44px]"
+          className="pr-10 rounded-full h-[44px] shadow-none"
         />
         <div className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1">
           <EmojiPicker
@@ -55,7 +55,7 @@ export const ChatInput: FC<ChatInputProps> = ({
       <LoadingButton
         type="submit"
         size="icon"
-        className={`rounded-lg bg-zinc-100 text-black hover:text-white `}
+        className={`rounded-lg bg-zinc-100 text-black hover:text-white shadow-none h-[44px] w-[44px]`}
         disabled={disabled || isSending || !message.trim()}
         loading={isSending}
       >
