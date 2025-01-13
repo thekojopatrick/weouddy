@@ -156,7 +156,7 @@ export function JoinEventDialog({
     <ResponsiveDialog
       open={joinMutation.isSuccess ? false : open}
       onOpenChangeAction={handleDialogClose}
-      className="h-[400px] max-h-[40vh] py-2"
+      className="max-h-[40vh] py-2 px-4 pb-6"
     >
       <DialogHeader>
         <DialogTitle className="text-sm">

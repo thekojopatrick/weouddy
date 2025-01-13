@@ -88,7 +88,7 @@ export function Comments({
     <div className="space-y-4">
       {comments.map((comment) => (
         <div key={comment.id} className="flex gap-2 group">
-          <Avatar className="h-8 w-8">
+          <Avatar className="size-5">
             <AvatarImage src={comment.user.avatarUrl || undefined} />
             <AvatarFallback className="text-xs">
               {getNameInitials(comment.user.name)}
@@ -104,7 +104,7 @@ export function Comments({
                   {formatTimeAgo(new Date(comment.createdAt))}
                 </span>
               </div>
-              <p className="text-sm">{comment.content}</p>
+              <p className="text-xs">{comment.content}</p>
             </div>
           </div>
           {comment.userId === currentUserId && (
@@ -184,12 +184,12 @@ export function Comments({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChangeAction}>
-      <DrawerContent>
+      <DrawerContent className="max-h-[60vh]">
         <DrawerHeader>
           <DrawerTitle className="text-sm">Comments</DrawerTitle>
         </DrawerHeader>
         <div className="px-4">
-          <div className="h-[50vh] overflow-y-auto px-1">
+          <div className="overflow-y-auto px-1">
             <CommentList />
           </div>
           <form onSubmit={onSubmit} className="flex gap-2 py-4">
@@ -205,7 +205,7 @@ export function Comments({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 disabled={isLoading}
-                className="rounded-full text-xs pr-10"
+                className="rounded-full text-xs pr-10 shadow-sm "
               />
               <div className="absolute right-1">
                 <EmojiPicker

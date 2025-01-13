@@ -23,7 +23,7 @@ export function LinkPasteForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="event-link">Event Link</Label>
+        <Label htmlFor="event-link font-medium">Paste Link</Label>
         <div className="relative">
           <Input
             id="event-link"
@@ -31,7 +31,7 @@ export function LinkPasteForm({
             placeholder="weouddy.com/events/..."
             value={link}
             onChange={(e) => setLink(e.target.value)}
-            className="pr-24"
+            className="pr-24 shadow-sm"
           />
           <LoadingButton
             size="sm"
@@ -65,7 +65,7 @@ export function LinkPasteForm({
 
       <LoadingButton
         variant="outline"
-        className="w-full"
+        className="w-full shadow-sm"
         onClick={onScanQRAction}
         disabled={isLoading}
         loading={isLoading}
