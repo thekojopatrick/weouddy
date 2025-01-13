@@ -44,7 +44,7 @@ export const ChatMessages: FC<ChatMessagesProps> = ({
   }
 
   return (
-    <ScrollArea className="flex flex-col p-4 h-[80vh] max-h-[80vh] sm:min-h-[80vh]">
+    <ScrollArea className="flex flex-col p-4 h-[70vh] max-h-[80vh] sm:min-h-[80vh]">
       {messages.map((message) => (
         <ChatMessageItem
           key={message.id}
