@@ -2,7 +2,6 @@ import type { Metadata, ResolvingMetadata } from 'next';
 
 import EventRoom from './../_components/event-room';
 import { formatEventDateTime } from '@/lib/formatters';
-import { getEventBySlug } from '@/server/actions/event/queries';
 import { getSession } from '@/lib/auth';
 import { getURL } from '@/lib/utils';
 import { EventService } from '@/server/services/event';
@@ -41,7 +40,7 @@ export async function generateMetadata(
         'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
       url: `${siteUrl}/${event?.slug}`,
       images: [
-        `${siteUrl}/assets/default-event-cover.png`,
+        `${siteUrl}/assets/default-event-cover.jpg`,
         ...previousImages,
       ],
     },
@@ -59,8 +58,6 @@ export default async function EventRoomPage(props: {
   if (!session) return null;
 
   const event = await EventService.getEvent(eventId);
-
-  console.log({ event });
 
   return (
     <>

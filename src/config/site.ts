@@ -1,63 +1,63 @@
-import { getURL } from "@/lib/utils";
+import { getURL } from '@/lib/utils';
 
 const siteUrl = getURL();
 
 export const siteConfig = {
-   metadataBase: new URL(siteUrl),
-  name: "WeOuddy",
+  metadataBase: new URL(siteUrl),
+  name: 'WeOuddy',
   description:
-    "WeOuddy connects people to moments that matter with real-time event engagement and community sharing.",
+    'WeOuddy connects people to moments that matter with real-time event engagement and community sharing.',
   footer: [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Contact Us", href: "/contact" },
-    { name: "Privacy Policy", href: "/privacy-policy" },
-    { name: "Terms & Conditions", href: "/terms-and-conditions" },
-    { name: "FAQ", href: "/faq" },
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact Us', href: '/contact' },
+    { name: 'Privacy Policy', href: '/privacy-policy' },
+    { name: 'Terms & Conditions', href: '/terms-and-conditions' },
+    { name: 'FAQ', href: '/faq' },
   ],
 };
 
 export const siteMeta = {
-  title: "WeOuddy - Real-Time Event Engagement and Community Sharing",
+  title: 'WeOuddy - Real-Time Event Engagement and Community Sharing',
   description:
-    "Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.",
+    'Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.',
   keywords: [
-    "real-time engagement",
-    "event sharing platform",
-    "community sharing",
-    "WeOuddy",
-    "event management",
-    "social events",
-    "community connections",
-    "event platform",
+    'real-time engagement',
+    'event sharing platform',
+    'community sharing',
+    'WeOuddy',
+    'event management',
+    'social events',
+    'community connections',
+    'event platform',
   ],
-  applicationName: "WeOuddy",
+  applicationName: 'WeOuddy',
   openGraph: {
-    title: "WeOuddy - Moments That Matter",
+    title: 'WeOuddy - Moments That Matter',
     description:
-      "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
+      'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
     url: siteUrl,
-    siteName: "WeOuddy",
-    locale: "en_US",
-    type: "website",
-    images: "/assets/og-image.png", // Replace with your hero/banner image path
+    siteName: 'WeOuddy',
+    locale: 'en_US',
+    type: 'website',
+    images: [`${siteUrl}/assets/og-image.jpg`], // Replace with your hero/banner image path
   },
   twitter: {
-    card: "summary_large_image",
-    title: "WeOuddy - Moments That Matter",
+    card: 'summary_large_image',
+    title: 'WeOuddy - Moments That Matter',
     description:
-      "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
-    creator: "@OfficialWeOuddy",
-    images: [`${siteUrl}/og-image.png`]
+      'Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.',
+    creator: '@OfficialWeOuddy',
+    images: [`${siteUrl}/assets/og-image.jpg`],
   },
-  manifest: "/manifest.json",
+  manifest: '/manifest.json',
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-32x32.png",
-    apple: "/apple-icon.png",
+    icon: '/favicon.ico',
+    shortcut: '/favicon-32x32.png',
+    apple: '/apple-icon.png',
     other: {
-      rel: "apple-touch-icon",
-      url: "/apple-touch-icon.png",
+      rel: 'apple-touch-icon',
+      url: '/apple-touch-icon.png',
     },
   },
 };
