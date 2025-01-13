@@ -40,7 +40,7 @@ export const siteMeta = {
     siteName: 'WeOuddy',
     locale: 'en_US',
     type: 'website',
-    images: [`${siteUrl}/assets/og-image.jpg`], // Replace with your hero/banner image path
+    images: [`${siteUrl}assets/og-image.jpg`], // Replace with your hero/banner image path
   },
   twitter: {
     card: 'summary_large_image',
@@ -48,7 +48,7 @@ export const siteMeta = {
     description:
       'Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.',
     creator: '@OfficialWeOuddy',
-    images: [`${siteUrl}/assets/og-image.jpg`],
+    images: [`${siteUrl}assets/og-image.jpg`],
   },
   manifest: '/manifest.json',
   icons: {

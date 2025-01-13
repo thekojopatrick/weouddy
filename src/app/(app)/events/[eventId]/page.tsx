@@ -38,9 +38,9 @@ export async function generateMetadata(
       title: `${event?.name} | WeOuddy - Moments That Matter`,
       description:
         'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
-      url: `${siteUrl}/${event?.slug}`,
+      url: `${siteUrl}${event?.slug}`,
       images: [
-        `${siteUrl}/assets/default-event-cover.jpg`,
+        `${siteUrl}assets/default-event-cover.jpg`,
         ...previousImages,
       ],
     },
