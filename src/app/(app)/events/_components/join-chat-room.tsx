@@ -93,7 +93,6 @@ const JoinChatRoom = ({
         footerContent={
           <ChatInput onSendMessage={handleSendMessage} />
         }
-        maxHeight={isSmallDevice ? '90vh' : '80vh'}
       />
     </>
   );

@@ -64,7 +64,7 @@ export default function CustomSheet({
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
         side={side}
-        className={`flex flex-col rounded-l-lg gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
+        className={`flex flex-col rounded-t-2xl md:rounded-l-2xl gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
       >
         {headerContent ? (
           <SheetHeader

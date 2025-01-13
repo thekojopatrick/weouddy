@@ -71,24 +71,8 @@ const EventModal = memo(
         onCloseAction();
         return;
       }
-
-      // If PIN is required or approval is needed, show the join dialog
-      if (
-        event.accessType === 'PIN_REQUIRED' ||
-        event.requiresApproval
-      ) {
-        setShowJoinDialog(true);
-      } else {
-        // Direct join for simple cases
-        setShowJoinDialog(true);
-      }
-    }, [
-      accountData?.id,
-      event.accessType,
-      event.requiresApproval,
-      onCloseAction,
-      router,
-    ]);
+      setShowJoinDialog(true);
+    }, [accountData?.id, onCloseAction, router]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
