@@ -12,6 +12,7 @@ import SearchDialog from './event/search-dialog';
 import { useAccount } from '@/hooks/account/use-account';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Container } from './common/container';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 export function SiteHeader({
   user,
@@ -82,27 +83,42 @@ export function SiteHeader({
             <SearchDialog events={events as never} />
           </div>
           <div className="md:ml-auto flex items-center space-x-3">
-            {!loading && accountData ? (
-              <NavUser
-                user={{
-                  name: accountData.fullname!,
-                  email: accountData.email!,
-                  avatar:
-                    accountData.avatarUrl ?? user?.avatarUrl ?? '',
-                  username:
-                    accountData.username ?? user?.username ?? '',
-                }}
-              />
+            {loading ? (
+              <>
+                <Avatar>
+                  <AvatarFallback className="shimmer"></AvatarFallback>
+                </Avatar>
+              </>
             ) : (
-              <Button
-                variant="outline"
-                className="rounded-full"
-                asChild
-              >
-                <Link href="/auth">Login</Link>
-              </Button>
+              <>
+                {!loading && accountData ? (
+                  <NavUser
+                    user={{
+                      name: accountData.fullname!,
+                      email: accountData.email!,
+                      avatar:
+                        accountData.avatarUrl ??
+                        user?.avatarUrl ??
+                        '',
+                      username:
+                        accountData.username ?? user?.username ?? '',
+                    }}
+                  />
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="rounded-full"
+                    asChild
+                  >
+                    <Link href="/auth">Login</Link>
+                  </Button>
+                )}
+              </>
             )}
-            <CountrySelector />
+
+            <div className="hidden md:block">
+              <CountrySelector />
+            </div>
           </div>
         </div>
       </Container>
