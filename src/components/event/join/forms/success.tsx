@@ -7,7 +7,7 @@ interface SuccessProps {
 export default function Success({ isLoading = false }: SuccessProps) {
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 my-6">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">
           Processing your request...
@@ -17,7 +17,7 @@ export default function Success({ isLoading = false }: SuccessProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4">
+    <div className="flex flex-col items-center justify-center space-y-4 my-6">
       <CheckCircle className="h-8 w-8 text-green-500" />
       <p className="text-sm text-muted-foreground">
         Redirecting to event...

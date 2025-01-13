@@ -156,9 +156,10 @@ export function JoinEventDialog({
     <ResponsiveDialog
       open={joinMutation.isSuccess ? false : open}
       onOpenChangeAction={handleDialogClose}
+      className="h-[400px] max-h-[40vh]"
     >
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle className="text-base">
           {step === 'PIN'
             ? 'Enter Event PIN'
             : step === 'QR_SCAN'
