@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { CountrySelector } from './country-selector';
 import Image from 'next/image';
 import Link from 'next/link';
-import { NavUser } from './nav-user';
+
 import SearchDialog from './event/search-dialog';
 import { useAccount } from '@/hooks/account/use-account';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Container } from './common/container';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { UserProfileSidebar } from './user-profile-sidebar';
 
 export function SiteHeader({
   user,
@@ -83,37 +83,25 @@ export function SiteHeader({
             <SearchDialog events={events as never} />
           </div>
           <div className="md:ml-auto flex items-center space-x-3">
-            {loading ? (
-              <>
-                <Avatar className="size-8">
-                  <AvatarFallback className="shimmer size-8"></AvatarFallback>
-                </Avatar>
-              </>
+            {!loading && accountData ? (
+              <UserProfileSidebar
+                user={{
+                  name: accountData.fullname!,
+                  email: accountData.email!,
+                  avatar:
+                    accountData.avatarUrl ?? user?.avatarUrl ?? '',
+                  username:
+                    accountData.username ?? user?.username ?? '',
+                }}
+              />
             ) : (
-              <>
-                {!loading && accountData ? (
-                  <NavUser
-                    user={{
-                      name: accountData.fullname!,
-                      email: accountData.email!,
-                      avatar:
-                        accountData.avatarUrl ??
-                        user?.avatarUrl ??
-                        '',
-                      username:
-                        accountData.username ?? user?.username ?? '',
-                    }}
-                  />
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="rounded-full"
-                    asChild
-                  >
-                    <Link href="/auth">Login</Link>
-                  </Button>
-                )}
-              </>
+              <Button
+                variant="outline"
+                className="rounded-full h-[40px]"
+                asChild
+              >
+                <Link href="/auth">Login</Link>
+              </Button>
             )}
 
             <div className="hidden md:block">
