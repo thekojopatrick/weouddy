@@ -43,7 +43,8 @@ class RedisCache {
     }
   }
 
-  async get(key: string): Promise<unknown> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async get(key: string): Promise<any> {
     this.ensureConnection();
     const value = await this.client!.get(key);
     if (!value) return null;

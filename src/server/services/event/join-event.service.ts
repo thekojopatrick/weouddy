@@ -1,6 +1,6 @@
+import { cache } from '@/lib/redis'; // Implement a caching solution like Redis or memory cache
 import { db } from '@/server/db/prisma';
 import { z } from 'zod';
-import { cache } from '@/lib/redis'; // Implement a caching solution like Redis or memory cache
 
 const joinEventSchema = z.object({
   identifier: z.string().min(1),
@@ -48,7 +48,7 @@ export class JoinEventService {
     data: unknown
   ) {
     const cacheKey = `${this.EVENT_CACHE_PREFIX}${identifier}`;
-    await cache.set(cacheKey, data, 60); // Cache for 1 minute
+    await cache.set(cacheKey, data, 60 * 5); // Cache for 5 minute
   }
 
   private static async acquireLock(
