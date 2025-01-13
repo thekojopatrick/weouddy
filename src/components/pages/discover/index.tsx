@@ -77,7 +77,7 @@ export default function DiscoverPage({
   ) as string[];
 
   return (
-    <div className="flex min-h-screen flex-col mt-4">
+    <div className="flex min-h-screen flex-col mt-4 pb-8 md:pb-16">
       <Container>
         <section className="flex-1">
           <div className="flex flex-col gap-4">

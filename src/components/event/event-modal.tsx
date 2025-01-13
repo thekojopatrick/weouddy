@@ -136,7 +136,7 @@ const EventModal = memo(
               <Badge variant="secondary" className="capitalize">
                 {event.type}
               </Badge>
-              <h2 className="text-xl font-bold mt-2 text-primary/80">
+              <h2 className="text-base md:text-xl tracking-tight font-bold mt-2 text-primary/80">
                 {event.name}
               </h2>
               <div className="flex items-center gap-2 mt-2">
@@ -148,7 +148,7 @@ const EventModal = memo(
                     {getNameInitials(event?.host?.name as string)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs md:text-sm text-muted-foreground tracking-tight">
                   Hosted by {event.host.name}
                 </span>
               </div>
@@ -228,9 +228,9 @@ const EventDetails = memo(
   }) => (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <Calendar className="h-5 w-5 text-muted-foreground" />
+        <Calendar className="size-[18px] text-muted-foreground self-start mt-1" />
         <div>
-          <div className="font-medium text-sm text-primary/80">
+          <div className="font-semibold tracking-tight text-sm text-primary/80">
             {event.date}
           </div>
           <div className="text-xs text-muted-foreground">
@@ -240,9 +240,9 @@ const EventDetails = memo(
       </div>
 
       <div className="flex items-center gap-4">
-        <MapPin className="h-5 w-5 text-muted-foreground" />
-        <div>
-          <div className="font-medium text-sm text-primary/80">
+        <MapPin className="size-[18px] text-muted-foreground self-start mt-1" />
+        <div className="">
+          <div className="font-semibold tracking-tight text-sm text-primary/80">
             {event.location.name}
           </div>
           <div className="text-xs text-muted-foreground">
@@ -252,13 +252,15 @@ const EventDetails = memo(
       </div>
 
       <div className="flex items-center gap-4">
-        <Users className="h-5 w-5 text-muted-foreground" />
-        <div className="font-medium text-sm text-primary/80">
+        <Users className="size-[18px] text-muted-foreground" />
+        <div className="font-semibold tracking-tight text-sm text-primary/80">
           {event.members ?? 0} members
         </div>
       </div>
       <div className="space-y-2">
-        <h3 className="font-semibold text-sm">About event</h3>
+        <h3 className="font-semibold tracking-tight text-sm">
+          About event
+        </h3>
         <p className="text-sm text-muted-foreground">
           {event.description}
         </p>
