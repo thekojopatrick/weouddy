@@ -1,9 +1,10 @@
 'use client';
 
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Image from 'next/image';
-import { MediaControls } from '../media-controls';
-import { useMediaSlider } from '@/hooks/use-media-slider';
+import { MediaControls } from './media-controls';
+
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { useMediaSlider } from '@/hooks/post/use-media-slider';
 
 interface PostMediaSliderProps {
   media: Array<{

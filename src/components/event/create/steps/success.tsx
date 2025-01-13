@@ -4,7 +4,6 @@ import { Button, LoadingButton } from '@/components/ui/button';
 import { CopyIcon, Download, Share2 } from 'lucide-react';
 
 import Image from 'next/image';
-import { QRCodeType } from '@/lib/qr/types';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { generateQRCode } from '@/lib/qr/generator';

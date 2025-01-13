@@ -17,7 +17,7 @@ import { EventPostCardProps } from './post-card';
 import React from 'react';
 import { formatTimeAgo } from '@/lib/formatters';
 import { getNameInitials } from '@/lib/utils';
-import { usePostInteractions } from '@/hooks/use-post-interaction';
+import { usePostInteractions } from '@/hooks/post/use-post-interaction';
 
 export default function CaptionOnlyPostCard({
   post,

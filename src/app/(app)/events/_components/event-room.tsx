@@ -15,7 +15,7 @@ import { useAuthProtection } from '@/hooks/use-auth-protection';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import FeedbackDialog from '@/components/feedback-dialog';
 
-import { usePosts } from '@/hooks/use-post';
+import { usePosts } from '@/hooks/post/use-post';
 import MasonryPosts from './masonry-posts';
 import ShareEventPopover from './share-event';
 import { Button } from '@/components/ui/button';

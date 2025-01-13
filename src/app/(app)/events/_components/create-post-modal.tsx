@@ -34,7 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useState } from 'react';
-import { useCreatePost } from '@/hooks/use-post';
+import { useCreatePost } from '@/hooks/post/use-post';
 import { useUploadFiles } from '@/hooks/use-upload-files';
 
 interface CreatePostModalProps {

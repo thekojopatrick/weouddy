@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
+import { ChatHeader } from '@/components/chat/chat-header';
+import { ChatInput } from '@/components/chat/chat-input';
+import { ChatMessages } from '@/components/chat/message-list';
 import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
-import { RiChat1Fill } from '@remixicon/react';
-import { cn } from '@/lib/utils';
 import { useEventChat } from '@/hooks/event/use-event-chat';
-import { ChatHeader } from '@/components/chat/chat-header';
-import { ChatMessages } from '@/components/chat/message-list';
-import { ChatInput } from '@/components/chat/chat-input';
+import { cn } from '@/lib/utils';
+import { RiChat1Fill } from '@remixicon/react';
 
 const JoinChatRoom = ({
   isSmallDevice,
