@@ -7,6 +7,7 @@ const publicPaths = [
   '/discover',
   '/sentry-example-page',
   '/api/events',
+  '/auth/callback',
 ];
 
 export async function updateSession(request: NextRequest) {
