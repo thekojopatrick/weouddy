@@ -59,11 +59,7 @@ export const ChatInput: FC<ChatInputProps> = ({
         disabled={disabled || isSending || !message.trim()}
         loading={isSending}
       >
-        {isSending ? (
-          <span className="animate-ping">...</span>
-        ) : (
-          <Send className="h-4 w-4" />
-        )}
+        <Send className="h-4 w-4" />
       </LoadingButton>
     </form>
   );
