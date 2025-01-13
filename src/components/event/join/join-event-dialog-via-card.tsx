@@ -96,7 +96,7 @@ export function JoinEventDialogViaEventCard({
   return (
     <ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle className="text-sm">
           {accessType === 'PIN_REQUIRED'
             ? 'Enter Event PIN'
             : requiresApproval

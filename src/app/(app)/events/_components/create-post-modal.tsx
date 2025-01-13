@@ -110,7 +110,7 @@ export function CreatePostModal({
   return (
     <Wrapper open={open} onOpenChange={onOpenChangeAction}>
       <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-[90vh] max-h-[80vh] rounded-none' : 'h-fit'}`}
+        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-screen max-h-[90vh] rounded-none' : 'h-fit'}`}
         closebtnstyle="hidden"
       >
         <HeaderWrapper className="p-0">
@@ -124,7 +124,7 @@ export function CreatePostModal({
             >
               <X className="h-5 w-5" />
             </Button>
-            <TitleWrapper className="text-md">
+            <TitleWrapper className="text-sm">
               Create New Post
             </TitleWrapper>
             <Button
@@ -150,7 +150,7 @@ export function CreatePostModal({
         <form onSubmit={handleSubmit} className="">
           {/* Content */}
           <div
-            className={`flex flex-col ${isMobile ? 'h-[80vh]' : 'h-[500px]'}`}
+            className={`flex flex-col ${isMobile ? 'h-fit' : 'h-[500px]'}`}
           >
             <div className="pt-4 px-4 flex gap-3">
               <Avatar className="h-8 w-8">
@@ -171,7 +171,7 @@ export function CreatePostModal({
               disabled={uploadState.isUploading || isSubmitting}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-full resize-none border-none focus-visible:ring-0 focus:outline-none bg-transparent placeholder:text-muted-foreground text-base"
+              className="w-full placeholder:text-sm h-full resize-none border-none focus-visible:ring-0 focus:outline-none bg-transparent placeholder:text-muted-foreground text-base"
             />
 
             {uploadState.files.length > 0 && (
