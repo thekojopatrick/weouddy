@@ -85,8 +85,8 @@ export function SiteHeader({
           <div className="md:ml-auto flex items-center space-x-3">
             {loading ? (
               <>
-                <Avatar>
-                  <AvatarFallback className="shimmer"></AvatarFallback>
+                <Avatar className="size-8">
+                  <AvatarFallback className="shimmer size-8"></AvatarFallback>
                 </Avatar>
               </>
             ) : (

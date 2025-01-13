@@ -67,7 +67,7 @@ export function NavUser({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="h-8 w-8 rounded-full">
+        <Avatar className="size-8 rounded-full">
           <AvatarImage
             src={avatarUrl ?? user.avatar}
             alt={user.name}
