@@ -110,7 +110,7 @@ export function CreatePostModal({
   return (
     <Wrapper open={open} onOpenChange={onOpenChangeAction}>
       <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-screen rounded-none' : 'h-fit'}`}
+        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-[90vh] max-h-[80vh] rounded-none' : 'h-fit'}`}
         closebtnstyle="hidden"
       >
         <HeaderWrapper className="p-0">
