@@ -53,12 +53,12 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
       </Avatar>
 
       <div
-        className={`flex flex-col ${isOwnMessage ? 'items-end' : ''}`}
+        className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
       >
         <div
           className={`flex items-center gap-2 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
         >
-          <span className="text-sm font-medium">{displayName}</span>
+          <span className="text-xs font-medium">{displayName}</span>
           <span className="text-xs text-muted-foreground">
             {new Date(message.createdAt).toLocaleTimeString([], {
               hour: '2-digit',

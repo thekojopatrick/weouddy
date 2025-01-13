@@ -55,7 +55,7 @@ export const ChatInput: FC<ChatInputProps> = ({
       <LoadingButton
         type="submit"
         size="icon"
-        className={`rounded-lg bg-zinc-100 text-black hover:text-white shadow-none h-[44px] w-[44px]`}
+        className={`rounded-lg bg-zinc-100 text-black hover:text-white shadow-none h-[44px] w-[44px] border`}
         disabled={disabled || isSending || !message.trim()}
         loading={isSending}
       >

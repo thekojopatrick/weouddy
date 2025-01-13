@@ -230,7 +230,7 @@ const EventDetails = memo(
       <div className="flex items-center gap-4">
         <Calendar className="h-5 w-5 text-muted-foreground" />
         <div>
-          <div className="font-medium text-primary/80">
+          <div className="font-medium text-sm text-primary/80">
             {event.date}
           </div>
           <div className="text-xs text-muted-foreground">
@@ -242,7 +242,7 @@ const EventDetails = memo(
       <div className="flex items-center gap-4">
         <MapPin className="h-5 w-5 text-muted-foreground" />
         <div>
-          <div className="font-medium text-primary/80">
+          <div className="font-medium text-sm text-primary/80">
             {event.location.name}
           </div>
           <div className="text-xs text-muted-foreground">
@@ -253,12 +253,12 @@ const EventDetails = memo(
 
       <div className="flex items-center gap-4">
         <Users className="h-5 w-5 text-muted-foreground" />
-        <div className="font-medium text-primary/80">
+        <div className="font-medium text-sm text-primary/80">
           {event.members ?? 0} members
         </div>
       </div>
       <div className="space-y-2">
-        <h3 className="font-semibold">About event</h3>
+        <h3 className="font-semibold text-sm">About event</h3>
         <p className="text-sm text-muted-foreground">
           {event.description}
         </p>
@@ -266,7 +266,9 @@ const EventDetails = memo(
 
       {event.additionalInfo && (
         <div className="space-y-2">
-          <h3 className="font-semibold">Additional information</h3>
+          <h3 className="font-semibold text-sm">
+            Additional information
+          </h3>
           <p className="text-sm text-muted-foreground">
             {event.additionalInfo}
           </p>
