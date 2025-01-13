@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/button';
 import CustomSheet from '@/components/ui/custom-sheet';
 import { RiChat1Fill } from '@remixicon/react';
 import { cn } from '@/lib/utils';
-import EventChatRoom from './event-room-chat';
+import { useEventChat } from '@/hooks/event/use-event-chat';
+import { ChatHeader } from '@/components/chat/chat-header';
+import { ChatMessages } from '@/components/chat/message-list';
+import { ChatInput } from '@/components/chat/chat-input';
 
 const JoinChatRoom = ({
   isSmallDevice,
@@ -22,11 +25,27 @@ const JoinChatRoom = ({
     userAvatar: string;
   };
 }) => {
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    deleteMessage,
+    pinMessage,
+  } = useEventChat(eventId, user.id);
+
   const [showDialog, setShowDialog] = useState(false);
 
   const handleClick = () => {
     if (!user) return null;
     setShowDialog(true);
+  };
+
+  const handleSendMessage = async (content: string) => {
+    try {
+      await sendMessage(content);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   return (
@@ -53,11 +72,27 @@ const JoinChatRoom = ({
         isOpen={showDialog}
         onCloseAction={() => setShowDialog(false)}
         side={isSmallDevice ? 'bottom' : 'right'}
-        title={`Vibez`}
-        content={<EventChatRoom eventId={eventId} userId={user.id} />}
+        headerContent={
+          <ChatHeader
+            title="Event Chat"
+            subtitle="Chat with event participants"
+          />
+        }
+        content={
+          <ChatMessages
+            messages={messages}
+            currentUserId={user.id}
+            isLoading={isLoading}
+            onPinMessage={pinMessage}
+            onDeleteMessage={deleteMessage}
+          />
+        }
         stickyHeader={true}
         stickyFooter={true}
         scrollableContent={true}
+        footerContent={
+          <ChatInput onSendMessage={handleSendMessage} />
+        }
         maxHeight={isSmallDevice ? '90vh' : '80vh'}
       />
     </>

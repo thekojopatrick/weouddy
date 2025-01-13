@@ -1,9 +1,10 @@
 'use client';
 
 import { FC, FormEvent, useState } from 'react';
-import { Send, SmilePlus, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Send } from 'lucide-react';
+import { LoadingButton } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { EmojiPicker } from '../emoji-picker';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
@@ -33,34 +34,37 @@ export const ChatInput: FC<ChatInputProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border-t flex gap-2 bg-background"
+      className="flex gap-2 bg-background w-full"
     >
-      <div className="relative flex-1">
+      <div className="relative flex-1 rounded-full bg-black/5">
         <Input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Write a message..."
           disabled={disabled || isSending}
-          className="pr-10"
+          className="pr-10 rounded-full h-[44px]"
         />
-        <button
-          type="button"
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted"
-        >
-          <SmilePlus className="h-5 w-5 text-muted-foreground" />
-        </button>
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1">
+          <EmojiPicker
+            onEmojiSelectAction={(emoji) =>
+              setMessage((prev) => prev + emoji)
+            }
+          />
+        </div>
       </div>
-      <Button
+      <LoadingButton
         type="submit"
         size="icon"
+        className={`rounded-lg bg-zinc-100 text-black hover:text-white `}
         disabled={disabled || isSending || !message.trim()}
+        loading={isSending}
       >
         {isSending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="animate-ping">...</span>
         ) : (
           <Send className="h-4 w-4" />
         )}
-      </Button>
+      </LoadingButton>
     </form>
   );
 };

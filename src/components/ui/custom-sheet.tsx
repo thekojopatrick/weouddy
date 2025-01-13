@@ -14,7 +14,8 @@ interface CustomSheetProps {
   isOpen: boolean;
   onCloseAction: () => void;
   trigger?: ReactNode;
-  title: string;
+  title?: string;
+  headerContent?: ReactNode;
   content: ReactNode;
   stickyHeader?: boolean;
   stickyFooter?: boolean;
@@ -31,6 +32,7 @@ export default function CustomSheet({
   onCloseAction,
   trigger,
   title,
+  headerContent,
   content,
   stickyHeader = false,
   stickyFooter = false,
@@ -64,13 +66,22 @@ export default function CustomSheet({
         side={side}
         className={`flex flex-col rounded-l-lg gap-0 p-0 sm:max-h-[${maxHeight}] sm:max-w-${maxWidth} [&>button:last-child]:top-3.5`}
       >
-        <SheetHeader
-          className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
-        >
-          <SheetTitle className="border-b border-border px-6 py-4 text-base">
-            {title}
-          </SheetTitle>
-        </SheetHeader>
+        {headerContent ? (
+          <SheetHeader
+            className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
+          >
+            {headerContent}
+          </SheetHeader>
+        ) : (
+          <SheetHeader
+            className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
+          >
+            <SheetTitle className="border-b border-border px-6 py-4 text-base">
+              {title}
+            </SheetTitle>
+          </SheetHeader>
+        )}
+
         <div
           ref={contentRef}
           onScroll={scrollableContent ? handleScroll : undefined}

@@ -33,7 +33,7 @@ const EventChatRoom: FC<EventChatRoomProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-md h-full flex flex-col">
+    <Card className="w-full max-w-md min-h-screen flex flex-col">
       <ChatHeader
         title="Event Chat"
         subtitle="Chat with event participants"
