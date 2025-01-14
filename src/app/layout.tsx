@@ -36,6 +36,21 @@ export default function RootLayout({
           <SonnerToaster />
         </Provider>
         <Script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=G-CD6PSSN7E2`}
+        />
+        <Script id="google-analytics">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-CD6PSSN7E2', {
+                page_path: window.location.pathname,
+          });
+        `}
+        </Script>
+        <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         />
       </body>
