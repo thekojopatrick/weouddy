@@ -19,6 +19,7 @@ import { EventWithFullData } from '@/types/event';
 import { getNameInitials } from '@/lib/utils';
 import { JoinEventDialogViaEventCard } from './join/join-event-dialog-via-card';
 import CustomDrawer from '../ui/custom-drawer';
+import { Drawer } from 'vaul';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -172,13 +173,15 @@ const EventModal = memo(
                 ? 'You are a member of this event.'
                 : 'Join this event to connect with other attendees and get updates.'}
           </p>
-          <Button
-            className="w-full"
-            onClick={buttonConfig.action}
-            disabled={buttonConfig.disabled}
-          >
-            {buttonConfig.text}
-          </Button>
+          <Drawer.Close asChild>
+            <Button
+              className="w-full"
+              onClick={buttonConfig.action}
+              disabled={buttonConfig.disabled}
+            >
+              {buttonConfig.text}
+            </Button>
+          </Drawer.Close>
         </div>
       ),
       [buttonConfig, userStatus]
