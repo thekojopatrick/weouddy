@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatInput } from '@/components/chat/chat-input';
 import { ChatMessages } from '@/components/chat/message-list';
 import { Button } from '@/components/ui/button';
-import CustomSheet from '@/components/ui/custom-sheet';
+import CustomDrawer from '@/components/ui/custom-drawer';
 import { useEventChat } from '@/hooks/event/use-event-chat';
 import { cn } from '@/lib/utils';
 import { RiChat1Fill } from '@remixicon/react';
@@ -32,7 +31,6 @@ const JoinChatRoom = ({
     deleteMessage,
     pinMessage,
   } = useEventChat(eventId, user.id);
-
   const [showDialog, setShowDialog] = useState(false);
 
   const handleClick = () => {
@@ -51,7 +49,7 @@ const JoinChatRoom = ({
   return (
     <>
       <Button
-        variant={'outline'}
+        variant="outline"
         size={isSmallDevice ? 'icon' : 'lg'}
         className={cn(
           'rounded-full shadow-lg',
@@ -62,16 +60,17 @@ const JoinChatRoom = ({
         {isSmallDevice ? (
           <RiChat1Fill />
         ) : (
-          <RiChat1Fill className={'size-6'} />
+          <RiChat1Fill className="size-6" />
         )}
         <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
           Vibez
         </span>
       </Button>
-      <CustomSheet
+
+      <CustomDrawer
         isOpen={showDialog}
-        onCloseAction={() => setShowDialog(false)}
-        side={isSmallDevice ? 'bottom' : 'right'}
+        onClose={() => setShowDialog(false)}
+        side={!isSmallDevice}
         headerContent={
           <ChatHeader
             title="Event Chat"
@@ -87,9 +86,6 @@ const JoinChatRoom = ({
             onDeleteMessage={deleteMessage}
           />
         }
-        stickyHeader={true}
-        stickyFooter={true}
-        scrollableContent={true}
         footerContent={
           <ChatInput onSendMessage={handleSendMessage} />
         }

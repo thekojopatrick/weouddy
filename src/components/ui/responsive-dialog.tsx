@@ -1,13 +1,8 @@
 'use client';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+import { Drawer } from 'vaul';
 import { useEffect, useState } from 'react';
-
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +25,6 @@ export function ResponsiveDialog({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -38,14 +32,17 @@ export function ResponsiveDialog({
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={onOpenChangeAction}>
-        <DrawerContent className="">
-          <DrawerTitle className="sr-only">Modal</DrawerTitle>
-          <div className={cn('mx-auto w-full max-w-sm', className)}>
-            {children}
-          </div>
-        </DrawerContent>
-      </Drawer>
+      <Drawer.Root open={open} onOpenChange={onOpenChangeAction}>
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+          <Drawer.Content className="bg-background flex flex-col fixed bottom-0 left-0 right-0 max-h-[96vh] rounded-t-[10px]">
+            <div className="mx-auto w-full max-w-sm">
+              <Drawer.Handle className="mx-auto my-4 h-2 w-[100px] rounded-full bg-muted" />
+              {children}
+            </div>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
     );
   }
 

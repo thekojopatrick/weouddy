@@ -13,7 +13,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
   className,
 }) => {
   return (
-    <CardHeader className={`border-b px-4 py-3 ${className}`}>
+    <CardHeader className={`px-0 py-0 ${className}`}>
       <div className="flex items-center gap-3">
         <div className="relative">
           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-base font-medium text-primary-foreground">
