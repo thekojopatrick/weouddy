@@ -1,75 +1,54 @@
-// src/lib/redis.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Redis from 'ioredis';
 import { env } from '@/env';
 
 class RedisCache {
-  private client: Redis | null = null;
-  private isServer: boolean;
+  private client: Redis;
 
   constructor() {
-    // Check if we're on the server side
-    this.isServer = typeof window === 'undefined';
+    this.client = new Redis(env.REDIS_URL!, {
+      // Recommended options for production
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      maxRetriesPerRequest: 3,
+    });
 
-    if (this.isServer) {
-      this.client = new Redis(env.REDIS_URL!, {
-        retryStrategy: (times) => {
-          const delay = Math.min(times * 50, 2000);
-          return delay;
-        },
-        maxRetriesPerRequest: 3,
-        // Disable auto clustering to avoid dns module dependency
-        enableReadyCheck: false,
-        lazyConnect: true,
-      });
+    this.client.on('error', (err) => {
+      console.error('Redis connection error:', err);
+    });
 
-      this.client.on('error', (err) => {
-        console.error('Redis connection error:', err);
-      });
-
-      this.client.on('connect', () => {
-        console.log('Successfully connected to Redis');
-      });
-    }
+    this.client.on('connect', () => {
+      console.log('Successfully connected to Redis');
+    });
   }
 
-  private ensureConnection() {
-    if (!this.isServer) {
-      throw new Error(
-        'Redis operations can only be performed on the server side'
-      );
-    }
-    if (!this.client) {
-      throw new Error('Redis client not initialized');
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async get(key: string): Promise<any> {
-    this.ensureConnection();
-    const value = await this.client!.get(key);
+    const value = await this.client.get(key);
     if (!value) return null;
 
     try {
       return JSON.parse(value);
     } catch {
-      return value;
+      return value; // Return raw value if not JSON
     }
   }
 
   async set(
     key: string,
-    value: unknown,
+    value: any,
     ttlInSeconds?: number,
     flag?: 'NX' | 'XX',
     px?: 'PX',
     pxValue?: number
   ): Promise<boolean> {
-    this.ensureConnection();
     const serializedValue =
       typeof value === 'string' ? value : JSON.stringify(value);
 
     if (flag && px && pxValue) {
-      const result = await this.client!.set(
+      // Handle the special case for locks with PX
+      const result = await this.client.set(
         key,
         serializedValue,
         px,
@@ -79,7 +58,7 @@ class RedisCache {
     }
 
     if (ttlInSeconds) {
-      const result = await this.client!.setex(
+      const result = await this.client.setex(
         key,
         ttlInSeconds,
         serializedValue
@@ -87,35 +66,22 @@ class RedisCache {
       return result === 'OK';
     }
 
-    const result = await this.client!.set(key, serializedValue);
+    const result = await this.client.set(key, serializedValue);
     return result === 'OK';
   }
 
   async del(key: string): Promise<void> {
-    this.ensureConnection();
-    await this.client!.del(key);
+    await this.client.del(key);
   }
 
   async flushAll(): Promise<void> {
-    this.ensureConnection();
-    await this.client!.flushall();
+    await this.client.flushall();
   }
 
   async disconnect(): Promise<void> {
-    this.ensureConnection();
-    await this.client!.quit();
+    await this.client.quit();
   }
 }
 
-// Create and export singleton instance
-let cacheInstance: RedisCache | null = null;
-
-export function getRedisCache(): RedisCache {
-  if (!cacheInstance) {
-    cacheInstance = new RedisCache();
-  }
-  return cacheInstance;
-}
-
-// For backward compatibility
-export const cache = getRedisCache();
+// Export a singleton instance
+export const cache = new RedisCache();
