@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useInView } from 'react-intersection-observer';
 
 //components
-import { CategoryFilters } from '@/components/category-filters';
+import { CategoryFilters } from './category-filters';
 import { CreateEventButton } from '@/components/create-event-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
 import { JoinEventButton } from '@/components/join-event-button';
-import { LocationFilters } from '@/components/location-filters';
+import { LocationFilters } from './location-filters';
 
 //types
 import { EventWithDetails } from '@/types/prisma.types';
@@ -26,6 +26,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useInfiniteEvents } from '@/hooks/event/use-infinite-events';
 import { useVisibleEvents } from '@/hooks/event/use-visible-events';
 import { Container } from '@/components/common/container';
+import FilterDrawer from './filter-drawer';
 
 export default function DiscoverPage({
   user,
@@ -70,7 +71,7 @@ export default function DiscoverPage({
     () => [
       'All',
       ...new Set(
-        events?.map((event: EventWithDetails) => event.type)
+        events?.flatMap((event: EventWithDetails) => event.type)
       ),
     ],
     [events]
@@ -100,11 +101,21 @@ export default function DiscoverPage({
                   currentLocation={currentLocation}
                   onLocationChangeAction={handleLocationChange}
                 />
-                <CategoryFilters
-                  onCategoryChangeAction={setCurrentCategory}
-                  currentCategory={currentCategory}
-                  categories={availableCategories}
-                />
+                <div className="flex items-center justify-between py-4">
+                  <CategoryFilters
+                    onCategoryChangeAction={setCurrentCategory}
+                    currentCategory={currentCategory}
+                    categories={availableCategories}
+                  />
+                  <FilterDrawer
+                    categories={availableCategories}
+                    locations={['world', 'africa']}
+                    currentCategory={currentCategory}
+                    currentLocation={currentLocation}
+                    onCategoryChange={setCurrentCategory}
+                    onLocationChange={handleLocationChange}
+                  />
+                </div>
               </div>
 
               {events.length === 0 ? (

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { ScrollArea, ScrollBar } from './ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 const locations = [
   { name: 'Accra', param: 'accra' },
