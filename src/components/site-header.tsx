@@ -30,7 +30,7 @@ export function SiteHeader({
   const { accountData, loading } = useAccount();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
       <Container>
         <div className="flex h-16 items-center gap-x-2">
           {showBackButton ? (

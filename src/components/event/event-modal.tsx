@@ -10,7 +10,6 @@ import { Calendar, MapPin, Share2, Users } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import CustomSheet from '@/components/ui/custom-sheet';
 import Image from 'next/image';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { toast } from 'sonner';
@@ -19,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { EventWithFullData } from '@/types/event';
 import { getNameInitials } from '@/lib/utils';
 import { JoinEventDialogViaEventCard } from './join/join-event-dialog-via-card';
+import CustomDrawer from '../ui/custom-drawer';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -110,8 +110,8 @@ const EventModal = memo(
 
     const renderContent = useMemo(
       () => (
-        <div className="flex flex-col sm:min-h-[80vh] space-y-6 pb-4">
-          <div className="relative h-48">
+        <div className="flex flex-col space-y-6 pb-4">
+          <div className="relative h-48 rounded-lg overflow-hidden">
             <Image
               src={event.coverImage!}
               alt={event.name}
@@ -131,7 +131,7 @@ const EventModal = memo(
             </Button>
           </div>
 
-          <div className="px-6 space-y-6">
+          <div className="space-y-6">
             <div>
               <Badge variant="secondary" className="capitalize">
                 {event.type}
@@ -186,15 +186,12 @@ const EventModal = memo(
 
     return (
       <>
-        <CustomSheet
+        <CustomDrawer
+          side={!isMobile}
           isOpen={isOpen}
-          onCloseAction={onCloseAction}
-          side={isMobile ? 'bottom' : 'right'}
+          onClose={onCloseAction}
           title={event.name}
           content={renderContent}
-          stickyHeader={true}
-          stickyFooter={true}
-          scrollableContent={true}
           footerContent={renderFooter}
         />
         <JoinEventDialogViaEventCard

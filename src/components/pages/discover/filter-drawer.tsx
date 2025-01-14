@@ -30,7 +30,7 @@ const FilterDrawer = ({
       </Drawer.Trigger>
 
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
         <Drawer.Content className="fixed bottom-2 right-2 top-2 z-50 w-[320px] rounded-xl bg-white p-6 shadow-lg dark:bg-neutral-900">
           <Drawer.Title className="mb-4 font-semibold">
             Filter by
