@@ -12,7 +12,6 @@ interface CreateEventDialogProps {
 export function CreateEventDialog({
   open,
   onOpenChangeAction,
-  userId,
 }: CreateEventDialogProps) {
   return (
     <ResponsiveDialog
@@ -23,7 +22,6 @@ export function CreateEventDialog({
       <div className="relative p-4">
         <CreateEventForm
           onCloseAction={() => onOpenChangeAction(false)}
-          userId={userId}
         />
       </div>
     </ResponsiveDialog>
