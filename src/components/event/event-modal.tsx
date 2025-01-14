@@ -111,7 +111,7 @@ const EventModal = memo(
     const renderContent = useMemo(
       () => (
         <div className="flex flex-col space-y-6 pb-4">
-          <div className="relative h-48 rounded-lg overflow-hidden">
+          <div className="relative h-48 m-4 md:m-0 rounded-lg overflow-hidden">
             <Image
               src={event.coverImage!}
               alt={event.name}
@@ -131,7 +131,7 @@ const EventModal = memo(
             </Button>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 px-4 md:px-0">
             <div>
               <Badge variant="secondary" className="capitalize">
                 {event.type}

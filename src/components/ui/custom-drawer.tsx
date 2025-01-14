@@ -61,9 +61,11 @@ export default function CustomDrawer({
                 </div>
               ) : (
                 title && (
-                  <Drawer.Title className="px-6 py-4 border-b">
-                    <h2 className="text-lg font-semibold">{title}</h2>
-                  </Drawer.Title>
+                  <div className="px-6 py-4 border-b">
+                    <Drawer.Title className="text-lg font-semibold">
+                      {title}
+                    </Drawer.Title>
+                  </div>
                 )
               )}
               <div className="flex-1 overflow-y-auto px-6 py-4">

@@ -40,7 +40,7 @@ export function PinEntryForm({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-5 px-4 md:px-0 md:py-6">
       <div className="space-y-2">
         <Label htmlFor="pin">Enter Event PIN</Label>
         <Input
@@ -53,7 +53,7 @@ export function PinEntryForm({
             setError(''); // Clear error on input change
           }}
           maxLength={6}
-          className={error ? 'border-red-500' : ''}
+          className={error ? 'border-red-500' : 'shadow-none'}
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
       </div>

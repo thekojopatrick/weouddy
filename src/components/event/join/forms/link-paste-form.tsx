@@ -1,6 +1,6 @@
 'use client';
 
-import { LinkIcon } from 'lucide-react';
+import { LinkIcon, QrCode } from 'lucide-react';
 
 import { LoadingButton } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,7 @@ export function LinkPasteForm({
   const [link, setLink] = useState('');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-5 px-4 md:px-0 md:py-6">
       <div className="space-y-2">
         <Label htmlFor="event-link font-medium">Paste Link</Label>
         <div className="relative">
@@ -31,11 +31,11 @@ export function LinkPasteForm({
             placeholder="weouddy.com/events/..."
             value={link}
             onChange={(e) => setLink(e.target.value)}
-            className="pr-24 shadow-sm"
+            className="pr-24 placeholder:text-sm shadow-none rounded-s-xl h-[40px] rounded-e-full"
           />
           <LoadingButton
             size="sm"
-            className="absolute right-[.12rem] top-[.1rem]"
+            className="absolute right-0 top-0 bottom-0 h-[40px] shadow-none rounded-s-xl rounded-e-full"
             onClick={() => onSubmitAction(link)}
             disabled={!link || isLoading}
             loading={isLoading}
@@ -64,12 +64,13 @@ export function LinkPasteForm({
       </div>
 
       <LoadingButton
-        variant="outline"
-        className="w-full shadow-sm"
+        variant="secondary"
+        className="w-full shadow-none border rounded-full"
         onClick={onScanQRAction}
         disabled={isLoading}
         loading={isLoading}
       >
+        <QrCode />
         Scan QR Code
       </LoadingButton>
     </div>

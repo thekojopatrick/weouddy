@@ -97,9 +97,9 @@ export function JoinEventDialogViaEventCard({
     <ResponsiveDialog
       open={open}
       onOpenChangeAction={onOpenChange}
-      className="py-3"
+      className="py-3 px-4"
     >
-      <DialogHeader>
+      <DialogHeader className="items-center">
         <DialogTitle className="text-sm">
           {accessType === 'PIN_REQUIRED'
             ? 'Enter Event PIN'

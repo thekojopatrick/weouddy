@@ -8,7 +8,7 @@ interface WelcomeStepProps {
 
 export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
   return (
-    <div className="space-y-6 py-6">
+    <div className="space-y-6 pb-5 md:py-6">
       <div className="space-y-2 text-center max-w-lg mx-auto">
         <h2 className="text-xl font-bold tracking-tight">
           Create & host your event, your way!

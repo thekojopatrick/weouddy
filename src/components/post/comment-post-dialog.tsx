@@ -6,25 +6,12 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2 } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import { EmojiPicker } from '@/components/emoji-picker';
 import { Input } from '@/components/ui/input';
@@ -33,6 +20,8 @@ import { getNameInitials } from '@/lib/utils';
 import useCurrentUser from '@/hooks/account/use-current-user';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useState } from 'react';
+import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 interface Comment {
   id: string;
@@ -134,65 +123,28 @@ export function Comments({
       ))}
     </div>
   );
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChangeAction}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="text-sm">Comments</DialogTitle>
-          </DialogHeader>
-          <div className="h-[400px] overflow-y-auto px-1">
-            <CommentList />
-          </div>
-
-          <form onSubmit={onSubmit} className="flex gap-2 py-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={currentUser?.avatarUrl ?? ''} />
-              <AvatarFallback className="text-xs">
-                {getNameInitials(currentUser?.name as string)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 flex items-center relative">
-              <Input
-                placeholder="Add a comment..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                disabled={isLoading}
-                className="rounded-full text-xs pr-10"
-              />
-              <div className="absolute right-1">
-                <EmojiPicker
-                  onEmojiSelectAction={(emoji) =>
-                    setComment((prev) => prev + emoji)
-                  }
-                />
-              </div>
-            </div>
-            <Button
-              type="submit"
-              size="sm"
-              className="rounded-full"
-              disabled={isLoading}
-            >
-              Send
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChangeAction}>
-      <DrawerContent className="max-h-[60vh]">
-        <DrawerHeader>
-          <DrawerTitle className="text-sm">Comments</DrawerTitle>
-        </DrawerHeader>
-        <div className="px-4">
-          <div className="overflow-y-auto px-1">
-            <CommentList />
-          </div>
-          <form onSubmit={onSubmit} className="flex gap-2 py-4">
+    <ResponsiveDialog
+      open={open}
+      onOpenChangeAction={onOpenChangeAction}
+      className="p-0 gap-0"
+    >
+      <div className="flex flex-col h-full">
+        <DialogTitle className="border-b px-4 pb-3 md:py-3 ">
+          <h2 className="font-semibold text-sm text-center">
+            Comments
+          </h2>
+        </DialogTitle>
+
+        <div
+          className={`flex-1 overflow-y-auto px-4 py-2 ${isDesktop ? 'h-[400px]' : ''}`}
+        >
+          <CommentList />
+        </div>
+
+        <div className="border-t px-4 py-3">
+          <form onSubmit={onSubmit} className="flex gap-2">
             <Avatar className="h-8 w-8">
               <AvatarImage src={currentUser?.avatarUrl ?? ''} />
               <AvatarFallback className="text-xs">
@@ -205,7 +157,7 @@ export function Comments({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 disabled={isLoading}
-                className="rounded-full text-xs pr-10 shadow-sm "
+                className="rounded-full text-xs pr-10 shadow-sm"
               />
               <div className="absolute right-1">
                 <EmojiPicker
@@ -225,7 +177,7 @@ export function Comments({
             </Button>
           </form>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </ResponsiveDialog>
   );
 }

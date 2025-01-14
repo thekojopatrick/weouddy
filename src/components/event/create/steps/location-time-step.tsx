@@ -77,7 +77,7 @@ export function LocationTimeStep({
   };
 
   return (
-    <div className="space-y-6 py-6">
+    <div className="space-y-6 pb-5 md:py-6">
       <div className="space-y-2">
         <h2 className="text-xl font-bold tracking-tight">
           Location & DateTime

@@ -126,7 +126,7 @@ export function QRScannerForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-5 px-4 pt-3 md:px-0 md:pt-2 md:py-6">
       <div className="aspect-square w-full bg-muted rounded-lg flex items-center justify-center">
         {isScanning ? (
           <div className="space-y-4">
@@ -138,7 +138,7 @@ export function QRScannerForm({
             />
           </div>
         ) : (
-          <Button onClick={startScanning}>
+          <Button onClick={startScanning} className="shadow-none">
             <QrCode className="mr-2 h-4 w-4" />
             {isScanning ? 'Scanning...' : 'Start Scanning'}
           </Button>
@@ -151,7 +151,7 @@ export function QRScannerForm({
           stopCamera();
           onBackAction();
         }}
-        className="mb-2 w-full rounded-full"
+        className="mb-2 w-full rounded-full shadow-none"
       >
         <ArrowLeft className="h-4 w-4" />
         Go Back
