@@ -7,8 +7,8 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 const locations = [
   { name: 'Accra', param: 'accra' },
   { name: 'Lagos', param: 'lagos' },
-  { name: 'Ghana', param: 'gh' },
-  { name: 'Nigeria', param: 'ng' },
+  { name: 'Ghana', param: 'ghana' },
+  { name: 'Nigeria', param: 'nigeria' },
   { name: 'Africa', param: 'africa' },
   { name: 'Rest of the world', param: 'world' },
 ];
