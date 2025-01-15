@@ -54,7 +54,7 @@ export function UserPosts({ userId }: UserPostsProps) {
   }
 
   return (
-    <div className="p-4">
+    <div className="user-posts">
       <MasonryPosts posts={posts} userId={userId} />
 
       {hasMore && (
