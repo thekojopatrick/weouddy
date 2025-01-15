@@ -11,13 +11,7 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  BadgeCheck,
-  Bell,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from 'lucide-react';
+import { LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { getNameInitials } from '@/lib/utils';
 import { useEffect, useState } from 'react';
@@ -36,6 +30,7 @@ export function UserProfileSidebar({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     user.avatar
   );
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!avatarUrl?.startsWith('https://lh3.googleusercontent.com')) {
@@ -57,8 +52,12 @@ export function UserProfileSidebar({
     }
   }, [avatarUrl, user]);
 
+  const handleItemClick = () => {
+    setOpen(false);
+  };
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Avatar className="size-8 rounded-full cursor-pointer">
           <AvatarImage
@@ -70,9 +69,9 @@ export function UserProfileSidebar({
           </AvatarFallback>
         </Avatar>
       </SheetTrigger>
-      <SheetContent className="w-[300px] sm:w-[400px]">
+      <SheetContent className="w-[270px] sm:w-[320px]">
         <SheetHeader>
-          <SheetTitle>Profile</SheetTitle>
+          <SheetTitle className="sr-only">Profile</SheetTitle>
         </SheetHeader>
         <div className="mt-6 space-y-6">
           <div className="flex items-center gap-4 px-2">
@@ -83,7 +82,9 @@ export function UserProfileSidebar({
               </AvatarFallback>
             </Avatar>
             <div className="grid gap-1">
-              <h3 className="font-semibold">{user.name}</h3>
+              <h3 className="font-semibold tracking-tight">
+                {user.name}
+              </h3>
               <p className="text-sm text-muted-foreground">
                 {user.email}
               </p>
@@ -91,10 +92,14 @@ export function UserProfileSidebar({
           </div>
 
           <div className="space-y-2">
-            <Link prefetch href={`/${user.username}`}>
+            <Link
+              prefetch
+              href={`/${user.username}`}
+              onClick={handleItemClick}
+            >
               <Button
                 variant="secondary"
-                className="w-full justify-start"
+                className="w-full rounded-full text-center "
               >
                 View Profile
               </Button>
@@ -103,40 +108,56 @@ export function UserProfileSidebar({
 
           <div className="space-y-2">
             <div className="text-sm font-medium">Features</div>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={handleItemClick}
+            >
               <Sparkles className="mr-2 size-4" />
               For Business
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={handleItemClick}
+            >
+              <LayoutDashboard className="mr-2 size-4" />
+              Dashboard
             </Button>
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">Settings</div>
-            <Button variant="ghost" className="w-full justify-start">
-              <BadgeCheck className="mr-2 size-4" />
+            <div className="text-sm font-medium hidden">Settings</div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={handleItemClick}
+            >
               Account Settings
             </Button>
             <Button
               variant="ghost"
               className="w-full justify-start hidden"
+              onClick={handleItemClick}
             >
-              <CreditCard className="mr-2 size-4" />
               Billing
             </Button>
             <Button
               variant="ghost"
               className="w-full justify-start hidden"
+              onClick={handleItemClick}
             >
-              <Bell className="mr-2 size-4" />
               Notifications
             </Button>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-auto">
             <form action="/auth/signout" method="post">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-red-500"
+                className="w-full text-center text-red-500 border border-red-400 bg-red-50 rounded-full"
                 type="submit"
+                onClick={handleItemClick}
               >
                 <LogOut className="mr-2 size-4" />
                 Sign out
