@@ -146,6 +146,23 @@ export async function signUpWithGuest() {
 export async function SignInWithGoogle() {
   const supabase = await createClient();
 
+  // First, sign out the user to clear any existing session
+  await supabase.auth.signOut();
+
+  // Clear any existing OAuth state from localStorage
+  if (typeof window !== 'undefined') {
+    const keys = Object.keys(localStorage);
+    keys.forEach((key) => {
+      if (
+        key.startsWith('supabase.auth.token') ||
+        key.startsWith('supabase.auth.refreshToken') ||
+        key.startsWith('user-storage')
+      ) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+
   // Determine the redirect URL based on the environment
   const redirectUrl = getURL();
 
