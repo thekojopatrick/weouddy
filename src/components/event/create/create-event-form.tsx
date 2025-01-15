@@ -56,7 +56,7 @@ export function CreateEventForm({
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
-      title: '',
+      name: '',
       type: '',
       description: '',
       location: '',

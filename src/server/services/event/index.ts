@@ -23,7 +23,7 @@ export class EventService {
 
         return tx.event.create({
           data: {
-            name: data.title,
+            name: data.name,
             description: data.description,
             type: data.type,
             location: data.location,
