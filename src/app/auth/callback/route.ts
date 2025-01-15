@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   if (!code) {
     return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?error=No authorization code provided`
+      `${origin}/auth/auth-code-error?error=No code provided`
     );
   }
 
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
     console.error('Unexpected error during auth:', error);
     return NextResponse.redirect(
       `${origin}/auth/auth-code-error?error=${encodeURIComponent(
-        'An unexpected error occurred during authentication'
+        'Unexpected error during authentication'
       )}`
     );
   }

@@ -128,15 +128,6 @@ export async function signUpWithGuest() {
   });
 
   // Create guest user in Prisma database
-  if (data.user) {
-    await prisma.user.create({
-      data: {
-        email: guestEmail,
-        name: 'Guest User',
-        isAnonymous: true,
-      },
-    });
-  }
 
   revalidatePath('/', 'layout');
 
@@ -146,30 +137,10 @@ export async function signUpWithGuest() {
 export async function SignInWithGoogle() {
   const supabase = await createClient();
 
-  // First, sign out the user to clear any existing session
-  await supabase.auth.signOut();
-
-  // Clear any existing OAuth state from localStorage
-  if (typeof window !== 'undefined') {
-    const keys = Object.keys(localStorage);
-    keys.forEach((key) => {
-      if (
-        key.startsWith('supabase.auth.token') ||
-        key.startsWith('supabase.auth.refreshToken') ||
-        key.startsWith('user-storage')
-      ) {
-        localStorage.removeItem(key);
-      }
-    });
-  }
-
-  // Determine the redirect URL based on the environment
-  const redirectUrl = getURL();
-
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${redirectUrl}auth/callback`,
+      redirectTo: `${getURL()}auth/callback`,
       queryParams: {
         access_type: 'offline',
         prompt: 'consent',
