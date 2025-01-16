@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { getNameInitials } from '@/lib/utils';
-import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -20,7 +18,7 @@ export async function GET(request: Request) {
     // First, ensure no existing session
     await supabase.auth.signOut();
 
-    const { error, data } =
+    const { error } =
       await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
@@ -31,39 +29,6 @@ export async function GET(request: Request) {
     }
 
     // Create user in Prisma database after successful Supabase signup
-    if (data.user) {
-      try {
-        const checkForExistingUser = await prisma.user.findUnique({
-          where: {
-            id: data.user.id,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        if (!checkForExistingUser) {
-          await prisma.user.create({
-            data: {
-              id: data.user.id,
-              email: data.user.email || '',
-              name: data.user.user_metadata.full_name ?? '',
-              username: data.user.email?.split('@')[0] ?? '',
-              avatarUrl:
-                data.user.user_metadata.avatar_url ??
-                `https://avatar.vercel.sh/${data.user.id}.svg?text=${getNameInitials(
-                  data.user.user_metadata.full_name
-                )}` ??
-                '',
-              isAnonymous: false,
-            },
-          });
-        }
-      } catch (dbError) {
-        console.error('Database Error:', dbError);
-        // Continue with auth flow even if DB operation fails
-      }
-    }
 
     const forwardedHost = request.headers.get('x-forwarded-host');
     const isLocalEnv = process.env.NODE_ENV === 'development';
