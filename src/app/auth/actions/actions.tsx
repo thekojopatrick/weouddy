@@ -52,11 +52,11 @@ export async function signIn(
           email: authData.user.email || '',
           name: authData.user.user_metadata.full_name ?? '',
           username: authData.user.email?.split('@')[0] ?? '',
-          avatarUrl:
+          avatar_url:
             authData.user.user_metadata.avatar_url ??
             `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
             '',
-          isAnonymous: false,
+          is_anonymous: false,
         },
       });
     }
@@ -101,11 +101,11 @@ export async function signUp(
           email: authData.user.email || '',
           name: authData.user.user_metadata.full_name ?? '',
           username: authData.user.email?.split('@')[0] ?? '',
-          avatarUrl:
+          avatar_url:
             authData.user.user_metadata.avatar_url ??
             `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
             '',
-          isAnonymous: false,
+          is_anonymous: false,
         },
       });
     }
