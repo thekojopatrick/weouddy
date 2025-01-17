@@ -13,20 +13,20 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ScrollArea } from '../ui/scroll-area';
+import { useEvents } from '@/hooks/event/use-event';
 
-export default function SearchDialog({
-  events,
-}: {
-  events: EventWithDetails[];
+export default function SearchDialog({}: {
+  events?: EventWithDetails[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
+  const { events } = useEvents();
 
   // Filter events based on search query
   const filteredEvents = events.filter(
-    (event) =>
+    (event: EventWithDetails) =>
       event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description
         ?.toLowerCase()
@@ -93,7 +93,7 @@ export default function SearchDialog({
               </div>
             ) : searchQuery ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredEvents.map((event) => {
+                {filteredEvents.map((event: EventWithDetails) => {
                   const { date, time } = formatEventDateTime(
                     event.dateTime as never
                   );

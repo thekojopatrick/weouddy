@@ -1,21 +1,22 @@
+'use client';
+
 import React, { ReactNode } from 'react';
 
 import { SiteHeader } from '@/components/site-header';
-import { getAllEvents } from '@/server/actions/event/queries';
-import { getSession } from '@/lib/auth';
 
-const AppLayout = async ({ children }: { children: ReactNode }) => {
-  const session = await getSession();
+import AuthWrapper from './_components/auth-wrapper';
+import { useAccount } from '@/hooks/account/use-account';
 
-  const events = await getAllEvents(session?.user?.id);
+const AppLayout = ({ children }: { children: ReactNode }) => {
+  const { accountData } = useAccount();
+
   return (
-    <main>
-      <SiteHeader
-        user={session?.user ?? null}
-        events={events as never}
-      />
-      <>{children}</>
-    </main>
+    <AuthWrapper>
+      <main>
+        <SiteHeader user={accountData as never} />
+        <>{children}</>
+      </main>
+    </AuthWrapper>
   );
 };
 
