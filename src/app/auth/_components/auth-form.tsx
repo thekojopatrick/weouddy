@@ -3,16 +3,10 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  SignInWithGoogle,
-  signIn,
-  signUp,
-  signUpWithGuest,
-} from '../actions/actions';
+import { SignInWithGoogle, signIn, signUp } from '../actions/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { LoginForm } from '@/components/auth/login-form';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { useRouter } from 'next/navigation';
@@ -128,35 +122,6 @@ export function AuthForm() {
     }
   };
 
-  const handleGuestAccess = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await signUpWithGuest();
-
-      if (error) throw error;
-
-      if (data.session) {
-        toast({
-          title: 'Welcome!',
-          description: 'You are now browsing as a guest.',
-        });
-
-        router.push('/discover');
-      }
-
-      router.refresh();
-    } catch (error: Error | unknown) {
-      toast({
-        title: 'Error',
-        description:
-          (error as Error).message || 'An unknown error occurred.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleForgotPassword = () => {
     // TODO: Implement forgot password functionality
     toast({
@@ -184,15 +149,6 @@ export function AuthForm() {
             onGoogleSignIn={handleGoogleSignIn}
           />
         )}
-
-        <Button
-          variant="outline"
-          className="w-full mt-4 hidden"
-          onClick={handleGuestAccess}
-          disabled={isLoading}
-        >
-          Continue as Guest
-        </Button>
       </CardContent>
     </Card>
   );

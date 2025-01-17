@@ -6,16 +6,18 @@ import {
 } from '@/types/validation';
 
 import { createClient } from '@/lib/supabase/server';
-import { getNameInitials, getURL } from '@/lib/utils';
 import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
+import { getURL } from '@/lib/utils';
 
 const prisma = new PrismaClient();
 
 type AuthResult = {
   success: boolean;
   error?: string;
+  user?: User;
   redirectPath?: string;
 };
 
@@ -42,42 +44,12 @@ export async function signIn(
       };
     }
 
-    try {
-      const checkForExistingUser = await prisma.user.findUnique({
-        where: {
-          id: authData.user.id,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      if (!checkForExistingUser) {
-        await prisma.user.create({
-          data: {
-            id: authData.user.id,
-            email: authData.user.email || '',
-            name: authData.user.user_metadata.full_name ?? '',
-            username: authData.user.email?.split('@')[0] ?? '',
-            avatar_url:
-              authData.user.user_metadata.avatar_url ??
-              `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(
-                authData.user.user_metadata.full_name
-              )}` ??
-              '',
-            is_anonymous: false,
-          },
-        });
-      }
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      // Don't fail the sign-in if DB sync fails
-    }
-
+    // Don't create Prisma user here - move it to the client side after successful auth
     revalidatePath('/', 'layout');
+
     return {
       success: true,
-      redirectPath: '/',
+      user: authData.user,
     };
   } catch (error) {
     console.error('Sign in error:', error);
@@ -111,42 +83,28 @@ export async function signUp(
       };
     }
 
+    // Create initial user record in Prisma
     try {
-      const checkForExistingUser = await prisma.user.findUnique({
-        where: {
+      await prisma.user.create({
+        data: {
           id: authData.user.id,
-        },
-        select: {
-          id: true,
+          email: authData.user.email || '',
+          name: authData.user.email?.split('@')[0] ?? '',
+          username: authData.user.email?.split('@')[0] ?? '',
+          avatar_url: `https://avatar.vercel.sh/${authData.user.id}.svg`,
+          is_anonymous: false,
         },
       });
-
-      if (!checkForExistingUser) {
-        await prisma.user.create({
-          data: {
-            id: authData.user.id,
-            email: authData.user.email || '',
-            name: authData.user.user_metadata.full_name ?? '',
-            username: authData.user.email?.split('@')[0] ?? '',
-            avatar_url:
-              authData.user.user_metadata.avatar_url ??
-              `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(
-                authData.user.user_metadata.full_name
-              )}` ??
-              '',
-            is_anonymous: false,
-          },
-        });
-      }
     } catch (dbError) {
       console.error('Database error:', dbError);
       // Don't fail the sign-up if DB sync fails
     }
 
     revalidatePath('/', 'layout');
+
     return {
       success: true,
-      redirectPath: '/',
+      user: authData.user,
     };
   } catch (error) {
     console.error('Sign up error:', error);

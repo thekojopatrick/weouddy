@@ -3,7 +3,6 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@prisma/client';
 
-// Types
 type UserProfile = Pick<
   User,
   'id' | 'name' | 'email' | 'avatarUrl' | 'bio' | 'username'
@@ -18,6 +17,7 @@ interface UserState {
   fetchUserProfile: (userId: string) => Promise<UserProfile | null>;
   updateCurrentUser: (updates: Partial<UserProfile>) => Promise<void>;
   clearStore: () => void;
+  setIsLoading: (loading: boolean) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -25,8 +25,10 @@ export const useUserStore = create<UserState>()(
     (set, get) => ({
       currentUser: null,
       userProfiles: {},
-      isLoading: true,
+      isLoading: false, // Changed initial value to false
       error: null,
+
+      setIsLoading: (loading: boolean) => set({ isLoading: loading }),
 
       initialize: async () => {
         const supabase = createClient();
@@ -42,6 +44,7 @@ export const useUserStore = create<UserState>()(
             set({
               error: error?.message ?? 'No user found',
               isLoading: false,
+              currentUser: null, // Ensure user is cleared
             });
             return;
           }
@@ -71,9 +74,15 @@ export const useUserStore = create<UserState>()(
               isLoading: false,
               error: null,
             });
+          } else {
+            set({ isLoading: false, currentUser: null });
           }
         } catch (error) {
-          set({ error: (error as Error).message, isLoading: false });
+          set({
+            error: (error as Error).message,
+            isLoading: false,
+            currentUser: null,
+          });
         }
       },
 
@@ -169,12 +178,15 @@ export const useUserStore = create<UserState>()(
           isLoading: false,
           error: null,
         });
+        // Clear localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user-storage');
+        }
       },
     }),
     {
-      name: 'user-storage', // unique name for localStorage key
+      name: 'user-storage',
       storage: createJSONStorage(() => localStorage),
-      // Only persist these fields:
       partialize: (state) => ({
         currentUser: state.currentUser,
         userProfiles: state.userProfiles,
@@ -182,14 +194,3 @@ export const useUserStore = create<UserState>()(
     }
   )
 );
-
-// Auth state change listener
-/**
- createClient().auth.onAuthStateChange((event, session) => {
-   if (event === 'SIGNED_OUT') {
-     useUserStore.getState().clearStore();
-   } else if (event === 'SIGNED_IN' && session) {
-     useUserStore.getState().initialize();
-   }
- });
- */

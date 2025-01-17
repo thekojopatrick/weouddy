@@ -10,57 +10,59 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper = ({ children }: AuthWrapperProps) => {
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const { initialize, clearStore } = useUserStore();
 
   useEffect(() => {
-    // Check if this is the first load or a page refresh
-    const isPageRefresh = !document.referrer;
+    const supabase = createClient();
+    let mounted = true;
 
     const initializeAuth = async () => {
       try {
-        const supabase = createClient();
-        const session = await supabase.auth.getUser();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-        if (session) {
+        if (session && mounted) {
           await initialize();
-        } else {
-          clearStore();
+        } else if (mounted) {
+          await clearStore();
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
-        clearStore();
+        if (mounted) {
+          clearStore();
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     // Set up auth state change listener
-    const supabase = createClient();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
-        clearStore();
+        if (mounted) {
+          await clearStore();
+        }
       } else if (event === 'SIGNED_IN' && session) {
-        await initialize();
+        if (mounted) {
+          await initialize();
+        }
       }
     });
 
-    // Only show splash screen on initial page load or refresh
-    if (isInitialLoad && isPageRefresh) {
-      initializeAuth();
-    } else {
-      setIsLoading(false);
-    }
+    initializeAuth();
 
     // Cleanup
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
-      setIsInitialLoad(false);
     };
-  }, [initialize, clearStore, isInitialLoad]);
+  }, [initialize, clearStore]);
 
   if (isLoading) {
     return (

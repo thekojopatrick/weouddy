@@ -7,7 +7,7 @@ import {
 } from '@/app/auth/actions/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
-
+import { useUserStore } from '@/stores/user-store';
 import { LoginForm } from './login-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { SignUpForm } from './signup-form';
@@ -30,6 +30,7 @@ export function AuthDialog({
   const [view, setView] = useState<'login' | 'signup'>(defaultView);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { initialize } = useUserStore();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -37,20 +38,60 @@ export function AuthDialog({
         data: { session },
       } = await supabase.auth.getSession();
       if (session) {
+        await initialize();
         onOpenChangeAction(false);
-        router.refresh();
+        router.push('/discover'); // Add explicit navigation
       }
     };
     checkSession();
-  }, [router, onOpenChangeAction]);
+  }, [router, onOpenChangeAction, initialize]);
 
-  const handleAuthSuccess = (
+  const handleAuthSuccess = async (
     message: string,
-    description: string
+    description: string,
+    redirectPath: string = '/discover'
   ) => {
+    await initialize();
     toast.success(message, { description });
     onOpenChangeAction(false);
-    router.refresh();
+
+    // Use setTimeout to ensure state updates complete before navigation
+    setTimeout(() => {
+      router.push(redirectPath);
+    }, 0);
+  };
+
+  const handleSignIn = async (
+    values: z.infer<typeof loginSchema>
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await signIn(values);
+
+      if (!response.success || response.error) {
+        throw new Error(
+          response.error || 'Invalid login credentials'
+        );
+      }
+
+      if (response.success && response.user) {
+        await handleAuthSuccess(
+          'Welcome back!',
+          'You have successfully signed in.'
+        );
+        return; // Exit early after successful auth
+      }
+    } catch (error) {
+      toast.error('Authentication Failed', {
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Invalid login credentials',
+      });
+      console.error('Sign in error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignUp = async (
@@ -58,12 +99,14 @@ export function AuthDialog({
   ) => {
     setIsLoading(true);
     try {
-      const { error, success } = await signUp(values);
+      const response = await signUp(values);
 
-      if (error) throw new Error(error);
+      if (!response.success || response.error) {
+        throw new Error(response.error || 'Sign up failed');
+      }
 
-      if (success) {
-        handleAuthSuccess(
+      if (response.success && response.user) {
+        await handleAuthSuccess(
           'Account created!',
           'Please check your email to verify your account.'
         );
@@ -81,31 +124,6 @@ export function AuthDialog({
     }
   };
 
-  const handleSignIn = async (
-    values: z.infer<typeof loginSchema>
-  ) => {
-    setIsLoading(true);
-    try {
-      const { error, success } = await signIn(values);
-
-      if (error) throw new Error(error);
-
-      if (success) {
-        handleAuthSuccess(
-          'Welcome back!',
-          'You have successfully signed in.'
-        );
-      }
-    } catch (error) {
-      toast.error('Authentication Failed', {
-        description: 'Invalid login credentials',
-      });
-      console.error('Sign in error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -113,7 +131,7 @@ export function AuthDialog({
       if (!result?.success && result?.error) {
         throw new Error(result.error);
       }
-      // No need to call handleAuthSuccess here as the OAuth redirect will handle the flow
+      // OAuth redirect will handle the flow
     } catch (error) {
       toast.error('Google Sign In Failed', {
         description:
@@ -128,7 +146,6 @@ export function AuthDialog({
   };
 
   const handleForgotPassword = () => {
-    // TODO: Implement forgot password functionality
     toast.info('Forgot Password', {
       description:
         'Forgot password functionality coming soon. Contact support for assistance.',
