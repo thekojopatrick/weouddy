@@ -22,7 +22,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const showBackButton = !pathname.match(/^\/($|discover)/);
-  const { accountData: user, loading } = useAccount();
+  const { accountData: user } = useAccount();
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <Container>
@@ -77,7 +78,7 @@ export function SiteHeader() {
             {/* <SearchDialog /> */}
           </div>
           <div className="md:ml-auto flex items-center space-x-3">
-            {!loading && user ? (
+            {user ? (
               <UserProfileSidebar
                 user={{
                   name: user.fullname!,
