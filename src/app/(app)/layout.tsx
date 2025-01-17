@@ -11,7 +11,7 @@ const AppLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <AuthWrapper>
       <main>
-        <SiteHeader user={session?.user as never} />
+        <SiteHeader user={session?.user || null} />
         <>{children}</>
       </main>
     </AuthWrapper>

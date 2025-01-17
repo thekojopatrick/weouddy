@@ -4,8 +4,6 @@ export const useAccount = () => {
   const { currentUser, isLoading, updateCurrentUser } =
     useUserStore();
 
-  console.log({ currentUser });
-
   return {
     accountData: currentUser
       ? {

@@ -21,9 +21,7 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     const initializeAuth = async () => {
       try {
         const supabase = createClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const session = await supabase.auth.getUser();
 
         if (session) {
           await initialize();
@@ -43,8 +41,8 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      //console.log({ event });
       if (event === 'SIGNED_OUT') {
+        console.log({ event });
         clearStore();
       } else if (event === 'SIGNED_IN' && session) {
         console.log({ event });

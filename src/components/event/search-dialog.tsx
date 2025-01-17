@@ -93,7 +93,7 @@ export default function SearchDialog({}: {
               </div>
             ) : searchQuery ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredEvents.map((event: EventWithDetails) => {
+                {filteredEvents?.map((event: EventWithDetails) => {
                   const { date, time } = formatEventDateTime(
                     event.dateTime as never
                   );
