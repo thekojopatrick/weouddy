@@ -158,4 +158,8 @@ export async function SignInWithGoogle() {
   if (data.url) {
     redirect(data.url);
   }
+
+  return {
+    success: true,
+  };
 }

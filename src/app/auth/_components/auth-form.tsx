@@ -67,7 +67,14 @@ export function AuthForm() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await SignInWithGoogle();
+      const result = await SignInWithGoogle();
+      if (!result.success && result.error) {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
       toast({
         title: 'Error',

@@ -4,7 +4,6 @@ import {
   SignInWithGoogle,
   signIn,
   signUp,
-  signUpWithGuest,
 } from '@/app/auth/actions/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
@@ -30,7 +29,6 @@ export function AuthDialog({
 }: AuthDialogProps) {
   const [view, setView] = useState<'login' | 'signup'>(defaultView);
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -38,13 +36,22 @@ export function AuthDialog({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
       if (session) {
-        //router.push('/rooms'); // Redirect to a protected route
+        onOpenChangeAction(false);
+        router.refresh();
       }
     };
     checkSession();
-  }, [router]);
+  }, [router, onOpenChangeAction]);
+
+  const handleAuthSuccess = (
+    message: string,
+    description: string
+  ) => {
+    toast.success(message, { description });
+    onOpenChangeAction(false);
+    router.refresh();
+  };
 
   const handleSignUp = async (
     values: z.infer<typeof signUpSchema>
@@ -53,21 +60,22 @@ export function AuthDialog({
     try {
       const { error, success } = await signUp(values);
 
-      if (error) throw error;
+      if (error) throw new Error(error);
 
       if (success) {
-        toast.success('Account created!', {
-          description:
-            'Please check your email to verify your account.',
-        });
-
-        router.replace('/discover');
+        handleAuthSuccess(
+          'Account created!',
+          'Please check your email to verify your account.'
+        );
       }
-
-      router.refresh();
-    } catch (error: Error | unknown) {
-      toast.error('An unknown error occurred.');
-      console.error(error);
+    } catch (error) {
+      toast.error('Sign Up Failed', {
+        description:
+          error instanceof Error
+            ? error.message
+            : 'An unknown error occurred',
+      });
+      console.error('Sign up error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -80,28 +88,25 @@ export function AuthDialog({
     try {
       const { error, success } = await signIn(values);
 
-      if (error) throw error;
+      if (error) throw new Error(error);
 
       if (success) {
-        toast('Welcome back!', {
-          description: 'You have successfully signed in.',
-        });
-
-        router.refresh();
+        handleAuthSuccess(
+          'Welcome back!',
+          'You have successfully signed in.'
+        );
       }
-
-      router.refresh();
-    } catch (error: Error | unknown) {
-      toast.error('Authentication Error', {
-        description: 'Invaild login credentials',
+    } catch (error) {
+      toast.error('Authentication Failed', {
+        description: 'Invalid login credentials',
       });
-      console.error(error);
+      console.error('Sign in error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /**
   const handleGuestAccess = async () => {
     setIsLoading(true);
     try {
@@ -110,19 +115,38 @@ export function AuthDialog({
       if (error) throw error;
 
       if (data.session) {
-        toast.info('Welcome!', {
-          description: 'You are now browsing as a guest.',
-        });
-
-        router.refresh();
+        handleAuthSuccess(
+          'Welcome!',
+          'You are now browsing as a guest.'
+        );
       }
-
-      router.refresh();
-    } catch (error: Error | unknown) {
-      toast.error('Error', {
-        description: 'An unknown error occurred.',
+    } catch (error) {
+      toast.error('Guest Access Failed', {
+        description: 'Unable to create guest account',
       });
-      console.error(error);
+      console.error('Guest access error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  */
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const result = await SignInWithGoogle();
+      if (!result?.success && result?.error) {
+        throw new Error(result.error);
+      }
+      // No need to call handleAuthSuccess here as the OAuth redirect will handle the flow
+    } catch (error) {
+      toast.error('Google Sign In Failed', {
+        description:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
+      });
+      console.error('Google sign in error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -132,26 +156,8 @@ export function AuthDialog({
     // TODO: Implement forgot password functionality
     toast.info('Forgot Password', {
       description:
-        'Forgot password functionality coming soon.Contact support for assistance.',
+        'Forgot password functionality coming soon. Contact support for assistance.',
     });
-  };
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      await SignInWithGoogle();
-    } catch (error) {
-      toast.error('Error', {
-        description:
-          'An unexpected error occurred during Google Sign-In.',
-      });
-      console.error(
-        'An unexpected error occurred during Google Sign-In:',
-        error
-      );
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
