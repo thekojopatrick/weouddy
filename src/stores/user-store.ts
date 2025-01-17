@@ -134,6 +134,7 @@ export const useUserStore = create<UserState>()(
             .from('User')
             .update({
               ...updates,
+              avatarUrl: currentUser?.avatarUrl as never,
               updatedAt: new Date().toISOString(),
             })
             .eq('id', currentUser.id)
