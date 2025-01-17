@@ -149,6 +149,7 @@ export async function SignInWithGoogle() {
   });
 
   if (error) {
+    console.error('Google Sign In Error:', error);
     return {
       success: false,
       error: error.message,
