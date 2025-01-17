@@ -7,7 +7,7 @@ import { CountrySelector } from './country-selector';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import SearchDialog from './event/search-dialog';
+//import SearchDialog from './event/search-dialog';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Container } from './common/container';
@@ -74,7 +74,7 @@ export function SiteHeader() {
             </Link>
           </nav>
           <div className="relative w-full">
-            <SearchDialog />
+            {/* <SearchDialog /> */}
           </div>
           <div className="md:ml-auto flex items-center space-x-3">
             {!loading && user ? (
