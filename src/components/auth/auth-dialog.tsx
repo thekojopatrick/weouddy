@@ -106,31 +106,6 @@ export function AuthDialog({
     }
   };
 
-  /**
-  const handleGuestAccess = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await signUpWithGuest();
-
-      if (error) throw error;
-
-      if (data.session) {
-        handleAuthSuccess(
-          'Welcome!',
-          'You are now browsing as a guest.'
-        );
-      }
-    } catch (error) {
-      toast.error('Guest Access Failed', {
-        description: 'Unable to create guest account',
-      });
-      console.error('Guest access error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  */
-
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {

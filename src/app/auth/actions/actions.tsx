@@ -5,11 +5,11 @@ import {
   SignUpFormValues,
 } from '@/types/validation';
 
-import { PrismaClient } from '@prisma/client';
 import { createClient } from '@/lib/supabase/server';
 import { getNameInitials, getURL } from '@/lib/utils';
-import { redirect } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const prisma = new PrismaClient();
 
@@ -22,116 +22,139 @@ type AuthResult = {
 export async function signIn(
   formData: LoginFormValues
 ): Promise<AuthResult> {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { error, data: authData } =
-    await supabase.auth.signInWithPassword(formData);
+    const { error: signInError, data: authData } =
+      await supabase.auth.signInWithPassword(formData);
 
-  if (error) {
-    return {
-      success: false,
-      error: error.message,
-    };
-  }
+    if (signInError) {
+      return {
+        success: false,
+        error: signInError.message,
+      };
+    }
 
-  // Optional: Ensure user exists in Prisma database
-  if (authData.user) {
-    const checkForExistingUser = await prisma.user.findUnique({
-      where: {
-        id: authData.user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    if (!authData.user) {
+      return {
+        success: false,
+        error: 'No user data returned',
+      };
+    }
 
-    if (!checkForExistingUser) {
-      await prisma.user.create({
-        data: {
+    try {
+      const checkForExistingUser = await prisma.user.findUnique({
+        where: {
           id: authData.user.id,
-          email: authData.user.email || '',
-          name: authData.user.user_metadata.full_name ?? '',
-          username: authData.user.email?.split('@')[0] ?? '',
-          avatar_url:
-            authData.user.user_metadata.avatar_url ??
-            `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
-            '',
-          is_anonymous: false,
+        },
+        select: {
+          id: true,
         },
       });
-    }
-  }
 
-  revalidatePath('/', 'layout');
-  return {
-    success: true,
-    redirectPath: '/',
-  };
+      if (!checkForExistingUser) {
+        await prisma.user.create({
+          data: {
+            id: authData.user.id,
+            email: authData.user.email || '',
+            name: authData.user.user_metadata.full_name ?? '',
+            username: authData.user.email?.split('@')[0] ?? '',
+            avatar_url:
+              authData.user.user_metadata.avatar_url ??
+              `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(
+                authData.user.user_metadata.full_name
+              )}` ??
+              '',
+            is_anonymous: false,
+          },
+        });
+      }
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      // Don't fail the sign-in if DB sync fails
+    }
+
+    revalidatePath('/', 'layout');
+    return {
+      success: true,
+      redirectPath: '/',
+    };
+  } catch (error) {
+    console.error('Sign in error:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred during sign in',
+    };
+  }
 }
+
 export async function signUp(
   formData: SignUpFormValues
 ): Promise<AuthResult> {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { error, data: authData } =
-    await supabase.auth.signUp(formData);
+    const { error: signUpError, data: authData } =
+      await supabase.auth.signUp(formData);
 
-  if (error) {
-    return {
-      success: false,
-      error: error.message,
-    };
-  }
+    if (signUpError) {
+      return {
+        success: false,
+        error: signUpError.message,
+      };
+    }
 
-  // Create user in Prisma database after successful Supabase signup
-  if (authData.user) {
-    const checkForExistingUser = await prisma.user.findUnique({
-      where: {
-        id: authData.user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    if (!authData.user) {
+      return {
+        success: false,
+        error: 'No user data returned',
+      };
+    }
 
-    if (!checkForExistingUser) {
-      await prisma.user.create({
-        data: {
+    try {
+      const checkForExistingUser = await prisma.user.findUnique({
+        where: {
           id: authData.user.id,
-          email: authData.user.email || '',
-          name: authData.user.user_metadata.full_name ?? '',
-          username: authData.user.email?.split('@')[0] ?? '',
-          avatar_url:
-            authData.user.user_metadata.avatar_url ??
-            `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(authData.user.user_metadata.full_name)}` ??
-            '',
-          is_anonymous: false,
+        },
+        select: {
+          id: true,
         },
       });
+
+      if (!checkForExistingUser) {
+        await prisma.user.create({
+          data: {
+            id: authData.user.id,
+            email: authData.user.email || '',
+            name: authData.user.user_metadata.full_name ?? '',
+            username: authData.user.email?.split('@')[0] ?? '',
+            avatar_url:
+              authData.user.user_metadata.avatar_url ??
+              `https://avatar.vercel.sh/${authData.user.id}.svg?text=${getNameInitials(
+                authData.user.user_metadata.full_name
+              )}` ??
+              '',
+            is_anonymous: false,
+          },
+        });
+      }
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      // Don't fail the sign-up if DB sync fails
     }
+
+    revalidatePath('/', 'layout');
+    return {
+      success: true,
+      redirectPath: '/',
+    };
+  } catch (error) {
+    console.error('Sign up error:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred during sign up',
+    };
   }
-
-  revalidatePath('/', 'layout');
-  return {
-    success: true,
-    redirectPath: '/',
-  };
-}
-
-export async function signUpWithGuest() {
-  const supabase = await createClient();
-  const guestEmail = `guest_${Date.now()}@temporary.com`;
-
-  const { error, data } = await supabase.auth.signInWithPassword({
-    email: guestEmail,
-    password: 'guest123',
-  });
-
-  // Create guest user in Prisma database
-
-  revalidatePath('/', 'layout');
-
-  return { error, data };
 }
 
 export async function SignInWithGoogle() {
