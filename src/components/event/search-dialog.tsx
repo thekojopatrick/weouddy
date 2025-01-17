@@ -25,7 +25,7 @@ export default function SearchDialog({}: {
   const { events } = useEvents();
 
   // Filter events based on search query
-  const filteredEvents = events.filter(
+  const filteredEvents = events?.filter(
     (event: EventWithDetails) =>
       event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description

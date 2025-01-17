@@ -43,9 +43,11 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      //console.log({ event });
       if (event === 'SIGNED_OUT') {
         clearStore();
       } else if (event === 'SIGNED_IN' && session) {
+        console.log({ event });
         await initialize();
       }
     });

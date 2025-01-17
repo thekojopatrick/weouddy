@@ -184,12 +184,12 @@ export const useUserStore = create<UserState>()(
 );
 
 // Auth state change listener
-/** 
-createClient().auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_OUT') {
-    useUserStore.getState().clearStore();
-  } else if (event === 'SIGNED_IN' && session) {
-    useUserStore.getState().initialize();
-  }
-});
-*/
+/**
+ createClient().auth.onAuthStateChange((event, session) => {
+   if (event === 'SIGNED_OUT') {
+     useUserStore.getState().clearStore();
+   } else if (event === 'SIGNED_IN' && session) {
+     useUserStore.getState().initialize();
+   }
+ });
+ */
