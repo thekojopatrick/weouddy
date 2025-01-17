@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/lib/supabase/server';
 
 export const getSession = async () => {
   const supabase = await createClient(); // Await the client creation
@@ -9,14 +9,14 @@ export const getSession = async () => {
     } = await supabase.auth.getUser(); // Destructure correctly
 
     if (error || !user) {
-      console.error("Session error:", error);
+      console.info('Session error:', error);
       return null;
     }
 
     const { data: userData } = await supabase
-      .from("User")
-      .select("*")
-      .eq("email", user.email!)
+      .from('User')
+      .select('*')
+      .eq('email', user.email!)
       .single();
 
     if (!userData) {
@@ -28,13 +28,14 @@ export const getSession = async () => {
       user: {
         ...user,
         name: userData.name ?? user.user_metadata.full_name,
-        bio: userData.bio ?? "",
+        bio: userData.bio ?? '',
         username: userData.username,
-        avatarUrl: userData.avatarUrl ?? user.user_metadata.avatar_url,
+        avatarUrl:
+          userData.avatarUrl ?? user.user_metadata.avatar_url,
       },
     };
   } catch (error) {
-    console.error("Error retrieving session:", error);
+    console.error('Error retrieving session:', error);
     return null;
   }
 };
