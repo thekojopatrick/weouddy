@@ -8,15 +8,15 @@ import AuthWrapper from './_components/auth-wrapper';
 import { useAccount } from '@/hooks/account/use-account';
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
-  const { accountData, loading } = useAccount();
+  const { loading } = useAccount();
 
   return (
     <AuthWrapper>
       <main>
         {loading ? (
-          <div className="h-10 w-full bg-slate-50 shimmer"></div>
+          <div className="h-10 w-full bg-slate-50 shimmer" />
         ) : (
-          <SiteHeader user={accountData as never} />
+          <SiteHeader />
         )}
         <>{children}</>
       </main>
