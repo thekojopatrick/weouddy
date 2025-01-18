@@ -14,6 +14,7 @@ export const env = createEnv({
     REDIS_URL: z.string().url(),
     UPSTASH_REDIS_REST_URL: z.string().min(1).url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+    HOST_NAME: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     EMAIL_SERVER_PASSWORD: z.string().min(1),
     NODE_ENV: z
@@ -43,6 +44,7 @@ export const env = createEnv({
     REDIS_URL: process.env.REDIS_URL,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    HOST_NAME: process.env.HOST_NAME,
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
