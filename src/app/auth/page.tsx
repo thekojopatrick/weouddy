@@ -15,10 +15,10 @@ export default function AuthPage() {
   useEffect(() => {
     const checkAuth = async () => {
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (session) {
+      if (user) {
         setAuthenticated(true);
         router.push('/discover');
       } else {
@@ -37,6 +37,8 @@ export default function AuthPage() {
         router.push('/discover');
       }
     });
+
+    setLoading(false);
 
     return () => {
       subscription.unsubscribe();

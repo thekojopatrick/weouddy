@@ -5,11 +5,15 @@ import * as z from 'zod';
 import { Card, CardContent } from '@/components/ui/card';
 import { SignInWithGoogle, signIn, signUp } from '../actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
-import { useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 
 import { LoginForm } from '@/components/auth/login-form';
 import { SignUpForm } from '@/components/auth/signup-form';
-import { useRouter } from 'next/navigation';
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 export function AuthForm() {
@@ -18,7 +22,27 @@ export function AuthForm() {
     'login'
   );
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { toast } = useToast();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  // Initialize tab from URL on mount
+  useEffect(() => {
+    const view = searchParams.get('view');
+    if (view === 'login' || view === 'signup') {
+      setActiveTab(view);
+    }
+  }, [searchParams]);
 
   const handleSignUp = async (
     values: z.infer<typeof signUpSchema>
@@ -142,7 +166,12 @@ export function AuthForm() {
         {activeTab === 'login' ? (
           <LoginForm
             onSubmitAction={handleSignIn}
-            onSignUpClickAction={() => setActiveTab('signup')}
+            onSignUpClickAction={() => {
+              setActiveTab('signup');
+              router.push(
+                pathname + '/' + createQueryString('', 'signup')
+              );
+            }}
             onForgotPassword={handleForgotPassword}
             isLoading={isLoading}
             onGoogleSignIn={handleGoogleSignIn}
@@ -150,7 +179,12 @@ export function AuthForm() {
         ) : (
           <SignUpForm
             onSubmitAction={handleSignUp}
-            onLoginClickAction={() => setActiveTab('login')}
+            onLoginClickAction={() => {
+              setActiveTab('login');
+              router.push(
+                pathname + '?' + createQueryString('view', 'login')
+              );
+            }}
             isLoading={isLoading}
             onGoogleSignIn={handleGoogleSignIn}
           />
