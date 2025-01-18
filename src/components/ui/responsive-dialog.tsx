@@ -34,7 +34,7 @@ export function ResponsiveDialog({
     return (
       <Drawer.Root open={open} onOpenChange={onOpenChangeAction}>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
+          <Drawer.Overlay className="fixed inset-0 z-40 bg-[var(--backdrop)]" />
           <Drawer.Content className="bg-background z-50 flex flex-col fixed bottom-0 left-0 right-0 max-h-[96vh] rounded-t-[10px]">
             <div className="mx-auto w-full max-w-sm">
               <Drawer.Handle className="mx-auto my-4 h-2 w-[100px] rounded-full bg-muted" />
