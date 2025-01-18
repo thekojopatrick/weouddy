@@ -1,7 +1,7 @@
 'use client';
 
-import { SignInWithGoogle, signIn, signUp } from '@/app/auth/actions';
-import { loginSchema, signUpSchema } from '@/types/validation';
+import { SignInWithGoogle, signUp } from '@/app/auth/actions';
+import { LoginFormValues, signUpSchema } from '@/types/validation';
 import { useState, useCallback } from 'react';
 
 import { LoginForm } from './login-form';
@@ -10,6 +10,7 @@ import { SignUpForm } from './signup-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import { signInAction } from '@/app/actions/auth';
 
 interface AuthDialogProps {
   open: boolean;
@@ -39,12 +40,16 @@ export function AuthDialog({
     }, 0);
   };
 
-  const handleSignIn = async (
-    values: z.infer<typeof loginSchema>
-  ) => {
+  const handleSignIn = async (values: LoginFormValues) => {
     setIsLoading(true);
     try {
-      const response = await signIn(values);
+      const formData = new FormData();
+
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await signInAction({}, formData);
 
       if (!response.success || response.error) {
         throw new Error(

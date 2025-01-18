@@ -47,6 +47,36 @@ const resetPasswordSchema = z
   });
 
 // Authentication actions
+
+export const signInWithMagicLinkAction = validatedAction(
+  z.object({
+    email: z.string().email(),
+    redirect: z.string().optional(),
+    priceId: z.string().optional(),
+  }),
+  async (data) => {
+    const supabase = await createClient();
+    const { email, priceId } = data;
+    const origin = (await headers()).get('origin');
+    const redirectTo = `${origin}/auth/callback`;
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${redirectTo}?priceId=${encodeURIComponent(
+          priceId || ''
+        )}&redirect=${encodeURIComponent('/test')}`,
+      },
+    });
+    if (error) {
+      console.error('Error sending magic link:', error);
+      return { error: error.message };
+    }
+
+    return { success: 'Magic link sent to your email.' };
+  }
+);
+
 export const signInAction = validatedAction(
   signInSchema,
   async (data): Promise<AuthResult> => {

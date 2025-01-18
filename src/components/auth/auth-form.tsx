@@ -3,18 +3,15 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  SignInWithGoogle,
-  signIn,
-  signUp,
-} from '../../app/auth/actions';
-import { loginSchema, signUpSchema } from '@/types/validation';
+import { SignInWithGoogle, signUp } from '@/app/auth/actions';
+import { LoginFormValues, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
 
 import { LoginForm } from '@/components/auth/login-form';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
+import { signInAction } from '@/app/actions/auth';
 
 export function AuthForm({
   mode = 'login',
@@ -27,7 +24,6 @@ export function AuthForm({
   );
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
 
   // Initialize tab from URL on mount
   useEffect(() => {
@@ -37,6 +33,19 @@ export function AuthForm({
     }
   }, [searchParams]);
 
+  const handleAuthSuccess = async (
+    message: string,
+    description: string,
+    redirectPath: string = '/discover'
+  ) => {
+    toast.success(message, { description });
+
+    // Use setTimeout to ensure state updates complete before navigation
+    setTimeout(() => {
+      router.push(redirectPath);
+    }, 0);
+  };
+
   const handleSignUp = async (
     values: z.infer<typeof signUpSchema>
   ) => {
@@ -45,29 +54,23 @@ export function AuthForm({
       const { error, success } = await signUp(values);
 
       if (error) {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: error || 'Account creation not successfully',
         });
       }
 
       if (success) {
-        toast({
-          title: 'Account created!',
-          description:
-            'Please check your email to verify your account.',
-        });
-
-        router.push('/discover');
+        await handleAuthSuccess(
+          'Account created!',
+          'Please check your email to verify your account.'
+        );
       }
 
       router.refresh();
     } catch (error: Error | unknown) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           (error as Error).message || 'An unknown error occurred.',
-        variant: 'destructive',
       });
       console.error(error);
     } finally {
@@ -80,18 +83,14 @@ export function AuthForm({
     try {
       const result = await SignInWithGoogle();
       if (!result.success && result.error) {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: result.error,
-          variant: 'destructive',
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           'An unexpected error occurred during Google Sign-In.',
-        variant: 'destructive',
       });
       console.error(
         'An unexpected error occurred during Google Sign-In:',
@@ -102,25 +101,16 @@ export function AuthForm({
     }
   };
 
-  const handleAuthSuccess = async (
-    message: string,
-    description: string,
-    redirectPath: string = '/discover'
-  ) => {
-    toast({ title: message, description });
-
-    // Use setTimeout to ensure state updates complete before navigation
-    setTimeout(() => {
-      router.push(redirectPath);
-    }, 0);
-  };
-
-  const handleSignIn = async (
-    values: z.infer<typeof loginSchema>
-  ) => {
+  const handleSignIn = async (values: LoginFormValues) => {
     setIsLoading(true);
     try {
-      const response = await signIn(values);
+      const formData = new FormData();
+
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await signInAction({}, formData);
 
       if (!response.success || response.error) {
         throw new Error(
@@ -136,8 +126,7 @@ export function AuthForm({
         return; // Exit early after successful auth
       }
     } catch (error) {
-      toast({
-        title: 'Authentication Failed',
+      toast.error('Authentication Failed', {
         description:
           error instanceof Error
             ? error.message

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
-import { signInWithMagicLink } from '../../app/(login)/actions';
+import { signInWithMagicLinkAction } from '@/app/actions/auth';
 import { useActionState, useState } from 'react';
 import { ActionState } from '@/utils/auth/middleware';
 
@@ -44,7 +44,7 @@ export function Login({
   const [magicLinkState, magicLinkAction, pending] = useActionState<
     ActionState,
     FormData
-  >(signInWithMagicLink, { error: '', success: '' });
+  >(signInWithMagicLinkAction, { error: '', success: '' });
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">

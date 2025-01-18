@@ -214,7 +214,7 @@ export const signInWithGoogle = async (
         options: {
           redirectTo: `${redirectTo}?priceId=${encodeURIComponent(
             priceId || ''
-          )}&redirect=/test`,
+          )}&redirect=/discover`,
         },
       });
     if (signInError) {
