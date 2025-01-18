@@ -157,7 +157,8 @@ export function LoginForm({
             className="px-0 text-sm justify-start"
             onClick={onForgotPassword}
           >
-            Forgot password?
+            Forgot Password
+            {/* <Link href={'/forgot-password'}>Forgot password?</Link> */}
           </Button>
 
           <Button

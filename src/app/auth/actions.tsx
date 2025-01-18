@@ -1,6 +1,7 @@
 'use server';
 
 import {
+  ForgotPasswordFormValues,
   LoginFormValues,
   SignUpFormValues,
 } from '@/types/validation';
@@ -148,11 +149,12 @@ export async function SignInWithGoogle() {
   };
 }
 
-export const forgotPasswordAction = async (formData: FormData) => {
-  const email = formData.get('email')?.toString();
+export const forgotPasswordAction = async (
+  formData: ForgotPasswordFormValues
+) => {
+  const { email, callbackUrl } = formData;
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
-  const callbackUrl = formData.get('callbackUrl')?.toString();
 
   if (!email) {
     return encodedRedirect(

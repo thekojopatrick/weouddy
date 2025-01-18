@@ -2,7 +2,7 @@
 
 import { SignInWithGoogle, signIn, signUp } from '@/app/auth/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { LoginForm } from './login-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
@@ -123,12 +123,29 @@ export function AuthDialog({
     }
   };
 
-  const handleForgotPassword = () => {
-    toast.info('Forgot Password', {
-      description:
-        'Forgot password functionality coming soon. Contact support for assistance.',
-    });
-  };
+  const handleForgotPassword = useCallback(() => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    // Try multiple navigation methods
+    try {
+      Promise.resolve().then(() => {
+        router.push('/forgot-password');
+
+        // Fallback to window location if router fails
+        setTimeout(() => {
+          window.location.href = '/forgot-password';
+        }, 100);
+      });
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Force navigation as last resort
+      window.location.href = '/forgot-password';
+    } finally {
+      setIsLoading(false);
+    }
+  }, [router, isLoading]);
 
   return (
     <ResponsiveDialog

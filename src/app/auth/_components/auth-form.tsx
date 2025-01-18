@@ -133,11 +133,7 @@ export function AuthForm() {
   };
 
   const handleForgotPassword = () => {
-    // TODO: Implement forgot password functionality
-    toast({
-      title: 'Forgot Password',
-      description: 'Forgot password functionality coming soon.',
-    });
+    router.push('/forgot-password');
   };
 
   return (

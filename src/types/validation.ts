@@ -21,6 +21,16 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  callbackUrl: z.string(),
+});
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(1, 'Password is required'),
+  confirmPassword: z.string().min(1, 'Confirm Password'),
+});
+
 export const eventFormSchema = z.object({
   name: z.string().min(1, 'Title is required'),
   type: z.string().min(1, 'Type is required'),
@@ -40,6 +50,13 @@ export const eventFormSchema = z.object({
 export type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export type ForgotPasswordFormValues = z.infer<
+  typeof forgotPasswordSchema
+>;
+export type ResetPasswordFormValues = z.infer<
+  typeof resetPasswordSchema
+>;
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export const eventDetailsSchema = eventFormSchema.pick({
