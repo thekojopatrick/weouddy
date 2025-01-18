@@ -1,7 +1,9 @@
 'use client';
 
-import { signUp } from '@/app/auth/actions';
-import { LoginFormValues, signUpSchema } from '@/types/validation';
+import {
+  LoginFormValues,
+  SignUpFormValues,
+} from '@/types/validation';
 import { useState, useCallback } from 'react';
 
 import { LoginForm } from './login-form';
@@ -9,10 +11,11 @@ import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { SignUpForm } from './signup-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
+
 import {
   signInAction,
   signInWithGoogleAction,
+  signUpAction,
 } from '@/app/actions/auth';
 
 interface AuthDialogProps {
@@ -80,12 +83,16 @@ export function AuthDialog({
     }
   };
 
-  const handleSignUp = async (
-    values: z.infer<typeof signUpSchema>
-  ) => {
+  const handleSignUp = async (values: SignUpFormValues) => {
     setIsLoading(true);
     try {
-      const response = await signUp(values);
+      const formData = new FormData();
+
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await signUpAction({}, formData);
 
       if (!response.success || response.error) {
         throw new Error(response.error || 'Sign up failed');

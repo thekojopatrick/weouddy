@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { Button } from '@/components/ui/button';
+import { Button, LoadingButton } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { signUpSchema } from '@/types/validation';
@@ -39,6 +39,7 @@ export function SignUpForm({
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
@@ -96,6 +97,25 @@ export function SignUpForm({
         >
           <FormField
             control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="name">Name</FormLabel>
+                <FormControl>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your name"
+                    {...field}
+                    className="rounded-full h-[40px] text-sm"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -149,13 +169,14 @@ export function SignUpForm({
             )}
           />
 
-          <Button
+          <LoadingButton
             type="submit"
             className="w-full rounded-full h-[40px]"
             disabled={isLoading}
+            loading={isLoading}
           >
-            Continue
-          </Button>
+            {isLoading ? 'Creating account...' : 'Continue'}
+          </LoadingButton>
         </form>
       </Form>
 

@@ -6,6 +6,7 @@ export const authSchema = z.object({
 });
 
 export const signUpSchema = z.object({
+  name: z.string().min(2).optional(),
   email: z.string().email('Invalid email address'),
   password: z
     .string()

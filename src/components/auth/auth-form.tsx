@@ -3,7 +3,6 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { signUp } from '@/app/auth/actions';
 import { LoginFormValues, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
 
@@ -14,6 +13,7 @@ import { toast } from 'sonner';
 import {
   signInAction,
   signInWithGoogleAction,
+  signUpAction,
 } from '@/app/actions/auth';
 
 export function AuthForm({
@@ -54,7 +54,13 @@ export function AuthForm({
   ) => {
     setIsLoading(true);
     try {
-      const { error, success } = await signUp(values);
+      const formData = new FormData();
+
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const { error, success } = await signUpAction({}, formData);
 
       if (error) {
         toast.error('Error', {
