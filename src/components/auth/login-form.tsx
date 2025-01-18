@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { Button } from '@/components/ui/button';
+import { Button, LoadingButton } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { loginSchema } from '@/types/validation';
@@ -51,7 +51,7 @@ export function LoginForm({
   };
 
   return (
-    <div className="grid gap-6 px-4">
+    <div className="grid gap-6 px-4 pt-3">
       <div className="flex flex-col items-center gap-2">
         <Image
           src="/brand/logomark.svg"
@@ -108,7 +108,7 @@ export function LoginForm({
                     type="email"
                     placeholder="Your email address"
                     {...field}
-                    className="rounded-full h-[40px] text-sm"
+                    className="rounded-full h-[44px] text-sm shadow-sm"
                   />
                 </FormControl>
                 <FormMessage />
@@ -129,13 +129,13 @@ export function LoginForm({
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Your password"
                       {...field}
-                      className="rounded-full h-[40px] text-sm"
+                      className="rounded-full h-[44px] text-sm shadow-sm"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
@@ -161,13 +161,14 @@ export function LoginForm({
             {/* <Link href={'/forgot-password'}>Forgot password?</Link> */}
           </Button>
 
-          <Button
+          <LoadingButton
             type="submit"
             className="w-full rounded-full"
             disabled={isLoading}
+            loading={isLoading}
           >
-            Continue
-          </Button>
+            {isLoading ? 'Authenticating..' : 'Continue'}
+          </LoadingButton>
         </form>
       </Form>
 

@@ -1,8 +1,5 @@
-import {
-  FormMessage,
-  Message,
-} from '@/app/(login)/_components/form-message';
-import { SubmitButton } from '@/app/(login)/_components/submit-button';
+import { FormMessage, Message } from '@/components/auth/form-message';
+import { SubmitButton } from '@/components/auth/submit-button';
 import { resetPasswordAction } from '@/app/auth/actions';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

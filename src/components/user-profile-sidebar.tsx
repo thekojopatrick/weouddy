@@ -155,7 +155,7 @@ export function UserProfileSidebar({
             <form action="/auth/signout" method="post">
               <Button
                 variant="ghost"
-                className="w-full text-center text-red-500 border border-red-400 bg-red-50 rounded-full"
+                className="w-full text-center text-red-500 border border-red-400 bg-red-50 rounded-full hover:bg-red-200 hover:text-red-600"
                 type="submit"
                 onClick={handleItemClick}
               >

@@ -3,7 +3,11 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { SignInWithGoogle, signIn, signUp } from '../actions';
+import {
+  SignInWithGoogle,
+  signIn,
+  signUp,
+} from '../../app/auth/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
 
@@ -12,10 +16,14 @@ import { SignUpForm } from '@/components/auth/signup-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
-export function AuthForm() {
+export function AuthForm({
+  mode = 'login',
+}: {
+  mode?: 'login' | 'signup';
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>(
-    'login'
+    mode
   );
   const router = useRouter();
   const searchParams = useSearchParams();
