@@ -3,7 +3,7 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { SignInWithGoogle, signIn, signUp } from '../actions/actions';
+import { SignInWithGoogle, signIn, signUp } from '../actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
 import { useState } from 'react';
 
@@ -85,38 +85,48 @@ export function AuthForm() {
     }
   };
 
+  const handleAuthSuccess = async (
+    message: string,
+    description: string,
+    redirectPath: string = '/discover'
+  ) => {
+    toast({ title: message, description });
+
+    // Use setTimeout to ensure state updates complete before navigation
+    setTimeout(() => {
+      router.push(redirectPath);
+    }, 0);
+  };
+
   const handleSignIn = async (
     values: z.infer<typeof loginSchema>
   ) => {
     setIsLoading(true);
     try {
-      const { error, success } = await signIn(values);
+      const response = await signIn(values);
 
-      if (error) {
-        toast({
-          title: 'Error',
-          description: 'Invalid login credentials.',
-        });
+      if (!response.success || response.error) {
+        throw new Error(
+          response.error || 'Invalid login credentials'
+        );
       }
 
-      if (success) {
-        toast({
-          title: 'Welcome back!',
-          description: 'You have successfully signed in.',
-        });
-
-        router.push('/discover');
+      if (response.success && response.user) {
+        await handleAuthSuccess(
+          'Welcome back!',
+          'You have successfully signed in.'
+        );
+        return; // Exit early after successful auth
       }
-
-      router.refresh();
-    } catch (error: Error | unknown) {
+    } catch (error) {
       toast({
-        title: 'Error',
+        title: 'Authentication Failed',
         description:
-          (error as Error).message || 'An unknown error occurred.',
-        variant: 'destructive',
+          error instanceof Error
+            ? error.message
+            : 'Invalid login credentials',
       });
-      console.error(error);
+      console.error('Sign in error:', error);
     } finally {
       setIsLoading(false);
     }

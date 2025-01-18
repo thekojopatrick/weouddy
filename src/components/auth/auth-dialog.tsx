@@ -1,17 +1,12 @@
 'use client';
 
-import {
-  SignInWithGoogle,
-  signIn,
-  signUp,
-} from '@/app/auth/actions/actions';
+import { SignInWithGoogle, signIn, signUp } from '@/app/auth/actions';
 import { loginSchema, signUpSchema } from '@/types/validation';
-import { useEffect, useState } from 'react';
-import { useUserStore } from '@/stores/user-store';
+import { useState } from 'react';
+
 import { LoginForm } from './login-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { SignUpForm } from './signup-form';
-import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
@@ -30,31 +25,14 @@ export function AuthDialog({
   const [view, setView] = useState<'login' | 'signup'>(defaultView);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { initialize } = useUserStore();
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        await initialize();
-        onOpenChangeAction(false);
-        router.push('/discover'); // Add explicit navigation
-      }
-    };
-    checkSession();
-  }, [router, onOpenChangeAction, initialize]);
 
   const handleAuthSuccess = async (
     message: string,
     description: string,
     redirectPath: string = '/discover'
   ) => {
-    await initialize();
     toast.success(message, { description });
     onOpenChangeAction(false);
-
     // Use setTimeout to ensure state updates complete before navigation
     setTimeout(() => {
       router.push(redirectPath);

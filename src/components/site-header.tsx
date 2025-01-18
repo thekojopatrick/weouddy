@@ -12,17 +12,17 @@ import Link from 'next/link';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Container } from './common/container';
 import { UserProfileSidebar } from './user-profile-sidebar';
+import { CurrentUser } from '@/types/prisma.types';
 
-import { useAccount } from '@/hooks/account/use-account';
-
-export function SiteHeader() {
+export function SiteHeader({ user }: { user: CurrentUser | null }) {
   const isSmallDevice = useMediaQuery(
     'only screen and (max-width : 768px)'
   );
   const pathname = usePathname();
   const router = useRouter();
   const showBackButton = !pathname.match(/^\/($|discover)/);
-  const { accountData: user } = useAccount();
+
+  console.log({ user });
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -81,7 +81,7 @@ export function SiteHeader() {
             {user ? (
               <UserProfileSidebar
                 user={{
-                  name: user.fullname!,
+                  name: user.name!,
                   email: user.email!,
                   avatar: (user.avatarUrl as never) ?? '',
                   username: user.username ?? '',

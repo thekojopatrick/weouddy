@@ -1,15 +1,7 @@
-import { createBrowserClient } from '@supabase/ssr';
-import { Database } from '@/types/database';
-
-export const createClientAuth = () => {
-  return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-};
+import { createClient } from '@/utils/supabase/client';
 
 export const getClientSession = async () => {
-  const supabase = createClientAuth();
+  const supabase = createClient();
   try {
     const {
       data: { user },
