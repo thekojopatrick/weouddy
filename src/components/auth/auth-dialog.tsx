@@ -1,6 +1,6 @@
 'use client';
 
-import { SignInWithGoogle, signUp } from '@/app/auth/actions';
+import { signUp } from '@/app/auth/actions';
 import { LoginFormValues, signUpSchema } from '@/types/validation';
 import { useState, useCallback } from 'react';
 
@@ -10,7 +10,10 @@ import { SignUpForm } from './signup-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { signInAction } from '@/app/actions/auth';
+import {
+  signInAction,
+  signInWithGoogleAction,
+} from '@/app/actions/auth';
 
 interface AuthDialogProps {
   open: boolean;
@@ -110,11 +113,17 @@ export function AuthDialog({
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const result = await SignInWithGoogle();
+      const result = await signInWithGoogleAction();
+
+      console.log(result);
+
       if (!result?.success && result?.error) {
         throw new Error(result.error);
       }
       // OAuth redirect will handle the flow
+      if (result.success && result.redirectPath) {
+        router.push(result.redirectPath);
+      }
     } catch (error) {
       toast.error('Google Sign In Failed', {
         description:

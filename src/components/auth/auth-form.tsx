@@ -3,7 +3,7 @@
 import * as z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { SignInWithGoogle, signUp } from '@/app/auth/actions';
+import { signUp } from '@/app/auth/actions';
 import { LoginFormValues, signUpSchema } from '@/types/validation';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +11,10 @@ import { LoginForm } from '@/components/auth/login-form';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { signInAction } from '@/app/actions/auth';
+import {
+  signInAction,
+  signInWithGoogleAction,
+} from '@/app/actions/auth';
 
 export function AuthForm({
   mode = 'login',
@@ -81,11 +84,15 @@ export function AuthForm({
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const result = await SignInWithGoogle();
+      const result = await signInWithGoogleAction();
       if (!result.success && result.error) {
         toast.error('Error', {
           description: result.error,
         });
+      }
+
+      if (result.success && result.redirectPath) {
+        router.push(result.redirectPath);
       }
     } catch (error) {
       toast.error('Error', {
