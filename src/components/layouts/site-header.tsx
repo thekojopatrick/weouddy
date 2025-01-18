@@ -3,14 +3,14 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CountrySelector } from './country-selector';
+import { CountrySelector } from '@/components/country-selector';
 import Image from 'next/image';
 import Link from 'next/link';
 
 //import SearchDialog from './event/search-dialog';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Container } from './common/container';
+import { Container } from '@/components/common/container';
 import { UserProfileSidebar } from './user-profile-sidebar';
 import { CurrentUser } from '@/types/prisma.types';
 
