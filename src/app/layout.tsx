@@ -12,6 +12,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { siteMeta } from '@/config/site';
 import Provider from './provider';
 import Script from 'next/script';
+//import { env } from '@/env';
 
 export const metadata: Metadata = siteMeta;
 
@@ -50,9 +51,10 @@ export default function RootLayout({
           });
         `}
         </Script>
-        <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        />
+        {/* <Script
+          id="map"
+          src={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAPS_API_KEY}&libraries=places`}
+        /> */}
       </body>
     </html>
   );

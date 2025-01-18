@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { toast } from 'sonner';
 import { useJsApiLoader } from '@react-google-maps/api';
+import { env } from '@/env';
 
 interface Location {
   name: string;
@@ -67,7 +68,7 @@ export function LocationModal({
 
   // Initialize Google Maps with correct libraries array
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: env.GOOGLE_MAPS_API_KEY!,
     libraries: ['places'],
   });
 
