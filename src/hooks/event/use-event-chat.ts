@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { ChatMessage } from '@/types/chat';

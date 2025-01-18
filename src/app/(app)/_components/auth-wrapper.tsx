@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from '@/stores/user-store';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
 import SplashScreen from './splash-screen';
 
 interface AuthWrapperProps {

@@ -15,7 +15,7 @@ import { LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { getNameInitials } from '@/lib/utils';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 
 export function UserProfileSidebar({
   user,

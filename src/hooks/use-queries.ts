@@ -1,7 +1,10 @@
-import { supabase } from '@/lib/supabase/client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabase/client';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useEffect } from 'react';
-
 
 export function useRealTimeUpdates(eventId: string) {
   const queryClient = useQueryClient();
@@ -9,28 +12,46 @@ export function useRealTimeUpdates(eventId: string) {
   useEffect(() => {
     const channel = supabase
       .channel(`event:${eventId}`)
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'Post',
-        filter: `eventId=eq.${eventId}` 
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['posts', eventId] });
-      })
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'Like',
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['posts', eventId] });
-      })
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'Comment',
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['posts', eventId] });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Post',
+          filter: `eventId=eq.${eventId}`,
+        },
+        () => {
+          queryClient.invalidateQueries({
+            queryKey: ['posts', eventId],
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Like',
+        },
+        () => {
+          queryClient.invalidateQueries({
+            queryKey: ['posts', eventId],
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Comment',
+        },
+        () => {
+          queryClient.invalidateQueries({
+            queryKey: ['posts', eventId],
+          });
+        }
+      )
       .subscribe();
 
     return () => {
@@ -52,7 +73,7 @@ export function usePosts(eventId: string) {
 
 export function useLikePost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ postId }: { postId: string }) => {
       const response = await fetch(`/api/posts/${postId}/like`, {
