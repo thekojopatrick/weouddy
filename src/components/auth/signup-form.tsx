@@ -51,13 +51,13 @@ export function SignUpForm({
 
   return (
     <div className="grid gap-6 px-4">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 pt-3">
         <Image
-          src="logo.svg"
+          src="/logo.svg"
           alt="WeOuddy"
           width={48}
           height={48}
-          className="h-16 w-16"
+          className="h-auto w-32"
         />
         <h1 className="text-2xl font-semibold tracking-tight">
           Create account

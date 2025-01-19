@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthForm } from '../../components/auth/auth-form';
+import { AuthForm } from '../../../components/auth/auth-form';
 import { createClient } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 

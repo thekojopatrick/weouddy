@@ -152,17 +152,17 @@ export function AuthDialog({
     // Try multiple navigation methods
     try {
       Promise.resolve().then(() => {
-        router.push('/forgot-password');
+        router.push('/auth/forgot-password');
 
         // Fallback to window location if router fails
         setTimeout(() => {
-          window.location.href = '/forgot-password';
+          window.location.href = '/auth/forgot-password';
         }, 100);
       });
     } catch (error) {
       console.error('Navigation error:', error);
       // Force navigation as last resort
-      window.location.href = '/forgot-password';
+      window.location.href = '/auth/forgot-password';
     } finally {
       setIsLoading(false);
     }
