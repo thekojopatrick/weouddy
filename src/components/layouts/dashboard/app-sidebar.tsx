@@ -113,7 +113,7 @@ export function AppSidebar({
           variant="ghost"
           size="icon"
           className="mr-2"
-          onClick={() => router.back()}
+          onClick={() => router.push('/discover')}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>

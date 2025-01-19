@@ -114,10 +114,14 @@ export function NavUser({ user }: { user: CurrentUser | null }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
+            <form action="/auth/signout" method="post">
+              <DropdownMenuItem asChild className="text-red-500">
+                <button>
+                  <LogOut />
+                  Log out
+                </button>
+              </DropdownMenuItem>
+            </form>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
