@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { SiteHeader } from '@/components/layouts/site-header';
+import { SiteHeader } from '@/components/layouts/frontpage/site-header';
 import AuthWrapper from './_components/auth-wrapper';
 import { getSession } from '@/lib/auth';
 
