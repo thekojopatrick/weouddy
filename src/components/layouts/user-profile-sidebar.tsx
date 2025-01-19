@@ -14,8 +14,7 @@ import { Button } from '@/components/ui/button';
 import { LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { getNameInitials } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase/client';
+import { useState } from 'react';
 
 export function UserProfileSidebar({
   user,
@@ -27,30 +26,30 @@ export function UserProfileSidebar({
     avatar: string;
   };
 }) {
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    user.avatar
-  );
+  // const [avatarUrl, setAvatarUrl] = useState<string | null>(
+  //   user.avatar
+  // );
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (!avatarUrl?.startsWith('https://lh3.googleusercontent.com')) {
-      async function downloadImage(path: string) {
-        try {
-          const { data, error } = await supabase.storage
-            .from('avatars')
-            .download(path);
+  // useEffect(() => {
+  //   if (!avatarUrl?.startsWith('https://lh3.googleusercontent.com')) {
+  //     async function downloadImage(path: string) {
+  //       try {
+  //         const { data, error } = await supabase.storage
+  //           .from('avatars')
+  //           .download(path);
 
-          if (error) throw error;
-          const url = URL.createObjectURL(data);
-          setAvatarUrl(url);
-        } catch (error) {
-          console.log('Error downloading image: ', error);
-        }
-      }
+  //         if (error) throw error;
+  //         const url = URL.createObjectURL(data);
+  //         setAvatarUrl(url);
+  //       } catch (error) {
+  //         console.log('Error downloading image: ', error);
+  //       }
+  //     }
 
-      if (user) downloadImage(user.avatar);
-    }
-  }, [avatarUrl, user]);
+  //     if (user) downloadImage(user.avatar);
+  //   }
+  // }, [avatarUrl, user]);
 
   const handleItemClick = () => {
     setOpen(false);
@@ -60,10 +59,7 @@ export function UserProfileSidebar({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Avatar className="size-8 rounded-full cursor-pointer">
-          <AvatarImage
-            src={avatarUrl ?? user.avatar}
-            alt={user.name}
-          />
+          <AvatarImage src={user.avatar} alt={user.name} />
           <AvatarFallback className="rounded-lg text-sm">
             {getNameInitials(user.name)}
           </AvatarFallback>
@@ -76,7 +72,7 @@ export function UserProfileSidebar({
         <div className="mt-6 space-y-6">
           <div className="flex items-center gap-4 px-2">
             <Avatar className="h-16 w-16 rounded-lg">
-              <AvatarImage src={avatarUrl!} alt={user.name} />
+              <AvatarImage src={user.avatar!} alt={user.name} />
               <AvatarFallback className="rounded-lg text-lg">
                 {getNameInitials(user.name)}
               </AvatarFallback>
@@ -108,22 +104,26 @@ export function UserProfileSidebar({
 
           <div className="space-y-2">
             <div className="text-sm font-medium">Features</div>
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={handleItemClick}
-            >
-              <Sparkles className="mr-2 size-4" />
-              For Business
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={handleItemClick}
-            >
-              <LayoutDashboard className="mr-2 size-4" />
-              Dashboard
-            </Button>
+            <Link href={'/about/pricing'}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                <Sparkles className="mr-2 size-4" />
+                For Business
+              </Button>
+            </Link>
+            <Link href={'/dashboard'}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                <LayoutDashboard className="mr-2 size-4" />
+                Dashboard
+              </Button>
+            </Link>
           </div>
 
           <div className="space-y-2">

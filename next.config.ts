@@ -3,6 +3,21 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  async redirects() {
+    return [
+      {
+        source: '/pricing',
+        destination: '/about/pricing',
+        permanent: true,
+      },
+      {
+        source: '/supporters',
+        destination: '/about/pricing',
+        permanent: true,
+      },
+    ];
+  },
+
   experimental: {
     serverActions: {
       bodySizeLimit: '6mb',
