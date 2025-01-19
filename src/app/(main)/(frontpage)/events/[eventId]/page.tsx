@@ -1,6 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 
-import EventRoom from './../_components/event-room';
+import EventRoom from '../_components/event-room';
 import { formatEventDateTime } from '@/lib/formatters';
 import { getSession } from '@/lib/auth';
 import { getURL } from '@/lib/utils';
