@@ -163,7 +163,7 @@ export function LoginForm({
 
           <LoadingButton
             type="submit"
-            className="w-full rounded-full"
+            className={`w-full rounded-full h-[44px] ${isLoading ? 'cursor-none' : 'cursor-default'}`}
             disabled={isLoading}
             loading={isLoading}
           >

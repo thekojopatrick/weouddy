@@ -126,7 +126,7 @@ export function SignUpForm({
                     type="email"
                     placeholder="Your email address"
                     {...field}
-                    className="rounded-full h-[40px] text-sm"
+                    className="rounded-full h-[44px] text-sm"
                   />
                 </FormControl>
                 <FormMessage />
@@ -147,7 +147,7 @@ export function SignUpForm({
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Your password"
                       {...field}
-                      className="rounded-full h-[40px] text-sm"
+                      className="rounded-full h-[44px] text-sm"
                     />
                     <Button
                       type="button"
@@ -171,7 +171,7 @@ export function SignUpForm({
 
           <LoadingButton
             type="submit"
-            className="w-full rounded-full h-[40px]"
+            className={`w-full rounded-full h-[44px] ${isLoading ? 'cursor-none' : 'cursor-default'}`}
             disabled={isLoading}
             loading={isLoading}
           >
