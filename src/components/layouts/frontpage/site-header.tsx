@@ -22,8 +22,6 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
   const router = useRouter();
   const showBackButton = !pathname.match(/^\/($|discover)/);
 
-  console.log({ user });
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <Container>

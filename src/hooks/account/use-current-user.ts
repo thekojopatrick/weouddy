@@ -2,11 +2,13 @@ import { useUserStore } from '@/stores/user-store';
 import { useEffect } from 'react';
 
 const useCurrentUser = (userId: string) => {
-  const { fetchUserProfile, userProfiles } = useUserStore();
+  const { fetchUserProfile, userProfiles, initialize } =
+    useUserStore();
 
   useEffect(() => {
+    initialize();
     fetchUserProfile(userId);
-  }, [userId, fetchUserProfile]);
+  }, [userId, fetchUserProfile, initialize]);
 
   return userProfiles[userId] ?? null;
 };
