@@ -20,8 +20,6 @@ export function NavMain({
   }[];
   activeItem: string;
 }) {
-  console.log(activeItem);
-
   return (
     <SidebarMenu>
       {items.map((item) => (
@@ -30,8 +28,8 @@ export function NavMain({
             asChild
             isActive={activeItem === item.url}
           >
-            <a href={item.url}>
-              <item.icon />
+            <a href={item.url} className="text-xl">
+              <item.icon size={32} scale={2} className="size-8" />
               <span>{item.title}</span>
             </a>
           </SidebarMenuButton>

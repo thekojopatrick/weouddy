@@ -122,8 +122,8 @@ export function AppSidebar({
             src={isMobile ? '/brand/logomark.svg' : '/logo.svg'}
             alt={'WeOuddy'}
             className="object-cover"
-            width={isMobile ? 60 : 120}
-            height={isMobile ? 60 : 120}
+            width={isMobile ? 32 : 80}
+            height={isMobile ? 32 : 80}
           />
           <span className="text-xl font-bold sr-only">WeOuddy</span>
         </Link>
