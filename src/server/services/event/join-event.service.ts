@@ -1,6 +1,7 @@
 import { cache } from '@/lib/redis'; // Implement a caching solution like Redis or memory cache
 import { db } from '@/server/db/prisma';
 import { z } from 'zod';
+import { rateLimiter } from '../ratelimiter/rate-limiter.service';
 
 const joinEventSchema = z.object({
   identifier: z.string().min(1),
@@ -70,6 +71,21 @@ export class JoinEventService {
   static async joinEvent(input: unknown): Promise<JoinEventResponse> {
     const startTime = Date.now();
     const { identifier, pin, userId } = joinEventSchema.parse(input);
+
+    // Rate limit join attempts - 3 attempts per minute
+    await rateLimiter.limit({
+      identifier: `join-event-${userId}`,
+      limit: 3,
+      window: 60000,
+    });
+
+    // Use Redis rate limiter for concurrent join prevention if available
+    await rateLimiter.limit({
+      identifier: `join-lock-${userId}-${identifier}`,
+      limit: 1,
+      window: 5000,
+      useRedis: true, // Will fall back to memory if Redis is unavailable
+    });
 
     // Use optimistic locking instead of pessimistic
     if (!(await this.acquireLock(userId, identifier))) {

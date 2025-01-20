@@ -7,12 +7,19 @@ import { storeQRCode } from '@/lib/qr/storage';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { getURL } from '@/lib/utils';
 import { cache } from '@/lib/redis';
+import { rateLimiter } from '../ratelimiter/rate-limiter.service';
 
 export class EventService {
   private static RATE_LIMIT_MS = 30000;
   private static MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
   static async create(data: EventFormValues, userId: string) {
+    await rateLimiter.limit({
+      identifier: `create-event-${userId}`,
+      limit: 1,
+      window: 30000,
+    });
+
     return db.$transaction(
       async (tx) => {
         await this.checkRateLimit(tx, userId);
