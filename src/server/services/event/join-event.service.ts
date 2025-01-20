@@ -149,7 +149,6 @@ export class JoinEventService {
       }
 
       // Determine status without additional query
-
       const status =
         event.hostId === userId || !event.requiresApproval
           ? 'APPROVED'
@@ -169,15 +168,14 @@ export class JoinEventService {
         });
 
         if (existingAttendee) {
-          // Only update if status is different
-          if (existingAttendee.status !== status) {
-            return tx.attendee.update({
-              where: { id: existingAttendee.id },
-              data: { status },
-              select: { status: true },
-            });
+          if (existingAttendee.status === status) {
+            return { status: existingAttendee.status };
           }
-          return existingAttendee;
+          return tx.attendee.update({
+            where: { id: existingAttendee.id },
+            data: { status },
+            select: { status: true },
+          });
         }
 
         // Create attendee and activity in parallel if possible
@@ -188,11 +186,16 @@ export class JoinEventService {
               eventId: event.id,
               status,
             },
-            select: {
-              status: true,
-            },
+            select: { status: true },
           }),
-          ,
+          status === 'APPROVED'
+            ? tx.event.update({
+                where: { id: event.id },
+                data: {
+                  members: { connect: { id: userId } },
+                },
+              })
+            : Promise.resolve(),
           tx.eventActivity.create({
             data: {
               eventId: event.id,
@@ -200,18 +203,6 @@ export class JoinEventService {
               type: 'JOIN',
             },
           }),
-          ...(status === 'APPROVED'
-            ? [
-                tx.event.update({
-                  where: { id: event.id },
-                  data: {
-                    members: {
-                      connect: { id: userId },
-                    },
-                  },
-                }),
-              ]
-            : []),
         ]);
 
         return attendee;
