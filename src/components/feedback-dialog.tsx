@@ -29,11 +29,12 @@ const FeedbackDialog = ({
   type = 'ACCOUNT_SETUP',
   metadata = {},
   title = '',
+  trigger = <></>,
 }) => {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState('');
   const [feedback, setFeedback] = useState('');
-  const [category, setCategory] = useState('UI_UX');
+  const [category, setCategory] = useState('GENERAL');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -78,7 +79,7 @@ const FeedbackDialog = ({
       // Reset form and close dialog
       setRating('');
       setFeedback('');
-      setCategory('UI_UX');
+      setCategory('GENERAL');
       setOpen(false);
     } catch (error) {
       toast({
@@ -93,14 +94,7 @@ const FeedbackDialog = ({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="fixed bottom-10 left-5 font-semibold rounded-full"
-        >
-          Feedback
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="flex flex-col gap-0 p-0 [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
           <DialogTitle className="border-b border-border px-6 py-4 text-base">

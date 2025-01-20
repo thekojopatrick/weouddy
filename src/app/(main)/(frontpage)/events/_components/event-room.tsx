@@ -94,6 +94,18 @@ export default function EventRoom({
               <div className="flex justify-between items-start">
                 <h1 className="text-2xl font-bold">{event.name}</h1>
                 <div className="flex gap-2">
+                  <FeedbackDialog
+                    type="EVENT_EXPERIENCE"
+                    title="How is your experience with the platform so far?"
+                    trigger={
+                      <Button
+                        variant="outline"
+                        className="font-semibold rounded-full"
+                      >
+                        Drop Feedback
+                      </Button>
+                    }
+                  />
                   <ShareEventPopover
                     inputRef={inputRef}
                     handleCopy={handleCopy}
@@ -198,10 +210,7 @@ export default function EventRoom({
             />
           </div>
         </div>
-        <FeedbackDialog
-          type="EVENT_EXPERIENCE"
-          title="How is your experience with the platform so far?"
-        />
+
         <EventSettingsModal
           event={event as never}
           isOpen={showSettings}
