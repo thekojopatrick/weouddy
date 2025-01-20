@@ -85,7 +85,7 @@ export const TaskDialog = ({
         closebtnstyle="hidden"
       >
         <DialogHeader className="px-4 py-2 flex flex-row justify-between items-center border-b">
-          <DialogTitle className="text-lg">New project</DialogTitle>
+          <DialogTitle className="text-lg">New task</DialogTitle>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreVertical className="h-4 w-4" />

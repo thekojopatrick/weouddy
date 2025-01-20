@@ -46,8 +46,11 @@ export function ProfileStatsComponent() {
         <CardTitle>Followers</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
+      <CardContent className="flex flex-1 items-center">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-square w-full h-full"
+        >
           <BarChart
             accessibilityLayer
             data={chartData}

@@ -23,7 +23,7 @@ import { useKanbanStore, Task } from '@/stores/use-kanban-store';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const COLUMNS: { id: Task['status']; title: string }[] = [
@@ -116,17 +116,26 @@ const Index = () => {
     <div className="p-6">
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-xl font-semibold">Event Planner</h1>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input placeholder="Search" className="pl-9 w-64" />
+                <Input
+                  placeholder="Search"
+                  className="pl-9 w-64 shadow-none"
+                />
               </div>
-              <Button variant="outline" className="gap-2">
-                <Filter className="w-4 h-4" />
-                <span>Filter</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="ghost" className="gap-2">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Newest first</span>
+                </Button>
+                <Button variant="ghost" className="gap-2">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Filter</span>
+                </Button>
+              </div>
             </div>
             <Button
               onClick={() => setDialogOpen(true)}
