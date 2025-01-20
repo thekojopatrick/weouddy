@@ -17,13 +17,13 @@ import {
 } from '@dnd-kit/sortable';
 import { Column } from './column';
 import { TaskCard } from './task-card';
-import { TaskDialog } from './new-task-dialog';
+import { TaskDialog } from './task-dialog';
 
 import { useKanbanStore, Task } from '@/stores/use-kanban-store';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Filter, Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const COLUMNS: { id: Task['status']; title: string }[] = [
@@ -123,7 +123,7 @@ const Index = () => {
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   placeholder="Search"
-                  className="w-64 shadow-none border-none bg-gray-100 text-sm text-gray-500 font-medium ps-9 pe-8 py-2 dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-600"
+                  className="w-64 shadow-none border-none bg-gray-100  text-sm text-gray-500 font-medium ps-9 pe-8 py-2 dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-600"
                 />
               </div>
               <div className="flex gap-2">
@@ -153,7 +153,7 @@ const Index = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex gap-6 overflow-x-auto pb-4 p-4 bg-gray-50">
           {COLUMNS.map((column) => (
             <Column
               key={column.id}

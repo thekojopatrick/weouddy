@@ -31,8 +31,10 @@ export const Column = ({
   return (
     <div className="flex-shrink-0 w-80">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="font-medium text-gray-700">{title}</h2>
+        <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full  border">
+          <h2 className="font-medium text-gray-700 text-sm">
+            {title}
+          </h2>
           <span className="text-sm text-gray-500">
             {tasks.length}
           </span>
@@ -48,7 +50,7 @@ export const Column = ({
       </div>
       <div
         ref={setNodeRef}
-        className="bg-gray-50 rounded-lg p-4 min-h-[calc(100vh-12rem)]"
+        className="rounded-lg  min-h-[calc(100vh-12rem)]"
       >
         <SortableContext
           items={tasks.map((t) => t.id)}

@@ -35,7 +35,7 @@ export const TaskCard = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white rounded-lg shadow-sm mb-3 p-4"
+      className="bg-white rounded-lg shadow-sm border mb-3 p-4"
       {...attributes}
       {...listeners}
       {...props}
