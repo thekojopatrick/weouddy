@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -20,14 +20,14 @@ const EventProjectCard = ({
 }: {
   project: {
     title: string;
-    logo: string;
+    logo: ReactNode;
     company: string;
     tasks: string[];
     inProgress: boolean;
     completed: boolean;
     dueDate: string;
     assignee: string;
-    lastEditedAvatar: string;
+    lastEditedAvatar: ReactNode;
     categoryColor: string;
     category: string;
     lastEdited: string;

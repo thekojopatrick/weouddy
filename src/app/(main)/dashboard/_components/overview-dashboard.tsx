@@ -27,6 +27,7 @@ import {
 } from 'recharts';
 import InviteModal from './invite-modal';
 import EventProjectCard from './event-project-card';
+import Image from 'next/image';
 
 const expensesData = [
   { month: 'Jan', amount: 18000 },
@@ -47,7 +48,14 @@ const projects = [
   {
     company: 'Slack Inc.',
     title: 'Illustration of Materials Design',
-    logo: <img src="/placeholder.svg" alt="Slack" />,
+    logo: (
+      <Image
+        width={100}
+        height={100}
+        src="/placeholder.svg"
+        alt="Slack"
+      />
+    ),
     tasks: 34,
     inProgress: 19,
     completed: 14,
@@ -56,11 +64,36 @@ const projects = [
     categoryColor: 'bg-purple-400',
     assignee: 'Amanda Harvey',
     lastEdited: 'James Collins',
-    lastEditedAvatar: <img src="/placeholder.svg" alt="James" />,
+    lastEditedAvatar: (
+      <Image
+        width={100}
+        height={100}
+        src="/placeholder.svg"
+        alt="James"
+      />
+    ),
     team: [
-      <img key="1" src="/placeholder.svg" alt="Team member" />,
-      <img key="2" src="/placeholder.svg" alt="Team member" />,
-      <img key="3" src="/placeholder.svg" alt="Team member" />,
+      <Image
+        width={100}
+        height={100}
+        key="1"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="2"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="3"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
       <AvatarFallback key="4">L</AvatarFallback>,
     ],
     comments: 2,
@@ -79,11 +112,36 @@ const projects = [
     categoryColor: 'bg-red-400',
     assignee: 'Daniel Hobbs',
     lastEdited: 'Daniel Hobbs',
-    lastEditedAvatar: <img src="/placeholder.svg" alt="Daniel" />,
+    lastEditedAvatar: (
+      <Image
+        width={100}
+        height={100}
+        src="/placeholder.svg"
+        alt="Daniel"
+      />
+    ),
     team: [
-      <img key="1" src="/placeholder.svg" alt="Team member" />,
-      <img key="2" src="/placeholder.svg" alt="Team member" />,
-      <img key="3" src="/placeholder.svg" alt="Team member" />,
+      <Image
+        width={100}
+        height={100}
+        key="1"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="2"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="3"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
       <AvatarFallback key="4">L</AvatarFallback>,
     ],
     comments: 4,
@@ -104,9 +162,27 @@ const projects = [
     lastEdited: 'Liza Harrison',
     lastEditedAvatar: <AvatarFallback>L</AvatarFallback>,
     team: [
-      <img key="1" src="/placeholder.svg" alt="Team member" />,
-      <img key="2" src="/placeholder.svg" alt="Team member" />,
-      <img key="3" src="/placeholder.svg" alt="Team member" />,
+      <Image
+        width={100}
+        height={100}
+        key="1"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="2"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
+      <Image
+        width={100}
+        height={100}
+        key="3"
+        src="/placeholder.svg"
+        alt="Team member"
+      />,
       <AvatarFallback key="4">L</AvatarFallback>,
     ],
     comments: 56,
@@ -125,7 +201,9 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="bg-yellow-400 rounded-xl p-2 w-12 h-12">
-              <img
+              <Image
+                width={100}
+                height={100}
                 src="/placeholder.svg"
                 alt="Mailchimp logo"
                 className="w-full h-full"
@@ -310,7 +388,9 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between p-4 bg-gray-100/5 rounded-lg">
                   <div className="flex items-center gap-4">
                     <Avatar>
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         src="/placeholder.svg"
                         alt="Amanda Harvey"
                       />
