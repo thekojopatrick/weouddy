@@ -1,16 +1,23 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Download, FileText } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Download, FileText } from 'lucide-react';
 
 interface Invoice {
-  id: string
-  date: string
-  amount: number
-  plan: string
+  id: string;
+  date: string;
+  amount: number;
+  plan: string;
 }
 
 interface InvoiceTableProps {
-  invoices: Invoice[]
+  invoices: Invoice[];
 }
 
 export function InvoiceTable({ invoices }: InvoiceTableProps) {
@@ -19,7 +26,7 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Invoice</TableHead>
+            <TableHead className="hidden  sm:flex">Invoice</TableHead>
             <TableHead>Billing date</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Plan</TableHead>
@@ -28,9 +35,9 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
         </TableHeader>
         <TableBody>
           {invoices.map((invoice) => (
-            <TableRow key={invoice.id}>
-              <TableCell>
-                <div className="flex items-center gap-2">
+            <TableRow key={invoice.id} className="py-3">
+              <TableCell className="hidden  sm:flex">
+                <div className="items-center gap-2 flex">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   {invoice.id}
                 </div>
@@ -38,12 +45,20 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
               <TableCell>{invoice.date}</TableCell>
               <TableCell>${invoice.amount}</TableCell>
               <TableCell>{invoice.plan}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button variant="ghost" size="sm">
+              <TableCell className="text-right space-x-2 flex items-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shadow-sm rounded-lg"
+                >
                   View
                 </Button>
-                <Button variant="ghost" size="sm">
-                  <Download className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shadow-sm rounded-lg"
+                >
+                  <Download className="h-5 w-5" />
                 </Button>
               </TableCell>
             </TableRow>
@@ -51,6 +66,5 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
-

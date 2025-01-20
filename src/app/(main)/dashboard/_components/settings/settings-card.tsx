@@ -10,18 +10,25 @@ interface SettingsCardProps {
   title: string;
   description: string;
   children: React.ReactNode;
+  actionButton?: React.ReactNode;
 }
 
 export function SettingsCard({
   title,
   description,
   children,
+  actionButton,
 }: SettingsCardProps) {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <div className="flex justify-between flex-wrap gap-3">
+          <div className="heading">
+            <CardTitle className="text-lg">{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </div>
+          {actionButton && actionButton}
+        </div>
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

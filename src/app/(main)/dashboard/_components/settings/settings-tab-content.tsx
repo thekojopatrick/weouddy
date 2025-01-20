@@ -6,6 +6,7 @@ interface SettingsTabContentProps {
   title: string;
   description: string;
   children?: React.ReactNode;
+  actionButton?: React.ReactNode;
 }
 
 export function SettingsTabContent({
@@ -13,10 +14,15 @@ export function SettingsTabContent({
   title,
   description,
   children,
+  actionButton,
 }: SettingsTabContentProps) {
   return (
     <TabsContent value={value}>
-      <SettingsCard title={title} description={description}>
+      <SettingsCard
+        title={title}
+        description={description}
+        actionButton={actionButton}
+      >
         {children || <p>{title} settings coming soon...</p>}
       </SettingsCard>
     </TabsContent>

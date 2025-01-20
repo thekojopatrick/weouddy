@@ -10,6 +10,8 @@ import { SocialAccounts } from './profile/social-accounts';
 import { SettingsTabContent } from './settings-tab-content';
 import BillingPage from './billing';
 import MembersPage from './partners';
+import { Button } from '@/components/ui/button';
+import { Gift } from 'lucide-react';
 
 const settingsTabs = [
   { value: 'profile', label: 'Profile' },
@@ -18,7 +20,7 @@ const settingsTabs = [
   { value: 'preferences', label: 'Preferences' },
   { value: 'workspace', label: 'Workspace' },
   { value: 'billing', label: 'Plan & Billing' },
-  { value: 'members', label: 'Members' },
+  { value: 'partners', label: 'Partners' },
 ];
 
 export default function AccountSettings() {
@@ -71,12 +73,21 @@ export default function AccountSettings() {
           value="billing"
           title="Plan & Billing"
           description="Manage your subscription and billing details."
+          actionButton={
+            <Button
+              variant="outline"
+              className="gap-1 shadow-sm rounded-xl"
+            >
+              <Gift className="h-5 w-5" />
+              Gift PRO
+            </Button>
+          }
         >
           <BillingPage />
         </SettingsTabContent>
         <SettingsTabContent
-          value="members"
-          title="Members"
+          value="partners"
+          title="Partners"
           description="Manage your team members and their roles."
         >
           <MembersPage />

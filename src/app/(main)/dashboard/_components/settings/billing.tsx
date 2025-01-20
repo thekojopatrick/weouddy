@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { Gift } from 'lucide-react';
 import { InvoiceTable } from './billing/invoice-table';
 import { PlanCard } from './billing/plan-card';
 import { PaymentMethods } from './billing/payment-methods';
@@ -42,20 +40,6 @@ const invoices = [
 export default function BillingPage() {
   return (
     <div className="space-y-8">
-      <div className="items-center justify-between hidden">
-        <div>
-          <h2 className="text-2xl font-bold">Plan & Billing</h2>
-          <p className="text-muted-foreground">
-            View your plan information or switch plans according to
-            your needs.
-          </p>
-        </div>
-        <Button variant="outline" className="gap-2">
-          <Gift className="h-4 w-4" />
-          Gift PRO
-        </Button>
-      </div>
-
       <div className="grid gap-8 md:grid-cols-2">
         <PlanCard
           name="Startup"
