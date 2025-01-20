@@ -115,8 +115,11 @@ export function NavUser({ user }: { user: CurrentUser | null }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <form action="/auth/signout" method="post">
-              <DropdownMenuItem asChild className="text-red-500">
-                <button>
+              <DropdownMenuItem
+                asChild
+                className="text-red-500 w-full hover:bg-red-50 hover:text-red-500"
+              >
+                <button className="w-full hover:bg-red-50 hover:text-red-500">
                   <LogOut />
                   Log out
                 </button>

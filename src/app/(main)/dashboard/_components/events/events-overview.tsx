@@ -1,7 +1,7 @@
-import { UserEvents } from '@/components/profile/user-events';
 import React from 'react';
+import { DashboardUserEvents } from './user-events-list';
 
-const EventsLists = ({ userId }: { userId: string }) => {
+const EventsOverview = ({ userId }: { userId: string }) => {
   return (
     <div className="space-y-6">
       <div className="">
@@ -10,9 +10,9 @@ const EventsLists = ({ userId }: { userId: string }) => {
           Find both your joined and hosted events here
         </p>
       </div>
-      <UserEvents userId={userId} />,
+      <DashboardUserEvents userId={userId} />,
     </div>
   );
 };
 
-export default EventsLists;
+export default EventsOverview;
