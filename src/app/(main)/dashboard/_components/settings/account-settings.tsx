@@ -1,0 +1,87 @@
+'use client';
+
+import { Separator } from '@/components/ui/separator';
+import { SettingsTabs } from './settings-tabs';
+import { AvatarUpload } from './profile/avatar-upload';
+import { DangerZone } from './profile/danger-zone';
+import { PasswordForm } from './profile/password-form';
+import { PersonalInfoForm } from './profile/personal-info-form';
+import { SocialAccounts } from './profile/social-accounts';
+import { SettingsTabContent } from './settings-tab-content';
+import BillingPage from './billing';
+import MembersPage from './partners';
+
+const settingsTabs = [
+  { value: 'profile', label: 'Profile' },
+  { value: 'notifications', label: 'Notifications' },
+  { value: 'integrations', label: 'Integrations' },
+  { value: 'preferences', label: 'Preferences' },
+  { value: 'workspace', label: 'Workspace' },
+  { value: 'billing', label: 'Plan & Billing' },
+  { value: 'members', label: 'Members' },
+];
+
+export default function AccountSettings() {
+  return (
+    <div className="container mx-auto p-4">
+      <SettingsTabs tabs={settingsTabs} defaultValue="profile">
+        <SettingsTabContent
+          value="profile"
+          title="Profile"
+          description="Manage your name, password and account settings."
+        >
+          <div className="space-y-8">
+            <AvatarUpload />
+            <Separator />
+            <PersonalInfoForm />
+            <Separator />
+            <PasswordForm />
+            <Separator />
+            <SocialAccounts />
+            <Separator />
+            <DangerZone />
+          </div>
+        </SettingsTabContent>
+
+        <SettingsTabContent
+          value="notifications"
+          title="Notifications"
+          description="Manage your notification preferences."
+        />
+
+        <SettingsTabContent
+          value="integrations"
+          title="Integrations"
+          description="Manage your connected applications and services."
+        />
+
+        <SettingsTabContent
+          value="preferences"
+          title="Preferences"
+          description="Manage your application preferences."
+        />
+
+        <SettingsTabContent
+          value="workspace"
+          title="Workspace"
+          description="Manage your workspace settings."
+        />
+
+        <SettingsTabContent
+          value="billing"
+          title="Plan & Billing"
+          description="Manage your subscription and billing details."
+        >
+          <BillingPage />
+        </SettingsTabContent>
+        <SettingsTabContent
+          value="members"
+          title="Members"
+          description="Manage your team members and their roles."
+        >
+          <MembersPage />
+        </SettingsTabContent>
+      </SettingsTabs>
+    </div>
+  );
+}
