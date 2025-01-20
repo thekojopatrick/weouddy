@@ -28,7 +28,7 @@ export function NavMain({
             asChild
             isActive={activeItem === item.url}
           >
-            <a href={item.url} className="text-xl">
+            <a href={item.url} className="text-lg">
               <item.icon size={32} scale={2} className="size-8" />
               <span>{item.title}</span>
             </a>
