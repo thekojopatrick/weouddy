@@ -2,7 +2,7 @@ import { EventService } from '@/server/services/event';
 import { getSession } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getIp } from '@/lib/get-ip';
+
 import { rateLimiter } from '@/server/services/ratelimiter/rate-limiter.service';
 
 export async function GET(request: Request) {
@@ -11,8 +11,6 @@ export async function GET(request: Request) {
   const limit = parseInt(searchParams.get('limit') || '12');
   const location = searchParams.get('location');
   const category = searchParams.get('category');
-
-  const ip = getIp();
 
   // Rate limit API requests - 30 requests per minute per IP
   await rateLimiter.limitByIp({
