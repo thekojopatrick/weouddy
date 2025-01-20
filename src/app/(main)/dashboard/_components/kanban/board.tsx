@@ -123,7 +123,7 @@ const Index = () => {
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   placeholder="Search"
-                  className="pl-9 w-64 shadow-none"
+                  className="w-64 shadow-none border-none bg-gray-100 text-sm text-gray-500 font-medium ps-9 pe-8 py-2 dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-600"
                 />
               </div>
               <div className="flex gap-2">
