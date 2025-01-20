@@ -36,7 +36,7 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
         <TableBody>
           {invoices.map((invoice) => (
             <TableRow key={invoice.id} className="py-3">
-              <TableCell className="hidden  sm:flex">
+              <TableCell className="hidden sm:flex">
                 <div className="items-center gap-2 flex">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   {invoice.id}
@@ -45,7 +45,7 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
               <TableCell>{invoice.date}</TableCell>
               <TableCell>${invoice.amount}</TableCell>
               <TableCell>{invoice.plan}</TableCell>
-              <TableCell className="text-right space-x-2 flex items-center">
+              <TableCell className="text-right space-x-2 flex items-center justify-end max-w-64">
                 <Button
                   variant="outline"
                   size="sm"
