@@ -39,7 +39,7 @@ const EventProjectCard = ({
 }) => {
   return (
     <div>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden shadow-sm">
         <CardContent className="p-0">
           {/* Header */}
           <div className="p-6 flex justify-between items-start">

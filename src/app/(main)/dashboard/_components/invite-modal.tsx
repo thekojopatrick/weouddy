@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { MoreVertical, X, Copy } from 'lucide-react';
+import Image from 'next/image';
 
 const InviteModal = ({
   open,
@@ -126,7 +127,9 @@ const InviteModal = ({
                           {invitee.avatar}
                         </div>
                       ) : (
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={invitee.avatar}
                           alt={invitee.name}
                         />

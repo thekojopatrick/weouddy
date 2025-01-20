@@ -1,11 +1,16 @@
+import { Post, Event } from '@prisma/client';
+
 export interface UserProfile {
   id: string;
   name: string | null;
   username: string | null;
-  email?: string;
+  email: string | null;
   avatarUrl: string | null;
   bio: string | null;
   allowFollowers: boolean;
+  posts: Post[];
+  hostedEvents: Event[];
+  joinedEvents: Event[];
 }
 
 export interface FollowStats {
@@ -16,7 +21,7 @@ export interface FollowStats {
 
 export interface FollowRequestResult {
   success: boolean;
-  action: "accept" | "decline";
+  action: 'accept' | 'decline';
 }
 
 export interface FollowRequest {
@@ -85,6 +90,6 @@ export interface FollowButtonProps {
   isFollowing: boolean;
   isMutual?: boolean;
   onToggle: () => void;
-  size?: "default" | "sm" | "lg" | "icon";
+  size?: 'default' | 'sm' | 'lg' | 'icon';
   disabled?: boolean;
 }

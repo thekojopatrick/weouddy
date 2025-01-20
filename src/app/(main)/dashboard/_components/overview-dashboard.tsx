@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -15,7 +15,6 @@ import {
   Building2,
   FolderKanban,
   ChevronDown,
-  Plus,
 } from 'lucide-react';
 import {
   BarChart,
@@ -25,9 +24,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import InviteModal from './invite-modal';
+
 import EventProjectCard from './event-project-card';
 import Image from 'next/image';
+import { ProfileHeader } from './profile-header';
 
 const expensesData = [
   { month: 'Jan', amount: 18000 },
@@ -43,6 +43,24 @@ const expensesData = [
   { month: 'Nov', amount: 17000 },
   { month: 'Dec', amount: 30000 },
 ];
+
+interface DashboardOverviewProps {
+  profile: {
+    id: string;
+    name: string;
+    username: string;
+    avatarUrl: string;
+    stats: {
+      following: number;
+      followers: number;
+      events: number;
+      posts: number;
+    };
+    isOwnProfile?: boolean;
+    isFollowing?: boolean;
+    allowFollowers?: boolean;
+  };
+}
 
 const projects = [
   {
@@ -191,54 +209,16 @@ const projects = [
   },
 ];
 
-const Dashboard = () => {
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
-
+const OverviewDashboard = ({ profile }: DashboardOverviewProps) => {
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-yellow-400 rounded-xl p-2 w-12 h-12">
-              <Image
-                width={100}
-                height={100}
-                src="/placeholder.svg"
-                alt="Mailchimp logo"
-                className="w-full h-full"
-              />
-            </div>
-            <div>
-              <h1 className="text-black text-xl font-semibold">
-                Mailchimp
-              </h1>
-              <p className="text-gray-400 text-sm">
-                Marketing, Automation & Email Platform
-              </p>
-            </div>
-          </div>
-          <>
-            <InviteModal
-              open={inviteModalOpen}
-              onOpenChange={setInviteModalOpen}
-            />
-
-            {/* Update the Invite talents button */}
-            <Button
-              variant="secondary"
-              className="gap-2"
-              onClick={() => setInviteModalOpen(true)}
-            >
-              <Plus size={16} />
-              Invite talents
-            </Button>
-          </>
-        </div>
+        <ProfileHeader {...profile} />
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Profile Setup Card */}
-          <Card>
+          <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Profile setup</CardTitle>
@@ -320,7 +300,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Expenses Card */}
-          <Card>
+          <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Expenses</CardTitle>
@@ -356,11 +336,11 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Talents Section */}
-        <Card>
+        {/* Partners Section */}
+        <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Talents</CardTitle>
+              <CardTitle>Partners</CardTitle>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-500">
@@ -383,7 +363,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* Talent Cards */}
+              {/* Partners Cards */}
               <div className="grid gap-4">
                 <div className="flex items-center justify-between p-4 bg-gray-100/5 rounded-lg">
                   <div className="flex items-center gap-4">
@@ -432,7 +412,7 @@ const Dashboard = () => {
         {/* Projects Section */}
         <div className="mt-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-semibold text-black">
               Projects
             </h2>
             <div className="flex items-center gap-4">
@@ -467,4 +447,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default OverviewDashboard;

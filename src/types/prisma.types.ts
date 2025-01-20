@@ -1,6 +1,6 @@
-import { EventActivityType, MediaType, UserRole } from "./enums";
+import { EventActivityType, MediaType, UserRole } from './enums';
 
-import { User } from "@supabase/supabase-js";
+import { User } from '@supabase/supabase-js';
 
 // User-related Types
 export type CurrentUser = User & {
@@ -192,7 +192,7 @@ export interface ProfilePageData {
   };
   isOwnProfile: boolean;
   isFollowing?: boolean;
-  allowFollowers: boolean;
+  allowFollowers?: boolean;
   followers: UserFollow[];
   following: UserFollow[];
 }

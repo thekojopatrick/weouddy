@@ -19,9 +19,13 @@ export async function getUserProfile(
       id: true,
       name: true,
       username: true,
+      email: true,
       avatarUrl: true,
       bio: true,
       allowFollowers: true,
+      posts: true,
+      joinedEvents: true,
+      hostedEvents: true,
     },
   });
 
