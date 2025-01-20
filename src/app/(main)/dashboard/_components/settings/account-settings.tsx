@@ -12,6 +12,7 @@ import BillingPage from './billing';
 import MembersPage from './partners';
 import { Button } from '@/components/ui/button';
 import { Gift } from 'lucide-react';
+import ConnectAccounts from './profile/connect-accounts';
 
 const settingsTabs = [
   { value: 'profile', label: 'Profile' },
@@ -40,6 +41,8 @@ export default function AccountSettings() {
             <PasswordForm />
             <Separator />
             <SocialAccounts />
+            <Separator />
+            <ConnectAccounts />
             <Separator />
             <DangerZone />
           </div>

@@ -1,9 +1,15 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export function PersonalInfoForm() {
   return (
@@ -12,22 +18,40 @@ export function PersonalInfoForm() {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" placeholder="Enter full name" />
+          <Input
+            id="name"
+            placeholder="Enter full name"
+            className="shadow-sm text-sm"
+          />
           <p className="text-sm text-muted-foreground">
-            Enter your full name, or a display name you are comfortable with.
+            Enter your full name, or a display name you are
+            comfortable with.
           </p>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="username">Username</Label>
-          <Input id="username" placeholder="Enter username" />
-          <p className="text-sm text-muted-foreground">Enter your display name for public forums.</p>
+          <Input
+            id="username"
+            placeholder="Enter username"
+            className="shadow-sm text-sm"
+          />
+          <p className="text-sm text-muted-foreground">
+            Enter your display name for public forums.
+          </p>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="Enter email address" />
-          <p className="text-sm text-muted-foreground">Enter the email address you want to use to log in.</p>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Enter email address"
+            className="shadow-sm text-sm"
+          />
+          <p className="text-sm text-muted-foreground">
+            Enter the email address you want to use to log in.
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -40,17 +64,22 @@ export function PersonalInfoForm() {
               <SelectItem value="us">United States</SelectItem>
               <SelectItem value="uk">United Kingdom</SelectItem>
               <SelectItem value="ca">Canada</SelectItem>
+              <SelectItem value="ca">Nigeria</SelectItem>
+              <SelectItem value="ca">Ghana</SelectItem>
               {/* Add more countries as needed */}
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex gap-4">
-          <Button>Save changes</Button>
-          <Button variant="outline">Cancel</Button>
+          <Button className="shadow-sm rounded-lg">
+            Save changes
+          </Button>
+          <Button variant="outline" className="shadow-sm rounded-lg">
+            Cancel
+          </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
