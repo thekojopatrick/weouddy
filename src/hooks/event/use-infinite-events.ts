@@ -1,12 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { EventWithDetails } from '@/types/prisma.types';
 
 const EVENTS_PER_PAGE = 10;
 
-export function useInfiniteEvents(
-  location = 'world',
-  category = 'All'
-) {
+export function useInfiniteEvents(location = 'world') {
   const { data, fetchNextPage, hasNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ['infiniteEvents', location],
@@ -23,13 +19,7 @@ export function useInfiniteEvents(
     });
 
   // Combine and filter events client-side
-  const events =
-    data?.pages
-      .flatMap((page) => page.events)
-      .filter(
-        (event: EventWithDetails) =>
-          category === 'All' || event.type === category
-      ) ?? [];
+  const events = data?.pages.flatMap((page) => page.events) ?? [];
 
   return { events, fetchNextPage, hasNextPage, isLoading };
 }

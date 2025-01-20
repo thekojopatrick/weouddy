@@ -45,11 +45,24 @@ export default function DiscoverPage({
   );
   const [currentCategory, setCurrentCategory] = useState('All');
 
-  const { events, fetchNextPage, hasNextPage, isLoading } =
-    useInfiniteEvents(currentLocation, currentCategory);
+  const {
+    events: allEvents,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+  } = useInfiniteEvents(currentLocation);
+
+  const filteredEvents = useMemo(
+    () =>
+      allEvents.filter(
+        (event) =>
+          currentCategory === 'All' || event.type === currentCategory
+      ),
+    [allEvents, currentCategory]
+  );
 
   const eventIds =
-    events?.map((event: EventWithDetails) => event.id) ?? [];
+    filteredEvents?.map((event: EventWithDetails) => event.id) ?? [];
   const { ref, statuses } = useVisibleEvents(eventIds);
 
   const { ref: loadMoreRef } = useInView({
@@ -71,11 +84,11 @@ export default function DiscoverPage({
     () => [
       'All',
       ...new Set(
-        events?.flatMap((event: EventWithDetails) => event.type)
+        allEvents?.flatMap((event: EventWithDetails) => event.type)
       ),
     ],
-    [events]
-  ) as string[];
+    [allEvents] // Use allEvents instead of filteredEvents
+  );
 
   return (
     <div className="flex min-h-screen flex-col mt-4 pb-8 md:pb-16">
@@ -118,7 +131,7 @@ export default function DiscoverPage({
                 </div>
               </div>
 
-              {events.length === 0 ? (
+              {filteredEvents.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     No events found for the selected filters.
@@ -126,7 +139,7 @@ export default function DiscoverPage({
                 </div>
               ) : (
                 <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {events.map((event) => {
+                  {filteredEvents.map((event) => {
                     const { date, time } = formatEventDateTime(
                       event.dateTime as never
                     );
