@@ -56,6 +56,7 @@
 		"date-fns": "^4.1.0",
 		"input-otp": "^1.4.1",
 		"ioredis": "^5.4.2",
+		"lodash.debounce": "^4.0.8",
 		"lucide-react": "^0.468.0",
 		"motion": "^11.15.0",
 		"nanoid": "^5.0.9",
@@ -86,6 +87,7 @@
 	},
 	"devDependencies": {
 		"@types/google.maps": "^3.58.1",
+		"@types/lodash.debounce": "^4.0.9",
 		"@types/node": "^20",
 		"@types/qrcode": "^1.5.5",
 		"@types/react": "^19",
