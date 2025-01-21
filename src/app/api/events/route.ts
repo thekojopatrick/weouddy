@@ -35,19 +35,11 @@ export async function GET(request: Request) {
       EventService.count(location, category, session?.userId),
     ]);
 
-    return new NextResponse(
-      JSON.stringify({
-        events,
-        hasMore: skip + limit < total,
-        nextPage: page + 1,
-      }),
-      {
-        headers: {
-          'Cache-Control':
-            'public, s-maxage=60, stale-while-revalidate=300',
-        },
-      }
-    );
+    return NextResponse.json({
+      events,
+      hasMore: skip + limit < total,
+      nextPage: page + 1,
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
