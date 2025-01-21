@@ -68,7 +68,7 @@ export function LocationModal({
 
   // Initialize Google Maps with correct libraries array
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: env.GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries: ['places'],
   });
 
