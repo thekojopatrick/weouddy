@@ -30,9 +30,13 @@ export async function GET(request: Request) {
         limit,
         location,
         category,
-        session?.userId
+        session?.userId || undefined
       ),
-      EventService.count(location, category, session?.userId),
+      EventService.count(
+        location,
+        category,
+        session?.userId || undefined
+      ),
     ]);
 
     return NextResponse.json({
