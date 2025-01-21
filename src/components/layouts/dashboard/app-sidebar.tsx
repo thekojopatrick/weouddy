@@ -103,7 +103,7 @@ export function AppSidebar({
   user: CurrentUser | null;
 }) {
   const router = useRouter();
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const pathname = usePathname();
 
   return (
@@ -112,12 +112,15 @@ export function AppSidebar({
         <Button
           variant="ghost"
           size="icon"
-          className="mr-2"
+          className=""
           onClick={() => router.push('/discover')}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Link href="/">
+        <Link
+          href="/"
+          className={state === 'collapsed' ? 'hidden' : 'block'}
+        >
           <Image
             src={isMobile ? '/brand/logomark.svg' : '/logo.svg'}
             alt={'WeOuddy'}
@@ -129,7 +132,11 @@ export function AppSidebar({
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} activeItem={pathname} />
+        <NavMain
+          items={data.navMain}
+          activeItem={pathname}
+          state={state}
+        />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={props.user} />

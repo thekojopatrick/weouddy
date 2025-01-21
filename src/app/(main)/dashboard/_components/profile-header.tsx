@@ -83,7 +83,7 @@ export function ProfileHeader({
                 {/* Update the Invite talents button */}
                 <Button
                   variant="outline"
-                  className="gap-2 shadow-none"
+                  className="gap-2 shadow-none btn-primary"
                   onClick={() => setInviteModalOpen(true)}
                 >
                   <Plus size={16} />

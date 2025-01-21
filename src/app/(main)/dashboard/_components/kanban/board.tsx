@@ -139,7 +139,7 @@ const Index = () => {
             </div>
             <Button
               onClick={() => setDialogOpen(true)}
-              className="bg-teal-600 hover:bg-teal-700"
+              className="btn-primary"
             >
               + New
             </Button>

@@ -19,16 +19,17 @@ export function NavMain({
     isActive?: boolean;
   }[];
   activeItem: string;
+  state?: 'expanded' | 'collapsed';
 }) {
   return (
-    <SidebarMenu>
+    <SidebarMenu className={`px-2 transition-all ease-in delay-500`}>
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton
             asChild
             isActive={activeItem === item.url}
           >
-            <a href={item.url} className="text-lg">
+            <a href={item.url} className="text-lg w-full">
               <item.icon size={32} scale={2} className="size-8" />
               <span>{item.title}</span>
             </a>

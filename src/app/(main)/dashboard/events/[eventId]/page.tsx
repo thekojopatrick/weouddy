@@ -45,9 +45,9 @@ const page = async ({ params }: { params: { eventId: string } }) => {
           </div>
           <div className="flex gap-3">
             <Link href={`/dashboard/events/${eventId}/planner`}>
-              <Button>View Planner</Button>
+              <Button className="btn-primary">View Planner</Button>
             </Link>
-            <Button>Invite Partners</Button>
+            <Button variant={'outline'}>Invite Partners</Button>
             <Button size={'icon'} variant={'outline'}>
               <Settings />
             </Button>
