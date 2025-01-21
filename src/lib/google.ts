@@ -5,7 +5,7 @@ import { env } from '@/env';
 export async function searchPlaces(input: string) {
   if (!input || input.length < 2) return [];
 
-  if (!env.GOOGLE_MAPS_API_KEY) {
+  if (!env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     console.error('Google Maps API key is not configured');
     throw new Error('Google Maps API key is missing');
   }
@@ -14,7 +14,7 @@ export async function searchPlaces(input: string) {
     const response = await fetch(
       `https://maps.googleapis.com/maps/api/js?input=${encodeURIComponent(
         input
-      )}&key=${env.GOOGLE_MAPS_API_KEY}&libraries=places&callback=initAutocompleter`,
+      )}&key=${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initAutocompleter`,
       { cache: 'no-store' }
     );
 

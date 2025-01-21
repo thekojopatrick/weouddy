@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Loader2, MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin } from 'lucide-react';
 import {
   Command,
   CommandEmpty,
@@ -18,8 +18,8 @@ import usePlacesAutocomplete, {
 import { Button } from '@/components/ui/button';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { toast } from 'sonner';
-import { useJsApiLoader } from '@react-google-maps/api';
-import { env } from '@/env';
+//import { useJsApiLoader } from '@react-google-maps/api';
+//import { env } from '@/env';
 
 interface Location {
   name: string;
@@ -67,10 +67,10 @@ export function LocationModal({
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize Google Maps with correct libraries array
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: ['places'],
-  });
+  // const { isLoaded, loadError } = useJsApiLoader({
+  //   googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+  //   libraries: ['places'],
+  // });
 
   // Initialize Places Autocomplete with correct options
   const {
@@ -144,6 +144,7 @@ export function LocationModal({
     }
   };
 
+  /*
   // Loading and error states
   if (loadError) {
     return (
@@ -156,8 +157,9 @@ export function LocationModal({
         </div>
       </ResponsiveDialog>
     );
-  }
+  }*/
 
+  /*
   if (!isLoaded) {
     return (
       <ResponsiveDialog
@@ -170,6 +172,7 @@ export function LocationModal({
       </ResponsiveDialog>
     );
   }
+*/
 
   return (
     <ResponsiveDialog
@@ -196,7 +199,7 @@ export function LocationModal({
               placeholder="Search for a location..."
               value={value}
               onValueChange={handleInputChange}
-              disabled={!ready || !isLoaded}
+              disabled={!ready}
             />
             <CommandList>
               <CommandEmpty>
