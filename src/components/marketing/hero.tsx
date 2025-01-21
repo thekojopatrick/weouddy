@@ -54,7 +54,7 @@ export default function HeroSection() {
               aria-label="Work with us"
               className="rounded-full h-12 font-semibold"
             >
-              Discover more
+              Explore Events
             </Button>
           </Link>
           <Link href={'https://x.com/OfficialWeouddy'}>
