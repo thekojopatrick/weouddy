@@ -20,8 +20,9 @@ const JoinChatRoom = ({
   eventName?: string;
   user: {
     id: string;
-    userName: string;
-    userAvatar: string;
+    name: string;
+    username?: string;
+    avatarUrl: string;
   };
 }) => {
   const {
@@ -78,13 +79,15 @@ const JoinChatRoom = ({
           />
         }
         content={
-          <ChatMessages
-            messages={messages}
-            currentUserId={user.id}
-            isLoading={isLoading}
-            onPinMessage={pinMessage}
-            onDeleteMessage={deleteMessage}
-          />
+          <div className="min-h-[30vh]">
+            <ChatMessages
+              messages={messages}
+              currentUser={user}
+              isLoading={isLoading}
+              onPinMessage={pinMessage}
+              onDeleteMessage={deleteMessage}
+            />
+          </div>
         }
         footerContent={
           <ChatInput onSendMessage={handleSendMessage} />

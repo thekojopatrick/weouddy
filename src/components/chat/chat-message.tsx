@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useUserStore } from '@/stores/user-store';
+
 import { getNameInitials } from '@/lib/utils';
 
 interface ChatMessageProps {
@@ -22,6 +22,12 @@ interface ChatMessageProps {
   onPinMessage: (messageId: string, isPinned: boolean) => void;
   onDeleteMessage: (messageId: string) => void;
   onReaction?: (messageId: string, emoji: string) => void;
+  currentUser: {
+    id: string;
+    name: string;
+    username?: string;
+    avatarUrl: string;
+  };
 }
 
 export const ChatMessageItem: FC<ChatMessageProps> = ({
@@ -30,11 +36,10 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
   onPinMessage,
   onDeleteMessage,
   onReaction,
+  currentUser,
 }) => {
-  const { currentUser } = useUserStore();
-
   const displayName = isOwnMessage
-    ? currentUser?.name || currentUser?.username
+    ? (currentUser.name ?? currentUser?.username)
     : message.user?.name || message.user?.username || 'Anonymous';
 
   const displayProfilePic = isOwnMessage
@@ -79,7 +84,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
         <div
           className={`
           max-w-[280px] rounded-lg p-2 mt-1
-          ${isOwnMessage ? 'bg-primary text-primary-foreground' : 'bg-muted'}
+          ${isOwnMessage ? 'bg-brand text-primary-foreground' : 'bg-muted'}
         `}
         >
           <p className="text-sm break-words">{message.content}</p>
@@ -95,7 +100,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
                 }
                 className={`px-2 py-1 rounded-lg text-sm flex items-center gap-1 ${
                   reaction.reacted
-                    ? 'bg-primary/20 text-primary'
+                    ? 'bg-brand text-primary'
                     : 'bg-muted hover:bg-muted/80'
                 }`}
               >

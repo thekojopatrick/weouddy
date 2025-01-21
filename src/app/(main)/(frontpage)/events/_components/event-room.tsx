@@ -91,8 +91,10 @@ export default function EventRoom({
           <div className="max-w-7xl px-6 py-6 mx-auto">
             {/* Event Header */}
             <div className="mb-8">
-              <div className="flex justify-between items-start">
-                <h1 className="text-2xl font-bold">{event.name}</h1>
+              <div className="flex justify-between flex-wrap gap-3 items-start">
+                <h1 className="text-xl md:text-2xl font-semibold">
+                  {event.name}
+                </h1>
                 <div className="flex gap-2">
                   <FeedbackDialog
                     type="EVENT_EXPERIENCE"
