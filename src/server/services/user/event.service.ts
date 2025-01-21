@@ -1,6 +1,32 @@
 import { db } from '@/server/db/prisma';
 
 export class UserEventService {
+  static async getUserEventStatus(eventId: string, userId: string) {
+    const [membership, pendingRequest] = await Promise.all([
+      db.event.findFirst({
+        where: {
+          id: eventId,
+          members: {
+            some: {
+              id: userId,
+            },
+          },
+        },
+      }),
+      db.attendee.findFirst({
+        where: {
+          eventId,
+          userId,
+          status: 'PENDING',
+        },
+      }),
+    ]);
+
+    if (membership) return 'JOINED';
+    if (pendingRequest) return 'PENDING';
+    return 'NOT_JOINED';
+  }
+
   static async getBatchUserEventStatus(
     eventIds: string[],
     userId: string

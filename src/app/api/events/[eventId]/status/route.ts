@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { getUserEventStatus } from "@/server/actions/user/queries";
+import { UserEventService } from '@/server/services/user/event.service';
+import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
 
 export async function GET(
   request: Request,
-  { params }: { params: { eventId: string } },
+  { params }: { params: { eventId: string } }
 ) {
   try {
     const session = await getSession();
@@ -12,10 +12,13 @@ export async function GET(
     const { eventId } = await params;
 
     if (!session?.user) {
-      return NextResponse.json({ status: "NOT_JOINED" });
+      return NextResponse.json({ status: 'NOT_JOINED' });
     }
 
-    const status = await getUserEventStatus(eventId, session.user.id);
+    const status = await UserEventService.getUserEventStatus(
+      eventId,
+      session.user.id
+    );
 
     console.log({ status });
 
@@ -23,8 +26,8 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch status" },
-      { status: 500 },
+      { error: 'Failed to fetch status' },
+      { status: 500 }
     );
   }
 }

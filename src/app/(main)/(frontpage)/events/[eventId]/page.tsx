@@ -5,6 +5,7 @@ import { formatEventDateTime } from '@/lib/formatters';
 import { getSession } from '@/lib/auth';
 import { getURL } from '@/lib/utils';
 import { EventService } from '@/server/services/event';
+import EventAccessGuard from '../_components/event-access-guard';
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -59,9 +60,11 @@ export default async function EventRoomPage(props: {
 
   const event = await EventService.getEvent(eventId);
 
+  if (!event) return null;
+
   return (
-    <>
+    <EventAccessGuard user={session?.user} event={event as never}>
       <EventRoom user={session.user} event={event as never} />
-    </>
+    </EventAccessGuard>
   );
 }
