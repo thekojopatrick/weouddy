@@ -16,17 +16,19 @@ import { useDropzone } from 'react-dropzone';
 import { useFormContext } from 'react-hook-form';
 
 interface CoverUploadStepProps {
-  onNextAction: () => void;
-  onBackAction: () => void;
+  onNext: () => void;
+  onBack: () => void;
   maxSize: number;
   onError: (error: string) => void;
+  disabled?: boolean;
 }
 
 export function CoverUploadStep({
-  onNextAction,
-  onBackAction,
+  onNext,
+  onBack,
   maxSize,
   onError,
+  disabled = false,
 }: CoverUploadStepProps) {
   const { setValue, watch } = useFormContext();
   const coverImage = watch('coverImage');
@@ -238,15 +240,16 @@ export function CoverUploadStep({
         <Button
           type="button"
           variant="outline"
-          onClick={onBackAction}
+          onClick={onBack}
           className="rounded-full shadow-none"
+          disabled={disabled}
         >
           Back
         </Button>
         <Button
           type="button"
-          onClick={onNextAction}
-          disabled={!previewImage || !!error}
+          onClick={onNext}
+          disabled={!previewImage || disabled || !!error}
           className="rounded-full"
         >
           Next

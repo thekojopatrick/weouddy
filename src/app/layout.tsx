@@ -53,7 +53,7 @@ export default function RootLayout({
         </Script>
         {/* <Script
           id="map"
-          src={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAPS_API_KEY}&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         /> */}
       </body>
     </html>

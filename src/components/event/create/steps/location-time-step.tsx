@@ -36,13 +36,15 @@ import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
 
 interface LocationTimeStepProps {
-  onNextAction: () => void;
-  onBackAction: () => void;
+  onNext: () => void;
+  onBack: () => void;
+  disabled?: boolean;
 }
 
 export function LocationTimeStep({
-  onNextAction,
-  onBackAction,
+  onNext,
+  onBack,
+  disabled = false,
 }: LocationTimeStepProps) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const { setValue, watch } = useFormContext();
@@ -223,8 +225,9 @@ export function LocationTimeStep({
         <Button
           type="button"
           variant="outline"
-          onClick={onBackAction}
+          onClick={onBack}
           className="rounded-full shadow-none"
+          disabled={disabled}
         >
           Back
         </Button>
@@ -235,9 +238,10 @@ export function LocationTimeStep({
             if (!timeValue) {
               setValue('time', format(new Date(), 'HH:mm'));
             }
-            onNextAction();
+            onNext();
           }}
           className="rounded-full"
+          disabled={disabled}
         >
           Next
         </Button>

@@ -34,11 +34,13 @@ const eventTypes = [
 interface EventDetailsStepProps {
   onNext: () => void;
   onBack: () => void;
+  disabled?: boolean;
 }
 
 export function EventDetailsStep({
   onNext,
   onBack,
+  disabled = false,
 }: EventDetailsStepProps) {
   return (
     <div className="space-y-6 pb-5 md:py-6">
@@ -53,7 +55,7 @@ export function EventDetailsStep({
       </div>
 
       <FormField
-        name="title"
+        name="name"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="font-medium">
@@ -124,6 +126,7 @@ export function EventDetailsStep({
           type="button"
           variant="outline"
           onClick={onBack}
+          disabled={disabled}
           className="rounded-full shadow-none"
         >
           Back
@@ -131,6 +134,7 @@ export function EventDetailsStep({
         <Button
           type="button"
           onClick={onNext}
+          disabled={disabled}
           className="rounded-full"
         >
           Next

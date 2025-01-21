@@ -1,3 +1,4 @@
+// create-event-form.tsx
 'use client';
 
 import { useState } from 'react';
@@ -8,67 +9,56 @@ import {
   type EventFormValues,
 } from '@/types/validation';
 import { Form } from '@/components/ui/form';
-import { createEvent } from '@/app/actions/create-event';
-import { useToast } from '@/hooks/use-toast';
-
-import { LocationTimeStep } from './steps/location-time-step';
-import { PrivacyStep } from './steps/privacy';
-import { SuccessStep } from './steps/success';
-import { WelcomeStep } from './steps/welcome';
 import { CoverUploadStep } from './steps/cover-upload';
 import { EventDetailsStep } from './steps/event-details';
-import LoadingOverlay from '../loading-overlay';
-import { getURL } from '@/lib/utils';
-import { useEvents } from '@/hooks/event/use-event';
+import { LocationTimeStep } from './steps/location-time-step';
+import { PrivacyStep } from './steps/privacy';
+import { WelcomeStep } from './steps/welcome';
+
+// ... (keep existing imports)
 
 interface CreateEventFormProps {
   onCloseAction: () => void;
+  onSubmit: (data: EventFormValues) => Promise<void>;
+  disabled?: boolean;
 }
 
-type Step =
-  | 'welcome'
-  | 'details'
-  | 'location'
-  | 'cover'
-  | 'privacy'
-  | 'success';
+type Step = 'welcome' | 'details' | 'location' | 'cover' | 'privacy';
 
 const MAX_COVER_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
-interface EventCreationResult {
-  eventUrl: string;
-  qrCodeUrl: string;
-  eventName: string;
-}
+const DEFAULT_VALUES: EventFormValues = {
+  name: '',
+  type: '', // Provide a default value for type
+  description: '',
+  location: '',
+  date: new Date().toISOString().split('T')[0], // Default to today's date
+  time: new Date().toLocaleTimeString('en-US', {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  }), // Default current time
+  coverImage: '',
+  isPublic: false,
+};
 
 export function CreateEventForm({
   onCloseAction,
+  onSubmit,
+  disabled = false, // Ensure disabled has a default value
 }: CreateEventFormProps) {
   const [step, setStep] = useState<Step>('welcome');
-  const [eventData, setEventData] =
-    useState<EventCreationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { invalidateEvents } = useEvents();
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: {
-      name: '',
-      type: '',
-      description: '',
-      location: '',
-      date: '',
-      time: '',
-      coverImage: '',
-      isPublic: false,
-    },
+    defaultValues: DEFAULT_VALUES,
     mode: 'onChange',
   });
 
   const validateCoverImage = (imageData: string) => {
+    if (!imageData) return; // Skip validation if no image
+
     if (!imageData.startsWith('data:image')) {
       throw new Error('Invalid image format');
     }
@@ -76,67 +66,20 @@ export function CreateEventForm({
     const base64Data = imageData.split(',')[1];
     const sizeInBytes = Buffer.from(base64Data, 'base64').length;
     if (sizeInBytes > MAX_COVER_IMAGE_SIZE) {
-      throw new Error('Cover image must be less than 800KB');
+      throw new Error('Cover image must be less than 5MB');
     }
   };
 
-  const baseUrl = getURL();
-
-  const onSubmit = async (data: EventFormValues) => {
-    setIsSubmitting(true);
-    setError(null);
-
+  const handleSubmit = async (data: EventFormValues) => {
     try {
-      if (data.coverImage) {
-        validateCoverImage(data.coverImage);
-      }
-
-      const event = await createEvent(data);
-
-      if (event) {
-        invalidateEvents();
-
-        toast({
-          title: 'Event created!',
-          description:
-            'Your event room has been created successfully.',
-        });
-
-        setEventData({
-          eventUrl: `${baseUrl}events/${event.slug}`,
-          qrCodeUrl: event.qrCodeUrl!,
-          eventName: event.name,
-        });
-        setStep('success');
-      } else {
-        setError('Failed to create event. Please try again.');
-      }
+      validateCoverImage(data.coverImage);
+      await onSubmit(data);
     } catch (error) {
-      console.error('Event creation error:', error);
-
       const errorMessage =
         error instanceof Error
           ? error.message
           : 'An unexpected error occurred';
-
-      if (errorMessage.includes('Please wait')) {
-        setError(
-          'Please wait a moment before creating another event'
-        );
-      } else if (errorMessage.includes('Cover image')) {
-        setError('Cover image error: ' + errorMessage);
-        form.setValue('coverImage', '');
-      } else {
-        setError(`Failed to create event: ${errorMessage}`);
-      }
-
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setError(errorMessage);
     }
   };
 
@@ -144,12 +87,11 @@ export function CreateEventForm({
     setError(null);
 
     const fieldsToValidate = {
-      details: ['title', 'type', 'description'],
+      details: ['name', 'type', 'description'],
       location: ['location', 'date', 'time'],
       cover: ['coverImage'],
       privacy: ['isPublic'],
       welcome: [],
-      success: [],
     }[step] as (keyof EventFormValues)[];
 
     try {
@@ -168,26 +110,10 @@ export function CreateEventForm({
     }
   };
 
-  // Render success step outside of form if event creation is complete
-  if (step === 'success' && eventData) {
-    return (
-      <SuccessStep
-        eventUrl={eventData.eventUrl}
-        qrCodeUrl={eventData.qrCodeUrl}
-        eventName={eventData.eventName}
-        onCloseAction={onCloseAction}
-      />
-    );
-  }
-
   return (
     <div className="max-w-2xl mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          {isSubmitting && (
-            <LoadingOverlay message="Creating your event..." />
-          )}
-
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           {step === 'welcome' && (
             <WelcomeStep
               onNext={() => setStep('details')}
@@ -199,30 +125,33 @@ export function CreateEventForm({
             <EventDetailsStep
               onNext={() => handleStepChange('location')}
               onBack={() => setStep('welcome')}
+              disabled={disabled}
             />
           )}
 
           {step === 'location' && (
             <LocationTimeStep
-              onNextAction={() => handleStepChange('cover')}
-              onBackAction={() => setStep('details')}
+              onNext={() => handleStepChange('cover')}
+              onBack={() => setStep('details')}
+              disabled={disabled}
             />
           )}
 
           {step === 'cover' && (
             <CoverUploadStep
-              onNextAction={() => handleStepChange('privacy')}
-              onBackAction={() => setStep('location')}
+              onNext={() => handleStepChange('privacy')}
+              onBack={() => setStep('location')}
               maxSize={MAX_COVER_IMAGE_SIZE}
               onError={(error) => setError(error)}
+              disabled={disabled}
             />
           )}
 
           {step === 'privacy' && (
             <PrivacyStep
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(handleSubmit)}
               onBack={() => setStep('cover')}
-              isSubmitting={isSubmitting}
+              isSubmitting={disabled}
               error={error}
             />
           )}

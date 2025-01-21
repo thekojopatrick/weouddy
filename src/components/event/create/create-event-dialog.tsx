@@ -1,8 +1,8 @@
 'use client';
 
-import { CreateEventForm } from './create-event-form';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { EventCreationManager } from './event-creation-manager';
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -24,8 +24,8 @@ export function CreateEventDialog({
         Create Modal Modal
       </DialogTitle>
       <div className="relative px-4 md:p-4">
-        <CreateEventForm
-          onCloseAction={() => onOpenChangeAction(false)}
+        <EventCreationManager
+          onClose={() => onOpenChangeAction(false)}
         />
       </div>
     </ResponsiveDialog>
