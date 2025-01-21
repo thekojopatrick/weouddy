@@ -51,10 +51,11 @@ export default function RootLayout({
           });
         `}
         </Script>
-        {/* <Script
+        <Script
           id="map"
+          defer
           src={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAPS_API_KEY}&libraries=places`}
-        /> */}
+        />
       </body>
     </html>
   );
