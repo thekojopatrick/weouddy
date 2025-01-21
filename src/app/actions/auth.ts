@@ -118,7 +118,8 @@ export const signInAction = validatedAction(
             id: authData.user.id,
             email: authData.user.email!,
             name: authData.user.email!.split('@')[0],
-            avatar_url: `https://avatar.vercel.sh/${authData.user.id}.svg`,
+            username: authData.user.email!.split('@')[0],
+            avatarUrl: `https://avatar.vercel.sh/${authData.user.id}.svg`,
           });
 
         if (createError) {
@@ -182,8 +183,8 @@ export const signUpAction = validatedAction(
             email: authData.user.email!,
             name: data.name ?? authData.user.email!.split('@')[0],
             username: authData.user.email!.split('@')[0],
-            avatar_url: `https://avatar.vercel.sh/${authData.user.id}.svg`,
-            is_anonymous: false,
+            avatarUrl: `https://avatar.vercel.sh/${authData.user.id}.svg`,
+            isAnonymous: false,
           },
         });
       } catch (dbError) {
