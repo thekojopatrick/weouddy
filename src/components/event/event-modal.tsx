@@ -7,7 +7,7 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Calendar, MapPin, Share2, Users } from 'lucide-react';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -17,7 +17,6 @@ import { useAccount } from '@/hooks/account/use-account';
 import { useRouter } from 'next/navigation';
 import { EventWithFullData } from '@/types/event';
 import { getNameInitials } from '@/lib/utils';
-import { JoinEventDialogViaEventCard } from './join/join-event-dialog-via-card';
 import CustomDrawer from '../ui/custom-drawer';
 import { Drawer } from 'vaul';
 
@@ -40,7 +39,6 @@ const EventModal = memo(
     );
     const { accountData } = useAccount();
     const router = useRouter();
-    const [showJoinDialog, setShowJoinDialog] = useState(false);
 
     const handleShare = useCallback(async () => {
       const eventUrl = `${window.location.origin}/events/${event.slug}`;
@@ -66,14 +64,15 @@ const EventModal = memo(
     }, [event.name, event.slug]);
 
     const handleJoinClick = useCallback(() => {
+      const eventUrl = `${window.location.origin}/events/${event.slug}`;
       if (!accountData?.id) {
         toast.error('Please sign in to join this event');
         router.push('/auth');
         onCloseAction();
         return;
       }
-      setShowJoinDialog(true);
-    }, [accountData?.id, onCloseAction, router]);
+      router.push(eventUrl);
+    }, [accountData?.id, onCloseAction, router, event.slug]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
@@ -196,13 +195,6 @@ const EventModal = memo(
           title={event.name}
           content={renderContent}
           footerContent={renderFooter}
-        />
-        <JoinEventDialogViaEventCard
-          open={showJoinDialog}
-          onOpenChange={setShowJoinDialog}
-          eventId={event.id}
-          accessType={event.accessType}
-          requiresApproval={event.requiresApproval}
         />
       </>
     );
