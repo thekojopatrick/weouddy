@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id               String    @id
+  id               String    @id @db.Uuid
   email            String?   @unique
   username         String?   @unique
   name             String?
@@ -66,7 +66,7 @@ model Event {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  hostId    String
+  hostId    String   @db.Uuid
   host      User     @relation("HostedEvents", fields: [hostId], references: [id])
 
   // Relations
@@ -82,7 +82,7 @@ model Event {
 model EventActivity {
   id        String            @id @default(cuid())
   eventId   String
-  userId    String
+  userId    String            @db.Uuid
   type      EventActivityType
   createdAt DateTime          @default(now())
   event     Event             @relation(fields: [eventId], references: [id])
@@ -114,7 +114,7 @@ model Post {
   media     PostMedia[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  userId    String
+  userId    String      @db.Uuid
   eventId   String
   user      User        @relation(fields: [userId], references: [id])
   event     Event       @relation(fields: [eventId], references: [id])
@@ -142,7 +142,7 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
+  userId    String   @db.Uuid
   postId    String
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
@@ -151,7 +151,7 @@ model Comment {
 model Like {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  userId    String
+  userId    String   @db.Uuid
   postId    String
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
@@ -161,8 +161,8 @@ model Like {
 
 model Follow {
   id          String   @id @default(cuid())
-  followerId  String
-  followingId String
+  followerId  String   @db.Uuid
+  followingId String   @db.Uuid
   createdAt   DateTime @default(now())
 
   // Relations
@@ -174,8 +174,8 @@ model Follow {
 
 model FollowRequest {
   id           String   @id @default(cuid())
-  requestorId  String
-  targetUserId String
+  requestorId  String   @db.Uuid
+  targetUserId String   @db.Uuid
   createdAt    DateTime @default(now())
 
   // Relations
@@ -187,7 +187,7 @@ model FollowRequest {
 
 model Attendee {
   id        String         @id @default(cuid())
-  userId    String
+  userId    String         @db.Uuid
   eventId   String
   status    AttendeeStatus @default(APPROVED)
   createdAt DateTime       @default(now())
@@ -205,7 +205,7 @@ model ChatMessage {
   isPinned  Boolean       @default(false)
   status    MessageStatus @default(SENT)
   createdAt DateTime      @default(now())
-  userId    String
+  userId    String        @db.Uuid
   eventId   String
 
   // Relations
@@ -227,7 +227,7 @@ model MessageReaction {
   id        String      @id @default(cuid())
   emoji     String
   messageId String
-  userId    String
+  userId    String      @db.Uuid
   createdAt DateTime    @default(now())
   message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
   user      User        @relation(fields: [userId], references: [id])
@@ -238,7 +238,7 @@ model MessageReaction {
 
 model EventRole {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @db.Uuid
   eventId   String
   role      Role
   createdAt DateTime @default(now())
@@ -312,7 +312,7 @@ enum AttendeeStatus {
 
 model Feedback {
   id        String           @id @default(cuid())
-  userId    String
+  userId    String           @db.Uuid
   type      FeedbackType
   rating    Int
   message   String?
