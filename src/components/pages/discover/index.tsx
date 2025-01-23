@@ -6,10 +6,10 @@ import { useInView } from 'react-intersection-observer';
 
 //components
 import { CategoryFilters } from './category-filters';
-import { CreateEventButton } from '@/components/create-event-button';
+import { CreateEventButton } from '@/components/event/create/create-event-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
-import { JoinEventButton } from '@/components/join-event-button';
+import { JoinEventButton } from '@/components/event/join/join-event-button';
 import { LocationFilters } from './location-filters';
 
 //types

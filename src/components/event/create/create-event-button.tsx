@@ -3,7 +3,7 @@
 import { CalendarPlus, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { CreateEventDialog } from './event/create/create-event-dialog';
+import { CreateEventDialog } from './create-event-dialog';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
