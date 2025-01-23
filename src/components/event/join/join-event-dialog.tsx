@@ -1,12 +1,17 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
+
 import { useJoinEvent } from '@/hooks/event/use-join-event';
 import { PinEntryForm } from './forms/pin-entry-form';
 import JoinEventSuccess from './forms/success';
 import { useCallback, useEffect } from 'react';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface JoinEventDialogProps {
   open: boolean;
@@ -16,7 +21,7 @@ interface JoinEventDialogProps {
   requiresApproval?: boolean;
 }
 
-export function JoinEventDialogViaEventCard({
+export function JoinEventDialog({
   open,
   onOpenChange,
   eventId,
@@ -94,21 +99,19 @@ export function JoinEventDialogViaEventCard({
   };
 
   return (
-    <ResponsiveDialog
-      open={open}
-      onOpenChangeAction={onOpenChange}
-      className="py-3 px-4"
-    >
-      <DialogHeader className="items-center">
-        <DialogTitle className="text-sm">
-          {accessType === 'PIN_REQUIRED'
-            ? 'Enter Event PIN'
-            : requiresApproval
-              ? 'Requesting to Join'
-              : 'Joining Event'}
-        </DialogTitle>
-      </DialogHeader>
-      {renderContent()}
-    </ResponsiveDialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="py-3 px-4">
+        <AlertDialogHeader className="items-center">
+          <AlertDialogTitle className="text-sm">
+            {accessType === 'PIN_REQUIRED'
+              ? 'Enter Event PIN'
+              : requiresApproval
+                ? 'Requesting to Join'
+                : 'Joining Event'}
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        {renderContent()}
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

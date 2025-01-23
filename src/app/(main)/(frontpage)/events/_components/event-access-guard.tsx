@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { EventWithFullData, UserEventStatus } from '@/types/event';
-import { Info, TriangleAlert, X, Loader2 } from 'lucide-react';
+import { Info, TriangleAlert, X, Loader2, Lock } from 'lucide-react';
 
-import { JoinEventDialogViaEventCard } from '@/components/event/join/join-event-dialog-via-card';
 import {
   Alert,
   AlertDescription,
@@ -14,6 +13,7 @@ import {
 import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { JoinEventDialog } from '@/components/event/join/join-event-dialog';
 
 interface EventAccessGuardProps {
   user:
@@ -35,7 +35,6 @@ export default function EventAccessGuard({
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is already a member
     const checkMembership = async () => {
       setIsCheckingAccess(true);
       try {
@@ -45,9 +44,15 @@ export default function EventAccessGuard({
         const data = await response.json();
         setUserStatus(data.status);
 
-        // If not joined and not pending, show join dialog
+        // Show join dialog if not joined, considering PIN requirement
         if (data.status === 'NOT_JOINED') {
-          setShowJoinDialog(true);
+          // If event requires PIN, always show dialog
+          if (event.accessType === 'PIN_REQUIRED') {
+            setShowJoinDialog(true);
+          } else {
+            // For LINK_ONLY events, user can join directly
+            setShowJoinDialog(true);
+          }
         }
       } catch (error) {
         console.error('Error checking membership:', error);
@@ -60,7 +65,7 @@ export default function EventAccessGuard({
     if (user) {
       checkMembership();
     }
-  }, [user, event.id]);
+  }, [user, event.id, event.accessType]);
 
   if (!user) {
     return (
@@ -77,7 +82,7 @@ export default function EventAccessGuard({
 
   if (isCheckingAccess) {
     return (
-      <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center">
+      <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center shadow-none border">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="mt-4 text-sm text-muted-foreground text-center">
           Verifying your access to {event.name}...
@@ -88,7 +93,7 @@ export default function EventAccessGuard({
 
   if (userStatus === 'PENDING') {
     return (
-      <Card className="p-6 max-w-md mx-auto mt-8">
+      <Card className="p-6 max-w-md mx-auto mt-8 shadow-none border">
         <Alert>
           <AlertDescription>
             <div className="flex gap-2">
@@ -131,22 +136,34 @@ export default function EventAccessGuard({
           <Alert variant="default">
             <div className="flex items-center gap-2">
               <div className="flex grow items-center gap-3">
-                <TriangleAlert
-                  className="-mt-0.5 me-3 inline-flex text-amber-500"
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                {event.accessType === 'PIN_REQUIRED' ? (
+                  <Lock
+                    className="-mt-0.5 me-3 inline-flex text-amber-500"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <TriangleAlert
+                    className="-mt-0.5 me-3 inline-flex text-amber-500"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                )}
                 <div className="flex grow items-center justify-between gap-12">
                   <p className="text-sm">
-                    You need to join &quot;{event.name}&quot; to
-                    access its content.
+                    {event.accessType === 'PIN_REQUIRED'
+                      ? 'This event requires a PIN to join.'
+                      : `You need to join "${event.name}" to access its content.`}
                   </p>
                   <Button
                     size="sm"
                     onClick={() => setShowJoinDialog(true)}
                   >
-                    Join Event
+                    {event.accessType === 'PIN_REQUIRED'
+                      ? 'Enter PIN'
+                      : 'Join Event'}
                   </Button>
                 </div>
               </div>
@@ -168,7 +185,7 @@ export default function EventAccessGuard({
         </Card>
       )}
 
-      <JoinEventDialogViaEventCard
+      <JoinEventDialog
         open={showJoinDialog}
         onOpenChange={setShowJoinDialog}
         eventId={event.id}
