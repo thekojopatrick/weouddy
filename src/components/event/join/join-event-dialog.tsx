@@ -100,7 +100,7 @@ export function JoinEventDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="py-3 px-4">
+      <AlertDialogContent>
         <AlertDialogHeader className="items-center">
           <AlertDialogTitle className="text-sm">
             {accessType === 'PIN_REQUIRED'
