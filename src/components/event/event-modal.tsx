@@ -38,10 +38,10 @@ const EventModal = memo(
       'only screen and (max-width : 638px)'
     );
     const { accountData } = useAccount();
+    const eventUrl = `${window.location.origin}/events/${event.slug}`;
     const router = useRouter();
 
     const handleShare = useCallback(async () => {
-      const eventUrl = `${window.location.origin}/events/${event.slug}`;
       try {
         if (navigator.share) {
           await navigator.share({
@@ -61,18 +61,18 @@ const EventModal = memo(
         }
         Sentry.captureException(err);
       }
-    }, [event.name, event.slug]);
+    }, [event.name, eventUrl]);
 
     const handleJoinClick = useCallback(() => {
-      const eventUrl = `${window.location.origin}/events/${event.slug}`;
       if (!accountData?.id) {
         toast.error('Please sign in to join this event');
         router.push('/auth');
         onCloseAction();
         return;
+      } else {
+        router.push(eventUrl);
       }
-      router.push(eventUrl);
-    }, [accountData?.id, onCloseAction, router, event.slug]);
+    }, [accountData?.id, router, onCloseAction, eventUrl]);
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
@@ -80,18 +80,22 @@ const EventModal = memo(
           return {
             text: 'Already Joined',
             disabled: true,
-            action: () => {},
+            action: () => {
+              router.push(eventUrl);
+            },
           };
         case 'PENDING':
           return {
             text: 'Waiting for Approval',
             disabled: true,
-            action: () => {},
+            action: () => {
+              toast.info('Waiting for host to approve you');
+            },
           };
         default:
           const buttonText =
             event.accessType === 'PIN_REQUIRED'
-              ? 'Enter PIN to Join'
+              ? 'PIN code is required to Join'
               : 'Join Room';
           return {
             text: event.requiresApproval
@@ -102,10 +106,12 @@ const EventModal = memo(
           };
       }
     }, [
+      userStatus,
       event.accessType,
       event.requiresApproval,
-      userStatus,
       handleJoinClick,
+      router,
+      eventUrl,
     ]);
 
     const renderContent = useMemo(

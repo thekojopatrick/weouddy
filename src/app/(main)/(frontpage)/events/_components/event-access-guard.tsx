@@ -3,10 +3,14 @@
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { EventWithFullData, UserEventStatus } from '@/types/event';
-import { Info, TriangleAlert, X } from 'lucide-react';
+import { Info, TriangleAlert, X, Loader2 } from 'lucide-react';
 
 import { JoinEventDialogViaEventCard } from '@/components/event/join/join-event-dialog-via-card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/components/ui/alert';
 import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -27,11 +31,13 @@ export default function EventAccessGuard({
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [userStatus, setUserStatus] =
     useState<UserEventStatus>('NOT_JOINED');
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     // Check if user is already a member
     const checkMembership = async () => {
+      setIsCheckingAccess(true);
       try {
         const response = await fetch(
           `/api/events/${event.id}/status`
@@ -46,6 +52,8 @@ export default function EventAccessGuard({
       } catch (error) {
         console.error('Error checking membership:', error);
         setShowJoinDialog(true);
+      } finally {
+        setIsCheckingAccess(false);
       }
     };
 
@@ -58,10 +66,22 @@ export default function EventAccessGuard({
     return (
       <Card className="p-6 max-w-md mx-auto mt-8">
         <Alert>
+          <AlertTitle>Authentication Required</AlertTitle>
           <AlertDescription>
             Please sign in to access this event.
           </AlertDescription>
         </Alert>
+      </Card>
+    );
+  }
+
+  if (isCheckingAccess) {
+    return (
+      <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-sm text-muted-foreground text-center">
+          Verifying your access to {event.name}...
+        </p>
       </Card>
     );
   }
@@ -79,8 +99,8 @@ export default function EventAccessGuard({
                   strokeWidth={2}
                   aria-hidden="true"
                 />
-                Your request to join this event is pending approval
-                from the host.
+                Your request to join &quot;{event.name}&quot; is
+                pending approval from the event host.
               </p>
               <Button
                 variant="ghost"
@@ -108,7 +128,7 @@ export default function EventAccessGuard({
         children
       ) : (
         <Card className="p-4 max-w-lg mx-auto mt-8 shadow-none">
-          <Alert>
+          <Alert variant="default">
             <div className="flex items-center gap-2">
               <div className="flex grow items-center gap-3">
                 <TriangleAlert
@@ -119,7 +139,8 @@ export default function EventAccessGuard({
                 />
                 <div className="flex grow items-center justify-between gap-12">
                   <p className="text-sm">
-                    You need to join this event to access its content.
+                    You need to join &quot;{event.name}&quot; to
+                    access its content.
                   </p>
                   <Button
                     size="sm"
