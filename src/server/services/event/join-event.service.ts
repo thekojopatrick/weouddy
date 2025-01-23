@@ -15,7 +15,7 @@ interface JoinEventResponse {
   event?: {
     id: string;
     slug: string;
-    accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+    accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
     requiresApproval: boolean;
     attendees?: Array<{
       userId: string;

@@ -19,7 +19,7 @@ interface JoinEventDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   eventId: string;
-  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
   requiresApproval?: boolean;
 }
 
@@ -46,11 +46,11 @@ export function JoinEventDialog({
     [handlePinSubmit]
   );
 
-  // Automatically trigger join for LINK_ONLY events
+  // Automatically trigger join for DIRECT_PASS events
   useEffect(() => {
     if (
       open &&
-      accessType === 'LINK_ONLY' &&
+      accessType === 'DIRECT_PASS' &&
       !joinMutation.isPending
     ) {
       handleJoinViaCard(eventId);

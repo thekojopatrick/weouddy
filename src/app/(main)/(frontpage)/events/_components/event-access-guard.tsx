@@ -50,7 +50,7 @@ export default function EventAccessGuard({
           if (event.accessType === 'PIN_REQUIRED') {
             setShowJoinDialog(true);
           } else {
-            // For LINK_ONLY events, user can join directly
+            // For DIRECT_PASS events, user can join directly
             setShowJoinDialog(true);
           }
         }

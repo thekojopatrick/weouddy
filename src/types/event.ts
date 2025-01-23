@@ -54,7 +54,7 @@ export interface EventWithFullData {
   isPrivate: boolean;
   isDisabled: boolean;
   requiresApproval: boolean;
-  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
   posts?: PostWithDetails[];
   members: number;
   description: string;
@@ -74,7 +74,7 @@ export interface JoinEventData {
   isDisabled: boolean;
   isPrivate: boolean; // This will determine the initial flow
   requiresApproval: boolean;
-  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
   pinCode?: string;
 }
 

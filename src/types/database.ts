@@ -809,7 +809,10 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      AccessType: 'LINK_ONLY' | 'PIN_REQUIRED' | 'APPROVAL_REQUIRED';
+      AccessType:
+        | 'DIRECT_PASS'
+        | 'PIN_REQUIRED'
+        | 'APPROVAL_REQUIRED';
       AttendeeStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
       EventActivityType:
         | 'JOIN'

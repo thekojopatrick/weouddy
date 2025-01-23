@@ -62,7 +62,7 @@ model Event {
   allowLikes       Boolean    @default(true)
   allowChat        Boolean    @default(false)
   allowPosts       Boolean    @default(true)
-  accessType       AccessType @default(LINK_ONLY)
+  accessType       AccessType @default(DIRECT_PASS)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -272,7 +272,7 @@ enum EventActivityType {
 }
 
 enum AccessType {
-  LINK_ONLY // Invite through direct links or QR codes
+  DIRECT_PASS // Invite through direct links or QR codes
   PIN_REQUIRED // Requires entering a PIN code to access
   APPROVAL_REQUIRED // Requires host approval for access
 }

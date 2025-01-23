@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 import { QRScannerForm } from './forms/qr-scanner-form';
 import { JoinStep } from '@/types/event';
 
-export type JoinEventAccessType = 'LINK_ONLY' | 'PIN_REQUIRED';
+export type JoinEventAccessType = 'DIRECT_PASS' | 'PIN_REQUIRED';
 interface JoinEventDialogProps {
   eventId?: string;
   eventSlug?: string;
