@@ -12,6 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 interface JoinEventDialogProps {
   open: boolean;
@@ -28,6 +30,7 @@ export function JoinEventDialog({
   accessType,
   requiresApproval,
 }: JoinEventDialogProps) {
+  const router = useRouter();
   const {
     joinMutation,
     handlePinSubmit,
@@ -59,6 +62,11 @@ export function JoinEventDialog({
     handleJoinViaCard,
     joinMutation.isPending,
   ]);
+
+  const handleCancel = useCallback(() => {
+    onOpenChange(false);
+    router.push('/discover');
+  }, [onOpenChange, router]);
 
   // Determine what content to show based on the current state
   const renderContent = () => {
@@ -99,18 +107,31 @@ export function JoinEventDialog({
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+    <AlertDialog
+      open={open}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (!open) handleCancel();
+      }}
+    >
+      <AlertDialogContent className="gap-2">
         <AlertDialogHeader className="items-center">
           <AlertDialogTitle className="text-sm">
             {accessType === 'PIN_REQUIRED'
-              ? 'Enter Event PIN'
+              ? 'Verify Event Access'
               : requiresApproval
-                ? 'Requesting to Join'
-                : 'Joining Event'}
+                ? 'Request Event Access'
+                : 'Join Event'}
           </AlertDialogTitle>
         </AlertDialogHeader>
         {renderContent()}
+        <Button
+          variant="outline"
+          className="w-full shadow-none"
+          onClick={handleCancel}
+        >
+          Cancel
+        </Button>
       </AlertDialogContent>
     </AlertDialog>
   );

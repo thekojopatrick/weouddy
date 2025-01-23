@@ -3,7 +3,6 @@
 import React, { ReactNode } from 'react';
 import { Drawer } from 'vaul';
 import { cn } from '@/lib/utils';
-import { DialogTitle } from '@radix-ui/react-dialog';
 
 interface CustomDrawerProps {
   isOpen: boolean;
@@ -63,9 +62,9 @@ export default function CustomDrawer({
               ) : (
                 title && (
                   <div className="px-6 py-4 border-b">
-                    <DialogTitle className="text-lg font-semibold">
+                    <Drawer.Title className="text-lg font-semibold">
                       {title}
-                    </DialogTitle>
+                    </Drawer.Title>
                   </div>
                 )
               )}
@@ -88,7 +87,9 @@ export default function CustomDrawer({
               ) : (
                 title && (
                   <div className="px-6 py-4 border-b">
-                    <h2 className="text-lg font-semibold">{title}</h2>
+                    <Drawer.Title className="text-lg font-semibold">
+                      {title}
+                    </Drawer.Title>
                   </div>
                 )
               )}

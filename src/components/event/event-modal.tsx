@@ -95,7 +95,7 @@ const EventModal = memo(
         default:
           const buttonText =
             event.accessType === 'PIN_REQUIRED'
-              ? 'PIN code is required to Join'
+              ? 'Join with PIN'
               : 'Join Room';
           return {
             text: event.requiresApproval
@@ -176,7 +176,9 @@ const EventModal = memo(
               ? 'Your request is pending approval from the host.'
               : userStatus === 'JOINED'
                 ? 'You are a member of this event.'
-                : 'Join this event to connect with other attendees and get updates.'}
+                : event.accessType === 'PIN_REQUIRED'
+                  ? 'This event requires a PIN. You will need to enter the PIN to join.'
+                  : 'Join this event to connect with other attendees and get updates.'}
           </p>
           <Drawer.Close asChild>
             <Button
@@ -189,7 +191,7 @@ const EventModal = memo(
           </Drawer.Close>
         </div>
       ),
-      [buttonConfig, userStatus]
+      [buttonConfig, userStatus, event.accessType]
     );
 
     return (

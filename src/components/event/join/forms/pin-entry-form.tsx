@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -43,33 +42,35 @@ export function PinEntryForm({
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="pin" className="text-base">
-          PIN
+          Event Access PIN
         </Label>
         <Input
           id="pin"
           type="text"
-          placeholder="Enter the 6-digit PIN"
+          placeholder="Enter 6-digit event PIN"
           value={pin}
           onChange={(e) => {
             setPin(e.target.value.replace(/[^0-9]/g, ''));
             setError(''); // Clear error on input change
           }}
           maxLength={6}
-          className={error ? 'border-red-500' : 'shadow-none text-sm'}
+          className={
+            error ? 'border-red-500' : 'shadow-none text-sm h-12'
+          }
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
+        <p className="text-xs text-muted-foreground">
+          Ask the event host for the access PIN
+        </p>
       </div>
-      <Button
+      <LoadingButton
         className="w-full"
         onClick={validateAndSubmit}
         disabled={!pin || isLoading}
+        loading={isLoading}
       >
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          'Continue'
-        )}
-      </Button>
+        {isLoading ? 'Validating...' : 'Verify Access'}
+      </LoadingButton>
     </div>
   );
 }

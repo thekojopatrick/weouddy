@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { extractIdentifierFromLink } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { getURL } from '@/utils';
 
 interface QRScannerFormProps {
   onScanCompleteAction: (result: string) => void;
@@ -82,9 +83,7 @@ export function QRScannerForm({
               try {
                 console.log({ url });
                 const eventId = extractIdentifierFromLink(url);
-                onScanCompleteAction(
-                  `${process.env.NEXT_PUBLIC_APP_URL}/events/${eventId}`
-                );
+                onScanCompleteAction(`${getURL()}events/${eventId}`);
               } catch (error) {
                 toast({
                   title: 'Invalid QR Code',
