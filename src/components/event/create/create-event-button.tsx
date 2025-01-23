@@ -39,7 +39,7 @@ export function CreateEventButton({
           <Plus className={'size-6'} />
         )}
         <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
-          Create Event
+          Create
         </span>
       </Button>
 
