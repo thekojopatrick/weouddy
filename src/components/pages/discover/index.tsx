@@ -9,7 +9,7 @@ import { CategoryFilters } from './category-filters';
 import { CreateEventButton } from '@/components/event/create/create-event-button';
 import { EventCard } from '@/components/event/event-card';
 import { EventListShimmer } from '@/components/event/shimmer-loading';
-import { JoinEventButton } from '@/components/event/join/join-event-button';
+import { ScanEventButton } from '@/components/event/join/scan-event-button';
 import { LocationFilters } from './location-filters';
 
 //types
@@ -187,16 +187,16 @@ export default function DiscoverPage({
             protectAction(
               user,
               () => (
-                <JoinEventButton
+                <ScanEventButton
                   isSmallDevice={isSmallDevice}
                   user={user as never}
                 />
               ),
-              'join an event'
+              'Scan an event'
             )
           }
         >
-          <JoinEventButton
+          <ScanEventButton
             isSmallDevice={isSmallDevice}
             user={user as never}
           />

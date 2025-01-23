@@ -7,7 +7,7 @@ import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
-export function JoinEventButton({
+export function ScanEventButton({
   isSmallDevice,
   user,
 }: {
