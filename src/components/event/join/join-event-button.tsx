@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import ScanQRCodeDialog from './scan-qr-code-dialog';
-import { ScanFace } from 'lucide-react';
+import { ScanQrCode } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -33,12 +33,12 @@ export function JoinEventButton({
         onClick={handleClick}
       >
         {isSmallDevice ? (
-          <ScanFace className={'size-6'} />
+          <ScanQrCode className={'size-6'} />
         ) : (
-          <ScanFace className={'size-6'} />
+          <ScanQrCode className={'size-6'} />
         )}
         <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
-          Scan QR Code
+          Scan QR
         </span>
       </Button>
 
