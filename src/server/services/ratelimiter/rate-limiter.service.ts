@@ -26,7 +26,7 @@ export class RateLimiterService {
           limiter: Ratelimit.slidingWindow(10, '10 s'),
           prefix: 'app-rate-limit',
         });
-      } catch (error) {
+      } catch {
         console.warn(
           'Failed to initialize Redis rate limiter, falling back to memory limiter'
         );
@@ -100,7 +100,7 @@ export class RateLimiterService {
           throw new RateLimitError();
         }
         return;
-      } catch (error) {
+      } catch {
         // Fall back to memory limiter on Redis failure
         console.warn(
           'Redis rate limit failed, falling back to memory limiter'
