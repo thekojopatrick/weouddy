@@ -22,7 +22,7 @@ const FilterDrawer = ({
 }: FilterDrawerProps) => {
   return (
     <Drawer.Root direction="right">
-      <Drawer.Trigger className="flex h-10 items-center justify-center gap-2 rounded-sm border bg-white px-4 text-sm font-medium shadow-sm hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+      <Drawer.Trigger className="flex h-10 items-center justify-center gap-2 shadow-none border md:border-none rounded-sm bg-white px-4 text-sm font-medium  hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800">
         <SlidersHorizontal size={16} />
         <span className=" hidden md:flex transition-all ease-linear">
           Filters
