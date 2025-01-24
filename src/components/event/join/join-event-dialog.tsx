@@ -19,7 +19,7 @@ interface JoinEventDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   eventId: string;
-  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED' | 'INVITE_ONLY';
   requiresApproval?: boolean;
 }
 

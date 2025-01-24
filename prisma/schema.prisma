@@ -272,9 +272,9 @@ enum EventActivityType {
 }
 
 enum AccessType {
-  DIRECT_PASS // Invite through direct links or QR codes
+  DIRECT_PASS //  Direct access through links or QR codes
   PIN_REQUIRED // Requires entering a PIN code to access
-  APPROVAL_REQUIRED // Requires host approval for access
+  INVITE_ONLY // Requires host approval for access
 }
 
 model Forms {

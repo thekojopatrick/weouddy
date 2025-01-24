@@ -306,6 +306,7 @@ export class EventService {
       allowChat: boolean;
       allowPosts: boolean;
       accessType: AccessType;
+      pinCode: string | null;
     }>
   ) {
     // Verify the user is the host
@@ -318,15 +319,16 @@ export class EventService {
     }
 
     // Generate PIN if access type requires it
-    // const pinCode =
-    //   settings.accessType === 'PIN_REQUIRED'
-    //     ? this.generatePinCode()
-    //     : null;
+    const pinCode =
+      settings.accessType === 'PIN_REQUIRED'
+        ? settings.pinCode
+        : null;
 
     const updatedEvent = await db.event.update({
       where: { id: eventId },
       data: {
         ...settings,
+        pinCode,
         accessType: settings.accessType,
       },
     });

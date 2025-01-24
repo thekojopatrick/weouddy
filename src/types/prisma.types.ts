@@ -79,7 +79,7 @@ export interface BaseEvent {
   allowPosts: boolean;
   requiresApproval: boolean;
   accessType: AccessType;
-  pinCode: string | null;
+  pinCode?: string;
   createdAt: Date;
   updatedAt: Date;
   hostId: string;

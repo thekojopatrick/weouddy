@@ -65,7 +65,7 @@ export function EventSettingsModal({
       ).toString();
       setSettings((prev) => ({ ...prev, pinCode: newPin }));
     } else if (settings.accessType !== 'PIN_REQUIRED') {
-      setSettings((prev) => ({ ...prev, pinCode: null }));
+      setSettings((prev) => ({ ...prev, pinCode: undefined }));
     }
   }, [settings.accessType, settings.pinCode]);
 

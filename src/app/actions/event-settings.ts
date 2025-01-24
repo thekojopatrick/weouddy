@@ -12,8 +12,9 @@ const EventSettingsSchema = z.object({
   allowLikes: z.boolean().optional(),
   allowChat: z.boolean().optional(),
   allowPosts: z.boolean().optional(),
+  pinCode: z.string().optional(),
   accessType: z
-    .enum(['DIRECT_PASS', 'PIN_REQUIRED', 'APPROVAL_REQUIRED'])
+    .enum(['DIRECT_PASS', 'PIN_REQUIRED', 'INVITE_ONLY'])
     .optional(),
 });
 
@@ -28,7 +29,11 @@ export async function updateEventSettings(
   }
 
   try {
+    console.log({ settings });
+
     const validatedSettings = EventSettingsSchema.parse(settings);
+
+    console.log({ validatedSettings });
 
     await EventService.updateEventSettings(
       eventId,

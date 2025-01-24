@@ -54,7 +54,7 @@ export interface EventWithFullData {
   isPrivate: boolean;
   isDisabled: boolean;
   requiresApproval: boolean;
-  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED' | 'INVITE_ONLY';
   posts?: PostWithDetails[];
   members: number;
   description: string;
