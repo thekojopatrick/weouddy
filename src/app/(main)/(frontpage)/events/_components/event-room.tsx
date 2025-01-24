@@ -92,9 +92,7 @@ export default function EventRoom({
   const handleSaveSettings = async (
     settings: Partial<EventWithDetails>
   ) => {
-    console.log({ settings });
-
-    await updateEventSettings(event.id, settings as never);
+    await updateEventSettings(event.id, settings);
   };
 
   return (

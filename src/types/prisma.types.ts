@@ -1,3 +1,4 @@
+import { AccessType } from '@prisma/client';
 import { EventActivityType, MediaType, UserRole } from './enums';
 
 import { User } from '@supabase/supabase-js';
@@ -77,7 +78,8 @@ export interface BaseEvent {
   allowChat: boolean;
   allowPosts: boolean;
   requiresApproval: boolean;
-  accessType: string;
+  accessType: AccessType;
+  pinCode: string | null;
   createdAt: Date;
   updatedAt: Date;
   hostId: string;

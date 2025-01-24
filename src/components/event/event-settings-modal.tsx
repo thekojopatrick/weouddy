@@ -13,8 +13,9 @@ import {
   UserCheck,
   KeyRound,
   GlobeLock,
+  Copy,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { EventWithDetails } from '@/types/prisma.types';
@@ -52,9 +53,21 @@ export function EventSettingsModal({
     allowChat: event.allowChat,
     allowPosts: event.allowPosts,
     accessType: event.accessType,
+    pinCode: event.pinCode,
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (settings.accessType === 'PIN_REQUIRED' && !settings.pinCode) {
+      const newPin = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      setSettings((prev) => ({ ...prev, pinCode: newPin }));
+    } else if (settings.accessType !== 'PIN_REQUIRED') {
+      setSettings((prev) => ({ ...prev, pinCode: null }));
+    }
+  }, [settings.accessType, settings.pinCode]);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -67,6 +80,13 @@ export function EventSettingsModal({
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCopyPin = () => {
+    if (settings.pinCode) {
+      navigator.clipboard.writeText(settings.pinCode);
+      toast.success('PIN copied to clipboard');
     }
   };
 
@@ -116,6 +136,27 @@ export function EventSettingsModal({
             </Select>
           </div>
 
+          {/* PIN Display when Access Type is PIN_REQUIRED */}
+          {settings.accessType === 'PIN_REQUIRED' &&
+            settings.pinCode && (
+              <div className="bg-muted p-3 rounded-lg flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">
+                    Event Access PIN
+                  </p>
+                  <p className="text-2xl font-bold tracking-widest">
+                    {settings.pinCode}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleCopyPin}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           {/* Privacy Settings */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

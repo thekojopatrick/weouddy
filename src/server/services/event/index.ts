@@ -318,16 +318,15 @@ export class EventService {
     }
 
     // Generate PIN if access type requires it
-    const pinCode =
-      settings.accessType === 'PIN_REQUIRED'
-        ? this.generatePinCode()
-        : null;
+    // const pinCode =
+    //   settings.accessType === 'PIN_REQUIRED'
+    //     ? this.generatePinCode()
+    //     : null;
 
     const updatedEvent = await db.event.update({
       where: { id: eventId },
       data: {
         ...settings,
-        pinCode,
         accessType: settings.accessType,
       },
     });
