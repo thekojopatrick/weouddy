@@ -295,7 +295,7 @@ export const signOut = async (): Promise<AuthResult> => {
 
     return {
       success: true,
-      redirectPath: '/auth',
+      redirectPath: '/discover',
     };
   } catch (error) {
     console.error('Sign out error:', error);
