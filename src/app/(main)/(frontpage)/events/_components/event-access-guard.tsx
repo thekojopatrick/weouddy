@@ -10,10 +10,11 @@ import {
   AlertDescription,
   AlertTitle,
 } from '@/components/ui/alert';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { JoinEventDialog } from '@/components/event/join/join-event-dialog';
+import { Container } from '@/components/common/container';
 
 interface EventAccessGuardProps {
   user:
@@ -80,48 +81,52 @@ export default function EventAccessGuard({
 
   if (isCheckingAccess) {
     return (
-      <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center shadow-none border">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-sm text-muted-foreground text-center">
-          Verifying your access to {event.name}...
-        </p>
-      </Card>
+      <Container>
+        <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center shadow-none border">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="mt-4 text-sm text-muted-foreground text-center">
+            Verifying your access to {event.name}...
+          </p>
+        </Card>
+      </Container>
     );
   }
 
   if (userStatus === 'PENDING') {
     return (
-      <Card className="p-6 max-w-md mx-auto mt-8 shadow-none border">
-        <Alert>
-          <AlertDescription>
-            <div className="flex gap-2">
-              <p className="grow text-sm">
-                <Info
-                  className="-mt-0.5 me-3 inline-flex text-blue-500"
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-                Your request to join &quot;{event.name}&quot; is
-                pending approval from the event host.
-              </p>
-              <Button
-                variant="ghost"
-                className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
-                aria-label="Close banner"
-                onClick={() => router.push('/discover')}
-              >
-                <X
-                  size={16}
-                  strokeWidth={2}
-                  className="opacity-60 transition-opacity group-hover:opacity-100"
-                  aria-hidden="true"
-                />
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      </Card>
+      <Container>
+        <Card className="p-6 max-w-md mx-auto mt-8 shadow-none border">
+          <Alert>
+            <AlertDescription>
+              <div className="flex gap-2">
+                <p className="grow text-sm">
+                  <Info
+                    className="-mt-0.5 me-3 inline-flex text-blue-500"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                  Your request to join &quot;{event.name}&quot; is
+                  pending approval from the event host.
+                </p>
+                <Button
+                  variant="ghost"
+                  className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
+                  aria-label="Close banner"
+                  onClick={() => router.push('/discover')}
+                >
+                  <X
+                    size={16}
+                    strokeWidth={2}
+                    className="opacity-60 transition-opacity group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </Card>
+      </Container>
     );
   }
 
@@ -130,57 +135,51 @@ export default function EventAccessGuard({
       {userStatus === 'JOINED' ? (
         children
       ) : (
-        <Card className="p-4 max-w-lg m-4 md:mx-auto mt-8 shadow-none">
-          <Alert variant="default">
-            <div className="flex items-center gap-2">
-              <div className="flex grow items-center gap-3">
-                {event.accessType === 'PIN_REQUIRED' ? (
-                  <Lock
-                    className="-mt-0.5 me-3 inline-flex text-amber-500"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <TriangleAlert
-                    className="-mt-0.5 me-3 inline-flex text-amber-500"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                )}
-                <div className="flex grow items-center justify-between gap-12">
-                  <p className="text-sm">
-                    {event.accessType === 'PIN_REQUIRED'
-                      ? 'This event requires a PIN to join.'
-                      : `You need to join "${event.name}" to access its content.`}
-                  </p>
-                  <Button
-                    size="sm"
-                    onClick={() => setShowJoinDialog(true)}
-                  >
-                    {event.accessType === 'PIN_REQUIRED'
-                      ? 'Enter PIN'
-                      : 'Join Event'}
-                  </Button>
+        <Container>
+          <Card className="p-4 max-w-lg mx-auto mt-8 shadow-none">
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <div className="flex grow items-center gap-3">
+                  {event.accessType === 'PIN_REQUIRED' ? (
+                    <Lock
+                      className="-mt-0.5 me-3 inline-flex text-amber-500"
+                      size={16}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <TriangleAlert
+                      className="-mt-0.5 me-3 inline-flex text-amber-500"
+                      size={16}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <div className="flex grow items-center justify-between gap-12">
+                    <p className="text-sm">
+                      {event.accessType === 'PIN_REQUIRED'
+                        ? 'This event requires a PIN to join.'
+                        : `You need to join "${event.name}" to access its content.`}
+                    </p>
+                  </div>
                 </div>
+                <Button
+                  variant="ghost"
+                  className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
+                  aria-label="Close banner"
+                  onClick={() => router.push('/discover')}
+                >
+                  <X
+                    size={16}
+                    strokeWidth={2}
+                    className="opacity-60 transition-opacity group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
-                aria-label="Close banner"
-                onClick={() => router.push('/discover')}
-              >
-                <X
-                  size={16}
-                  strokeWidth={2}
-                  className="opacity-60 transition-opacity group-hover:opacity-100"
-                  aria-hidden="true"
-                />
-              </Button>
-            </div>
-          </Alert>
-        </Card>
+            </CardContent>
+          </Card>
+        </Container>
       )}
 
       <JoinEventDialog

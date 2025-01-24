@@ -20,6 +20,8 @@ import MasonryPosts from './masonry-posts';
 import ShareEventPopover from './share-event';
 import { Button } from '@/components/ui/button';
 import { SharePlatform } from '@/types/enums';
+import { updateEventSettings } from '@/app/actions/event-settings';
+import { EventWithDetails } from '@/types/prisma.types';
 
 export default function EventRoom({
   user,
@@ -84,6 +86,17 @@ export default function EventRoom({
     }
   };
 
+  // Check if current user is the host
+  const isHost = user?.id === event.host.id;
+
+  const handleSaveSettings = async (
+    settings: Partial<EventWithDetails>
+  ) => {
+    console.log({ settings });
+
+    await updateEventSettings(event.id, settings as never);
+  };
+
   return (
     <>
       <div className="flex min-h-screen flex-col">
@@ -115,13 +128,15 @@ export default function EventRoom({
                     copied={copied}
                     handleSocialShare={handleSocialShare}
                   />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setShowSettings(true)}
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
+                  {isHost && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setShowSettings(true)}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -217,7 +232,7 @@ export default function EventRoom({
           event={event as never}
           isOpen={showSettings}
           onOpenChangeAction={setShowSettings}
-          onSaveSettingsAction={() => {}}
+          onSaveSettingsAction={handleSaveSettings}
         />
       </div>
     </>

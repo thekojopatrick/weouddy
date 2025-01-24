@@ -4,7 +4,7 @@ import { uploadEventCoverImage } from '@/lib/supabase/upload/event-cover-image';
 import { nanoid } from 'nanoid';
 import { generateQRCode } from '@/lib/qr/generator';
 import { storeQRCode } from '@/lib/qr/storage';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { AccessType, Prisma, PrismaClient } from '@prisma/client';
 import { getURL } from '@/lib/utils';
 import { cache } from '@/lib/redis';
 import { rateLimiter } from '../ratelimiter/rate-limiter.service';
@@ -293,5 +293,65 @@ export class EventService {
     const dateTime = new Date(date);
     dateTime.setHours(parseInt(hours), parseInt(minutes));
     return dateTime;
+  }
+
+  static async updateEventSettings(
+    eventId: string,
+    userId: string,
+    settings: Partial<{
+      isPrivate: boolean;
+      requiresApproval: boolean;
+      allowComments: boolean;
+      allowLikes: boolean;
+      allowChat: boolean;
+      allowPosts: boolean;
+      accessType: AccessType;
+    }>
+  ) {
+    // Verify the user is the host
+    const event = await db.event.findUnique({
+      where: { id: eventId, hostId: userId },
+    });
+
+    if (!event) {
+      throw new Error('Only the event host can modify settings');
+    }
+
+    // Generate PIN if access type requires it
+    const pinCode =
+      settings.accessType === 'PIN_REQUIRED'
+        ? this.generatePinCode()
+        : null;
+
+    const updatedEvent = await db.event.update({
+      where: { id: eventId },
+      data: {
+        ...settings,
+        pinCode,
+        accessType: settings.accessType,
+      },
+    });
+
+    // Invalidate cache
+    await cache.del(`event:${eventId}`);
+
+    return updatedEvent;
+  }
+
+  private static generatePinCode(): string {
+    // Generate a 6-digit PIN
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  static async validateEventPin(eventId: string, pinCode: string) {
+    const event = await db.event.findUnique({
+      where: {
+        id: eventId,
+        pinCode: pinCode,
+        accessType: 'PIN_REQUIRED',
+      },
+    });
+
+    return !!event;
   }
 }

@@ -9,8 +9,6 @@ export const useAuthProtection = () => {
     action: () => void,
     actionName: string = 'perform this action'
   ) => {
-    console.log(user);
-
     if (!user?.id) {
       toast.error(`Please sign in to ${actionName}`);
       router.push('/auth');
