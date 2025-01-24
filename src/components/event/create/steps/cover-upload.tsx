@@ -102,7 +102,7 @@ export function CoverUploadStep({
         }
       }
     },
-    [setValue, maxSize, onError]
+    [setValue, onError]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

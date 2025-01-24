@@ -31,7 +31,7 @@ interface BaseEventCardProps {
   isPrivate: boolean;
   isDisabled: boolean;
   requiresApproval: boolean;
-  accessType: 'LINK_ONLY' | 'PIN_REQUIRED';
+  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
   host: {
     id: string;
     name: string;

@@ -52,7 +52,7 @@ export const useUserStore = create<UserState>()(
           const { data } = await supabase
             .from('User')
             .select('id, email, name, username, avatarUrl, bio')
-            .eq('id', user.id)
+            .eq('id', user.id!)
             .single();
 
           if (data) {

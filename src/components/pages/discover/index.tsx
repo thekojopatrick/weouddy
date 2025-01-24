@@ -33,6 +33,8 @@ export default function DiscoverPage({
 }: {
   user: User & { username: string | null; avatarUrl: string | null };
 }) {
+  //console.log({ user });
+
   const isSmallDevice = useMediaQuery(
     'only screen and (max-width : 768px)'
   );

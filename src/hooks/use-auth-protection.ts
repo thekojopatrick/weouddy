@@ -1,5 +1,5 @@
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export const useAuthProtection = () => {
   const router = useRouter();
@@ -7,11 +7,13 @@ export const useAuthProtection = () => {
   const protectAction = (
     user: { id?: string } | null,
     action: () => void,
-    actionName: string = "perform this action",
+    actionName: string = 'perform this action'
   ) => {
+    console.log(user);
+
     if (!user?.id) {
       toast.error(`Please sign in to ${actionName}`);
-      router.push("/auth");
+      router.push('/auth');
       return false;
     }
     action();

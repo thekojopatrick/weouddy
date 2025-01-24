@@ -45,14 +45,12 @@ export default function EventAccessGuard({
         setUserStatus(data.status);
 
         // Show join dialog if not joined, considering PIN requirement
-        if (data.status === 'NOT_JOINED') {
+        if (
+          data.status === 'NOT_JOINED' &&
+          event.accessType === 'PIN_REQUIRED'
+        ) {
           // If event requires PIN, always show dialog
-          if (event.accessType === 'PIN_REQUIRED') {
-            setShowJoinDialog(true);
-          } else {
-            // For DIRECT_PASS events, user can join directly
-            setShowJoinDialog(true);
-          }
+          setShowJoinDialog(true);
         }
       } catch (error) {
         console.error('Error checking membership:', error);
@@ -132,7 +130,7 @@ export default function EventAccessGuard({
       {userStatus === 'JOINED' ? (
         children
       ) : (
-        <Card className="p-4 max-w-lg mx-auto mt-8 shadow-none">
+        <Card className="p-4 max-w-lg m-4 md:mx-auto mt-8 shadow-none">
           <Alert variant="default">
             <div className="flex items-center gap-2">
               <div className="flex grow items-center gap-3">

@@ -18,26 +18,26 @@ export function UserPosts({ userId }: UserPostsProps) {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadPosts = async () => {
-    setIsLoading(true);
-    try {
-      const newPosts = await fetchUserPosts(userId, page);
-
-      if (newPosts.length === 0) {
-        setHasMore(false);
-      } else {
-        setPosts((prev) =>
-          page === 1 ? newPosts : [...prev, ...newPosts]
-        );
-      }
-    } catch (error) {
-      console.error('Failed to load posts', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const loadPosts = async () => {
+      setIsLoading(true);
+      try {
+        const newPosts = await fetchUserPosts(userId, page);
+
+        if (newPosts.length === 0) {
+          setHasMore(false);
+        } else {
+          setPosts((prev) =>
+            page === 1 ? newPosts : [...prev, ...newPosts]
+          );
+        }
+      } catch (error) {
+        console.error('Failed to load posts', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadPosts();
   }, [userId, page]);
 

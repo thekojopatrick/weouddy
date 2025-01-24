@@ -23,25 +23,25 @@ export function UserEvents({ userId }: UserEventsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [eventType, setEventType] = useState<EventType>('all');
 
-  const loadEvents = async () => {
-    setIsLoading(true);
-    try {
-      const newEvents = await fetchUserEvents(userId, page);
-      if (newEvents.length === 0) {
-        setHasMore(false);
-      } else {
-        setEvents((prev) =>
-          page === 1 ? newEvents : [...prev, ...newEvents]
-        );
-      }
-    } catch (error) {
-      console.error('Failed to load events', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const loadEvents = async () => {
+      setIsLoading(true);
+      try {
+        const newEvents = await fetchUserEvents(userId, page);
+        if (newEvents.length === 0) {
+          setHasMore(false);
+        } else {
+          setEvents((prev) =>
+            page === 1 ? newEvents : [...prev, ...newEvents]
+          );
+        }
+      } catch (error) {
+        console.error('Failed to load events', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadEvents();
   }, [userId, page, eventType]);
 
