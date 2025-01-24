@@ -98,6 +98,7 @@ export const TaskDialog = ({
             >
               <X className="h-4 w-4" />
             </Button>
+            <Button onClick={handleSave}>Create</Button>
           </div>
         </DialogHeader>
 
