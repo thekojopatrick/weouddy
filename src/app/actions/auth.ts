@@ -4,11 +4,9 @@ import { z } from 'zod';
 import { validatedAction } from '@/utils/auth/middleware';
 import { createClient } from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
-import { PrismaClient } from '@prisma/client';
+
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-
-const prisma = new PrismaClient();
 
 // Type definitions
 type AuthResult = {
@@ -103,30 +101,6 @@ export const signInAction = validatedAction(
         };
       }
 
-      // Fetch or create user data
-      const { error: userDataError } = await supabase
-        .from('User')
-        .select('*')
-        .eq('email', authData.user.email)
-        .single();
-
-      if (userDataError && userDataError.code === 'PGRST116') {
-        // No user data found, create initial record
-        const { error: createError } = await supabase
-          .from('User')
-          .insert({
-            id: authData.user.id,
-            email: authData.user.email!,
-            name: authData.user.email!.split('@')[0],
-            username: authData.user.email!.split('@')[0],
-            avatarUrl: `https://avatar.vercel.sh/${authData.user.id}.svg`,
-          });
-
-        if (createError) {
-          console.error('Error creating user data:', createError);
-        }
-      }
-
       revalidatePath('/', 'layout');
 
       return {
@@ -173,23 +147,6 @@ export const signUpAction = validatedAction(
           success: false,
           error: 'No user data returned',
         };
-      }
-
-      // Create initial user record
-      try {
-        await prisma.user.create({
-          data: {
-            id: authData.user.id,
-            email: authData.user.email!,
-            name: data.name ?? authData.user.email!.split('@')[0],
-            username: authData.user.email!.split('@')[0],
-            avatarUrl: `https://avatar.vercel.sh/${authData.user.id}.svg`,
-            isAnonymous: false,
-          },
-        });
-      } catch (dbError) {
-        console.error('Database error:', dbError);
-        // Don't fail the sign-up if DB sync fails
       }
 
       revalidatePath('/', 'layout');
