@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { CardHeader } from '@/components/ui/card';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 interface ChatHeaderProps {
   title: string;
@@ -22,7 +23,9 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
           <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-background" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold">{title}</h3>
+          <DialogTitle className="text-sm font-semibold">
+            {title}
+          </DialogTitle>
           {subtitle && (
             <p className="text-sm text-muted-foreground">
               {subtitle}

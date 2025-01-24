@@ -25,13 +25,14 @@ import { EventWithDetails } from '@/types/prisma.types';
 
 export default function EventRoom({
   user,
-  event,
+  event: initialEvent,
 }: {
   user:
     | (User & { username: string | null; avatarUrl: string | null })
     | null;
   event: EventWithFullData;
 }) {
+  const [event, setEvent] = React.useState(initialEvent);
   const { data: posts } = usePosts(event.id, event.posts as []);
 
   const { date, time } = formatEventDateTime(
@@ -41,6 +42,7 @@ export default function EventRoom({
     'only screen and (max-width : 638px)'
   );
   const [showSettings, setShowSettings] = React.useState(false);
+
   const [copied, setCopied] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { protectAction } = useAuthProtection();
@@ -92,9 +94,23 @@ export default function EventRoom({
   const handleSaveSettings = async (
     settings: Partial<EventWithDetails>
   ) => {
-    console.log({ settings });
+    try {
+      // Immediately update local state
+      setEvent((prevEvent: EventWithFullData) => {
+        return {
+          ...prevEvent,
+          ...settings,
+          location: settings.location ?? prevEvent.location,
+          coverImage: settings.coverImage ?? prevEvent.coverImage,
+        } as EventWithFullData;
+      });
 
-    await updateEventSettings(event.id, settings);
+      await updateEventSettings(event.id, settings);
+    } catch (error) {
+      console.error(error);
+      // Optionally revert state on error
+      setEvent(initialEvent);
+    }
   };
 
   return (

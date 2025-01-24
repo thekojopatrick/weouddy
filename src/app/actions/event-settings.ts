@@ -29,11 +29,7 @@ export async function updateEventSettings(
   }
 
   try {
-    console.log({ settings });
-
     const validatedSettings = EventSettingsSchema.parse(settings);
-
-    console.log({ validatedSettings });
 
     await EventService.updateEventSettings(
       eventId,

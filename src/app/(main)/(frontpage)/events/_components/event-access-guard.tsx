@@ -47,8 +47,9 @@ export default function EventAccessGuard({
 
         // Show join dialog if not joined, considering PIN requirement
         if (
-          data.status === 'NOT_JOINED' &&
-          event.accessType === 'PIN_REQUIRED'
+          (data.status === 'NOT_JOINED' &&
+            event.accessType === 'PIN_REQUIRED') ||
+          data.status === 'NOT_JOINED'
         ) {
           // If event requires PIN, always show dialog
           setShowJoinDialog(true);

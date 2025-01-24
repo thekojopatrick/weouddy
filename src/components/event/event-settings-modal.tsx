@@ -67,12 +67,17 @@ export function EventSettingsModal({
     } else if (settings.accessType !== 'PIN_REQUIRED') {
       setSettings((prev) => ({ ...prev, pinCode: undefined }));
     }
-  }, [settings.accessType, settings.pinCode]);
+  }, [settings?.accessType, settings?.pinCode]);
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await onSaveSettingsAction(settings);
+      const newSettings = await onSaveSettingsAction(settings);
+
+      console.log({ newSettings });
+
+      ///setSettings(newSettings as never);
+
       onOpenChangeAction(false);
       toast.success('Event settings updated successfully');
     } catch (error) {
