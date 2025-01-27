@@ -7,6 +7,7 @@ import { getURL } from '@/lib/utils';
 import { EventService } from '@/server/services/event';
 import EventAccessGuard from '../_components/event-access-guard';
 import { checkUserEventStatus } from '@/app/actions/check-user-event-status';
+import EventNotFound from '../_components/event-not-found';
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -61,7 +62,7 @@ export default async function EventRoomPage(props: {
 
   const event = await EventService.getEvent(eventId);
 
-  if (!event) return null;
+  if (!event.id) return <EventNotFound />;
 
   const userEventStatus = await checkUserEventStatus({
     eventId: event.id,
@@ -78,7 +79,7 @@ export default async function EventRoomPage(props: {
   return (
     <EventAccessGuard
       user={session?.user}
-      event={event}
+      event={event || null}
       userStatus={userEventStatus?.status || 'NOT_JOINED'}
     >
       <EventRoom user={session.user} event={event as never} />

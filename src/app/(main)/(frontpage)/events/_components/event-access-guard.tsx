@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { EventWithFullData, UserEventStatus } from '@/types/event';
-import { Info, TriangleAlert, X, Loader2, Lock } from 'lucide-react';
-
+import { EventWithFullData } from '@/types/event';
+import {
+  Info,
+  TriangleAlert,
+  X,
+  Loader2,
+  Lock,
+  AlertCircle,
+} from 'lucide-react';
 import {
   Alert,
   AlertDescription,
@@ -21,7 +27,7 @@ interface EventAccessGuardProps {
   user:
     | (User & { username: string | null; avatarUrl: string | null })
     | null;
-  event: EventWithFullData;
+  event: EventWithFullData; // Make event nullable
   children: React.ReactNode;
   userStatus: string;
 }
@@ -32,42 +38,35 @@ export default function EventAccessGuard({
   userStatus: initialUserEventStatus,
   children,
 }: EventAccessGuardProps) {
+  const router = useRouter();
+
   const [showJoinDialog, setShowJoinDialog] = useState(false);
-  const [userStatus, setUserStatus] = useState<
-    UserEventStatus | string
-  >(
+  const [userStatus, setUserStatus] = useState<string>(
     initialUserEventStatus === 'APPROVED'
       ? 'JOINED'
       : initialUserEventStatus
   );
   const [isCheckingAccess, setIsCheckingAccess] = useState(
-    userStatus !== 'JOINED' ? true : false
+    userStatus !== 'JOINED' && userStatus !== 'DENIED'
   );
-  const router = useRouter();
 
-  console.log({ userStatus });
-
-  // In event-access-guard.txt, modify the checkMembership function
   useEffect(() => {
     const checkMembership = async () => {
+      if (!user || user.id === event?.host?.id) return;
+
       setIsCheckingAccess(true);
       try {
         const updatedStatus = await checkUserEventStatus({
-          eventId: event.id,
+          eventId: event?.id || '',
           userId: user?.id || null,
-          slug: event.slug || null,
+          slug: event?.slug || null,
         });
+
         setUserStatus(updatedStatus?.status || 'NOT_JOINED');
-
-        console.log({ updatedStatus });
-
-        if (updatedStatus?.status === 'DENIED') return;
-
-        if (updatedStatus?.status === 'JOINED') return;
 
         if (
           (updatedStatus?.status === 'NOT_JOINED' &&
-            event.accessType === 'PIN_REQUIRED') ||
+            event?.accessType === 'PIN_REQUIRED') ||
           updatedStatus?.status === 'NOT_JOINED'
         ) {
           setShowJoinDialog(true);
@@ -82,34 +81,33 @@ export default function EventAccessGuard({
     if (user && userStatus !== 'JOINED') {
       checkMembership();
     }
-  }, [event.accessType, event.id, user, userStatus, event.slug]);
+  }, [
+    event?.id,
+    userStatus,
+    event?.host?.id,
+    event?.slug,
+    user,
+    event?.accessType,
+  ]);
 
-  //TODO:IMPEMENT STRICT EVENT NOT FOUND
+  // Host always gets access
+  if (user?.id === event?.host.id) {
+    return children;
+  }
 
   if (!user) {
     return (
-      <Card className="p-6 max-w-md mx-auto mt-8">
-        <Alert>
-          <AlertTitle>Authentication Required</AlertTitle>
-          <AlertDescription>
-            Please sign in to access this event.
-          </AlertDescription>
-        </Alert>
-      </Card>
-    );
-  }
-
-  if (!event) {
-    return (
-      <Card className="p-6 max-w-md mx-auto mt-8">
-        <Alert>
-          <AlertTitle>Event not found</AlertTitle>
-          <AlertDescription>
-            Please check the link again or event might have been
-            deleted
-          </AlertDescription>
-        </Alert>
-      </Card>
+      <Container>
+        <Card className="p-6 max-w-md mx-auto mt-8">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Authentication Required</AlertTitle>
+            <AlertDescription>
+              Please sign in to access this event.
+            </AlertDescription>
+          </Alert>
+        </Card>
+      </Container>
     );
   }
 
@@ -119,8 +117,31 @@ export default function EventAccessGuard({
         <Card className="p-6 max-w-md mx-auto mt-8 flex flex-col items-center justify-center shadow-none border">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="mt-4 text-sm text-muted-foreground text-center">
-            Verifying your access to {event.name}...
+            Verifying your access to {event?.name}...
           </p>
+        </Card>
+      </Container>
+    );
+  }
+
+  if (userStatus === 'DENIED') {
+    return (
+      <Container>
+        <Card className="p-6 max-w-md mx-auto mt-8">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Access Denied</AlertTitle>
+            <AlertDescription>
+              You do not have permission to access this event. Please
+              contact the event host if you believe this is an error.
+            </AlertDescription>
+          </Alert>
+          <Button
+            className="w-full mt-4"
+            onClick={() => router.push('/discover')}
+          >
+            Back to Discover
+          </Button>
         </Card>
       </Container>
     );
@@ -132,16 +153,22 @@ export default function EventAccessGuard({
         <Card className="p-6 max-w-md mx-auto mt-8 shadow-none border">
           <CardContent>
             <div className="flex gap-2">
-              <p className="grow text-sm">
-                <Info
-                  className="-mt-0.5 me-3 inline-flex text-blue-500"
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-                Your request to join &quot;{event.name}&quot; is
-                pending approval from the event host.
-              </p>
+              <Info
+                className="shrink-0 text-blue-500"
+                size={20}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              <div className="grow">
+                <p className="text-sm">
+                  Your request to join &quot;{event?.name}&quot; is
+                  pending approval from the event host.
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  You&apos;ll be notified once your request is
+                  reviewed.
+                </p>
+              </div>
               <Button
                 variant="ghost"
                 className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
@@ -172,26 +199,28 @@ export default function EventAccessGuard({
             <CardContent className="pt-4 pr-3">
               <div className="flex items-center gap-2">
                 <div className="grid grid-cols-[auto,1fr] items-center gap-2">
-                  {event.accessType === 'PIN_REQUIRED' ? (
+                  {event?.accessType === 'PIN_REQUIRED' ? (
                     <Lock
-                      className="-mt-0.5 me-3 size-5 inline-flex text-amber-500"
-                      size={16}
+                      className="text-amber-500"
+                      size={20}
                       strokeWidth={2}
                       aria-hidden="true"
                     />
                   ) : (
                     <TriangleAlert
-                      className="-mt-0.5 me-3 inline-flex size-5 text-amber-500"
-                      size={16}
+                      className="text-amber-500"
+                      size={20}
                       strokeWidth={2}
                       aria-hidden="true"
                     />
                   )}
                   <div className="flex items-center justify-between gap-12">
                     <p className="text-sm">
-                      {event.accessType === 'PIN_REQUIRED'
+                      {event?.accessType === 'PIN_REQUIRED'
                         ? 'This event requires a PIN to join.'
-                        : `You need to join "${event.name}" to access its content.`}
+                        : event?.accessType === 'INVITE_ONLY'
+                          ? 'This event requires host approval to join.'
+                          : `You need to join "${event?.name}" to access its content.`}
                     </p>
                   </div>
                 </div>
@@ -217,9 +246,9 @@ export default function EventAccessGuard({
       <JoinEventDialog
         open={showJoinDialog}
         onOpenChange={setShowJoinDialog}
-        eventId={event.id}
-        accessType={event.accessType}
-        requiresApproval={event.requiresApproval}
+        eventId={event?.id}
+        accessType={event?.accessType}
+        requiresApproval={event?.requiresApproval}
         userStatus={userStatus as never}
       />
     </>

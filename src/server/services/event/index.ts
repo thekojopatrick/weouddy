@@ -56,6 +56,7 @@ export class EventService {
     const cacheKey = `event:${identifier}`;
 
     // Try cache first
+
     const cachedEvent = await cache.get(cacheKey);
     if (cachedEvent) {
       return cachedEvent;
@@ -122,6 +123,10 @@ export class EventService {
         memberCount: event?._count.members,
         attendeeCount: event?._count.attendees,
       }));
+
+    if (!event.id) {
+      return { message: 'Event Not Found' };
+    }
 
     if (event) {
       // Cache for 1 minute

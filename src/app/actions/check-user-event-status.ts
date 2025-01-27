@@ -1,7 +1,7 @@
 'use server';
 
 import { getSession } from '@/lib/auth';
-import { joinEventService } from '@/server/services/event/new-join-event.service';
+import { checkAttendeeStatus } from '@/server/services/event/test-join-event';
 
 export async function checkUserEventStatus({
   eventId,
@@ -20,10 +20,7 @@ export async function checkUserEventStatus({
   try {
     console.log('checking start');
 
-    const result = await joinEventService.checkAttendeeStatus(
-      eventId,
-      userId!
-    );
+    const result = await checkAttendeeStatus(eventId, userId!);
 
     if (result.status === 'DENIED') {
       return {

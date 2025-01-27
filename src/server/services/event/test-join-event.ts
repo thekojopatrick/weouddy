@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { db } from '@/server/db/prisma';
+import { EventActivityType } from '@prisma/client';
 
 // Input validation schema
 const JoinEventSchema = z.object({
@@ -8,7 +9,6 @@ const JoinEventSchema = z.object({
   pin: z.string().optional(),
 });
 
-// Custom error class for clear error handling
 class JoinEventError extends Error {
   constructor(
     message: string,
@@ -18,7 +18,6 @@ class JoinEventError extends Error {
   }
 }
 
-// Utility functions
 async function verifyPinCode(
   storedPinCode: string | null,
   providedPin: string
@@ -31,12 +30,25 @@ async function fetchEventWithDetails(identifier: string) {
   return db.event.findUnique({
     where: { id: identifier },
     include: {
-      attendees: { where: { status: 'APPROVED' } },
+      attendees: true,
     },
   });
 }
 
-// Main joinEvent function
+async function createEventActivity(
+  eventId: string,
+  userId: string,
+  type: EventActivityType
+) {
+  return db.eventActivity.create({
+    data: {
+      eventId,
+      userId,
+      type,
+    },
+  });
+}
+
 export async function joinEvent(
   input: z.infer<typeof JoinEventSchema>
 ) {
@@ -55,36 +67,93 @@ export async function joinEvent(
     );
   }
 
-  // Check for invite-only event
-  if (event.requiresApproval && event.accessType === 'INVITE_ONLY') {
-    throw new JoinEventError(
-      'This event requires approval to join.',
-      'REQUIRES_APPROVAL'
-    );
+  // If user is the host, grant immediate access without creating attendee record
+  if (event.hostId === userId) {
+    await createEventActivity(event.id, userId, 'JOIN');
+    return {
+      success: true,
+      status: 'JOINED',
+      event: {
+        id: event.id,
+        name: event.name,
+        slug: event.slug,
+        accessType: event.accessType,
+      },
+    };
+  }
+
+  // For invite-only events, create pending request
+  if (event.accessType === 'INVITE_ONLY') {
+    const attendee = await db.$transaction(async (tx) => {
+      const attendee = await tx.attendee.upsert({
+        where: {
+          userId_eventId: { userId, eventId: event.id },
+        },
+        create: {
+          eventId: event.id,
+          userId,
+          status: 'PENDING',
+        },
+        update: {
+          status: 'PENDING',
+        },
+      });
+
+      await createEventActivity(event.id, userId, 'RESQUEST_PENDING');
+      return attendee;
+    });
+
+    return {
+      success: true,
+      status: attendee.status,
+      event: {
+        id: event.id,
+        name: event.name,
+        slug: event.slug,
+        accessType: event.accessType,
+      },
+    };
   }
 
   // Validate PIN if required
-  if (
-    event.pinCode &&
-    !(await verifyPinCode(event.pinCode, pin ?? ''))
-  ) {
-    throw new JoinEventError(
-      'Invalid PIN provided for this event.',
-      'INVALID_PIN'
-    );
+  if (event.accessType === 'PIN_REQUIRED') {
+    if (!pin) {
+      throw new JoinEventError(
+        'PIN is required for this event.',
+        'PIN_REQUIRED'
+      );
+    }
+    if (!(await verifyPinCode(event.pinCode, pin))) {
+      await createEventActivity(event.id, userId, 'ACCESS_DENIED');
+      throw new JoinEventError(
+        'Invalid PIN provided for this event.',
+        'INVALID_PIN'
+      );
+    }
   }
 
-  // Determine attendee status
-  const status =
-    event.hostId === userId
-      ? 'JOINED'
-      : event.requiresApproval
-        ? 'PENDING'
-        : 'APPROVED';
+  // Determine initial status based on approval requirements
+  const initialStatus = event.requiresApproval
+    ? 'PENDING'
+    : 'APPROVED';
 
   // Use transaction to ensure consistency
   const attendee = await db.$transaction(async (tx) => {
-    // Upsert attendee to avoid duplication
+    // Check if user was previously denied
+    const existingAttendee = await tx.attendee.findUnique({
+      where: {
+        userId_eventId: { userId, eventId: event.id },
+      },
+    });
+
+    if (existingAttendee?.status === 'DENIED') {
+      await createEventActivity(event.id, userId, 'ACCESS_DENIED');
+      throw new JoinEventError(
+        'Access to this event has been denied.',
+        'ACCESS_DENIED'
+      );
+    }
+
     const attendee = await tx.attendee.upsert({
       where: {
         userId_eventId: { userId, eventId: event.id },
@@ -92,28 +161,21 @@ export async function joinEvent(
       create: {
         eventId: event.id,
         userId,
-        status,
+        status: initialStatus,
       },
       update: {
-        status,
+        status: initialStatus,
       },
     });
 
-    if (status === 'APPROVED' || status === 'JOINED') {
-      //Initial Joined
-      //ACCESS GRANTED = APPROVED
-      //ACCESS DENIED == DENIED
-      //REQUEST PENDING == PENDING
+    // Create appropriate activity log
+    if (initialStatus === 'APPROVED') {
+      await createEventActivity(event.id, userId, 'ACCESS_GRANTED');
+      await createEventActivity(event.id, userId, 'JOIN');
+    } else {
+      await createEventActivity(event.id, userId, 'RESQUEST_PENDING');
     }
-    await tx.eventActivity.create({
-      data: {
-        eventId: event.id,
-        userId,
-        type: 'JOIN',
-      },
-    });
 
-    // Optionally update event details or count (if needed)
     return attendee;
   });
 
@@ -129,16 +191,29 @@ export async function joinEvent(
   };
 }
 
-//Check user event status
 export async function checkAttendeeStatus(
   eventId: string,
   userId: string
 ) {
-  const result = db.attendee.findUnique({
+  const event = await db.event.findUnique({
+    where: { id: eventId ?? '' },
+    select: { hostId: true },
+  });
+
+  // If user is the host, they automatically have access
+  if (event?.hostId === userId) {
+    return {
+      id: eventId,
+      status: 'JOINED',
+      event: { id: eventId },
+    };
+  }
+
+  const attendee = await db.attendee.findUnique({
     where: {
       userId_eventId: {
         userId,
-        eventId,
+        eventId: eventId ?? '',
       },
     },
     select: {
@@ -148,22 +223,17 @@ export async function checkAttendeeStatus(
     },
   });
 
-  const data = await result;
-
-  if (data?.status === 'APPROVED' || data?.status === 'JOINED') {
+  if (!attendee) {
     return {
-      ...data,
-      status: 'JOINED',
+      id: eventId,
+      status: 'NOT_JOINED',
     };
-  } else if (
-    data?.status === 'PENDING' ||
-    data?.status === 'DENIED'
-  ) {
-    return data;
   }
 
+  // Map APPROVED status to JOINED for consistency
   return {
-    id: eventId,
-    status: 'NOT_JOINED',
+    ...attendee,
+    status:
+      attendee.status === 'APPROVED' ? 'JOINED' : attendee.status,
   };
 }
