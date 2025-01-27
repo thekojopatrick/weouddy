@@ -128,3 +128,42 @@ export async function joinEvent(
     },
   };
 }
+
+//Check user event status
+export async function checkAttendeeStatus(
+  eventId: string,
+  userId: string
+) {
+  const result = db.attendee.findUnique({
+    where: {
+      userId_eventId: {
+        userId,
+        eventId,
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+      event: { select: { id: true, name: true, slug: true } },
+    },
+  });
+
+  const data = await result;
+
+  if (data?.status === 'APPROVED' || data?.status === 'JOINED') {
+    return {
+      ...data,
+      status: 'JOINED',
+    };
+  } else if (
+    data?.status === 'PENDING' ||
+    data?.status === 'DENIED'
+  ) {
+    return data;
+  }
+
+  return {
+    id: eventId,
+    status: 'NOT_JOINED',
+  };
+}
