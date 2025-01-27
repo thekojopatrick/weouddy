@@ -41,7 +41,7 @@ export default async function ProfilePage({
     getUserFollowers(username),
     getUserFollowing(username),
     getProfileStats(username), // Use the new function here
-    checkIfFollowing(session.userId, username),
+    checkIfFollowing(session?.userId, username),
   ]);
 
   if (!viewedUserProfile) {
@@ -54,7 +54,7 @@ export default async function ProfilePage({
     username: viewedUserProfile.username ?? '',
     avatarUrl:
       viewedUserProfile.avatarUrl ??
-      session.user.user_metadata.avatar_url ??
+      session?.user.user_metadata.avatar_url ??
       '/placeholder.svg',
     stats: stats ?? {
       // Use the fetched stats
@@ -80,7 +80,7 @@ export default async function ProfilePage({
               This profile is private. Follow to view content.
             </div>
           ))}
-        <ProfileTabs stats={profile.stats} userId={session.userId} />
+        <ProfileTabs stats={profile.stats} userId={session?.userId} />
       </main>
     </div>
   );

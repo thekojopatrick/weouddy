@@ -12,9 +12,7 @@ export async function getUserProfile(
   usernameOrId: string
 ): Promise<UserProfile | null> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ username: usernameOrId }, { id: usernameOrId }],
-    },
+    where: { username: usernameOrId },
     select: {
       id: true,
       name: true,
@@ -36,9 +34,7 @@ export async function getUserProfile(
 
 export async function getFollowStats(usernameOrId: string) {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ username: usernameOrId }, { id: usernameOrId }],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -58,9 +54,7 @@ export async function getUserFollowers(
   usernameOrId: string
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ username: usernameOrId }, { id: usernameOrId }],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -104,9 +98,7 @@ export async function getUserFollowing(
   usernameOrId: string
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ username: usernameOrId }, { id: usernameOrId }],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -314,9 +306,7 @@ export async function getUserEventStatus(
 
 export async function getProfileStats(usernameOrId: string) {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ username: usernameOrId }, { id: usernameOrId }],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
