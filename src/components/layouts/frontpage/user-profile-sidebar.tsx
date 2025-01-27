@@ -65,7 +65,7 @@ export function UserProfileSidebar({
           </AvatarFallback>
         </Avatar>
       </SheetTrigger>
-      <SheetContent className="w-[270px] sm:w-[320px]">
+      <SheetContent className="w-[290px] p-4 md:p-6 sm:w-[320px]">
         <SheetHeader>
           <SheetTitle className="sr-only">Profile</SheetTitle>
         </SheetHeader>

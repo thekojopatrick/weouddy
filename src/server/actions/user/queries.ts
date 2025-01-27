@@ -4,6 +4,7 @@ import {
   EventWithDetails,
   PostWithDetails,
 } from '@/types/prisma.types';
+import { EventActivityType } from '@prisma/client';
 import { Follow, UserProfile } from './types';
 
 import { prisma } from '@/lib/prisma';
@@ -333,4 +334,81 @@ export async function getProfileStats(usernameOrId: string) {
     events: eventCount,
     posts: postCount,
   };
+}
+
+export async function fetchPendingRequests(hostId: string) {
+  return prisma.attendee.findMany({
+    where: {
+      event: {
+        hostId: hostId,
+      },
+      status: {
+        in: ['PENDING', 'DENIED'],
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+      event: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function updateRequestStatus(
+  requestId: string,
+  status: 'APPROVED' | 'DENIED' | 'PENDING'
+) {
+  return prisma.$transaction(async (tx) => {
+    const attendee = await tx.attendee.update({
+      where: { id: requestId },
+      data: { status },
+      include: {
+        event: true,
+        user: true,
+      },
+    });
+
+    // Create activity log based on status
+    const activityType: EventActivityType =
+      status === 'APPROVED'
+        ? 'ACCESS_GRANTED'
+        : status === 'DENIED'
+          ? 'ACCESS_DENIED'
+          : 'RESQUEST_PENDING';
+
+    await tx.eventActivity.create({
+      data: {
+        eventId: attendee.eventId,
+        userId: attendee.userId,
+        type: activityType,
+      },
+    });
+
+    // If approved, create a JOIN activity
+    if (status === 'APPROVED') {
+      await tx.eventActivity.create({
+        data: {
+          eventId: attendee.eventId,
+          userId: attendee.userId,
+          type: 'JOIN',
+        },
+      });
+    }
+
+    return attendee;
+  });
 }

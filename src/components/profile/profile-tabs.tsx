@@ -4,6 +4,7 @@ import { CustomTabs, TabItem } from '@/components/ui/custom-tabs';
 
 import { UserEvents } from './user-events';
 import { UserPosts } from './user-posts';
+import RequestsList from './user-events-requests';
 
 interface ProfileTabsProps {
   stats: {
@@ -29,8 +30,8 @@ export function ProfileTabs({ stats, userId }: ProfileTabsProps) {
     },
     {
       value: 'requests',
-      label: `ApproveRequest`,
-      content: '',
+      label: `E-Requests`,
+      content: <RequestsList />,
     },
   ];
 
