@@ -98,7 +98,7 @@ export function UserFollowing({ userId }: UserFollowingProps) {
           placeholder="Search following"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full"
+          className="w-full shadow-none text-sm"
         />
       </div>
 
