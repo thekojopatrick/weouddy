@@ -2,28 +2,24 @@ import { db } from '@/server/db/prisma';
 
 export class UserEventService {
   static async getUserEventStatus(eventId: string, userId: string) {
-    const [membership, pendingRequest] = await db.$transaction([
-      db.event.findFirst({
+    const [event, attendee] = await db.$transaction([
+      db.event.findUnique({
         where: {
           id: eventId,
-          members: {
-            some: {
-              id: userId,
-            },
-          },
+          hostId: userId, // Check if user is host
         },
       }),
       db.attendee.findFirst({
         where: {
           eventId,
           userId,
-          status: 'PENDING',
         },
       }),
     ]);
 
-    if (membership) return 'JOINED';
-    if (pendingRequest) return 'PENDING';
+    if (event) return 'JOINED'; // Host is always joined
+    if (attendee?.status === 'APPROVED') return 'JOINED';
+    if (attendee?.status === 'PENDING') return 'PENDING';
     return 'NOT_JOINED';
   }
 
@@ -31,15 +27,11 @@ export class UserEventService {
     eventIds: string[],
     userId: string
   ) {
-    const [memberships, pendingRequests] = await db.$transaction([
+    const [hostedEvents, attendees] = await db.$transaction([
       db.event.findMany({
         where: {
           id: { in: eventIds },
-          members: {
-            some: {
-              id: userId,
-            },
-          },
+          hostId: userId, // Check hosted events
         },
         select: { id: true },
       }),
@@ -47,23 +39,29 @@ export class UserEventService {
         where: {
           eventId: { in: eventIds },
           userId,
-          status: 'PENDING',
         },
-        select: { eventId: true },
+        select: {
+          eventId: true,
+          status: true,
+        },
       }),
     ]);
 
-    const membershipSet = new Set(memberships.map((m) => m.id));
-    const pendingSet = new Set(pendingRequests.map((r) => r.eventId));
+    const hostedSet = new Set(hostedEvents.map((e) => e.id));
+    const attendeeMap = new Map(
+      attendees.map((a) => [a.eventId, a.status])
+    );
 
     return Object.fromEntries(
       eventIds.map((eventId) => [
         eventId,
-        membershipSet.has(eventId)
+        hostedSet.has(eventId)
           ? 'JOINED'
-          : pendingSet.has(eventId)
-            ? 'PENDING'
-            : 'NOT_JOINED',
+          : attendeeMap.get(eventId) === 'APPROVED'
+            ? 'JOINED'
+            : attendeeMap.get(eventId) === 'PENDING'
+              ? 'PENDING'
+              : 'NOT_JOINED',
       ])
     );
   }
