@@ -25,10 +25,14 @@ export async function checkUserEventStatus({
       userId!
     );
 
-    if (result?.status === 'JOINED' || result?.status === 'PENDING') {
-      //revalidatePath(`/events/${slug}`, 'page');
-      // Also revalidate parent paths if needed
-      //revalidatePath('/discover', 'page');
+    if (result.status === 'DENIED') {
+      return {
+        success: true,
+        status: 'DENIED',
+        message:
+          'Access Denied, user is not allowed to access this event',
+        slug: slug,
+      };
     }
 
     return {

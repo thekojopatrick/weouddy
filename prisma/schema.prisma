@@ -269,6 +269,9 @@ enum EventActivityType {
   COMMENT
   DELETE
   REPORT
+  RESQUEST_PENDING
+  ACCESS_DENIED
+  ACCESS_GRANTED
 }
 
 enum AccessType {

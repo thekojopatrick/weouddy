@@ -171,7 +171,7 @@ export default function EventRoom({
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
-                  <span>{event.memberCount} Members</span>
+                  <span>{event.attendeeCount} Members</span>
                   <span className="text-muted-foreground">
                     {event?.posts?.length} posts
                   </span>

@@ -61,6 +61,8 @@ export default function EventAccessGuard({
 
         console.log({ updatedStatus });
 
+        if (updatedStatus?.status === 'DENIED') return;
+
         if (updatedStatus?.status === 'JOINED') return;
 
         if (
@@ -218,6 +220,7 @@ export default function EventAccessGuard({
         eventId={event.id}
         accessType={event.accessType}
         requiresApproval={event.requiresApproval}
+        userStatus={userStatus as never}
       />
     </>
   );

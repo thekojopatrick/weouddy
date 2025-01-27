@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
 import { db } from '@/server/db/prisma';
 
 // Input validation schema
@@ -25,7 +24,7 @@ async function verifyPinCode(
   providedPin: string
 ): Promise<boolean> {
   if (!storedPinCode) return false;
-  return bcrypt.compare(providedPin, storedPinCode);
+  return storedPinCode.trim() === providedPin.trim();
 }
 
 async function fetchEventWithDetails(identifier: string) {
@@ -78,7 +77,7 @@ export async function joinEvent(
   // Determine attendee status
   const status =
     event.hostId === userId
-      ? 'APPROVED'
+      ? 'JOINED'
       : event.requiresApproval
         ? 'PENDING'
         : 'APPROVED';
@@ -100,6 +99,12 @@ export async function joinEvent(
       },
     });
 
+    if (status === 'APPROVED' || status === 'JOINED') {
+      //Initial Joined
+      //ACCESS GRANTED = APPROVED
+      //ACCESS DENIED == DENIED
+      //REQUEST PENDING == PENDING
+    }
     await tx.eventActivity.create({
       data: {
         eventId: event.id,

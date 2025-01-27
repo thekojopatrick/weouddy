@@ -21,6 +21,7 @@ interface JoinEventDialogProps {
   eventId: string;
   accessType: 'DIRECT_PASS' | 'PIN_REQUIRED' | 'INVITE_ONLY';
   requiresApproval?: boolean;
+  userStatus: 'JOINED' | 'NOT_JOINED';
 }
 
 export function JoinEventDialog({
@@ -29,6 +30,7 @@ export function JoinEventDialog({
   eventId,
   accessType,
   requiresApproval,
+  userStatus,
 }: JoinEventDialogProps) {
   const router = useRouter();
   const {
@@ -105,7 +107,10 @@ export function JoinEventDialog({
       return <JoinEventSuccess isLoading={false} />;
     }
 
-    if (accessType === 'PIN_REQUIRED') {
+    if (
+      accessType === 'PIN_REQUIRED' &&
+      userStatus === 'NOT_JOINED'
+    ) {
       return (
         <PinEntryForm
           onSubmitAction={handlePinSubmitWrapper}
