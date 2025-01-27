@@ -305,9 +305,10 @@ enum FormsType {
 }
 
 enum AttendeeStatus {
+  JOINED
   PENDING
   APPROVED
-  REJECTED
+  DENIED
 }
 
 model Feedback {

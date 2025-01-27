@@ -35,6 +35,8 @@ export function JoinEventDialog({
     joinMutation,
     handlePinSubmit,
     handleJoinViaCard,
+    debouncedJoinEvent,
+    debouncedJoinViaLink,
     isLoading,
   } = useJoinEvent();
 
@@ -46,12 +48,12 @@ export function JoinEventDialog({
     [handlePinSubmit]
   );
 
-  // Automatically trigger join for DIRECT_PASS events
   useEffect(() => {
     if (
       open &&
       accessType === 'DIRECT_PASS' &&
-      !joinMutation.isPending
+      !isLoading &&
+      !joinMutation.isSuccess
     ) {
       handleJoinViaCard(eventId);
     }
@@ -60,8 +62,24 @@ export function JoinEventDialog({
     accessType,
     eventId,
     handleJoinViaCard,
-    joinMutation.isPending,
+    isLoading,
+    joinMutation.isSuccess,
   ]);
+
+  // Add this useEffect to handle success state
+  useEffect(() => {
+    if (joinMutation.isSuccess) {
+      onOpenChange(false); // Close the dialog
+      router.refresh(); // Refresh page state
+    }
+  }, [joinMutation.isSuccess, onOpenChange, router]);
+
+  useEffect(() => {
+    return () => {
+      debouncedJoinEvent.cancel();
+      debouncedJoinViaLink.cancel();
+    };
+  }, [debouncedJoinEvent, debouncedJoinViaLink]);
 
   const handleCancel = useCallback(() => {
     onOpenChange(false);
@@ -70,8 +88,8 @@ export function JoinEventDialog({
 
   // Determine what content to show based on the current state
   const renderContent = () => {
-    if (joinMutation.isPending) {
-      return <JoinEventSuccess isLoading={true} />;
+    if (isLoading) {
+      return <JoinEventSuccess isLoading={isLoading} />;
     }
 
     if (joinMutation.isSuccess) {
@@ -99,7 +117,7 @@ export function JoinEventDialog({
 
     return (
       <Alert>
-        <AlertDescription>
+        <AlertDescription className="text-center">
           Processing your request to join...
         </AlertDescription>
       </Alert>

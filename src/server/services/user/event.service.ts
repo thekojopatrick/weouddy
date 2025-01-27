@@ -2,7 +2,7 @@ import { db } from '@/server/db/prisma';
 
 export class UserEventService {
   static async getUserEventStatus(eventId: string, userId: string) {
-    const [membership, pendingRequest] = await Promise.all([
+    const [membership, pendingRequest] = await db.$transaction([
       db.event.findFirst({
         where: {
           id: eventId,
@@ -31,7 +31,7 @@ export class UserEventService {
     eventIds: string[],
     userId: string
   ) {
-    const [memberships, pendingRequests] = await Promise.all([
+    const [memberships, pendingRequests] = await db.$transaction([
       db.event.findMany({
         where: {
           id: { in: eventIds },

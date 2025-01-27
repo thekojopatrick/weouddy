@@ -157,7 +157,7 @@ export default function DiscoverPage({
                           date={date}
                           time={time}
                           coverImage={event.coverImage!}
-                          members={event.memberCount}
+                          members={event.attendeeCount}
                           category={event.type}
                           location={event.location!}
                           slug={event.slug!}

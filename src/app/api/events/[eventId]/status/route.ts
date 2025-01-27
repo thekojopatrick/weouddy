@@ -1,6 +1,7 @@
-import { UserEventService } from '@/server/services/user/event.service';
+//import { UserEventService } from '@/server/services/user/event.service';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { joinEventService } from '@/server/services/event/new-join-event.service';
 
 export async function GET(
   request: Request,
@@ -15,14 +16,20 @@ export async function GET(
       return NextResponse.json({ status: 'NOT_JOINED' });
     }
 
-    const status = await UserEventService.getUserEventStatus(
+    // First, check the existing method
+    const attendee = await joinEventService.checkAttendeeStatus(
       eventId,
       session.user.id
     );
 
-    console.log({ status });
+    // If status is NOT_JOINED, double-check with Attendee table
 
-    return NextResponse.json({ status });
+    console.log({ attendee });
+
+    return NextResponse.json({
+      status:
+        attendee?.status === 'APPROVED' ? 'JOINED' : 'NOT_JOINED',
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

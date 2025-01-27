@@ -1,8 +1,7 @@
 import { getSession } from '@/lib/auth';
-import {
-  JoinEventError,
-  JoinEventService,
-} from '@/server/services/event/join-event.service';
+import { JoinEventError } from '@/server/services/event/join-event.service';
+import { joinEventService } from '@/server/services/event/new-join-event.service';
+import { joinEvent } from '@/server/services/event/test-join-event';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -25,11 +24,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await JoinEventService.joinEvent({
+    const attendee = await joinEventService.checkAttendeeStatus(
       identifier,
-      pin,
+      session.user.id
+    );
+
+    if (attendee?.status === 'APPROVED') {
+      console.log('JOINED');
+
+      return NextResponse.json(attendee);
+    }
+
+    const result = await joinEvent({
+      identifier,
       userId: session.user.id,
+      pin,
     });
+
+    console.log({ result });
 
     return NextResponse.json(result);
   } catch (error: unknown) {

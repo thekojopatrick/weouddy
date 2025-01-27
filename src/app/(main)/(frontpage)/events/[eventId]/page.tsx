@@ -6,6 +6,7 @@ import { getSession } from '@/lib/auth';
 import { getURL } from '@/lib/utils';
 import { EventService } from '@/server/services/event';
 import EventAccessGuard from '../_components/event-access-guard';
+import { checkUserEventStatus } from '@/app/actions/check-user-event-status';
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -62,8 +63,24 @@ export default async function EventRoomPage(props: {
 
   if (!event) return null;
 
+  const userEventStatus = await checkUserEventStatus({
+    eventId: event.id,
+    userId: session.userId,
+    slug: event.slug,
+  });
+
+  console.log(userEventStatus);
+
+  const checkStatus = userEventStatus?.status === 'JOINED';
+
+  console.log({ checkStatus });
+
   return (
-    <EventAccessGuard user={session?.user} event={event as never}>
+    <EventAccessGuard
+      user={session?.user}
+      event={event}
+      userStatus={userEventStatus?.status || 'NOT_JOINED'}
+    >
       <EventRoom user={session.user} event={event as never} />
     </EventAccessGuard>
   );

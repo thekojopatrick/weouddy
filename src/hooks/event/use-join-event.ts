@@ -2,7 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { extractIdentifierFromLink } from '@/lib/utils';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
+import debounce from 'lodash.debounce';
 
 interface JoinEventParams {
   identifier: string;
@@ -11,7 +12,7 @@ interface JoinEventParams {
 
 interface EventJoinResponse {
   success: boolean;
-  status: 'JOINED' | 'PENDING';
+  status: 'APPROVED' | 'PENDING';
   event?: {
     id: string;
     slug: string;
@@ -30,89 +31,114 @@ export const useJoinEvent = () => {
       identifier,
       pin,
     }: JoinEventParams): Promise<EventJoinResponse> => {
-      // Add delay to prevent rapid successive calls
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      console.log('Join trigger start');
+      try {
+        const res = await fetch('/api/events/join', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ identifier, pin }),
+        });
 
-      const res = await fetch('/api/events/join', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ identifier, pin }),
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        // If it's a lock error, we can handle it gracefully
-        if (error.error?.includes('already in progress')) {
-          return {
-            success: false,
-            status: 'PENDING',
-            error:
-              'Please wait while your previous join request completes',
-          };
+        if (!res.ok) {
+          const error = await res.json();
+          if (error.error?.includes('already in progress')) {
+            return {
+              success: false,
+              status: 'PENDING',
+              error:
+                'Please wait while your previous join request completes',
+            };
+          }
+          throw new Error(error.error || 'Failed to join event');
         }
-        throw new Error(error.error || 'Failed to join event');
-      }
 
-      return res.json();
+        console.log('Join trigger end');
+        return res.json();
+      } catch (error: unknown) {
+        console.log('Join event hook', { error });
+
+        throw new Error('Unexpected error occurred');
+      }
     },
+
     onSuccess: (data) => {
+      console.log('Join event success start');
+
+      console.log(data);
+
       if (!data.success) {
         if (data.error) {
-          toast.info('Please wait', {
+          toast.info('Action in progress', {
             description: data.error,
           });
         }
         return;
       }
 
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-
       if (data.status === 'PENDING') {
         toast.info('Request sent', {
           description: 'Waiting for host approval',
         });
-      } else if (data.status === 'JOINED' && data.event?.slug) {
+      } else if (data.status === 'APPROVED' && data.event?.slug) {
         toast.success('Successfully joined', {
           description: 'Redirecting to event page...',
         });
-        setTimeout(
-          () => router.push(`/events/${data.event?.slug}`),
-          1000
-        );
+        router.refresh();
       }
+
+      queryClient.invalidateQueries({
+        queryKey: ['events', data.event?.slug],
+      });
+
+      console.log('Join event success end');
+
+      router.refresh();
     },
+
     onError: (error: Error) => {
-      toast.error('Failed to join', {
+      toast.error('Failed to join event', {
         description: error.message,
       });
     },
   });
 
-  const handleJoinViaLink = useCallback(
-    async (link: string) => {
+  // UseRef to persist the debounced function across renders
+  const debouncedJoinEvent = useRef(
+    debounce((eventId: string) => {
+      joinMutation.mutate({ identifier: eventId });
+    }, 500)
+  ).current;
+
+  const debouncedJoinViaLink = useRef(
+    debounce((link: string) => {
       const identifier = extractIdentifierFromLink(link);
       if (!identifier) {
         toast.error('Invalid event link');
         return;
       }
-      return joinMutation.mutate({ identifier });
+      joinMutation.mutate({ identifier });
+    }, 500)
+  ).current;
+
+  const handleJoinViaLink = useCallback(
+    (link: string) => {
+      debouncedJoinViaLink(link);
     },
-    [joinMutation]
+    [debouncedJoinViaLink]
   );
 
   const handleJoinViaCard = useCallback(
-    async (eventId: string) => {
-      return joinMutation.mutate({ identifier: eventId });
+    (eventId: string) => {
+      debouncedJoinEvent(eventId);
     },
-    [joinMutation]
+    [debouncedJoinEvent]
   );
 
   const handlePinSubmit = useCallback(
-    async (identifier: string, pin: string) => {
-      return joinMutation.mutate({ identifier, pin });
+    (identifier: string, pin: string) => {
+      joinMutation.mutate({ identifier, pin });
     },
     [joinMutation]
   );
@@ -122,6 +148,8 @@ export const useJoinEvent = () => {
     handleJoinViaLink,
     handleJoinViaCard,
     handlePinSubmit,
+    debouncedJoinEvent,
+    debouncedJoinViaLink,
     isLoading: joinMutation.isPending,
   };
 };

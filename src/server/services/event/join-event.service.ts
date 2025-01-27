@@ -1,7 +1,10 @@
-import { cache } from '@/lib/redis'; // Implement a caching solution like Redis or memory cache
+import { cache } from '@/lib/redis';
 import { db } from '@/server/db/prisma';
 import { z } from 'zod';
 import { rateLimiter } from '../ratelimiter/rate-limiter.service';
+
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY = 100; // ms
 
 const joinEventSchema = z.object({
   identifier: z.string().min(1),
@@ -17,10 +20,6 @@ interface JoinEventResponse {
     slug: string;
     accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
     requiresApproval: boolean;
-    attendees?: Array<{
-      userId: string;
-      status: 'PENDING' | 'APPROVED';
-    }>;
   };
 }
 
@@ -35,96 +34,91 @@ export class JoinEventError extends Error {
 }
 
 export class JoinEventService {
-  private static readonly LOCK_KEY_PREFIX = 'event-join-lock:';
   private static readonly EVENT_CACHE_PREFIX = 'event:';
-  private static readonly LOCK_TIMEOUT = 5000;
-
-  private static async getEventFromCache(identifier: string) {
-    const cacheKey = `${this.EVENT_CACHE_PREFIX}${identifier}`;
-    return cache.get(cacheKey);
-  }
-
-  private static async setEventCache(
-    identifier: string,
-    data: unknown
-  ) {
-    const cacheKey = `${this.EVENT_CACHE_PREFIX}${identifier}`;
-    await cache.set(cacheKey, data, 60 * 5); // Cache for 5 minute
-  }
-
-  private static async acquireLock(
-    userId: string,
-    identifier: string
-  ): Promise<boolean> {
-    const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
-    return cache.set(lockKey, Date.now(), this.LOCK_TIMEOUT);
-  }
-
-  private static async releaseLock(
-    userId: string,
-    identifier: string
-  ): Promise<void> {
-    const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
-    await cache.del(lockKey);
-  }
+  private static readonly LOCK_KEY_PREFIX = 'event-join-lock:';
 
   static async joinEvent(input: unknown): Promise<JoinEventResponse> {
+    let attempt = 0;
+    while (attempt < MAX_RETRIES) {
+      try {
+        return await this.attemptJoinEvent(input);
+      } catch (error) {
+        if (
+          this.isRetryableError(error) &&
+          attempt < MAX_RETRIES - 1
+        ) {
+          const delay = this.calculateBackoff(attempt);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          attempt++;
+        } else {
+          throw error;
+        }
+      }
+    }
+    throw new JoinEventError(
+      'Failed to join event after maximum retries',
+      'MAX_RETRIES_EXCEEDED'
+    );
+  }
+
+  private static calculateBackoff(attempt: number): number {
+    return (
+      RETRY_BASE_DELAY * Math.pow(2, attempt) +
+      Math.random() * RETRY_BASE_DELAY
+    );
+  }
+
+  private static isRetryableError(error: unknown): boolean {
+    const errorMessage = error instanceof Error ? error.message : '';
+    return (
+      errorMessage.includes('deadlock') ||
+      errorMessage.includes('write conflict')
+    );
+  }
+
+  private static async attemptJoinEvent(
+    input: unknown
+  ): Promise<JoinEventResponse> {
     const startTime = Date.now();
     const { identifier, pin, userId } = joinEventSchema.parse(input);
 
-    // Rate limit join attempts - 3 attempts per minute
+    // Rate limit join attempts
     await rateLimiter.limit({
       identifier: `join-event-${userId}`,
       limit: 3,
       window: 60000,
     });
 
-    // Use Redis rate limiter for concurrent join prevention if available
-    await rateLimiter.limit({
-      identifier: `join-lock-${userId}-${identifier}`,
-      limit: 1,
-      window: 5000,
-      useRedis: true, // Will fall back to memory if Redis is unavailable
-    });
+    // Acquire distributed lock
+    const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
+    const lockAcquired = await cache.set(
+      lockKey,
+      Date.now().toString()
+    );
 
-    // Use optimistic locking instead of pessimistic
-    if (!(await this.acquireLock(userId, identifier))) {
+    if (!lockAcquired) {
       throw new JoinEventError(
         'A join request is already in progress',
-        'LOCK_ERROR'
+        'CONCURRENT_JOIN_ATTEMPT'
       );
     }
 
     try {
-      // First, try to get event from cache
-      let event = await this.getEventFromCache(identifier);
-
-      if (!event) {
-        // Optimize the query by selecting only needed fields
-        event = await db.event.findFirst({
-          where: {
-            OR: [{ id: identifier }, { slug: identifier }],
-          },
-          select: {
-            id: true,
-            slug: true,
-            requiresApproval: true,
-            isDisabled: true,
-            accessType: true,
-            pinCode: true,
-            hostId: true,
-            _count: {
-              select: {
-                members: true,
-              },
-            },
-          },
-        });
-
-        if (event) {
-          await this.setEventCache(identifier, event);
-        }
-      }
+      // Fetch event with optimized query
+      const event = await db.event.findFirst({
+        where: {
+          OR: [{ id: identifier }, { slug: identifier }],
+        },
+        select: {
+          id: true,
+          slug: true,
+          requiresApproval: true,
+          isDisabled: true,
+          accessType: true,
+          pinCode: true,
+          hostId: true,
+        },
+      });
 
       if (!event) {
         throw new JoinEventError('Event not found', 'NOT_FOUND');
@@ -148,68 +142,73 @@ export class JoinEventService {
         );
       }
 
-      // Determine status without additional query
+      // Determine status
       const status =
         event.hostId === userId || !event.requiresApproval
           ? 'APPROVED'
           : 'PENDING';
 
-      // Combine all database operations into a single transaction
-      const result = await db.$transaction(async (tx) => {
-        // First check for existing attendee
-        const existingAttendee = await tx.attendee.findFirst({
-          where: {
-            AND: [{ userId: userId }, { eventId: event.id }],
-          },
-          select: {
-            id: true,
-            status: true,
-          },
-        });
+      // Transactional join with conflict resolution
+      const result = await db.$transaction(
+        async (prisma) => {
+          // Check for existing attendee with optimistic locking
+          const existingAttendee = await prisma.attendee.findFirst({
+            where: {
+              userId: userId,
+              eventId: event.id,
+            },
+            select: {
+              id: true,
+              status: true,
+            },
+          });
 
-        if (existingAttendee) {
-          if (existingAttendee.status === status) {
+          if (existingAttendee) {
+            // Update if status changed
+            if (existingAttendee.status !== status) {
+              return prisma.attendee.update({
+                where: { id: existingAttendee.id },
+                data: { status },
+                select: { status: true },
+              });
+            }
             return { status: existingAttendee.status };
           }
-          return tx.attendee.update({
-            where: { id: existingAttendee.id },
-            data: { status },
-            select: { status: true },
-          });
+
+          // Create new attendee
+          const [attendee] = await Promise.all([
+            prisma.attendee.create({
+              data: {
+                userId,
+                eventId: event.id,
+                status,
+              },
+              select: { status: true },
+            }),
+            status === 'APPROVED'
+              ? prisma.event.update({
+                  where: { id: event.id },
+                  data: {
+                    members: { connect: { id: userId } },
+                  },
+                })
+              : Promise.resolve(),
+            prisma.eventActivity.create({
+              data: {
+                eventId: event.id,
+                userId,
+                type: 'JOIN',
+              },
+            }),
+          ]);
+
+          return attendee;
+        },
+        {
+          // Prisma transaction isolation for conflict handling
+          isolationLevel: 'Serializable',
         }
-
-        // Create attendee and activity in parallel if possible
-        const [attendee] = await Promise.all([
-          tx.attendee.create({
-            data: {
-              userId,
-              eventId: event.id,
-              status,
-            },
-            select: { status: true },
-          }),
-          status === 'APPROVED'
-            ? tx.event.update({
-                where: { id: event.id },
-                data: {
-                  members: { connect: { id: userId } },
-                },
-              })
-            : Promise.resolve(),
-          tx.eventActivity.create({
-            data: {
-              eventId: event.id,
-              userId,
-              type: 'JOIN',
-            },
-          }),
-        ]);
-
-        return attendee;
-      });
-
-      // Invalidate cache
-      await cache.del(`${this.EVENT_CACHE_PREFIX}${identifier}`);
+      );
 
       const executionTime = Date.now() - startTime;
       console.log(`Join event execution time: ${executionTime}ms`);
@@ -220,12 +219,27 @@ export class JoinEventService {
         event: {
           id: event.id,
           slug: event.slug!,
-          accessType: event.accessType as never,
+          accessType: event.accessType as
+            | 'DIRECT_PASS'
+            | 'PIN_REQUIRED',
           requiresApproval: event.requiresApproval,
         },
       };
     } finally {
-      await this.releaseLock(userId, identifier);
+      // Always release lock
+      await cache.del(lockKey);
     }
+  }
+
+  static async checkAttendeeStatus(eventId: string, userId: string) {
+    return db.attendee.findUnique({
+      where: {
+        userId_eventId: {
+          userId,
+          eventId,
+        },
+      },
+      select: { id: true, status: true },
+    });
   }
 }
