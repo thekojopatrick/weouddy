@@ -104,7 +104,7 @@ export function UserProfileSidebar({
 
           <div className="space-y-2">
             <div className="text-sm font-medium hidden">Features</div>
-            <Link href={'/about/pricing'}>
+            <Link href={'/support-us'}>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -122,7 +122,7 @@ export function UserProfileSidebar({
                 About
               </Button>
             </Link>
-            <Link href={'/about/pricing'} className="hidden">
+            <Link href={'/pricing'} className="hidden">
               <Button
                 variant="ghost"
                 className="w-full justify-start"

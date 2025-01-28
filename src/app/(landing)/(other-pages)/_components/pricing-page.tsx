@@ -1,4 +1,4 @@
-import { PricingCards } from '../_components/pricing-card';
+import { PricingCards } from './pricing-card';
 
 const tiers = [
   {
