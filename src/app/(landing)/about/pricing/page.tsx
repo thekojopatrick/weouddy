@@ -1,7 +1,8 @@
 import React from 'react';
+import SupportUsPage from '../_components/support-us';
 
 const PricingPage = () => {
-  return <div>Pricing Page</div>;
+  return <SupportUsPage />;
 };
 
 export default PricingPage;

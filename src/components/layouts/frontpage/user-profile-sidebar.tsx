@@ -69,7 +69,7 @@ export function UserProfileSidebar({
         <SheetHeader>
           <SheetTitle className="sr-only">Profile</SheetTitle>
         </SheetHeader>
-        <div className="mt-6 space-y-6">
+        <div className="mt-6 space-y-5">
           <div className="flex items-center gap-4 px-2">
             <Avatar className="h-16 w-16 rounded-lg">
               <AvatarImage src={user.avatar!} alt={user.name} />
@@ -87,7 +87,7 @@ export function UserProfileSidebar({
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-6">
             <Link
               prefetch
               href={`/${user.username}`}
@@ -103,14 +103,32 @@ export function UserProfileSidebar({
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">Features</div>
+            <div className="text-sm font-medium hidden">Features</div>
             <Link href={'/about/pricing'}>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
                 onClick={handleItemClick}
               >
-                <Sparkles className="mr-2 size-4" />
+                Support Us
+              </Button>
+            </Link>
+            <Link href={'/about'}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                About
+              </Button>
+            </Link>
+            <Link href={'/about/pricing'} className="hidden">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                <Sparkles className="hidden size-4" />
                 For Business
               </Button>
             </Link>
@@ -120,20 +138,20 @@ export function UserProfileSidebar({
                 className="w-full justify-start"
                 onClick={handleItemClick}
               >
-                <LayoutDashboard className="mr-2 size-4" />
+                <LayoutDashboard className="hidden size-4" />
                 Dashboard
               </Button>
             </Link>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 hidden">
             <div className="text-sm font-medium hidden">Settings</div>
             <Button
               variant="ghost"
-              className="w-full justify-start"
+              className="w-full justify-start hidden"
               onClick={handleItemClick}
             >
-              Account Settings
+              Notifications
             </Button>
             <Button
               variant="ghost"
@@ -144,10 +162,10 @@ export function UserProfileSidebar({
             </Button>
             <Button
               variant="ghost"
-              className="w-full justify-start hidden"
+              className="w-full justify-start"
               onClick={handleItemClick}
             >
-              Notifications
+              Account Settings
             </Button>
           </div>
 
