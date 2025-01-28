@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { VideoShowcase } from '../_components/video-showcase';
 import { TestimonialCard } from '../_components/testimonial-card';
