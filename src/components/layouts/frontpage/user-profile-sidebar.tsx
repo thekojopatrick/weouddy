@@ -11,7 +11,7 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { getNameInitials } from '@/lib/utils';
 import { useState } from 'react';
@@ -104,6 +104,16 @@ export function UserProfileSidebar({
 
           <div className="space-y-2">
             <div className="text-sm font-medium hidden">Features</div>
+            <Link href={'/dashboard'} className="hidden">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                <LayoutDashboard className="hidden size-4" />
+                Dashboard
+              </Button>
+            </Link>
             <Link href={'/support-us'}>
               <Button
                 variant="ghost"
@@ -113,6 +123,24 @@ export function UserProfileSidebar({
                 Support Us
               </Button>
             </Link>
+            <Link href={'/contact'} className="hidden">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                Blog
+              </Button>
+            </Link>
+            <Link href={'/contact'} className="">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={handleItemClick}
+              >
+                Contact
+              </Button>
+            </Link>
             <Link href={'/about'}>
               <Button
                 variant="ghost"
@@ -120,26 +148,6 @@ export function UserProfileSidebar({
                 onClick={handleItemClick}
               >
                 About
-              </Button>
-            </Link>
-            <Link href={'/pricing'} className="hidden">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={handleItemClick}
-              >
-                <Sparkles className="hidden size-4" />
-                For Business
-              </Button>
-            </Link>
-            <Link href={'/dashboard'}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={handleItemClick}
-              >
-                <LayoutDashboard className="hidden size-4" />
-                Dashboard
               </Button>
             </Link>
           </div>
