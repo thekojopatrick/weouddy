@@ -11,10 +11,13 @@ const AboutPage = () => {
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="max-w-3xl text-left mb-24">
           <h1 className="text-2xl mb-6">
-            WeOuddy is a show, don&apos;t tell professional network
-            with beautiful profiles and meaningful connections.
-            Designed from the ground up to help you find new
-            opportunities or your next great hire.
+            We’re building a social platform that reimagines how
+            people connect and engage during events and special
+            moments. Inspired by the need to share memories
+            effortlessly without the pressure of exchanging contacts,
+            our platform lets you capture, relive, and preserve those
+            experiences while engaging with others in real time. It’s
+            where events meet connection, all in one seamless space.
           </h1>
         </div>
         <VideoShowcase />
