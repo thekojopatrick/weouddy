@@ -178,6 +178,7 @@ export function LocationModal({
     <ResponsiveDialog
       open={open}
       onOpenChangeAction={onOpenChangeAction}
+      className="px-0"
     >
       <div className="space-y-4 py-4">
         <div className="flex items-center gap-2 px-4">
@@ -193,7 +194,7 @@ export function LocationModal({
           </h2>
         </div>
 
-        <div className="px-4">
+        <div className="px-2">
           <Command>
             <CommandInput
               placeholder="Search for a location..."
@@ -235,9 +236,9 @@ export function LocationModal({
                       onSelect={() =>
                         handleLocationSelect(location.name)
                       }
-                      className="flex flex-col items-start"
+                      className="flex flex-col items-start gap-1"
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         {location.name}
                       </div>
