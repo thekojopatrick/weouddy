@@ -1,6 +1,5 @@
 'use client';
 import { PricingPage } from './pricing-page';
-import Footer from '@/components/marketing/footer';
 
 export default function SupportUsPage() {
   return (
@@ -94,7 +93,6 @@ export default function SupportUsPage() {
 
         {/* Footer */}
       </main>
-      <Footer />
     </div>
   );
 }
