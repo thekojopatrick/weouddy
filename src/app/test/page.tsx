@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import CalendarWithDropdown from './components/calendar-comp';
 
 export default async function TestPage() {
   const supabase = await createClient();
@@ -29,6 +30,9 @@ export default async function TestPage() {
           Sign out
         </Button>
       </form>
+      <div className="grid">
+        <CalendarWithDropdown />
+      </div>
     </div>
   ) : (
     <div className="flex gap-2">

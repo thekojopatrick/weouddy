@@ -12,9 +12,19 @@ const batchStatusSchema = z.object({
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    const { eventIds } = batchStatusSchema.parse(
-      await request.json()
-    );
+    let requestBody;
+
+    try {
+      requestBody = await request.json();
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return NextResponse.json(
+        { error: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
+
+    const { eventIds } = batchStatusSchema.parse(requestBody);
 
     if (!session?.user) {
       return NextResponse.json(
@@ -35,7 +45,7 @@ export async function POST(request: Request) {
     );
     return NextResponse.json(statuses);
   } catch (error) {
-    console.error(error);
+    console.error('Internal server error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch statuses' },
       { status: 500 }
