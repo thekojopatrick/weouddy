@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import Image from 'next/image';
-import { Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import Image from "next/image";
+import { Plus } from "lucide-react";
 
 interface PaymentMethod {
-  type: 'visa' | 'mastercard';
+  type: "visa" | "mastercard";
   last4: string;
   expiryDate: string;
   isDefault?: boolean;
@@ -21,8 +21,7 @@ export function PaymentMethods({ methods }: PaymentMethodsProps) {
         <div className="space-y-1">
           <h3 className="text-lg font-medium">Payment methods</h3>
           <p className="text-sm text-muted-foreground">
-            Add and manage your payment methods using our secure
-            payment system.
+            Add and manage your payment methods using our secure payment system.
           </p>
         </div>
 
@@ -36,9 +35,9 @@ export function PaymentMethods({ methods }: PaymentMethodsProps) {
                 <div className="relative h-8 w-12">
                   <Image
                     src={
-                      method.type === 'visa'
-                        ? '/brand/visa.svg'
-                        : '/brand/mastercard.svg'
+                      method.type === "visa"
+                        ? "/brand/visa.svg"
+                        : "/brand/mastercard.svg"
                     }
                     alt={method.type}
                     fill
@@ -47,8 +46,8 @@ export function PaymentMethods({ methods }: PaymentMethodsProps) {
                 </div>
                 <div>
                   <div className="font-medium">
-                    {method.type === 'visa' ? 'Visa' : 'MasterCard'}{' '}
-                    •••• {method.last4}
+                    {method.type === "visa" ? "Visa" : "MasterCard"} ••••{" "}
+                    {method.last4}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Expires {method.expiryDate}
@@ -62,13 +61,9 @@ export function PaymentMethods({ methods }: PaymentMethodsProps) {
                   className="rounded-xl"
                   disabled={method.isDefault}
                 >
-                  {method.isDefault ? 'Default' : 'Set as default'}
+                  {method.isDefault ? "Default" : "Set as default"}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-xl"
-                >
+                <Button variant="ghost" size="sm" className="rounded-xl">
                   Edit
                 </Button>
               </div>

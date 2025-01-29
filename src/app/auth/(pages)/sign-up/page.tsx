@@ -1,12 +1,12 @@
-import { redirect } from 'next/navigation';
-import { getSession } from '@/lib/auth';
-import { AuthForm } from '@/components/auth/auth-form';
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
+import { AuthForm } from "@/components/auth/auth-form";
 
 export default async function SignUpPage() {
   const user = await getSession();
 
   if (user) {
-    return redirect('/discover');
+    return redirect("/discover");
   }
 
   return (

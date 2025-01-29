@@ -1,21 +1,18 @@
-'use client';
+"use client";
 
-import { FC, FormEvent, useState } from 'react';
-import { Send } from 'lucide-react';
-import { LoadingButton } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { EmojiPicker } from '../emoji-picker';
+import { FC, FormEvent, useState } from "react";
+import { Send } from "lucide-react";
+import { LoadingButton } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { EmojiPicker } from "../emoji-picker";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
   disabled?: boolean;
 }
 
-export const ChatInput: FC<ChatInputProps> = ({
-  onSendMessage,
-  disabled,
-}) => {
-  const [message, setMessage] = useState('');
+export const ChatInput: FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
+  const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -25,17 +22,14 @@ export const ChatInput: FC<ChatInputProps> = ({
     setIsSending(true);
     try {
       await onSendMessage(message.trim());
-      setMessage('');
+      setMessage("");
     } finally {
       setIsSending(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex gap-2 bg-background w-full"
-    >
+    <form onSubmit={handleSubmit} className="flex gap-2 bg-background w-full">
       <div className="relative flex-1 rounded-full bg-black/5">
         <Input
           value={message}
@@ -46,9 +40,7 @@ export const ChatInput: FC<ChatInputProps> = ({
         />
         <div className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1">
           <EmojiPicker
-            onEmojiSelectAction={(emoji) =>
-              setMessage((prev) => prev + emoji)
-            }
+            onEmojiSelectAction={(emoji) => setMessage((prev) => prev + emoji)}
           />
         </div>
       </div>

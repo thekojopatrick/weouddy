@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { ArrowLeft, QrCode } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { extractIdentifierFromLink } from '@/lib/utils';
-import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { getURL } from '@/utils';
+import { ArrowLeft, QrCode } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { extractIdentifierFromLink } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { getURL } from "@/utils";
 
 interface QRScannerFormProps {
   onScanCompleteAction: (result: string) => void;
@@ -48,24 +48,20 @@ export function QRScannerForm({
       setIsScanning(true);
 
       // Check if the browser supports the BarcodeDetector API
-      if ('BarcodeDetector' in window) {
+      if ("BarcodeDetector" in window) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const barcodeDetector = new (window as any).BarcodeDetector({
-          formats: ['qr_code'],
+          formats: ["qr_code"],
         });
 
-        const mediaStream = await navigator.mediaDevices.getUserMedia(
-          {
-            video: { facingMode: 'environment' },
-          }
-        );
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
         setStream(mediaStream);
 
-        const video = document.getElementById(
-          'qr-video'
-        ) as HTMLVideoElement;
+        const video = document.getElementById("qr-video") as HTMLVideoElement;
         if (!video) {
-          throw new Error('Video element not found');
+          throw new Error("Video element not found");
         }
 
         video.srcObject = mediaStream;
@@ -86,39 +82,37 @@ export function QRScannerForm({
                 onScanCompleteAction(`${getURL()}events/${eventId}`);
               } catch (error) {
                 toast({
-                  title: 'Invalid QR Code',
+                  title: "Invalid QR Code",
                   description:
                     error instanceof Error
                       ? error.message
-                      : 'The scanned QR code is not a valid event link.',
-                  variant: 'destructive',
+                      : "The scanned QR code is not a valid event link.",
+                  variant: "destructive",
                 });
               }
             } else if (isScanning) {
               requestAnimationFrame(checkForQRCode);
             }
           } catch (error) {
-            console.error('Error detecting QR code:', error);
+            console.error("Error detecting QR code:", error);
           }
         };
 
         checkForQRCode();
       } else {
         toast({
-          title: 'Not Supported',
-          description:
-            'QR code scanning is not supported in your browser.',
-          variant: 'destructive',
+          title: "Not Supported",
+          description: "QR code scanning is not supported in your browser.",
+          variant: "destructive",
         });
         setIsScanning(false);
       }
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error("Error accessing camera:", error);
       toast({
-        title: 'Camera Error',
-        description:
-          'Unable to access your camera. Please check permissions.',
-        variant: 'destructive',
+        title: "Camera Error",
+        description: "Unable to access your camera. Please check permissions.",
+        variant: "destructive",
       });
       setIsScanning(false);
     }
@@ -139,7 +133,7 @@ export function QRScannerForm({
         ) : (
           <Button onClick={startScanning} className="shadow-none">
             <QrCode className="mr-2 h-4 w-4" />
-            {isScanning ? 'Scanning...' : 'Start Scanning'}
+            {isScanning ? "Scanning..." : "Start Scanning"}
           </Button>
         )}
       </div>

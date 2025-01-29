@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { PostWithDetails } from '@/types/prisma.types';
-import { fetchUserPosts } from '@/server/actions/user/queries';
-import MasonryPosts from './masonry-posts';
+import { PostWithDetails } from "@/types/prisma.types";
+import { fetchUserPosts } from "@/server/actions/user/queries";
+import MasonryPosts from "./masonry-posts";
 
 interface UserPostsProps {
   userId: string;
@@ -27,12 +27,10 @@ export function UserPosts({ userId }: UserPostsProps) {
         if (newPosts.length === 0) {
           setHasMore(false);
         } else {
-          setPosts((prev) =>
-            page === 1 ? newPosts : [...prev, ...newPosts]
-          );
+          setPosts((prev) => (page === 1 ? newPosts : [...prev, ...newPosts]));
         }
       } catch (error) {
-        console.error('Failed to load posts', error);
+        console.error("Failed to load posts", error);
       } finally {
         setIsLoading(false);
       }
@@ -62,9 +60,9 @@ export function UserPosts({ userId }: UserPostsProps) {
           <Button
             onClick={handleLoadMore}
             disabled={isLoading}
-            variant={'ghost'}
+            variant={"ghost"}
           >
-            {isLoading ? 'Loading...' : 'Load More'}
+            {isLoading ? "Loading..." : "Load More"}
           </Button>
         </div>
       )}

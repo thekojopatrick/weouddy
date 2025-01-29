@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const data = await request.json();
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
     // Verify the authenticated user matches the requested user
     if (session.user.id !== id) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // Try to find existing user
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error('[USER_PROFILE_ERROR]', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    console.error("[USER_PROFILE_ERROR]", error);
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }

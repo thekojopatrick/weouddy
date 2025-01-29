@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { AttendeeStatus } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
-import { createClient } from '@/utils/supabase/server';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { AttendeeStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 
 // Simplified parameter validation
 const paramsSchema = z.string().min(1);
 
 export async function GET(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   const { eventId } = await params;
 
@@ -21,10 +21,7 @@ export async function GET(
     const result = paramsSchema.safeParse(eventId);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Invalid event ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
     }
 
     const {
@@ -34,8 +31,8 @@ export async function GET(
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized', status: 'NOT_JOINED' },
-        { status: 401 }
+        { error: "Unauthorized", status: "NOT_JOINED" },
+        { status: 401 },
       );
     }
 
@@ -54,28 +51,25 @@ export async function GET(
 
     // If no membership found, return NOT_JOINED
     if (!membership) {
-      return NextResponse.json(
-        { status: 'NOT_JOINED' },
-        { status: 200 }
-      );
+      return NextResponse.json({ status: "NOT_JOINED" }, { status: 200 });
     }
 
     // Map AttendeeStatus to UserEventStatus
     const statusMap: Record<AttendeeStatus, string> = {
-      PENDING: 'PENDING',
-      APPROVED: 'JOINED',
-      REJECTED: 'NOT_JOINED',
+      PENDING: "PENDING",
+      APPROVED: "JOINED",
+      REJECTED: "NOT_JOINED",
     };
 
     return NextResponse.json(
       { status: statusMap[membership.status] },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error('Error checking membership:', error);
+    console.error("Error checking membership:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

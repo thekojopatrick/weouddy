@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Download } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Download } from "lucide-react";
 
 export function MemberSearch() {
   return (
@@ -24,16 +24,11 @@ export function MemberSearch() {
           <path d="m21 21-4.35-4.35" />
         </svg>
       </div>
-      <Button
-        variant="outline"
-        className="gap-2 rounded-xl shadow-xs"
-      >
+      <Button variant="outline" className="gap-2 rounded-xl shadow-xs">
         <Download className="h-4 w-4" />
         Download CSV
       </Button>
-      <Button className="gap-2 rounded-xl shadow-xs">
-        Send Invite
-      </Button>
+      <Button className="gap-2 rounded-xl shadow-xs">Send Invite</Button>
     </div>
   );
 }

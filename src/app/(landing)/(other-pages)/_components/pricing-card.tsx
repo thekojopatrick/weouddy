@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { CheckIcon, ArrowRightIcon } from 'lucide-react';
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { CheckIcon, ArrowRightIcon } from "lucide-react";
 
 export interface PricingFeature {
   name: string;
@@ -44,48 +44,45 @@ export function PricingCards({
   return (
     <section
       className={cn(
-        'bg-background text-foreground',
-        'py-12 sm:py-24 md:py-32 px-4',
-        'fade-bottom overflow-hidden pb-0',
-        sectionClassName
+        "bg-background text-foreground",
+        "py-12 sm:py-24 md:py-32 px-4",
+        "fade-bottom overflow-hidden pb-0",
+        sectionClassName,
       )}
     >
       <div
-        className={cn(
-          'w-full max-w-5xl mx-auto px-4',
-          containerClassName
-        )}
+        className={cn("w-full max-w-5xl mx-auto px-4", containerClassName)}
         {...props}
       >
         <div
           className={cn(
-            'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8',
-            className
+            "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8",
+            className,
           )}
         >
           {tiers.map((tier) => (
             <div
               key={tier.name}
               className={cn(
-                'relative group',
-                'rounded-2xl transition-all duration-500',
+                "relative group",
+                "rounded-2xl transition-all duration-500",
                 tier.highlight
-                  ? 'bg-linear-to-b from-neutral-950 to-neutral-900 dark:from-neutral-900 dark:to-neutral-950'
-                  : 'bg-white dark:bg-neutral-900',
-                'border border-neutral-200 dark:border-neutral-800',
-                'hover:border-neutral-300 dark:hover:border-neutral-700',
-                'hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]',
-                cardClassName
+                  ? "bg-linear-to-b from-neutral-950 to-neutral-900 dark:from-neutral-900 dark:to-neutral-950"
+                  : "bg-white dark:bg-neutral-900",
+                "border border-neutral-200 dark:border-neutral-800",
+                "hover:border-neutral-300 dark:hover:border-neutral-700",
+                "hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]",
+                cardClassName,
               )}
             >
               <div className="p-10 flex flex-col h-full">
                 <div className="space-y-4">
                   <h3
                     className={cn(
-                      'text-lg uppercase tracking-wider font-medium',
+                      "text-lg uppercase tracking-wider font-medium",
                       tier.highlight
-                        ? 'text-white'
-                        : 'text-neutral-900 dark:text-white'
+                        ? "text-white"
+                        : "text-neutral-900 dark:text-white",
                     )}
                   >
                     {tier.name}
@@ -93,31 +90,31 @@ export function PricingCards({
                   <div className="flex items-baseline gap-2">
                     <span
                       className={cn(
-                        'text-5xl font-light',
+                        "text-5xl font-light",
                         tier.highlight
-                          ? 'text-white'
-                          : 'text-neutral-900 dark:text-white'
+                          ? "text-white"
+                          : "text-neutral-900 dark:text-white",
                       )}
                     >
                       ${tier.price}+
                     </span>
                     <span
                       className={cn(
-                        'text-sm',
+                        "text-sm",
                         tier.highlight
-                          ? 'text-neutral-400'
-                          : 'text-neutral-500 dark:text-neutral-400'
+                          ? "text-neutral-400"
+                          : "text-neutral-500 dark:text-neutral-400",
                       )}
                     >
-                      {tier.interval || 'one-time'}
+                      {tier.interval || "one-time"}
                     </span>
                   </div>
                   <p
                     className={cn(
-                      'text-sm pb-6 border-b',
+                      "text-sm pb-6 border-b",
                       tier.highlight
-                        ? 'text-neutral-400 border-neutral-800'
-                        : 'text-neutral-500 dark:text-neutral-400 border-neutral-200 dark:border-neutral-800'
+                        ? "text-neutral-400 border-neutral-800"
+                        : "text-neutral-500 dark:text-neutral-400 border-neutral-200 dark:border-neutral-800",
                     )}
                   >
                     {tier.description}
@@ -126,28 +123,25 @@ export function PricingCards({
 
                 <div className="mt-8 space-y-4 grow">
                   {tier.features.map((feature) => (
-                    <div
-                      key={feature.name}
-                      className="flex items-center gap-3"
-                    >
+                    <div key={feature.name} className="flex items-center gap-3">
                       <div
                         className={cn(
-                          'shrink-0 w-5 h-5 rounded-full flex items-center justify-center',
+                          "shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
                           feature.included
                             ? tier.highlight
-                              ? 'text-white'
-                              : 'text-neutral-900 dark:text-white'
-                            : 'text-neutral-300 dark:text-neutral-700'
+                              ? "text-white"
+                              : "text-neutral-900 dark:text-white"
+                            : "text-neutral-300 dark:text-neutral-700",
                         )}
                       >
                         <CheckIcon className="w-3.5 h-3.5" />
                       </div>
                       <span
                         className={cn(
-                          'text-sm',
+                          "text-sm",
                           tier.highlight
-                            ? 'text-neutral-300'
-                            : 'text-neutral-600 dark:text-neutral-300'
+                            ? "text-neutral-300"
+                            : "text-neutral-600 dark:text-neutral-300",
                         )}
                       >
                         {feature.name}
@@ -160,11 +154,11 @@ export function PricingCards({
                   <div className="mt-8">
                     <Button
                       className={cn(
-                        'w-full h-12 group relative',
+                        "w-full h-12 group relative",
                         tier.highlight
-                          ? 'bg-white hover:bg-neutral-100 text-neutral-900'
-                          : 'bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900',
-                        'transition-all duration-300'
+                          ? "bg-white hover:bg-neutral-100 text-neutral-900"
+                          : "bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900",
+                        "transition-all duration-300",
                       )}
                       onClick={tier.cta.onClick}
                       asChild={Boolean(tier.cta.href)}

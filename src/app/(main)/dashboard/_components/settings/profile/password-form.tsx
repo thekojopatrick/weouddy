@@ -1,19 +1,16 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export function PasswordForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-medium">Password</h2>
-        <div
-          className="rounded-full bg-muted p-1"
-          title="Password information"
-        >
+        <div className="rounded-full bg-muted p-1" title="Password information">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"

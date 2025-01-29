@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import CalendarWithDropdown from './components/calendar-comp';
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import CalendarWithDropdown from "./components/calendar-comp";
 
 export default async function TestPage() {
   const supabase = await createClient();
@@ -12,21 +12,21 @@ export default async function TestPage() {
   } = await supabase.auth.getUser();
 
   const signOut = async () => {
-    'use server';
+    "use server";
     const supabase = await createClient();
 
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
-    redirect('/sign-in');
+    redirect("/sign-in");
   };
 
   return user ? (
     <div className="flex items-center gap-4">
       Hey, {user.email}!
       <form action={signOut}>
-        <Button type="submit" variant={'outline'}>
+        <Button type="submit" variant={"outline"}>
           Sign out
         </Button>
       </form>
@@ -36,10 +36,10 @@ export default async function TestPage() {
     </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={'outline'}>
+      <Button asChild size="sm" variant={"outline"}>
         <Link href="/sign-in">Sign in</Link>
       </Button>
-      <Button asChild size="sm" variant={'default'}>
+      <Button asChild size="sm" variant={"default"}>
         <Link href="/sign-up">Sign up</Link>
       </Button>
     </div>

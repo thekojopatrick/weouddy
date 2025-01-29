@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import React from 'react';
-import { TextEffect } from '@/components/ui/text-effect';
+import Image from "next/image";
+import React from "react";
+import { TextEffect } from "@/components/ui/text-effect";
 const AboutUsSection = () => {
   return (
     <section className="flex flex-col w-full justify-center items-center py-12 pb-20 px-6 md:py-16">
@@ -52,9 +52,9 @@ const AboutUsSection = () => {
           className="text-sm md:text-xl font-medium text-center tracking-tight"
           preset="blur-sm"
         >
-          Discover real-time moments, stories, and insights about
-          events, businesses, startups, and creatives. It&apos;s your
-          space to connect and share memories.
+          Discover real-time moments, stories, and insights about events,
+          businesses, startups, and creatives. It&apos;s your space to connect
+          and share memories.
         </TextEffect>
       </div>
       <div className="flex flex-col gap-6 max-w-4xl mt-6">

@@ -1,4 +1,4 @@
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, Loader2 } from "lucide-react";
 
 interface SuccessProps {
   isLoading?: boolean;
@@ -19,9 +19,7 @@ export default function Success({ isLoading = false }: SuccessProps) {
   return (
     <div className="flex flex-col items-center justify-center space-y-4 my-6">
       <CheckCircle className="h-8 w-8 text-green-500" />
-      <p className="text-sm text-muted-foreground">
-        Redirecting to event...
-      </p>
+      <p className="text-sm text-muted-foreground">Redirecting to event...</p>
     </div>
   );
 }

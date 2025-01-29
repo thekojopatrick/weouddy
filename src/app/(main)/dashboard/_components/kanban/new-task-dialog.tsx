@@ -1,13 +1,13 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Clock,
   Calendar,
@@ -19,15 +19,15 @@ import {
   Mic,
   MoreVertical,
   X,
-} from 'lucide-react';
-import type { Task } from '@/stores/use-kanban-store';
+} from "lucide-react";
+import type { Task } from "@/stores/use-kanban-store";
 
 interface TaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (task: Partial<Task>) => void;
   task?: Task;
-  status?: Task['status'];
+  status?: Task["status"];
 }
 
 export const TaskDialog = ({
@@ -37,29 +37,29 @@ export const TaskDialog = ({
   task,
   status,
 }: TaskDialogProps) => {
-  const [title, setTitle] = useState('');
-  const [hours, setHours] = useState('');
-  const [days, setDays] = useState('');
-  const [cost, setCost] = useState('');
-  const [tasks, setTasks] = useState('');
-  const [assignee, setAssignee] = useState('');
+  const [title, setTitle] = useState("");
+  const [hours, setHours] = useState("");
+  const [days, setDays] = useState("");
+  const [cost, setCost] = useState("");
+  const [tasks, setTasks] = useState("");
+  const [assignee, setAssignee] = useState("");
   const [assignees, setAssignees] = useState<[]>();
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setHours(task.totalHours || '');
-      setDays(task.days?.toString() || '');
-      setCost(task.cost?.toString() || '');
-      setTasks(task.tasksCount?.toString() || '');
+      setHours(task.totalHours || "");
+      setDays(task.days?.toString() || "");
+      setCost(task.cost?.toString() || "");
+      setTasks(task.tasksCount?.toString() || "");
       setAssignees(task.assignees as []);
     } else {
-      setTitle('');
-      setHours('');
-      setDays('');
-      setCost('');
-      setTasks('');
-      setAssignee('');
+      setTitle("");
+      setHours("");
+      setDays("");
+      setCost("");
+      setTasks("");
+      setAssignee("");
     }
   }, [task]);
 
@@ -80,10 +80,7 @@ export const TaskDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[600px] p-0"
-        closebtnstyle="hidden"
-      >
+      <DialogContent className="sm:max-w-[600px] p-0" closebtnstyle="hidden">
         <DialogHeader className="px-4 py-2 flex flex-row justify-between items-center border-b">
           <DialogTitle className="text-lg">New task</DialogTitle>
           <div className="flex items-center gap-2">
@@ -184,10 +181,7 @@ export const TaskDialog = ({
                 <Mic className="h-4 w-4" />
               </Button>
             </div>
-            <Input
-              placeholder="Message..."
-              className="max-w-[200px] h-8"
-            />
+            <Input placeholder="Message..." className="max-w-[200px] h-8" />
           </div>
         </div>
       </DialogContent>

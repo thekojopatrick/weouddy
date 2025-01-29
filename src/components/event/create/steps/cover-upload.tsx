@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { ImagePlus, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
+} from "@/components/ui/form";
+import { ImagePlus, X } from "lucide-react";
+import { useCallback, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { useDropzone } from 'react-dropzone';
-import { useFormContext } from 'react-hook-form';
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { useDropzone } from "react-dropzone";
+import { useFormContext } from "react-hook-form";
 
 interface CoverUploadStepProps {
   onNext: () => void;
@@ -31,10 +31,8 @@ export function CoverUploadStep({
   disabled = false,
 }: CoverUploadStepProps) {
   const { setValue, watch } = useFormContext();
-  const coverImage = watch('coverImage');
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    coverImage
-  );
+  const coverImage = watch("coverImage");
+  const [previewImage, setPreviewImage] = useState<string | null>(coverImage);
   const [error, setError] = useState<string | null>(null);
 
   const validateImage = (file: File) => {
@@ -47,8 +45,8 @@ export function CoverUploadStep({
     }
 
     // Check file type
-    if (!file.type.startsWith('image/')) {
-      const errorMsg = 'Please upload a valid image file';
+    if (!file.type.startsWith("image/")) {
+      const errorMsg = "Please upload a valid image file";
       setError(errorMsg);
       onError(errorMsg);
       return false;
@@ -65,14 +63,14 @@ export function CoverUploadStep({
         const imageDataUrl = reader.result as string;
         // Additional validation for base64 size
         const base64Size = Buffer.from(
-          imageDataUrl.split(',')[1],
-          'base64'
+          imageDataUrl.split(",")[1],
+          "base64",
         ).length;
         if (base64Size > maxSize) {
           reject(
             new Error(
-              `Processed image size (${Math.round(base64Size / 1024)}KB) exceeds maximum size`
-            )
+              `Processed image size (${Math.round(base64Size / 1024)}KB) exceeds maximum size`,
+            ),
           );
           return;
         }
@@ -90,25 +88,23 @@ export function CoverUploadStep({
         try {
           const imageDataUrl = await processImage(file);
           setPreviewImage(imageDataUrl);
-          setValue('coverImage', imageDataUrl);
+          setValue("coverImage", imageDataUrl);
           setError(null);
         } catch (err) {
           const errorMsg =
-            err instanceof Error
-              ? err.message
-              : 'Failed to process image';
+            err instanceof Error ? err.message : "Failed to process image";
           setError(errorMsg);
           onError(errorMsg);
         }
       }
     },
-    [setValue, onError]
+    [setValue, onError],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.png', '.gif', '.jpg', '.webp'],
+      "image/*": [".jpeg", ".png", ".gif", ".jpg", ".webp"],
     },
     multiple: false,
     maxSize,
@@ -116,25 +112,21 @@ export function CoverUploadStep({
 
   const handleRemoveImage = () => {
     setPreviewImage(null);
-    setValue('coverImage', null);
+    setValue("coverImage", null);
     setError(null);
   };
 
-  const handleManualUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleManualUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && validateImage(file)) {
       try {
         const imageDataUrl = await processImage(file);
         setPreviewImage(imageDataUrl);
-        setValue('coverImage', imageDataUrl);
+        setValue("coverImage", imageDataUrl);
         setError(null);
       } catch (err) {
         const errorMsg =
-          err instanceof Error
-            ? err.message
-            : 'Failed to process image';
+          err instanceof Error ? err.message : "Failed to process image";
         setError(errorMsg);
         onError(errorMsg);
       }
@@ -144,12 +136,9 @@ export function CoverUploadStep({
   return (
     <div className="space-y-6 pb-5 md:py-6">
       <div className="space-y-2">
-        <h2 className="text-xl font-bold tracking-tight">
-          Upload Cover
-        </h2>
+        <h2 className="text-xl font-bold tracking-tight">Upload Cover</h2>
         <p className="text-muted-foreground text-sm">
-          Turn your gathering into a celebration and let your world
-          shine.
+          Turn your gathering into a celebration and let your world shine.
         </p>
       </div>
 
@@ -169,10 +158,10 @@ export function CoverUploadStep({
                   {...getRootProps()}
                   className={`relative aspect-video w-full overflow-hidden rounded-lg border ${
                     isDragActive
-                      ? 'border-primary bg-primary/10'
+                      ? "border-primary bg-primary/10"
                       : error
-                        ? 'border-destructive'
-                        : 'border-dashed'
+                        ? "border-destructive"
+                        : "border-dashed"
                   } cursor-pointer`}
                 >
                   <input {...getInputProps()} />
@@ -202,8 +191,8 @@ export function CoverUploadStep({
                       <ImagePlus className="h-8 w-8 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">
                         {isDragActive
-                          ? 'Drop image here'
-                          : 'Drag and drop or click to upload'}
+                          ? "Drop image here"
+                          : "Drag and drop or click to upload"}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         Maximum size: {Math.round(maxSize / 1024)}KB
@@ -216,12 +205,12 @@ export function CoverUploadStep({
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      const input = document.createElement('input');
-                      input.type = 'file';
-                      input.accept = 'image/*';
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept = "image/*";
                       input.onchange = (e) =>
                         handleManualUpload(
-                          e as unknown as React.ChangeEvent<HTMLInputElement>
+                          e as unknown as React.ChangeEvent<HTMLInputElement>,
                         );
                       input.click();
                     }}

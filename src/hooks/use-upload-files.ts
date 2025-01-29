@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { FileWithPreview, UploadState } from '@/types/upload';
+import { FileWithPreview, UploadState } from "@/types/upload";
 
-import { supabase } from '@/utils/supabase/client';
-import { toast } from 'sonner';
-import { useState } from 'react';
+import { supabase } from "@/utils/supabase/client";
+import { toast } from "sonner";
+import { useState } from "react";
 
 export function useUploadFiles() {
   const [uploadState, setUploadState] = useState<UploadState>({
@@ -21,8 +21,8 @@ export function useUploadFiles() {
       //alert("You can only upload up to 5 files");
 
       toast.warning(
-        'Please can only upload up to 5 files,Image, Videos or Gifs',
-        {}
+        "Please can only upload up to 5 files,Image, Videos or Gifs",
+        {},
       );
 
       return;
@@ -31,9 +31,7 @@ export function useUploadFiles() {
     // Create preview and initial state for each file
     const newFiles: FileWithPreview[] = Array.from(incomingFiles).map(
       (file) => {
-        const mediaType = file.type.startsWith('video/')
-          ? 'VIDEO'
-          : 'IMAGE';
+        const mediaType = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
         return {
           file,
           preview: URL.createObjectURL(file),
@@ -41,7 +39,7 @@ export function useUploadFiles() {
           uploading: false,
           mediaType,
         };
-      }
+      },
     );
 
     setUploadState((prev) => ({
@@ -53,51 +51,49 @@ export function useUploadFiles() {
   const uploadFiles = async (eventId: string) => {
     setUploadState((prev) => ({ ...prev, isUploading: true }));
 
-    const uploads = uploadState.files.map(
-      async (fileWithPreview, index) => {
-        try {
-          const { file, mediaType } = fileWithPreview;
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Math.random()}.${fileExt}`;
-          //const filePath = `${eventId}/${fileName}`;
+    const uploads = uploadState.files.map(async (fileWithPreview, index) => {
+      try {
+        const { file, mediaType } = fileWithPreview;
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        //const filePath = `${eventId}/${fileName}`;
 
-          // Determine storage bucket based on media type
-          const filePath =
-            mediaType === 'VIDEO'
-              ? `${eventId}/videos/${fileName}`
-              : `${eventId}/images/${fileName}`;
+        // Determine storage bucket based on media type
+        const filePath =
+          mediaType === "VIDEO"
+            ? `${eventId}/videos/${fileName}`
+            : `${eventId}/images/${fileName}`;
 
-          // Upload file to Supabase Storage
-          const { error: uploadError, data } = await supabase.storage
-            .from('posts')
-            .upload(filePath, file);
+        // Upload file to Supabase Storage
+        const { error: uploadError, data } = await supabase.storage
+          .from("posts")
+          .upload(filePath, file);
 
-          if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-          console.log('Upload File', data);
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from('posts').getPublicUrl(filePath);
+        console.log("Upload File", data);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("posts").getPublicUrl(filePath);
 
-          return {
-            url: publicUrl,
-            type: mediaType,
-            order: index,
+        return {
+          url: publicUrl,
+          type: mediaType,
+          order: index,
+        };
+      } catch (error) {
+        setUploadState((prev) => {
+          const newFiles = [...prev.files];
+          newFiles[index] = {
+            ...newFiles[index],
+            error: "Upload failed",
           };
-        } catch (error) {
-          setUploadState((prev) => {
-            const newFiles = [...prev.files];
-            newFiles[index] = {
-              ...newFiles[index],
-              error: 'Upload failed',
-            };
-            return { ...prev, files: newFiles };
-          });
-          console.error(error);
-          return null;
-        }
+          return { ...prev, files: newFiles };
+        });
+        console.error(error);
+        return null;
       }
-    );
+    });
 
     const mediaFiles = await Promise.all(uploads);
     setUploadState((prev) => ({ ...prev, isUploading: false }));

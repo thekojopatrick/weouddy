@@ -1,8 +1,7 @@
-import { useUserStore } from '@/stores/user-store';
+import { useUserStore } from "@/stores/user-store";
 
 export const useAccount = () => {
-  const { currentUser, isLoading, updateCurrentUser } =
-    useUserStore();
+  const { currentUser, isLoading, updateCurrentUser } = useUserStore();
 
   return {
     accountData: currentUser

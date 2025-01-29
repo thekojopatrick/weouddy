@@ -1,16 +1,13 @@
-import { db } from '@/server/db/prisma';
-import { CreatePostInput } from '@/types/post';
-import { revalidatePath } from 'next/cache';
+import { db } from "@/server/db/prisma";
+import { CreatePostInput } from "@/types/post";
+import { revalidatePath } from "next/cache";
 
 export class PostService {
   static async createPost(userId: string, data: CreatePostInput) {
     // Check if user has access to event
-    const hasAccess = await this.validateEventAccess(
-      userId,
-      data.eventId
-    );
+    const hasAccess = await this.validateEventAccess(userId, data.eventId);
     if (!hasAccess) {
-      throw new Error('Unauthorized access to event');
+      throw new Error("Unauthorized access to event");
     }
 
     try {
@@ -48,8 +45,8 @@ export class PostService {
       revalidatePath(`/events/${data.eventId}`);
       return post;
     } catch (error) {
-      console.error('Post creation failed:', error);
-      throw new Error('Failed to create post');
+      console.error("Post creation failed:", error);
+      throw new Error("Failed to create post");
     }
   }
 
@@ -120,21 +117,15 @@ export class PostService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  private static async validateEventAccess(
-    userId: string,
-    eventId: string
-  ) {
+  private static async validateEventAccess(userId: string, eventId: string) {
     const event = await db.event.findFirst({
       where: {
         id: eventId,
-        OR: [
-          { hostId: userId },
-          { members: { some: { id: userId } } },
-        ],
+        OR: [{ hostId: userId }, { members: { some: { id: userId } } }],
       },
     });
     return !!event;

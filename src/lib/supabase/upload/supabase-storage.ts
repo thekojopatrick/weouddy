@@ -7,13 +7,12 @@ export async function uploadToSupabase(
   // Generate a unique filename to avoid collisions
   const timestamp = new Date().getTime();
   const fileExtension = file.name.split(".").pop();
-  const fileName = `${eventId}/${timestamp}-${
-    Math.random().toString(36).substring(7)
-  }.${fileExtension}`;
+  const fileName = `${eventId}/${timestamp}-${Math.random()
+    .toString(36)
+    .substring(7)}.${fileExtension}`;
 
   // Upload file to Supabase storage
-  const { error } = await supabase
-    .storage
+  const { error } = await supabase.storage
     .from("posts") // Replace with your bucket name
     .upload(fileName, file, {
       cacheControl: "3600",
@@ -26,8 +25,9 @@ export async function uploadToSupabase(
   }
 
   // Get public URL for the uploaded file
-  const { data: { publicUrl } } = supabase
-    .storage
+  const {
+    data: { publicUrl },
+  } = supabase.storage
     .from("posts") // Replace with your bucket name
     .getPublicUrl(fileName);
 

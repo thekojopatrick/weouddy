@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -8,16 +8,16 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { useEffect, useState } from 'react';
+} from "@/components/ui/command";
+import { useEffect, useState } from "react";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
-} from 'use-places-autocomplete';
+} from "use-places-autocomplete";
 
-import { Button } from '@/components/ui/button';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { toast } from "sonner";
 //import { useJsApiLoader } from '@react-google-maps/api';
 //import { env } from '@/env';
 
@@ -37,25 +37,25 @@ interface LocationModalProps {
 
 const predefinedLocations: Location[] = [
   {
-    name: 'Accra, Ghana',
-    address: 'Accra, Ghana',
+    name: "Accra, Ghana",
+    address: "Accra, Ghana",
     lat: 5.6037,
     lng: -0.187,
-    subtitle: 'Capital City',
+    subtitle: "Capital City",
   },
   {
-    name: 'Takoradi, Ghana',
-    address: 'Takoradi, Ghana',
+    name: "Takoradi, Ghana",
+    address: "Takoradi, Ghana",
     lat: 4.8757,
     lng: -1.7831,
-    subtitle: 'Western Region',
+    subtitle: "Western Region",
   },
   {
-    name: 'Lagos, Nigeria',
-    address: 'Lagos, Nigeria',
+    name: "Lagos, Nigeria",
+    address: "Lagos, Nigeria",
     lat: 6.455,
     lng: 3.394,
-    subtitle: 'Commercial Capital of Nigeria',
+    subtitle: "Commercial Capital of Nigeria",
   },
 ];
 
@@ -81,26 +81,26 @@ export function LocationModal({
     clearSuggestions,
   } = usePlacesAutocomplete({
     requestOptions: {
-      componentRestrictions: { country: 'gh' }, // Restrict to Ghana
-      types: ['geocode'], // Use only geocode type for consistent results
+      componentRestrictions: { country: "gh" }, // Restrict to Ghana
+      types: ["geocode"], // Use only geocode type for consistent results
     },
     debounce: 300,
     cache: 86400,
-    defaultValue: '',
+    defaultValue: "",
     initOnMount: true,
   });
 
   // Reset search when modal opens
   useEffect(() => {
     if (open) {
-      setValue('');
+      setValue("");
       clearSuggestions();
     }
   }, [open, setValue, clearSuggestions]);
 
   // Handle input change
   const handleInputChange = (newValue: string) => {
-    console.log('Input Value Changed:', newValue);
+    console.log("Input Value Changed:", newValue);
     setValue(newValue);
     if (!newValue) {
       clearSuggestions();
@@ -116,7 +116,7 @@ export function LocationModal({
 
       // Check predefined locations first
       const predefinedLocation = predefinedLocations.find(
-        (loc) => loc.name === description
+        (loc) => loc.name === description,
       );
 
       if (predefinedLocation) {
@@ -137,8 +137,8 @@ export function LocationModal({
       });
       onOpenChangeAction(false);
     } catch (error) {
-      console.error('Error selecting location:', error);
-      toast.error('Error selecting location');
+      console.error("Error selecting location:", error);
+      toast.error("Error selecting location");
     } finally {
       setIsLoading(false);
     }
@@ -189,9 +189,7 @@ export function LocationModal({
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h2 className="text-lg font-semibold">
-            Enter your address
-          </h2>
+          <h2 className="text-lg font-semibold">Enter your address</h2>
         </div>
 
         <div className="px-2">
@@ -204,20 +202,18 @@ export function LocationModal({
             />
             <CommandList>
               <CommandEmpty>
-                {isLoading ? 'Searching...' : 'No results found.'}
+                {isLoading ? "Searching..." : "No results found."}
               </CommandEmpty>
               <CommandGroup>
                 {/* Show suggestions when available */}
-                {status === 'OK' &&
+                {status === "OK" &&
                   data.map(({ place_id, description }) => (
                     <CommandItem
                       key={place_id}
                       value={description}
                       onSelect={(currentValue) => {
                         // If selecting the same country, reset, otherwise set new value
-                        setValue(
-                          currentValue === value ? '' : currentValue
-                        );
+                        setValue(currentValue === value ? "" : currentValue);
                         handleLocationSelect(description);
                       }}
                     >
@@ -229,13 +225,11 @@ export function LocationModal({
                   ))}
 
                 {/* Show predefined locations only when no suggestions */}
-                {(!status || status !== 'OK' || data.length === 0) &&
+                {(!status || status !== "OK" || data.length === 0) &&
                   predefinedLocations.map((location) => (
                     <CommandItem
                       key={location.name}
-                      onSelect={() =>
-                        handleLocationSelect(location.name)
-                      }
+                      onSelect={() => handleLocationSelect(location.name)}
                       className="flex flex-col items-start gap-1"
                     >
                       <div className="flex items-center gap-1">

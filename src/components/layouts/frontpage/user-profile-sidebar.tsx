@@ -4,17 +4,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogOut } from 'lucide-react';
-import Link from 'next/link';
-import { getNameInitials } from '@/lib/utils';
-import { useState } from 'react';
+} from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { LayoutDashboard, LogOut } from "lucide-react";
+import Link from "next/link";
+import { getNameInitials } from "@/lib/utils";
+import { useState } from "react";
 
 export function UserProfileSidebar({
   user,
@@ -78,21 +74,13 @@ export function UserProfileSidebar({
               </AvatarFallback>
             </Avatar>
             <div className="grid gap-1">
-              <h3 className="font-semibold tracking-tight">
-                {user.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {user.email}
-              </p>
+              <h3 className="font-semibold tracking-tight">{user.name}</h3>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </div>
 
           <div className="space-y-6">
-            <Link
-              prefetch
-              href={`/${user.username}`}
-              onClick={handleItemClick}
-            >
+            <Link prefetch href={`/${user.username}`} onClick={handleItemClick}>
               <Button
                 variant="secondary"
                 className="w-full rounded-full text-center "
@@ -104,7 +92,7 @@ export function UserProfileSidebar({
 
           <div className="space-y-2">
             <div className="text-sm font-medium hidden">Features</div>
-            <Link href={'/dashboard'} className="hidden">
+            <Link href={"/dashboard"} className="hidden">
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -114,7 +102,7 @@ export function UserProfileSidebar({
                 Dashboard
               </Button>
             </Link>
-            <Link href={'/support-us'}>
+            <Link href={"/support-us"}>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -123,7 +111,7 @@ export function UserProfileSidebar({
                 Support Us
               </Button>
             </Link>
-            <Link href={'/contact'} className="hidden">
+            <Link href={"/contact"} className="hidden">
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -132,7 +120,7 @@ export function UserProfileSidebar({
                 Blog
               </Button>
             </Link>
-            <Link href={'/contact'} className="">
+            <Link href={"/contact"} className="">
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -141,7 +129,7 @@ export function UserProfileSidebar({
                 Contact
               </Button>
             </Link>
-            <Link href={'/about'}>
+            <Link href={"/about"}>
               <Button
                 variant="ghost"
                 className="w-full justify-start"

@@ -1,13 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { AvatarImage, Avatar } from '@/components/ui/avatar';
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AvatarImage, Avatar } from "@/components/ui/avatar";
+import React from "react";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const PartnersList = () => {
   return (
@@ -50,8 +45,7 @@ const PartnersList = () => {
                 <div>
                   <h3 className="font-semibold">Amanda Harvey</h3>
                   <p className="text-sm text-gray-500">
-                    Front-End Developer | (892) 312-5483 |
-                    amanda@email.com
+                    Front-End Developer | (892) 312-5483 | amanda@email.com
                   </p>
                 </div>
               </div>

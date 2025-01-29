@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -9,15 +9,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import ReactCountryFlag from 'react-country-flag';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import ReactCountryFlag from "react-country-flag";
+import { cn } from "@/lib/utils";
 
 interface Country {
   label: string;
@@ -25,19 +25,19 @@ interface Country {
 }
 
 const COUNTRIES: readonly Country[] = [
-  { label: 'Ghana', value: 'GH' },
-  { label: 'United States', value: 'US' },
-  { label: 'United Kingdom', value: 'GB' },
-  { label: 'Canada', value: 'CA' },
-  { label: 'Australia', value: 'AU' },
-  { label: 'Germany', value: 'DE' },
-  { label: 'France', value: 'FR' },
-  { label: 'Japan', value: 'JP' },
-  { label: 'Brazil', value: 'BR' },
-  { label: 'India', value: 'IN' },
+  { label: "Ghana", value: "GH" },
+  { label: "United States", value: "US" },
+  { label: "United Kingdom", value: "GB" },
+  { label: "Canada", value: "CA" },
+  { label: "Australia", value: "AU" },
+  { label: "Germany", value: "DE" },
+  { label: "France", value: "FR" },
+  { label: "Japan", value: "JP" },
+  { label: "Brazil", value: "BR" },
+  { label: "India", value: "IN" },
 ] as const;
 
-const DEFAULT_COUNTRY = 'GH';
+const DEFAULT_COUNTRY = "GH";
 
 interface CountrySelectorProps {
   selectedCountry?: string;
@@ -58,12 +58,12 @@ export function CountrySelector({
   const detectUserCountry = React.useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://ipapi.co/json/');
+      const response = await fetch("https://ipapi.co/json/");
       const data = await response.json();
 
       // Check if the detected country is in our list
       const detectedCountry = COUNTRIES.find(
-        (country) => country.value === data.country
+        (country) => country.value === data.country,
       );
 
       if (detectedCountry) {
@@ -71,7 +71,7 @@ export function CountrySelector({
         onCountryChange?.(detectedCountry.value);
       }
     } catch (error) {
-      console.error('Error detecting country:', error);
+      console.error("Error detecting country:", error);
       // Fallback to default country if detection fails
       setValue(DEFAULT_COUNTRY);
       onCountryChange?.(DEFAULT_COUNTRY);
@@ -96,9 +96,9 @@ export function CountrySelector({
       COUNTRIES?.filter(
         (country) =>
           country.label.toLowerCase().includes(value.toLowerCase()) ||
-          country.value.toLowerCase().includes(value.toLowerCase())
+          country.value.toLowerCase().includes(value.toLowerCase()),
       ),
-    [value]
+    [value],
   );
 
   return (
@@ -109,9 +109,9 @@ export function CountrySelector({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            'w-[50px] justify-between px-1',
-            isLoading && 'opacity-50',
-            className
+            "w-[50px] justify-between px-1",
+            isLoading && "opacity-50",
+            className,
           )}
           disabled={isLoading}
         >
@@ -119,8 +119,8 @@ export function CountrySelector({
             countryCode={value}
             svg
             style={{
-              width: '2em',
-              height: '2em',
+              width: "2em",
+              height: "2em",
             }}
           />
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
@@ -141,27 +141,23 @@ export function CountrySelector({
                   key={country.value}
                   value={country.value}
                   onSelect={(currentValue) => {
-                    setValue(
-                      currentValue === value ? '' : currentValue
-                    );
+                    setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
-                      'mr-2 h-4 w-4',
-                      value === country.value
-                        ? 'opacity-100'
-                        : 'opacity-0'
+                      "mr-2 h-4 w-4",
+                      value === country.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   <ReactCountryFlag
                     countryCode={country.value}
                     svg
                     style={{
-                      width: '1em',
-                      height: '1em',
-                      marginRight: '0.5em',
+                      width: "1em",
+                      height: "1em",
+                      marginRight: "0.5em",
                     }}
                   />
                   {country.label}

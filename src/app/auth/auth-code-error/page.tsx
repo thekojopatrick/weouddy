@@ -1,26 +1,20 @@
-'use client';
+"use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Suspense } from 'react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Suspense } from "react";
 
 // Separate component that uses useSearchParams
 function ErrorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const errorMessage =
-    searchParams.get('error') || 'Authentication failed';
+  const errorMessage = searchParams.get("error") || "Authentication failed";
 
   const handleRetry = () => {
-    router.push('/auth');
+    router.push("/auth");
   };
 
   return (
@@ -46,7 +40,7 @@ function ErrorContent() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="w-full rounded-xl"
           >
             Return to Home
@@ -55,7 +49,7 @@ function ErrorContent() {
 
         <div className="text-center text-xs text-gray-500 mt-4">
           <p>
-            If the problem persists, please contact support.{' '}
+            If the problem persists, please contact support.{" "}
             <Link href="/contact">Contact us</Link>
           </p>
         </div>

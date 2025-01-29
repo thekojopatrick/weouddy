@@ -1,9 +1,9 @@
-'use client';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+"use client";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-import { Calendar, Clock, DollarSign, Users } from 'lucide-react';
-import type { Task } from '@/stores/use-kanban-store';
+import { Calendar, Clock, DollarSign, Users } from "lucide-react";
+import type { Task } from "@/stores/use-kanban-store";
 
 interface TaskCardProps {
   task: Task;
@@ -42,9 +42,7 @@ export const TaskCard = ({
     >
       <h3 className="font-medium text-gray-900 mb-3">{task.title}</h3>
       {task.description && (
-        <p className="text-sm text-gray-500 mt-1">
-          {task.description}
-        </p>
+        <p className="text-sm text-gray-500 mt-1">{task.description}</p>
       )}
       <div className="space-y-2 text-sm text-gray-600">
         {task.totalHours && (

@@ -1,42 +1,39 @@
-'use client';
+"use client";
 
-import {
-  LoginFormValues,
-  SignUpFormValues,
-} from '@/types/validation';
-import { useState, useCallback } from 'react';
+import { LoginFormValues, SignUpFormValues } from "@/types/validation";
+import { useState, useCallback } from "react";
 
-import { LoginForm } from './login-form';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { SignUpForm } from './signup-form';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { LoginForm } from "./login-form";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { SignUpForm } from "./signup-form";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import {
   signInAction,
   signInWithGoogleAction,
   signUpAction,
-} from '@/app/actions/auth';
+} from "@/app/actions/auth";
 
 interface AuthDialogProps {
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
-  defaultView?: 'login' | 'signup';
+  defaultView?: "login" | "signup";
 }
 
 export function AuthDialog({
   open,
   onOpenChangeAction,
-  defaultView = 'login',
+  defaultView = "login",
 }: AuthDialogProps) {
-  const [view, setView] = useState<'login' | 'signup'>(defaultView);
+  const [view, setView] = useState<"login" | "signup">(defaultView);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleAuthSuccess = async (
     message: string,
     description: string,
-    redirectPath: string = '/discover'
+    redirectPath: string = "/discover",
   ) => {
     toast.success(message, { description });
     onOpenChangeAction(false);
@@ -58,26 +55,22 @@ export function AuthDialog({
       const response = await signInAction({}, formData);
 
       if (!response.success || response.error) {
-        throw new Error(
-          response.error || 'Invalid login credentials'
-        );
+        throw new Error(response.error || "Invalid login credentials");
       }
 
       if (response.success && response.user) {
         await handleAuthSuccess(
-          'Welcome back!',
-          'You have successfully signed in.'
+          "Welcome back!",
+          "You have successfully signed in.",
         );
         return; // Exit early after successful auth
       }
     } catch (error) {
-      toast.error('Authentication Failed', {
+      toast.error("Authentication Failed", {
         description:
-          error instanceof Error
-            ? error.message
-            : 'Invalid login credentials',
+          error instanceof Error ? error.message : "Invalid login credentials",
       });
-      console.error('Sign in error:', error);
+      console.error("Sign in error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -95,23 +88,21 @@ export function AuthDialog({
       const response = await signUpAction({}, formData);
 
       if (!response.success || response.error) {
-        throw new Error(response.error || 'Sign up failed');
+        throw new Error(response.error || "Sign up failed");
       }
 
       if (response.success && response.user) {
         await handleAuthSuccess(
-          'Account created!',
-          'Please check your email to verify your account.'
+          "Account created!",
+          "Please check your email to verify your account.",
         );
       }
     } catch (error) {
-      toast.error('Sign Up Failed', {
+      toast.error("Sign Up Failed", {
         description:
-          error instanceof Error
-            ? error.message
-            : 'An unknown error occurred',
+          error instanceof Error ? error.message : "An unknown error occurred",
       });
-      console.error('Sign up error:', error);
+      console.error("Sign up error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -132,13 +123,13 @@ export function AuthDialog({
         router.push(result.redirectPath);
       }
     } catch (error) {
-      toast.error('Google Sign In Failed', {
+      toast.error("Google Sign In Failed", {
         description:
           error instanceof Error
             ? error.message
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
       });
-      console.error('Google sign in error:', error);
+      console.error("Google sign in error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -152,30 +143,27 @@ export function AuthDialog({
     // Try multiple navigation methods
     try {
       Promise.resolve().then(() => {
-        router.push('/auth/forgot-password');
+        router.push("/auth/forgot-password");
 
         // Fallback to window location if router fails
         setTimeout(() => {
-          window.location.href = '/auth/forgot-password';
+          window.location.href = "/auth/forgot-password";
         }, 100);
       });
     } catch (error) {
-      console.error('Navigation error:', error);
+      console.error("Navigation error:", error);
       // Force navigation as last resort
-      window.location.href = '/auth/forgot-password';
+      window.location.href = "/auth/forgot-password";
     } finally {
       setIsLoading(false);
     }
   }, [router, isLoading]);
 
   return (
-    <ResponsiveDialog
-      open={open}
-      onOpenChangeAction={onOpenChangeAction}
-    >
-      {view === 'login' ? (
+    <ResponsiveDialog open={open} onOpenChangeAction={onOpenChangeAction}>
+      {view === "login" ? (
         <LoginForm
-          onSignUpClickAction={() => setView('signup')}
+          onSignUpClickAction={() => setView("signup")}
           onSubmitAction={handleSignIn}
           onForgotPassword={handleForgotPassword}
           isLoading={isLoading}
@@ -183,7 +171,7 @@ export function AuthDialog({
         />
       ) : (
         <SignUpForm
-          onLoginClickAction={() => setView('login')}
+          onLoginClickAction={() => setView("login")}
           onSubmitAction={handleSignUp}
           isLoading={isLoading}
           onGoogleSignIn={handleGoogleSignIn}

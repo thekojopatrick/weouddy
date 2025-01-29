@@ -1,5 +1,5 @@
-import { db } from '@/server/db/prisma';
-import { FollowStats } from './types';
+import { db } from "@/server/db/prisma";
+import { FollowStats } from "./types";
 
 export class FollowService {
   static async getFollowStats(userId: string): Promise<FollowStats> {
@@ -51,7 +51,7 @@ export class FollowService {
 
   static async checkIfFollowing(
     currentUserId: string,
-    targetUsername: string
+    targetUsername: string,
   ): Promise<boolean> {
     const targetUser = await db.user.findUnique({
       where: { username: targetUsername },

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { RequestCard } from './event-request-card';
+import React, { useState, useEffect } from "react";
+import { RequestCard } from "./event-request-card";
 
 // Types for our components
-type RequestStatus = 'PENDING' | 'APPROVED' | 'DENIED';
+type RequestStatus = "PENDING" | "APPROVED" | "DENIED";
 
 interface AttendeeRequest {
   id: string;
@@ -29,12 +29,12 @@ const RequestsList = () => {
   // Function to fetch requests
   const fetchRequests = async () => {
     try {
-      const response = await fetch('/api/events/requests');
-      if (!response.ok) throw new Error('Failed to fetch requests');
+      const response = await fetch("/api/events/requests");
+      if (!response.ok) throw new Error("Failed to fetch requests");
       const data = await response.json();
       setRequests(data);
     } catch (error) {
-      console.error('Error fetching requests:', error);
+      console.error("Error fetching requests:", error);
     } finally {
       setIsLoading(false);
     }
@@ -43,36 +43,34 @@ const RequestsList = () => {
   // Handle status change
   const handleStatusChange = async (
     requestId: string,
-    newStatus: RequestStatus
+    newStatus: RequestStatus,
   ) => {
     try {
-      const response = await fetch('/api/events/requests/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/events/requests/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId, status: newStatus }),
       });
 
-      if (!response.ok) throw new Error('Failed to update status');
+      if (!response.ok) throw new Error("Failed to update status");
 
       // Update local state
       setRequests((currentRequests) =>
         currentRequests.map((request) =>
           request.id === requestId
             ? { ...request, status: newStatus }
-            : request
-        )
+            : request,
+        ),
       );
 
       // Remove approved requests from the list
-      if (newStatus === 'APPROVED') {
+      if (newStatus === "APPROVED") {
         setRequests((currentRequests) =>
-          currentRequests.filter(
-            (request) => request.id !== requestId
-          )
+          currentRequests.filter((request) => request.id !== requestId),
         );
       }
     } catch (error) {
-      console.error('Error updating request status:', error);
+      console.error("Error updating request status:", error);
       throw error;
     }
   };

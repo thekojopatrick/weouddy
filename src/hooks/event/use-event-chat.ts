@@ -1,7 +1,7 @@
-import { supabase } from '@/utils/supabase/client';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import type { ChatMessage } from '@/types/chat';
+import { supabase } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import type { ChatMessage } from "@/types/chat";
 
 export const useEventChat = (eventId: string, userId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -13,33 +13,30 @@ export const useEventChat = (eventId: string, userId: string) => {
     const channel = supabase
       .channel(`event-chat-${eventId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'ChatMessage',
+          event: "*",
+          schema: "public",
+          table: "ChatMessage",
           filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setMessages((prev) => [
-              ...prev,
-              payload.new as ChatMessage,
-            ]);
-          } else if (payload.eventType === 'DELETE') {
+          if (payload.eventType === "INSERT") {
+            setMessages((prev) => [...prev, payload.new as ChatMessage]);
+          } else if (payload.eventType === "DELETE") {
             setMessages((prev) =>
-              prev.filter((message) => message.id !== payload.old.id)
+              prev.filter((message) => message.id !== payload.old.id),
             );
-          } else if (payload.eventType === 'UPDATE') {
+          } else if (payload.eventType === "UPDATE") {
             setMessages((prev) =>
               prev.map((message) =>
                 message.id === payload.new.id
                   ? { ...message, ...payload.new }
-                  : message
-              )
+                  : message,
+              ),
             );
           }
-        }
+        },
       )
       .subscribe();
 
@@ -51,7 +48,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const fetchMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('ChatMessage')
+        .from("ChatMessage")
         .select(
           `
           *,
@@ -61,16 +58,16 @@ export const useEventChat = (eventId: string, userId: string) => {
             avatarUrl,
             name
           )
-        `
+        `,
         )
-        .eq('eventId', eventId)
-        .order('createdAt', { ascending: true });
+        .eq("eventId", eventId)
+        .order("createdAt", { ascending: true });
 
       if (error) throw error;
       setMessages(data as []);
     } catch (error) {
-      toast.error('Failed to load chat messages');
-      console.error('Error fetching messages:', error);
+      toast.error("Failed to load chat messages");
+      console.error("Error fetching messages:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +76,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const sendMessage = async (content: string) => {
     try {
       const { data, error } = await supabase
-        .from('ChatMessage')
+        .from("ChatMessage")
         .insert([
           {
             content,
@@ -99,17 +96,17 @@ export const useEventChat = (eventId: string, userId: string) => {
             avatarUrl,
             name
           )
-        `
+        `,
         )
         .single();
 
-      console.log('message:', data);
+      console.log("message:", data);
 
       if (error) throw error;
       return data;
     } catch (error) {
-      toast.error('Failed to send message');
-      console.error('Error sending message:', error);
+      toast.error("Failed to send message");
+      console.error("Error sending message:", error);
       throw error;
     }
   };
@@ -117,31 +114,31 @@ export const useEventChat = (eventId: string, userId: string) => {
   const deleteMessage = async (messageId: string) => {
     try {
       const { error } = await supabase
-        .from('ChatMessage')
+        .from("ChatMessage")
         .delete()
-        .eq('id', messageId)
-        .eq('userId', userId);
+        .eq("id", messageId)
+        .eq("userId", userId);
 
       if (error) throw error;
-      toast.success('Message deleted');
+      toast.success("Message deleted");
     } catch (error) {
-      toast.error('Failed to delete message');
-      console.error('Error deleting message:', error);
+      toast.error("Failed to delete message");
+      console.error("Error deleting message:", error);
     }
   };
 
   const pinMessage = async (messageId: string, isPinned: boolean) => {
     try {
       const { error } = await supabase
-        .from('ChatMessage')
+        .from("ChatMessage")
         .update({ isPinned })
-        .eq('id', messageId);
+        .eq("id", messageId);
 
       if (error) throw error;
-      toast.success(isPinned ? 'Message pinned' : 'Message unpinned');
+      toast.success(isPinned ? "Message pinned" : "Message unpinned");
     } catch (error) {
-      toast.error('Failed to update message');
-      console.error('Error updating message:', error);
+      toast.error("Failed to update message");
+      console.error("Error updating message:", error);
     }
   };
 

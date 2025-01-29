@@ -1,10 +1,10 @@
-import { db } from '@/server/db/prisma';
-import { getSession } from '@/lib/auth';
-import { NextResponse } from 'next/server';
+import { db } from "@/server/db/prisma";
+import { getSession } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   try {
     const { eventId } = await params;
@@ -13,8 +13,8 @@ export async function GET(
 
     if (!session?.user) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
@@ -33,12 +33,12 @@ export async function GET(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
+        { success: false, error: "Event not found" },
+        { status: 404 },
       );
     }
 
-    const userStatus = event.attendees[0]?.status || 'NOT_JOINED';
+    const userStatus = event.attendees[0]?.status || "NOT_JOINED";
 
     return NextResponse.json({
       success: true,
@@ -55,8 +55,8 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Server error' },
-      { status: 500 }
+      { success: false, error: "Server error" },
+      { status: 500 },
     );
   }
 }

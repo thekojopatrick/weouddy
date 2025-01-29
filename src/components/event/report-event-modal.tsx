@@ -4,12 +4,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import React, { useState } from 'react';
+} from "@/components/ui/dialog";
+import React, { useState } from "react";
 
-import { AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 type ReportEventModalProps = {
   eventId: string;
@@ -23,7 +23,7 @@ export function ReportEventModal({
   onOpenChange,
   onReport,
 }: ReportEventModalProps) {
-  const [reportReason, setReportReason] = useState('');
+  const [reportReason, setReportReason] = useState("");
 
   const handleSubmitReport = () => {
     if (reportReason.trim()) {
@@ -33,10 +33,10 @@ export function ReportEventModal({
   };
 
   const reportReasons = [
-    'Inappropriate Content',
-    'Spam',
-    'Harassment',
-    'Other',
+    "Inappropriate Content",
+    "Spam",
+    "Harassment",
+    "Other",
   ];
 
   return (
@@ -62,8 +62,8 @@ export function ReportEventModal({
                 onClick={() => setReportReason(reason)}
                 className={
                   reportReason === reason
-                    ? 'bg-primary text-primary-foreground'
-                    : ''
+                    ? "bg-primary text-primary-foreground"
+                    : ""
                 }
               >
                 {reason}
@@ -80,10 +80,7 @@ export function ReportEventModal({
         </div>
 
         <div className="mt-4 flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button

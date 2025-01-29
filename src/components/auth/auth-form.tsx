@@ -1,37 +1,31 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
+import * as z from "zod";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { LoginFormValues, signUpSchema } from '@/types/validation';
-import { useEffect, useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { LoginFormValues, signUpSchema } from "@/types/validation";
+import { useEffect, useState } from "react";
 
-import { LoginForm } from '@/components/auth/login-form';
-import { SignUpForm } from '@/components/auth/signup-form';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { toast } from 'sonner';
+import { LoginForm } from "@/components/auth/login-form";
+import { SignUpForm } from "@/components/auth/signup-form";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
   signInAction,
   signInWithGoogleAction,
   signUpAction,
-} from '@/app/actions/auth';
+} from "@/app/actions/auth";
 
-export function AuthForm({
-  mode = 'login',
-}: {
-  mode?: 'login' | 'signup';
-}) {
+export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(
-    mode
-  );
+  const [activeTab, setActiveTab] = useState<"login" | "signup">(mode);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Initialize tab from URL on mount
   useEffect(() => {
-    const view = searchParams.get('view');
-    if (view === 'login' || view === 'signup') {
+    const view = searchParams.get("view");
+    if (view === "login" || view === "signup") {
       setActiveTab(view);
     }
   }, [searchParams]);
@@ -39,7 +33,7 @@ export function AuthForm({
   const handleAuthSuccess = async (
     message: string,
     description: string,
-    redirectPath: string = '/discover'
+    redirectPath: string = "/discover",
   ) => {
     toast.success(message, { description });
 
@@ -49,9 +43,7 @@ export function AuthForm({
     }, 0);
   };
 
-  const handleSignUp = async (
-    values: z.infer<typeof signUpSchema>
-  ) => {
+  const handleSignUp = async (values: z.infer<typeof signUpSchema>) => {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -63,23 +55,22 @@ export function AuthForm({
       const { error, success } = await signUpAction({}, formData);
 
       if (error) {
-        toast.error('Error', {
-          description: error || 'Account creation not successfully',
+        toast.error("Error", {
+          description: error || "Account creation not successfully",
         });
       }
 
       if (success) {
         await handleAuthSuccess(
-          'Account created!',
-          'Please check your email to verify your account.'
+          "Account created!",
+          "Please check your email to verify your account.",
         );
       }
 
       router.refresh();
     } catch (error: Error | unknown) {
-      toast.error('Error', {
-        description:
-          (error as Error).message || 'An unknown error occurred.',
+      toast.error("Error", {
+        description: (error as Error).message || "An unknown error occurred.",
       });
       console.error(error);
     } finally {
@@ -92,7 +83,7 @@ export function AuthForm({
     try {
       const result = await signInWithGoogleAction();
       if (!result.success && result.error) {
-        toast.error('Error', {
+        toast.error("Error", {
           description: result.error,
         });
       }
@@ -101,13 +92,12 @@ export function AuthForm({
         router.push(result.redirectPath);
       }
     } catch (error) {
-      toast.error('Error', {
-        description:
-          'An unexpected error occurred during Google Sign-In.',
+      toast.error("Error", {
+        description: "An unexpected error occurred during Google Sign-In.",
       });
       console.error(
-        'An unexpected error occurred during Google Sign-In:',
-        error
+        "An unexpected error occurred during Google Sign-In:",
+        error,
       );
     } finally {
       setIsLoading(false);
@@ -126,42 +116,38 @@ export function AuthForm({
       const response = await signInAction({}, formData);
 
       if (!response.success || response.error) {
-        throw new Error(
-          response.error || 'Invalid login credentials'
-        );
+        throw new Error(response.error || "Invalid login credentials");
       }
 
       if (response.success && response.user) {
         await handleAuthSuccess(
-          'Welcome back!',
-          'You have successfully signed in.'
+          "Welcome back!",
+          "You have successfully signed in.",
         );
         return; // Exit early after successful auth
       }
     } catch (error) {
-      toast.error('Authentication Failed', {
+      toast.error("Authentication Failed", {
         description:
-          error instanceof Error
-            ? error.message
-            : 'Invalid login credentials',
+          error instanceof Error ? error.message : "Invalid login credentials",
       });
-      console.error('Sign in error:', error);
+      console.error("Sign in error:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleForgotPassword = () => {
-    router.push('/auth/forgot-password');
+    router.push("/auth/forgot-password");
   };
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-xs">
       <CardContent>
-        {activeTab === 'login' ? (
+        {activeTab === "login" ? (
           <LoginForm
             onSubmitAction={handleSignIn}
-            onSignUpClickAction={() => setActiveTab('signup')}
+            onSignUpClickAction={() => setActiveTab("signup")}
             onForgotPassword={handleForgotPassword}
             isLoading={isLoading}
             onGoogleSignIn={handleGoogleSignIn}
@@ -169,7 +155,7 @@ export function AuthForm({
         ) : (
           <SignUpForm
             onSubmitAction={handleSignUp}
-            onLoginClickAction={() => setActiveTab('login')}
+            onLoginClickAction={() => setActiveTab("login")}
             isLoading={isLoading}
             onGoogleSignIn={handleGoogleSignIn}
           />

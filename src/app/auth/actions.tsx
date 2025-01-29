@@ -1,19 +1,19 @@
-'use server';
+"use server";
 
 import {
   ForgotPasswordFormValues,
   LoginFormValues,
   SignUpFormValues,
-} from '@/types/validation';
+} from "@/types/validation";
 
-import { createClient } from '@/utils/supabase/server';
-import { PrismaClient } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { User } from '@supabase/supabase-js';
-import { getURL } from '@/lib/utils';
-import { encodedRedirect } from '@/utils';
-import { headers } from 'next/headers';
+import { createClient } from "@/utils/supabase/server";
+import { PrismaClient } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { User } from "@supabase/supabase-js";
+import { getURL } from "@/lib/utils";
+import { encodedRedirect } from "@/utils";
+import { headers } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -24,9 +24,7 @@ type AuthResult = {
   redirectPath?: string;
 };
 
-export async function signIn(
-  formData: LoginFormValues
-): Promise<AuthResult> {
+export async function signIn(formData: LoginFormValues): Promise<AuthResult> {
   try {
     const supabase = await createClient();
 
@@ -43,29 +41,27 @@ export async function signIn(
     if (!authData.user) {
       return {
         success: false,
-        error: 'No user data returned',
+        error: "No user data returned",
       };
     }
 
     // Don't create Prisma user here - move it to the client side after successful auth
-    revalidatePath('/', 'layout');
+    revalidatePath("/", "layout");
 
     return {
       success: true,
       user: authData.user,
     };
   } catch (error) {
-    console.error('Sign in error:', error);
+    console.error("Sign in error:", error);
     return {
       success: false,
-      error: 'An unexpected error occurred during sign in',
+      error: "An unexpected error occurred during sign in",
     };
   }
 }
 
-export async function signUp(
-  formData: SignUpFormValues
-): Promise<AuthResult> {
+export async function signUp(formData: SignUpFormValues): Promise<AuthResult> {
   try {
     const supabase = await createClient();
 
@@ -82,7 +78,7 @@ export async function signUp(
     if (!authData.user) {
       return {
         success: false,
-        error: 'No user data returned',
+        error: "No user data returned",
       };
     }
 
@@ -91,29 +87,29 @@ export async function signUp(
       await prisma.user.create({
         data: {
           id: authData.user.id,
-          email: authData.user.email || '',
-          name: authData.user.email?.split('@')[0] ?? '',
-          username: authData.user.email?.split('@')[0] ?? '',
+          email: authData.user.email || "",
+          name: authData.user.email?.split("@")[0] ?? "",
+          username: authData.user.email?.split("@")[0] ?? "",
           avatar_url: `https://avatar.vercel.sh/${authData.user.id}.svg`,
           is_anonymous: false,
         },
       });
     } catch (dbError) {
-      console.error('Database error:', dbError);
+      console.error("Database error:", dbError);
       // Don't fail the sign-up if DB sync fails
     }
 
-    revalidatePath('/', 'layout');
+    revalidatePath("/", "layout");
 
     return {
       success: true,
       user: authData.user,
     };
   } catch (error) {
-    console.error('Sign up error:', error);
+    console.error("Sign up error:", error);
     return {
       success: false,
-      error: 'An unexpected error occurred during sign up',
+      error: "An unexpected error occurred during sign up",
     };
   }
 }
@@ -122,18 +118,18 @@ export async function SignInWithGoogle() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
     options: {
       redirectTo: `${getURL()}auth/callback`,
       queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
+        access_type: "offline",
+        prompt: "consent",
       },
     },
   });
 
   if (error) {
-    console.error('Google Sign In Error:', error);
+    console.error("Google Sign In Error:", error);
     return {
       success: false,
       error: error.message,
@@ -150,18 +146,14 @@ export async function SignInWithGoogle() {
 }
 
 export const forgotPasswordAction = async (
-  formData: ForgotPasswordFormValues
+  formData: ForgotPasswordFormValues,
 ) => {
   const { email, callbackUrl } = formData;
   const supabase = await createClient();
-  const origin = (await headers()).get('origin');
+  const origin = (await headers()).get("origin");
 
   if (!email) {
-    return encodedRedirect(
-      'error',
-      '/forgot-password',
-      'Email is required'
-    );
+    return encodedRedirect("error", "/forgot-password", "Email is required");
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -171,9 +163,9 @@ export const forgotPasswordAction = async (
   if (error) {
     console.error(error.message);
     return encodedRedirect(
-      'error',
-      '/forgot-password',
-      'Could not reset password'
+      "error",
+      "/forgot-password",
+      "Could not reset password",
     );
   }
 
@@ -182,31 +174,31 @@ export const forgotPasswordAction = async (
   }
 
   return encodedRedirect(
-    'success',
-    '/forgot-password',
-    'Check your email for a link to reset your password.'
+    "success",
+    "/forgot-password",
+    "Check your email for a link to reset your password.",
   );
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
   const supabase = await createClient();
 
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
 
   if (!password || !confirmPassword) {
     encodedRedirect(
-      'error',
-      '/account/reset-password',
-      'Password and confirm password are required'
+      "error",
+      "/account/reset-password",
+      "Password and confirm password are required",
     );
   }
 
   if (password !== confirmPassword) {
     encodedRedirect(
-      'error',
-      '/account/reset-password',
-      'Passwords do not match'
+      "error",
+      "/account/reset-password",
+      "Passwords do not match",
     );
   }
 
@@ -216,15 +208,11 @@ export const resetPasswordAction = async (formData: FormData) => {
 
   if (error) {
     encodedRedirect(
-      'error',
-      '/account/reset-password',
-      'Password update failed'
+      "error",
+      "/account/reset-password",
+      "Password update failed",
     );
   }
 
-  encodedRedirect(
-    'success',
-    '/account/reset-password',
-    'Password updated'
-  );
+  encodedRedirect("success", "/account/reset-password", "Password updated");
 };

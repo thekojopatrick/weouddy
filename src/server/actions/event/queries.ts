@@ -1,12 +1,9 @@
-import { EventSettings } from './types';
-import QRCode from 'qrcode';
-import { prisma } from '@/lib/prisma';
-import { cache } from '@/lib/redis';
+import { EventSettings } from "./types";
+import QRCode from "qrcode";
+import { prisma } from "@/lib/prisma";
+import { cache } from "@/lib/redis";
 
-export async function generateEventQRCode(
-  eventId: string,
-  baseUrl: string
-) {
+export async function generateEventQRCode(eventId: string, baseUrl: string) {
   const eventUrl = `${baseUrl}/events/${eventId}/room`;
   return QRCode.toDataURL(eventUrl);
 }
@@ -104,7 +101,7 @@ export async function getAllEvents(userId?: string) {
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       })
       .then((events) =>
@@ -112,7 +109,7 @@ export async function getAllEvents(userId?: string) {
           ...event,
           memberCount: event._count.members,
           attendeeCount: event._count.attendees,
-        }))
+        })),
       );
   } else {
     // For unauthenticated users, return only public events
@@ -132,7 +129,7 @@ export async function getAllEvents(userId?: string) {
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       })
       .then((events) =>
@@ -140,7 +137,7 @@ export async function getAllEvents(userId?: string) {
           ...event,
           memberCount: event._count.members,
           attendeeCount: event._count.attendees,
-        }))
+        })),
       );
   }
 }
@@ -157,13 +154,13 @@ export async function getEventSettings(eventId: string) {
     },
   });
 
-  if (!event) throw new Error('event not found');
+  if (!event) throw new Error("event not found");
   return event;
 }
 
 export async function updateEventSettings(
   eventId: string,
-  settings: Partial<EventSettings>
+  settings: Partial<EventSettings>,
 ) {
   return prisma.event.update({
     where: { id: eventId },

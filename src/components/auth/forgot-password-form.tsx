@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
+import * as z from "zod";
 
 import {
   Form,
@@ -9,34 +9,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import SVGLogo from '../svg-logo';
-import { forgotPasswordAction } from '@/app/auth/actions';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import SVGLogo from "../svg-logo";
+import { forgotPasswordAction } from "@/app/auth/actions";
 
-import Link from 'next/link';
-import { forgotPasswordSchema } from '@/types/validation';
+import Link from "next/link";
+import { forgotPasswordSchema } from "@/types/validation";
 
 export function ForgotPasswordForm() {
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: '',
-      callbackUrl: '',
+      email: "",
+      callbackUrl: "",
     },
   });
 
-  const handleSubmit = (
-    values: z.infer<typeof forgotPasswordSchema>
-  ) => {
+  const handleSubmit = (values: z.infer<typeof forgotPasswordSchema>) => {
     forgotPasswordAction({
       email: values.email,
-      callbackUrl: '/account/reset-password',
+      callbackUrl: "/account/reset-password",
     });
   };
 
@@ -54,10 +52,7 @@ export function ForgotPasswordForm() {
         </p>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="grid gap-4"
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
           <FormField
             control={form.control}
             name="email"
@@ -78,21 +73,15 @@ export function ForgotPasswordForm() {
             )}
           />
 
-          <Button
-            type="submit"
-            className="text-sm shadow-xs rounded-xl h-12"
-          >
+          <Button type="submit" className="text-sm shadow-xs rounded-xl h-12">
             Reset Password
           </Button>
         </form>
       </Form>
 
       <div className="text-center text-sm text-gray-600">
-        Already have an account?{' '}
-        <Link
-          className="text-primary underline font-medium"
-          href="/sign-in"
-        >
+        Already have an account?{" "}
+        <Link className="text-primary underline font-medium" href="/sign-in">
           Sign in
         </Link>
       </div>

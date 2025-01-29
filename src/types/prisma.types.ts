@@ -1,7 +1,7 @@
-import { AccessType } from '@prisma/client';
-import { EventActivityType, MediaType, UserRole } from './enums';
+import { AccessType } from "@prisma/client";
+import { EventActivityType, MediaType, UserRole } from "./enums";
 
-import { User } from '@supabase/supabase-js';
+import { User } from "@supabase/supabase-js";
 
 // User-related Types
 export type CurrentUser = User & {

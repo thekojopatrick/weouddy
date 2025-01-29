@@ -1,11 +1,11 @@
 import {
   CategorizedLocation,
   categorizeLocation,
-} from '@/lib/location-mapping';
-import { useCallback, useMemo, useState } from 'react';
+} from "@/lib/location-mapping";
+import { useCallback, useMemo, useState } from "react";
 
 //import { EventData } from "@/types/event";
-import { EventWithDetails } from '@/types/prisma.types';
+import { EventWithDetails } from "@/types/prisma.types";
 
 // Define strict types for event and filtering
 export interface EventWithLocationDetails extends EventWithDetails {
@@ -20,7 +20,7 @@ export interface FilteringResult<T> {
 
 export function useOptimizedEventFiltering(
   events: EventWithDetails[],
-  initialCategory = 'All'
+  initialCategory = "All",
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -37,9 +37,7 @@ export function useOptimizedEventFiltering(
       return processedEvents;
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err
-          : new Error('Event processing failed')
+        err instanceof Error ? err : new Error("Event processing failed"),
       );
       setIsLoading(false);
       return [];
@@ -50,7 +48,7 @@ export function useOptimizedEventFiltering(
   const filterEvents = useCallback(
     (
       location: string,
-      category: string = initialCategory
+      category: string = initialCategory,
     ): FilteringResult<EventWithLocationDetails> => {
       if (!memoizedEvents.length) {
         return {
@@ -63,16 +61,15 @@ export function useOptimizedEventFiltering(
       try {
         const filteredEvents = memoizedEvents.filter((event) => {
           const locationMatch =
-            location === 'world' ||
+            location === "world" ||
             location.toLowerCase() ===
               event.locationDetails.region.toLowerCase() ||
             location.toLowerCase() ===
               event.locationDetails.country.toLowerCase() ||
-            location.toLowerCase() ===
-              event.locationDetails.city.toLowerCase();
+            location.toLowerCase() === event.locationDetails.city.toLowerCase();
 
           const categoryMatch =
-            category === 'All' ||
+            category === "All" ||
             event.type.toLowerCase() === category.toLowerCase();
 
           return locationMatch && categoryMatch;
@@ -85,7 +82,7 @@ export function useOptimizedEventFiltering(
         };
       } catch (err) {
         const error =
-          err instanceof Error ? err : new Error('Filtering failed');
+          err instanceof Error ? err : new Error("Filtering failed");
         return {
           data: [],
           isLoading: false,
@@ -93,7 +90,7 @@ export function useOptimizedEventFiltering(
         };
       }
     },
-    [initialCategory, memoizedEvents]
+    [initialCategory, memoizedEvents],
   );
 
   return {

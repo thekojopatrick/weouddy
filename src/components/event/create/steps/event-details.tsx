@@ -4,31 +4,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const eventTypes = [
-  'Birthday',
-  'Anniversary',
-  'Church',
-  'Wedding',
-  'Conference',
-  'Indoor Party',
-  'Outdoor Party',
-  'Celebration',
-  'Worklife',
-  'Meeting',
-  'Other',
+  "Birthday",
+  "Anniversary",
+  "Church",
+  "Wedding",
+  "Conference",
+  "Indoor Party",
+  "Outdoor Party",
+  "Celebration",
+  "Worklife",
+  "Meeting",
+  "Other",
 ];
 
 interface EventDetailsStepProps {
@@ -49,8 +49,8 @@ export function EventDetailsStep({
           Enter Event or Room Details
         </h2>
         <p className="text-muted-foreground text-sm">
-          Big or small, your event, your room deserves the spotlight.
-          Share your vibe, your way!
+          Big or small, your event, your room deserves the spotlight. Share your
+          vibe, your way!
         </p>
       </div>
 
@@ -80,10 +80,7 @@ export function EventDetailsStep({
             <FormLabel className="font-medium">
               Choose the type of event you&apos;re planning
             </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger className="rounded-full shadow-none text-sm py-5 bg-zinc-50">
                   <SelectValue placeholder="Select event type" />

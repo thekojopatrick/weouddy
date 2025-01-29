@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const locations = [
-  { name: 'Accra', param: 'accra' },
-  { name: 'Lagos', param: 'lagos' },
-  { name: 'Ghana', param: 'ghana' },
-  { name: 'Nigeria', param: 'nigeria' },
-  { name: 'Africa', param: 'africa' },
-  { name: 'Rest of the world', param: 'world' },
+  { name: "Accra", param: "accra" },
+  { name: "Lagos", param: "lagos" },
+  { name: "Ghana", param: "ghana" },
+  { name: "Nigeria", param: "nigeria" },
+  { name: "Africa", param: "africa" },
+  { name: "Rest of the world", param: "world" },
 ];
 
 interface LocationFiltersProps {
@@ -40,10 +40,10 @@ export function LocationFilters({
               key={location.name}
               onClick={() => handleLocationClick(location.param)}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
+                "text-sm font-medium transition-colors hover:text-primary",
                 currentLocation === location.param
-                  ? 'text-primary underline underline-offset-2'
-                  : 'text-muted-foreground'
+                  ? "text-primary underline underline-offset-2"
+                  : "text-muted-foreground",
               )}
             >
               {location.name}

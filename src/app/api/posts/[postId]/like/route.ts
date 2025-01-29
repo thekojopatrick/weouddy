@@ -16,7 +16,7 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const like = PostService.toggleLike(postId,session.userId)
+    const like = PostService.toggleLike(postId, session.userId);
 
     return NextResponse.json(like);
   } catch (error) {

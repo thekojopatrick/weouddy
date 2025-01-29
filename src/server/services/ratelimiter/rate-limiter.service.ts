@@ -1,16 +1,14 @@
-import { env } from '@/env';
-import { RateLimitError } from './errors';
-import { Redis } from '@upstash/redis';
-import { Ratelimit } from '@upstash/ratelimit';
-import { getIp } from '@/lib/get-ip';
+import { env } from "@/env";
+import { RateLimitError } from "./errors";
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
+import { getIp } from "@/lib/get-ip";
 
 export class RateLimiterService {
   private static instance: RateLimiterService;
   private redisLimiter: Ratelimit | null = null;
-  private memoryTrackers: Record<
-    string,
-    { count: number; expiresAt: number }
-  > = {};
+  private memoryTrackers: Record<string, { count: number; expiresAt: number }> =
+    {};
   private pruneInterval: NodeJS.Timeout;
 
   private constructor() {
@@ -23,21 +21,18 @@ export class RateLimiterService {
         });
         this.redisLimiter = new Ratelimit({
           redis,
-          limiter: Ratelimit.slidingWindow(10, '10 s'),
-          prefix: 'app-rate-limit',
+          limiter: Ratelimit.slidingWindow(10, "10 s"),
+          prefix: "app-rate-limit",
         });
       } catch {
         console.warn(
-          'Failed to initialize Redis rate limiter, falling back to memory limiter'
+          "Failed to initialize Redis rate limiter, falling back to memory limiter",
         );
       }
     }
 
     // Set up memory tracker pruning
-    this.pruneInterval = setInterval(
-      this.pruneTrackers.bind(this),
-      60 * 1000
-    );
+    this.pruneInterval = setInterval(this.pruneTrackers.bind(this), 60 * 1000);
   }
 
   public static getInstance(): RateLimiterService {
@@ -71,7 +66,7 @@ export class RateLimiterService {
 
     await this.limit({
       ...options,
-      identifier: `${ip}-${options.key || 'global'}`,
+      identifier: `${ip}-${options.key || "global"}`,
     });
   }
 
@@ -85,12 +80,7 @@ export class RateLimiterService {
     window?: number;
     useRedis?: boolean;
   }): Promise<void> {
-    const {
-      identifier,
-      limit = 1,
-      window = 10000,
-      useRedis = false,
-    } = options;
+    const { identifier, limit = 1, window = 10000, useRedis = false } = options;
 
     // Try Redis limiter first if requested and available
     if (useRedis && this.redisLimiter) {
@@ -102,9 +92,7 @@ export class RateLimiterService {
         return;
       } catch {
         // Fall back to memory limiter on Redis failure
-        console.warn(
-          'Redis rate limit failed, falling back to memory limiter'
-        );
+        console.warn("Redis rate limit failed, falling back to memory limiter");
       }
     }
 

@@ -1,9 +1,8 @@
-import { useUserStore } from '@/stores/user-store';
-import { useEffect } from 'react';
+import { useUserStore } from "@/stores/user-store";
+import { useEffect } from "react";
 
 const useCurrentUser = (userId: string) => {
-  const { fetchUserProfile, userProfiles, initialize } =
-    useUserStore();
+  const { fetchUserProfile, userProfiles, initialize } = useUserStore();
 
   useEffect(() => {
     initialize();

@@ -1,17 +1,17 @@
-import { createServerClient } from '@supabase/ssr';
-import { type NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 
 const publicPaths = [
-  '/',
-  '/contact',
-  '/about',
-  '/pricing',
-  '/support-us',
-  '/privacy-policy',
-  '/discover',
-  '/sentry-example-page',
-  '/api/events',
-  '/auth/callback',
+  "/",
+  "/contact",
+  "/about",
+  "/pricing",
+  "/support-us",
+  "/privacy-policy",
+  "/discover",
+  "/sentry-example-page",
+  "/api/events",
+  "/auth/callback",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -30,17 +30,17 @@ export async function updateSession(request: NextRequest) {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
+              request.cookies.set(name, value),
             );
             supabaseResponse = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
+              supabaseResponse.cookies.set(name, value, options),
             );
           },
         },
-      }
+      },
     );
 
     // Do not run code between createServerClient and
@@ -57,7 +57,7 @@ export async function updateSession(request: NextRequest) {
     const isPublicPath = publicPaths.some(
       (path) =>
         request.nextUrl.pathname === path ||
-        request.nextUrl.pathname.startsWith('/auth')
+        request.nextUrl.pathname.startsWith("/auth"),
     );
 
     // Allow access to public paths without authentication
@@ -67,13 +67,13 @@ export async function updateSession(request: NextRequest) {
 
     if (
       !user &&
-      !request.nextUrl.pathname.startsWith('/sign-in') &&
-      !request.nextUrl.pathname.startsWith('/sign-up') &&
-      !request.nextUrl.pathname.startsWith('/auth')
+      !request.nextUrl.pathname.startsWith("/sign-in") &&
+      !request.nextUrl.pathname.startsWith("/sign-up") &&
+      !request.nextUrl.pathname.startsWith("/auth")
     ) {
       // no user, potentially respond by redirecting the user to the login page
       const url = request.nextUrl.clone();
-      url.pathname = '/auth';
+      url.pathname = "/auth";
       return NextResponse.redirect(url);
     }
 

@@ -10,8 +10,8 @@
  * setup a redis instance just to launch your saas product.
  */
 
-import { getIp } from '@/lib/get-ip';
-import { RateLimitError } from '@/server/services/ratelimiter/errors';
+import { getIp } from "@/lib/get-ip";
+import { RateLimitError } from "@/server/services/ratelimiter/errors";
 
 const PRUNE_INTERVAL = 60 * 1000; // 1 minute
 
@@ -36,7 +36,7 @@ function pruneTrackers() {
 setInterval(pruneTrackers, PRUNE_INTERVAL);
 
 export async function rateLimitByIp({
-  key = 'global',
+  key = "global",
   limit = 1,
   window = 10000,
 }: {
@@ -58,7 +58,7 @@ export async function rateLimitByIp({
 }
 
 export async function rateLimitByKey({
-  key = 'global',
+  key = "global",
   limit = 1,
   window = 10000,
 }: {

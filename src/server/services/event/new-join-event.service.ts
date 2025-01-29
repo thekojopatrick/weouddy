@@ -1,13 +1,13 @@
-import { db } from '@/server/db/prisma';
-import { PrismaClient } from '@prisma/client';
-import { z } from 'zod';
+import { db } from "@/server/db/prisma";
+import { PrismaClient } from "@prisma/client";
+import { z } from "zod";
 
 export class JoinEventError extends Error {
   code: string;
 
   constructor(message: string, code: string) {
     super(message);
-    this.name = 'JoinEventError';
+    this.name = "JoinEventError";
     this.code = code;
   }
 }
@@ -25,8 +25,8 @@ export class JoinEventService {
     pin?: string;
   }) {
     const schema = z.object({
-      identifier: z.string().min(1, 'Event identifier is required'),
-      userId: z.string().min(1, 'User ID is required'),
+      identifier: z.string().min(1, "Event identifier is required"),
+      userId: z.string().min(1, "User ID is required"),
       pin: z.string().optional(),
     });
 
@@ -204,31 +204,28 @@ export class JoinEventService {
     });
 
     if (!event) {
-      throw new JoinEventError('Event not found', 'EVENT_NOT_FOUND');
+      throw new JoinEventError("Event not found", "EVENT_NOT_FOUND");
     }
 
     // Access type validation
     switch (event.accessType) {
-      case 'PIN_REQUIRED':
+      case "PIN_REQUIRED":
         if (!pin) {
-          throw new JoinEventError('PIN is required', 'PIN_REQUIRED');
+          throw new JoinEventError("PIN is required", "PIN_REQUIRED");
         }
         if (pin !== event.pinCode) {
-          throw new JoinEventError('Invalid PIN', 'INVALID_PIN');
+          throw new JoinEventError("Invalid PIN", "INVALID_PIN");
         }
         break;
-      case 'INVITE_ONLY':
-        throw new JoinEventError(
-          'Event is invite-only',
-          'INVITE_ONLY'
-        );
+      case "INVITE_ONLY":
+        throw new JoinEventError("Event is invite-only", "INVITE_ONLY");
     }
 
     // Determine status
     const status =
       event.hostId === userId || !event.requiresApproval
-        ? 'APPROVED'
-        : 'PENDING';
+        ? "APPROVED"
+        : "PENDING";
 
     try {
       return await db.$transaction(async (tx) => {
@@ -248,7 +245,7 @@ export class JoinEventService {
           },
         });
 
-        if (status === 'APPROVED') {
+        if (status === "APPROVED") {
           await tx.event.update({
             where: { id: event.id },
             data: {
@@ -260,14 +257,14 @@ export class JoinEventService {
             data: {
               eventId: event.id,
               userId,
-              type: 'JOIN',
+              type: "JOIN",
             },
           });
         }
 
         return {
           success: true,
-          status: 'JOINED',
+          status: "JOINED",
           event: {
             id: event.id,
             slug: event.slug,
@@ -277,7 +274,7 @@ export class JoinEventService {
       });
     } catch (err) {
       console.error(err);
-      throw new JoinEventError('Failed to join event', 'JOIN_FAILED');
+      throw new JoinEventError("Failed to join event", "JOIN_FAILED");
     }
   }
 
@@ -298,25 +295,20 @@ export class JoinEventService {
 
     const data = await result;
 
-    if (data?.status === 'APPROVED' || data?.status === 'JOINED') {
+    if (data?.status === "APPROVED" || data?.status === "JOINED") {
       return {
         ...data,
-        status: 'JOINED',
+        status: "JOINED",
       };
-    } else if (
-      data?.status === 'PENDING' ||
-      data?.status === 'DENIED'
-    ) {
+    } else if (data?.status === "PENDING" || data?.status === "DENIED") {
       return data;
     }
 
     return {
       id: eventId,
-      status: 'NOT_JOINED',
+      status: "NOT_JOINED",
     };
   }
 }
 
-export const joinEventService = new JoinEventService(
-  new PrismaClient()
-);
+export const joinEventService = new JoinEventService(new PrismaClient());

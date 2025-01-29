@@ -1,8 +1,8 @@
-'use client';
-import React from 'react';
-import { VideoShowcase } from '../_components/video-showcase';
-import { TestimonialCard } from '../_components/testimonial-card';
-import { FeaturesGrid } from '../_components/features-grid';
+"use client";
+import React from "react";
+import { VideoShowcase } from "../_components/video-showcase";
+import { TestimonialCard } from "../_components/testimonial-card";
+import { FeaturesGrid } from "../_components/features-grid";
 
 const AboutPage = () => {
   return (
@@ -10,13 +10,12 @@ const AboutPage = () => {
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="max-w-3xl text-left mb-24">
           <h1 className="text-2xl mb-6">
-            We’re building a social platform that reimagines how
-            people connect and engage during events and special
-            moments. Inspired by the need to share memories
-            effortlessly without the pressure of exchanging contacts,
-            our platform lets you capture, relive, and preserve those
-            experiences while engaging with others in real time. It’s
-            where events meet connection, all in one seamless space.
+            We’re building a social platform that reimagines how people connect
+            and engage during events and special moments. Inspired by the need
+            to share memories effortlessly without the pressure of exchanging
+            contacts, our platform lets you capture, relive, and preserve those
+            experiences while engaging with others in real time. It’s where
+            events meet connection, all in one seamless space.
           </h1>
         </div>
         <VideoShowcase />
@@ -37,8 +36,8 @@ const AboutPage = () => {
         <FeaturesGrid />
         <div className="text-center py-16">
           <p className="mb-4">
-            Unlock profile analytics, custom domains, and more premium
-            features by becoming a supporter.
+            Unlock profile analytics, custom domains, and more premium features
+            by becoming a supporter.
           </p>
           <button className="bg-black text-white px-8 py-3 rounded-full">
             Become a supporter

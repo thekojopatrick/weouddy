@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 const EventsPage = () => {
-  return redirect('/discover');
+  return redirect("/discover");
 };
 
 export default EventsPage;

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/image";
 
 export const VideoShowcase = () => (
   <div className="relative w-full h-[450px] min-h-96 max-h-[540px] mb-16 rounded-lg overflow-hidden">

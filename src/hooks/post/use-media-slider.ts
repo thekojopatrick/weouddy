@@ -20,7 +20,9 @@ export function useMediaSlider(media: Media[], isHovered: boolean) {
     const currentVideo = videoRefs.current[currentMediaIndex];
 
     if (
-      isHovered && currentVideo && media[currentMediaIndex].type === "VIDEO"
+      isHovered &&
+      currentVideo &&
+      media[currentMediaIndex].type === "VIDEO"
     ) {
       videoRefs.current.forEach((video) => {
         if (video) {

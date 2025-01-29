@@ -1,20 +1,16 @@
-'use client';
+"use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { useEffect, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Follow } from '@/server/actions/user/types';
-import FollowButton from './follow-button';
-import { Input } from '@/components/ui/input';
-import Link from 'next/link';
-import { getUserFollowers } from '@/server/actions/user/queries';
-import { toast } from 'sonner';
-import { toggleFollow } from '@/server/actions/user/follow';
+import { Button } from "@/components/ui/button";
+import { Follow } from "@/server/actions/user/types";
+import FollowButton from "./follow-button";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { getUserFollowers } from "@/server/actions/user/queries";
+import { toast } from "sonner";
+import { toggleFollow } from "@/server/actions/user/follow";
 
 interface UserFollowersProps {
   userId: string;
@@ -25,7 +21,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const loadFollowers = async () => {
@@ -37,12 +33,12 @@ export function UserFollowers({ userId }: UserFollowersProps) {
           setHasMore(false);
         } else {
           setFollowers((prev) =>
-            page === 1 ? newFollowers : [...prev, ...newFollowers]
+            page === 1 ? newFollowers : [...prev, ...newFollowers],
           );
         }
       } catch (error) {
-        console.error('Failed to load followers', error);
-        toast.error('Failed to load followers');
+        console.error("Failed to load followers", error);
+        toast.error("Failed to load followers");
       } finally {
         setIsLoading(false);
       }
@@ -60,11 +56,11 @@ export function UserFollowers({ userId }: UserFollowersProps) {
         prev.map((follower) =>
           follower.follower.id === targetUserId
             ? { ...follower, isFollowing: !follower.isFollowing }
-            : follower
-        )
+            : follower,
+        ),
       );
     } catch (error) {
-      toast.error('Failed to toggle follow');
+      toast.error("Failed to toggle follow");
       console.error(error);
     }
   };
@@ -75,12 +71,8 @@ export function UserFollowers({ userId }: UserFollowersProps) {
 
   const filteredFollowers = followers.filter(
     (f) =>
-      f.follower.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      f.follower.username
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+      f.follower.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.follower.username.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (filteredFollowers.length === 0 && !isLoading) {
@@ -115,9 +107,7 @@ export function UserFollowers({ userId }: UserFollowersProps) {
                 className="flex items-center space-x-3 grow"
               >
                 <Avatar>
-                  <AvatarImage
-                    src={follower.avatarUrl || '/placeholder.svg'}
-                  />
+                  <AvatarImage src={follower.avatarUrl || "/placeholder.svg"} />
                   <AvatarFallback>{follower.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -141,9 +131,9 @@ export function UserFollowers({ userId }: UserFollowersProps) {
           <Button
             onClick={handleLoadMore}
             disabled={isLoading}
-            variant={'ghost'}
+            variant={"ghost"}
           >
-            {isLoading ? 'Loading...' : 'Load More Followers'}
+            {isLoading ? "Loading..." : "Load More Followers"}
           </Button>
         </div>
       )}

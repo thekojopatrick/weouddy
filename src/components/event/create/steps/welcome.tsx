@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -14,15 +14,15 @@ export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
           Create & host your event, your way!
         </h2>
         <p className="text-muted-foreground text-sm">
-          Create an event in just a few clicks. Whether it&apos;s for
-          close friends or a public audience, make it memorable by
-          sharing the details instantly
+          Create an event in just a few clicks. Whether it&apos;s for close
+          friends or a public audience, make it memorable by sharing the details
+          instantly
         </p>
       </div>
 
       <div className="flex justify-center py-8">
         <Image
-          src={'/illustration/event-people.svg'}
+          src={"/illustration/event-people.svg"}
           className="object-cover max-h-96 max-w-96"
           alt="Event illustration"
           width={300}

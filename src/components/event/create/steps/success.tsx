@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Button, LoadingButton } from '@/components/ui/button';
-import { CopyIcon, Download, Share2 } from 'lucide-react';
+import { Button, LoadingButton } from "@/components/ui/button";
+import { CopyIcon, Download, Share2 } from "lucide-react";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { generateQRCode } from '@/lib/qr/generator';
+import Image from "next/image";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { generateQRCode } from "@/lib/qr/generator";
 
 interface SuccessStepProps {
   qrCodeUrl: string;
@@ -30,15 +30,14 @@ export function SuccessStep({
     try {
       await navigator.clipboard.writeText(eventUrl);
       toast({
-        title: 'Link copied!',
-        description:
-          'The event link has been copied to your clipboard.',
+        title: "Link copied!",
+        description: "The event link has been copied to your clipboard.",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to copy link to clipboard.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to copy link to clipboard.",
+        variant: "destructive",
       });
       console.error(error);
     }
@@ -49,7 +48,7 @@ export function SuccessStep({
     const qrCode = await generateQRCode(eventUrl);
 
     try {
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = qrCode.dataUrl;
       link.download = qrCode.fileName;
       document.body.appendChild(link);
@@ -57,15 +56,14 @@ export function SuccessStep({
       document.body.removeChild(link);
 
       toast({
-        title: 'QR Code Downloaded',
-        description: 'The QR code has been saved to your device.',
+        title: "QR Code Downloaded",
+        description: "The QR code has been saved to your device.",
       });
     } catch (error) {
       toast({
-        title: 'Download Failed',
-        description:
-          'Failed to download the QR code. Please try again.',
-        variant: 'destructive',
+        title: "Download Failed",
+        description: "Failed to download the QR code. Please try again.",
+        variant: "destructive",
       });
       console.error(error);
     } finally {
@@ -81,22 +79,22 @@ export function SuccessStep({
       if (navigator.share) {
         await navigator.share({
           title: `Your link to ${eventName} room`,
-          text: 'Tap link or Scan this QR code to join the event',
+          text: "Tap link or Scan this QR code to join the event",
           url: shareUrl,
         });
       } else {
         await navigator.clipboard.writeText(qrCodeUrl);
         toast({
-          title: 'Link Copied',
-          description: 'QR code link copied to clipboard',
+          title: "Link Copied",
+          description: "QR code link copied to clipboard",
         });
       }
     } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
+      if ((error as Error).name !== "AbortError") {
         toast({
-          title: 'Share Failed',
-          description: 'Failed to share the QR code',
-          variant: 'destructive',
+          title: "Share Failed",
+          description: "Failed to share the QR code",
+          variant: "destructive",
         });
       }
     }
@@ -109,8 +107,8 @@ export function SuccessStep({
           Event successfully created
         </h2>
         <p className="text-muted-foreground text-sm">
-          Your event has been created successfully! Share it with your
-          friends or publish it to reach a wider audience
+          Your event has been created successfully! Share it with your friends
+          or publish it to reach a wider audience
         </p>
       </div>
 
@@ -128,20 +126,13 @@ export function SuccessStep({
       <div className="space-y-4">
         <div className="flex items-center gap-2 rounded-lg border p-2">
           <span className="truncate flex-1 text-sm">{eventUrl}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={copyToClipboard}
-          >
+          <Button variant="ghost" size="icon" onClick={copyToClipboard}>
             <CopyIcon className="h-4 w-4" />
           </Button>
         </div>
 
         <div className="grid gap-2">
-          <Button
-            className="w-full rounded-full"
-            onClick={handleShare}
-          >
+          <Button className="w-full rounded-full" onClick={handleShare}>
             <Share2 className="mr-2 h-4 w-4" />
             Share Event
           </Button>
@@ -153,7 +144,7 @@ export function SuccessStep({
             onClick={handleDownload}
           >
             {!isDownloading && <Download className="mr-2 h-4 w-4" />}
-            {isDownloading ? 'Downloading..' : 'Download QR Code'}
+            {isDownloading ? "Downloading.." : "Download QR Code"}
           </LoadingButton>
         </div>
 

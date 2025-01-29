@@ -1,7 +1,7 @@
-import React, { ReactNode } from 'react';
-import { SiteHeader } from '@/components/layouts/frontpage/site-header';
-import AuthWrapper from './_components/auth-wrapper';
-import { getSession } from '@/lib/auth';
+import React, { ReactNode } from "react";
+import { SiteHeader } from "@/components/layouts/frontpage/site-header";
+import AuthWrapper from "./_components/auth-wrapper";
+import { getSession } from "@/lib/auth";
 
 const AppLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getSession();

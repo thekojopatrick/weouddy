@@ -1,29 +1,29 @@
-import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
-import React from 'react';
-import { EventStatCard } from '../../_components/events/stats/event-stat-card';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
+import React from "react";
+import { EventStatCard } from "../../_components/events/stats/event-stat-card";
+import Link from "next/link";
 
 const stats = [
   {
-    title: 'Total Users',
+    title: "Total Users",
     value: 356,
-    type: 'total' as const,
+    type: "total" as const,
   },
   {
-    title: 'Active users',
+    title: "Active users",
     value: 239,
-    type: 'active' as const,
+    type: "active" as const,
   },
   {
-    title: 'Return user rate',
+    title: "Return user rate",
     value: 79,
-    type: 'return' as const,
+    type: "return" as const,
   },
   {
-    title: 'Complains',
+    title: "Complains",
     value: 2,
-    type: 'fake' as const,
+    type: "fake" as const,
   },
 ];
 
@@ -36,9 +36,7 @@ const page = async ({ params }: { params: { eventId: string } }) => {
         {/*Header */}
         <div className="flex justify-between flex-wrap gap-4">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">
-              Event :{eventId}
-            </h1>
+            <h1 className="text-2xl font-semibold">Event :{eventId}</h1>
             <p className="text-sm text-muted-foreground">
               Highlight of your events and summary
             </p>
@@ -47,8 +45,8 @@ const page = async ({ params }: { params: { eventId: string } }) => {
             <Link href={`/dashboard/events/${eventId}/planner`}>
               <Button className="btn-primary">View Planner</Button>
             </Link>
-            <Button variant={'outline'}>Invite Partners</Button>
-            <Button size={'icon'} variant={'outline'}>
+            <Button variant={"outline"}>Invite Partners</Button>
+            <Button size={"icon"} variant={"outline"}>
               <Settings />
             </Button>
           </div>

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 import {
   DateFieldProps,
   DateField as DateFieldRac,
@@ -13,7 +13,7 @@ import {
   TimeField as TimeFieldRac,
   TimeValue as TimeValueRac,
   composeRenderProps,
-} from 'react-aria-components';
+} from "react-aria-components";
 
 const DateField = <T extends DateValueRac>({
   className,
@@ -23,7 +23,7 @@ const DateField = <T extends DateValueRac>({
   return (
     <DateFieldRac
       className={composeRenderProps(className, (className) =>
-        cn('space-y-2', className)
+        cn("space-y-2", className),
       )}
       {...props}
     >
@@ -40,7 +40,7 @@ const TimeField = <T extends TimeValueRac>({
   return (
     <TimeFieldRac
       className={composeRenderProps(className, (className) =>
-        cn('space-y-2', className)
+        cn("space-y-2", className),
       )}
       {...props}
     >
@@ -54,9 +54,9 @@ const DateSegment = ({ className, ...props }: DateSegmentProps) => {
     <DateSegmentRac
       className={composeRenderProps(className, (className) =>
         cn(
-          'inline rounded p-0.5 text-foreground caret-transparent outline-0 data-[disabled]:cursor-not-allowed data-[focused]:bg-accent data-[invalid]:data-[focused]:bg-destructive data-[type=literal]:px-0 data-[focused]:data-[placeholder]:text-foreground data-[focused]:text-foreground data-[invalid]:data-[focused]:data-[placeholder]:text-destructive-foreground data-[invalid]:data-[focused]:text-destructive-foreground data-[invalid]:data-[placeholder]:text-destructive data-[invalid]:text-destructive data-[placeholder]:text-muted-foreground/70 data-[type=literal]:text-muted-foreground/70 data-[disabled]:opacity-50',
-          className
-        )
+          "inline rounded p-0.5 text-foreground caret-transparent outline-0 data-[disabled]:cursor-not-allowed data-[focused]:bg-accent data-[invalid]:data-[focused]:bg-destructive data-[type=literal]:px-0 data-[focused]:data-[placeholder]:text-foreground data-[focused]:text-foreground data-[invalid]:data-[focused]:data-[placeholder]:text-destructive-foreground data-[invalid]:data-[focused]:text-destructive-foreground data-[invalid]:data-[placeholder]:text-destructive data-[invalid]:text-destructive data-[placeholder]:text-muted-foreground/70 data-[type=literal]:text-muted-foreground/70 data-[disabled]:opacity-50",
+          className,
+        ),
       )}
       {...props}
     />
@@ -64,7 +64,7 @@ const DateSegment = ({ className, ...props }: DateSegmentProps) => {
 };
 
 const dateInputStyle =
-  'relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm shadow-black/5 transition-shadow data-[focus-within]:border-ring data-[disabled]:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20';
+  "relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm shadow-black/5 transition-shadow data-[focus-within]:border-ring data-[disabled]:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20";
 
 interface DateInputProps extends DateInputPropsRac {
   className?: string;
@@ -75,11 +75,11 @@ const DateInput = ({
   className,
   unstyled = false,
   ...props
-}: Omit<DateInputProps, 'children'>) => {
+}: Omit<DateInputProps, "children">) => {
   return (
     <DateInputRac
       className={composeRenderProps(className, (className) =>
-        cn(!unstyled && dateInputStyle, className)
+        cn(!unstyled && dateInputStyle, className),
       )}
       {...props}
     >
@@ -88,11 +88,5 @@ const DateInput = ({
   );
 };
 
-export {
-  DateField,
-  DateInput,
-  DateSegment,
-  TimeField,
-  dateInputStyle,
-};
+export { DateField, DateInput, DateSegment, TimeField, dateInputStyle };
 export type { DateInputProps };

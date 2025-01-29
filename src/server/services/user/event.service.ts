@@ -1,4 +1,4 @@
-import { db } from '@/server/db/prisma';
+import { db } from "@/server/db/prisma";
 
 export class UserEventService {
   static async getUserEventStatus(eventId: string, userId: string) {
@@ -17,16 +17,13 @@ export class UserEventService {
       }),
     ]);
 
-    if (event) return 'JOINED'; // Host is always joined
-    if (attendee?.status === 'APPROVED') return 'JOINED';
-    if (attendee?.status === 'PENDING') return 'PENDING';
-    return 'NOT_JOINED';
+    if (event) return "JOINED"; // Host is always joined
+    if (attendee?.status === "APPROVED") return "JOINED";
+    if (attendee?.status === "PENDING") return "PENDING";
+    return "NOT_JOINED";
   }
 
-  static async getBatchUserEventStatus(
-    eventIds: string[],
-    userId: string
-  ) {
+  static async getBatchUserEventStatus(eventIds: string[], userId: string) {
     const [hostedEvents, attendees] = await db.$transaction([
       db.event.findMany({
         where: {
@@ -48,21 +45,19 @@ export class UserEventService {
     ]);
 
     const hostedSet = new Set(hostedEvents.map((e) => e.id));
-    const attendeeMap = new Map(
-      attendees.map((a) => [a.eventId, a.status])
-    );
+    const attendeeMap = new Map(attendees.map((a) => [a.eventId, a.status]));
 
     return Object.fromEntries(
       eventIds.map((eventId) => [
         eventId,
         hostedSet.has(eventId)
-          ? 'JOINED'
-          : attendeeMap.get(eventId) === 'APPROVED'
-            ? 'JOINED'
-            : attendeeMap.get(eventId) === 'PENDING'
-              ? 'PENDING'
-              : 'NOT_JOINED',
-      ])
+          ? "JOINED"
+          : attendeeMap.get(eventId) === "APPROVED"
+            ? "JOINED"
+            : attendeeMap.get(eventId) === "PENDING"
+              ? "PENDING"
+              : "NOT_JOINED",
+      ]),
     );
   }
 }

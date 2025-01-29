@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { Camera, Trash2, Upload, UserCircle2 } from 'lucide-react';
+import { Camera, Trash2, Upload, UserCircle2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import React, { useEffect, useState } from 'react';
+} from "@/components/ui/dialog";
+import React, { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { supabase } from '@/utils/supabase/client';
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { supabase } from "@/utils/supabase/client";
 
 export default function Avatar({
   uid,
@@ -32,11 +32,11 @@ export default function Avatar({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (!url?.startsWith('https://lh3.googleusercontent.com')) {
+    if (!url?.startsWith("https://lh3.googleusercontent.com")) {
       async function downloadImage(path: string) {
         try {
           const { data, error } = await supabase.storage
-            .from('avatars')
+            .from("avatars")
             .download(path);
 
           if (error) {
@@ -46,7 +46,7 @@ export default function Avatar({
           const url = URL.createObjectURL(data);
           setAvatarUrl(url);
         } catch (error) {
-          console.log('Error downloading image: ', error);
+          console.log("Error downloading image: ", error);
         }
       }
 
@@ -54,22 +54,22 @@ export default function Avatar({
     }
   }, [url]);
 
-  const uploadAvatar: React.ChangeEventHandler<
-    HTMLInputElement
-  > = async (event) => {
+  const uploadAvatar: React.ChangeEventHandler<HTMLInputElement> = async (
+    event,
+  ) => {
     try {
       setUploading(true);
 
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('You must select an image to upload.');
+        throw new Error("You must select an image to upload.");
       }
 
       const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const filePath = `${uid}-${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from("avatars")
         .upload(filePath, file);
 
       if (uploadError) {
@@ -79,8 +79,8 @@ export default function Avatar({
       onUploadAction(filePath);
       setIsDialogOpen(false);
     } catch (error: Error | unknown) {
-      console.error('Error uploading image: ', error);
-      alert('Error uploading avatar!');
+      console.error("Error uploading image: ", error);
+      alert("Error uploading avatar!");
     } finally {
       setUploading(false);
     }
@@ -109,7 +109,7 @@ export default function Avatar({
                 style={{
                   height: size,
                   width: size,
-                  objectFit: 'cover',
+                  objectFit: "cover",
                 }}
               />
             ) : (
@@ -120,19 +120,16 @@ export default function Avatar({
                   width: size,
                 }}
               >
-                <UserCircle2
-                  className="text-gray-500"
-                  size={size * 0.7}
-                />
+                <UserCircle2 className="text-gray-500" size={size * 0.7} />
               </div>
             )}
             <div
               className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 shadow-md group-hover:scale-110 transition-transform duration-300"
               style={{
-                transform: 'translate(25%, 25%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                transform: "translate(25%, 25%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <Camera size={16} />
@@ -158,20 +155,16 @@ export default function Avatar({
           )}
 
           <div className="flex space-x-4">
-            <Button
-              variant="outline"
-              className="flex items-center"
-              asChild
-            >
+            <Button variant="outline" className="flex items-center" asChild>
               <label
                 htmlFor="avatar-upload"
                 className="cursor-pointer flex items-center"
               >
                 <Upload className="mr-2 h-4 w-4" />
-                {uploading ? 'Uploading...' : 'Upload New'}
+                {uploading ? "Uploading..." : "Upload New"}
                 <input
                   id="avatar-upload"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   type="file"
                   accept="image/*"
                   onChange={uploadAvatar}

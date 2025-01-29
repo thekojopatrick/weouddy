@@ -7,9 +7,10 @@ type UseCharacterLimitProps = {
   initialValue?: string;
 };
 
-export function useCharacterLimit(
-  { maxLength, initialValue = "" }: UseCharacterLimitProps,
-) {
+export function useCharacterLimit({
+  maxLength,
+  initialValue = "",
+}: UseCharacterLimitProps) {
   const [value, setValue] = useState(initialValue);
   const [characterCount, setCharacterCount] = useState(initialValue.length);
 

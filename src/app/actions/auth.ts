@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
-import { validatedAction } from '@/utils/auth/middleware';
-import { createClient } from '@/utils/supabase/server';
-import { User } from '@supabase/supabase-js';
+import { z } from "zod";
+import { validatedAction } from "@/utils/auth/middleware";
+import { createClient } from "@/utils/supabase/server";
+import { User } from "@supabase/supabase-js";
 
-import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 // Type definitions
 type AuthResult = {
@@ -41,7 +41,7 @@ const resetPasswordSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 // Authentication actions
@@ -55,24 +55,24 @@ export const signInWithMagicLinkAction = validatedAction(
   async (data) => {
     const supabase = await createClient();
     const { email, priceId } = data;
-    const origin = (await headers()).get('origin');
+    const origin = (await headers()).get("origin");
     const redirectTo = `${origin}/auth/callback`;
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${redirectTo}?priceId=${encodeURIComponent(
-          priceId || ''
-        )}&redirect=${encodeURIComponent('/test')}`,
+          priceId || "",
+        )}&redirect=${encodeURIComponent("/test")}`,
       },
     });
     if (error) {
-      console.error('Error sending magic link:', error);
+      console.error("Error sending magic link:", error);
       return { error: error.message };
     }
 
-    return { success: 'Magic link sent to your email.' };
-  }
+    return { success: "Magic link sent to your email." };
+  },
 );
 
 export const signInAction = validatedAction(
@@ -97,25 +97,25 @@ export const signInAction = validatedAction(
       if (!authData.user) {
         return {
           success: false,
-          error: 'No user data returned',
+          error: "No user data returned",
         };
       }
 
-      revalidatePath('/', 'layout');
+      revalidatePath("/", "layout");
 
       return {
         success: true,
         user: authData.user,
-        redirectPath: '/discover',
+        redirectPath: "/discover",
       };
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error("Sign in error:", error);
       return {
         success: false,
-        error: 'An unexpected error occurred during sign in',
+        error: "An unexpected error occurred during sign in",
       };
     }
-  }
+  },
 );
 
 export const signUpAction = validatedAction(
@@ -124,8 +124,8 @@ export const signUpAction = validatedAction(
     const supabase = await createClient();
 
     try {
-      const { data: authData, error: signUpError } =
-        await supabase.auth.signUp({
+      const { data: authData, error: signUpError } = await supabase.auth.signUp(
+        {
           email: data.email,
           password: data.password,
           options: {
@@ -133,7 +133,8 @@ export const signUpAction = validatedAction(
               full_name: data.name,
             },
           },
-        });
+        },
+      );
 
       if (signUpError) {
         return {
@@ -145,105 +146,100 @@ export const signUpAction = validatedAction(
       if (!authData.user) {
         return {
           success: false,
-          error: 'No user data returned',
+          error: "No user data returned",
         };
       }
 
-      revalidatePath('/', 'layout');
+      revalidatePath("/", "layout");
 
       return {
         success: true,
         user: authData.user,
-        redirectPath: '/discover',
+        redirectPath: "/discover",
       };
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error("Sign up error:", error);
       return {
         success: false,
-        error: 'An unexpected error occurred during sign up',
+        error: "An unexpected error occurred during sign up",
       };
     }
-  }
+  },
 );
 
-export const signInWithGoogleAction =
-  async (): Promise<AuthResult> => {
-    const supabase = await createClient();
-    const origin = (await headers()).get('origin');
+export const signInWithGoogleAction = async (): Promise<AuthResult> => {
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
 
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${origin}/auth/callback`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${origin}/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
         },
-      });
+      },
+    });
 
-      if (error) {
-        return {
-          success: false,
-          error: error.message,
-        };
-      }
-
-      if (data.url) {
-        return {
-          success: true,
-          redirectPath: data.url,
-        };
-      }
-
-      return {
-        success: true,
-      };
-    } catch (error) {
-      console.error('Google sign in error:', error);
+    if (error) {
       return {
         success: false,
-        error: 'An unexpected error occurred during Google sign in',
+        error: error.message,
       };
     }
-  };
+
+    if (data.url) {
+      return {
+        success: true,
+        redirectPath: data.url,
+      };
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Google sign in error:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred during Google sign in",
+    };
+  }
+};
 
 export const forgotPasswordAction = validatedAction(
   forgotPasswordSchema,
   async (data): Promise<AuthResult> => {
     const supabase = await createClient();
-    const origin = (await headers()).get('origin');
+    const origin = (await headers()).get("origin");
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        data.email,
-        {
-          redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
-        }
-      );
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
+      });
 
       if (error) {
         return {
           success: false,
-          error: 'Could not reset password',
+          error: "Could not reset password",
         };
       }
 
       return {
         success: true,
         redirectPath: data.callbackUrl,
-        message:
-          'Check your email for a link to reset your password.',
+        message: "Check your email for a link to reset your password.",
       };
     } catch (error) {
-      console.error('Password reset error:', error);
+      console.error("Password reset error:", error);
       return {
         success: false,
-        error: 'An unexpected error occurred during password reset',
+        error: "An unexpected error occurred during password reset",
       };
     }
-  }
+  },
 );
 
 export const resetPasswordAction = validatedAction(
@@ -259,23 +255,23 @@ export const resetPasswordAction = validatedAction(
       if (error) {
         return {
           success: false,
-          error: 'Password update failed',
+          error: "Password update failed",
         };
       }
 
       return {
         success: true,
-        message: 'Password updated successfully',
-        redirectPath: '/auth',
+        message: "Password updated successfully",
+        redirectPath: "/auth",
       };
     } catch (error) {
-      console.error('Password update error:', error);
+      console.error("Password update error:", error);
       return {
         success: false,
-        error: 'An unexpected error occurred while updating password',
+        error: "An unexpected error occurred while updating password",
       };
     }
-  }
+  },
 );
 
 export const signOut = async (): Promise<AuthResult> => {
@@ -291,17 +287,17 @@ export const signOut = async (): Promise<AuthResult> => {
       };
     }
 
-    revalidatePath('/', 'layout');
+    revalidatePath("/", "layout");
 
     return {
       success: true,
-      redirectPath: '/discover',
+      redirectPath: "/discover",
     };
   } catch (error) {
-    console.error('Sign out error:', error);
+    console.error("Sign out error:", error);
     return {
       success: false,
-      error: 'An unexpected error occurred during sign out',
+      error: "An unexpected error occurred during sign out",
     };
   }
 };

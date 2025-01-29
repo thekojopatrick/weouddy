@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
 
 export function AvatarUpload() {
   return (

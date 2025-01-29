@@ -1,16 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import {
-  EmptyEvents,
-  EventType,
-  FilterEmptyState,
-} from './empty-states';
-import { EventWithDetails } from '@/types/prisma.types';
-import { fetchUserEvents } from '@/server/actions/user/queries';
-import { EventCard } from './user-event-card';
+import { Button } from "@/components/ui/button";
+import { EmptyEvents, EventType, FilterEmptyState } from "./empty-states";
+import { EventWithDetails } from "@/types/prisma.types";
+import { fetchUserEvents } from "@/server/actions/user/queries";
+import { EventCard } from "./user-event-card";
 
 interface UserEventsProps {
   userId: string;
@@ -21,7 +17,7 @@ export function UserEvents({ userId }: UserEventsProps) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [eventType, setEventType] = useState<EventType>('all');
+  const [eventType, setEventType] = useState<EventType>("all");
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -32,11 +28,11 @@ export function UserEvents({ userId }: UserEventsProps) {
           setHasMore(false);
         } else {
           setEvents((prev) =>
-            page === 1 ? newEvents : [...prev, ...newEvents]
+            page === 1 ? newEvents : [...prev, ...newEvents],
           );
         }
       } catch (error) {
-        console.error('Failed to load events', error);
+        console.error("Failed to load events", error);
       } finally {
         setIsLoading(false);
       }
@@ -50,8 +46,8 @@ export function UserEvents({ userId }: UserEventsProps) {
   };
 
   const filteredEvents = events.filter((event) => {
-    if (eventType === 'hosted') return event.hostId === userId;
-    if (eventType === 'joined') return event.hostId !== userId;
+    if (eventType === "hosted") return event.hostId === userId;
+    if (eventType === "joined") return event.hostId !== userId;
     return true;
   });
 
@@ -64,28 +60,26 @@ export function UserEvents({ userId }: UserEventsProps) {
   return (
     <div className="">
       <div className="flex items-center space-x-4 mb-6">
-        {['all', 'hosted', 'joined'].map((type) => (
+        {["all", "hosted", "joined"].map((type) => (
           <Button
             key={type}
-            variant={eventType === type ? 'default' : 'outline'}
+            variant={eventType === type ? "default" : "outline"}
             onClick={() => {
               setEventType(type as EventType);
               setPage(1);
             }}
             className="rounded-full shadow-none"
           >
-            {type === 'all'
-              ? 'All Events'
-              : type === 'hosted'
-                ? 'Hosted'
-                : 'Joined'}
+            {type === "all"
+              ? "All Events"
+              : type === "hosted"
+                ? "Hosted"
+                : "Joined"}
           </Button>
         ))}
       </div>
 
-      {filteredEvents.length === 0 &&
-      !isLoading &&
-      eventType !== 'all' ? (
+      {filteredEvents.length === 0 && !isLoading && eventType !== "all" ? (
         <FilterEmptyState type={eventType} />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -100,9 +94,9 @@ export function UserEvents({ userId }: UserEventsProps) {
           <Button
             onClick={handleLoadMore}
             disabled={isLoading}
-            variant={'ghost'}
+            variant={"ghost"}
           >
-            {isLoading ? 'Loading...' : 'Load More Events'}
+            {isLoading ? "Loading..." : "Load More Events"}
           </Button>
         </div>
       )}

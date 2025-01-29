@@ -1,5 +1,5 @@
-import React from 'react';
-import KanbanBoard from '../../../_components/kanban/board';
+import React from "react";
+import KanbanBoard from "../../../_components/kanban/board";
 
 const page = () => {
   return (

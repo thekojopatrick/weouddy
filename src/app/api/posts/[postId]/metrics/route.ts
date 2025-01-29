@@ -1,17 +1,17 @@
-import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-import { NextResponse } from 'next/server';
-import { rateLimiter } from '@/server/services/ratelimiter/rate-limiter.service';
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { rateLimiter } from "@/server/services/ratelimiter/rate-limiter.service";
 
 export async function GET(
   req: Request,
-  { params }: { params: { postId: string } }
+  { params }: { params: { postId: string } },
 ) {
   const { postId } = await params;
 
   // Rate limit API requests - 30 requests per minute per IP
   await rateLimiter.limitByIp({
-    key: 'get-metrics',
+    key: "get-metrics",
     limit: 15,
     window: 60000,
   });
@@ -29,7 +29,7 @@ export async function GET(
     });
 
     if (!post) {
-      return new NextResponse('Post not found', { status: 404 });
+      return new NextResponse("Post not found", { status: 404 });
     }
 
     return NextResponse.json({
@@ -39,6 +39,6 @@ export async function GET(
     });
   } catch (error) {
     console.error(error);
-    return new NextResponse('Internal server error', { status: 500 });
+    return new NextResponse("Internal server error", { status: 500 });
   }
 }

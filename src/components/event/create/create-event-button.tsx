@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { CalendarPlus, Plus } from 'lucide-react';
+import { CalendarPlus, Plus } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { CreateEventDialog } from './create-event-dialog';
-import { User } from '@supabase/supabase-js';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { CreateEventDialog } from "./create-event-dialog";
+import { User } from "@supabase/supabase-js";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function CreateEventButton({
   isSmallDevice,
@@ -25,20 +25,16 @@ export function CreateEventButton({
   return (
     <>
       <Button
-        variant={'outline'}
-        size={isSmallDevice ? 'icon' : 'lg'}
+        variant={"outline"}
+        size={isSmallDevice ? "icon" : "lg"}
         className={cn(
-          'rounded-full shadow-lg',
-          isSmallDevice ? 'size-12' : 'h-12'
+          "rounded-full shadow-lg",
+          isSmallDevice ? "size-12" : "h-12",
         )}
         onClick={handleClick}
       >
-        {isSmallDevice ? (
-          <CalendarPlus />
-        ) : (
-          <Plus className={'size-6'} />
-        )}
-        <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
+        {isSmallDevice ? <CalendarPlus /> : <Plus className={"size-6"} />}
+        <span className={isSmallDevice ? "sr-only" : "font-semibold"}>
           Create
         </span>
       </Button>

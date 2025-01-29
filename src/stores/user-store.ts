@@ -1,11 +1,11 @@
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
-import { createClient } from '@/utils/supabase/client';
-import { User } from '@prisma/client';
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@prisma/client";
 
 type UserProfile = Pick<
   User,
-  'id' | 'name' | 'email' | 'avatarUrl' | 'bio' | 'username'
+  "id" | "name" | "email" | "avatarUrl" | "bio" | "username"
 >;
 
 interface UserState {
@@ -42,7 +42,7 @@ export const useUserStore = create<UserState>()(
 
           if (error || !user) {
             set({
-              error: error?.message ?? 'No user found',
+              error: error?.message ?? "No user found",
               isLoading: false,
               currentUser: null, // Ensure user is cleared
             });
@@ -50,9 +50,9 @@ export const useUserStore = create<UserState>()(
           }
 
           const { data } = await supabase
-            .from('User')
-            .select('id, email, name, username, avatarUrl, bio')
-            .eq('id', user.id!)
+            .from("User")
+            .select("id, email, name, username, avatarUrl, bio")
+            .eq("id", user.id!)
             .single();
 
           if (data) {
@@ -98,9 +98,9 @@ export const useUserStore = create<UserState>()(
 
         try {
           const { data } = await supabase
-            .from('User')
-            .select('id, email, name, username, avatarUrl, bio')
-            .eq('id', userId)
+            .from("User")
+            .select("id, email, name, username, avatarUrl, bio")
+            .eq("id", userId)
             .single();
 
           if (data) {
@@ -124,7 +124,7 @@ export const useUserStore = create<UserState>()(
             return userProfile;
           }
         } catch (error) {
-          console.error('Error fetching user profile:', error);
+          console.error("Error fetching user profile:", error);
         }
 
         return null;
@@ -135,18 +135,18 @@ export const useUserStore = create<UserState>()(
         const supabase = createClient();
 
         if (!currentUser) {
-          throw new Error('No current user');
+          throw new Error("No current user");
         }
 
         try {
           const { data, error } = await supabase
-            .from('User')
+            .from("User")
             .update({
               ...updates,
               avatarUrl: currentUser?.avatarUrl as never,
               updatedAt: new Date().toISOString(),
             })
-            .eq('id', currentUser.id)
+            .eq("id", currentUser.id)
             .single();
 
           if (error) throw error;
@@ -179,18 +179,18 @@ export const useUserStore = create<UserState>()(
           error: null,
         });
         // Clear localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('user-storage');
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user-storage");
         }
       },
     }),
     {
-      name: 'user-storage',
+      name: "user-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         currentUser: state.currentUser,
         userProfiles: state.userProfiles,
       }),
-    }
-  )
+    },
+  ),
 );

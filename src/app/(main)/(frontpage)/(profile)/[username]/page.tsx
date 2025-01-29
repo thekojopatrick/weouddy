@@ -1,16 +1,16 @@
-import { ProfileHeader } from '@/components/profile/profile-header';
-import { ProfileTabs } from '@/components/profile/profile-tabs';
-import { getSession } from '@/lib/auth';
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfileTabs } from "@/components/profile/profile-tabs";
+import { getSession } from "@/lib/auth";
 import {
   getUserProfile,
   getUserFollowers,
   getUserFollowing,
   getProfileStats,
   checkIfFollowing,
-} from '@/server/actions/user/queries';
-import { ProfilePageData } from '@/types/prisma.types';
+} from "@/server/actions/user/queries";
+import { ProfilePageData } from "@/types/prisma.types";
 
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 interface ProfilePageProps {
   params: {
@@ -18,44 +18,37 @@ interface ProfilePageProps {
   };
 }
 
-export default async function ProfilePage({
-  params,
-}: ProfilePageProps) {
+export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params;
 
   const session = await getSession();
 
   if (!session) {
-    redirect('/auth');
+    redirect("/auth");
   }
 
   // Fetch profile data for the viewed profile
-  const [
-    viewedUserProfile,
-    followers,
-    following,
-    stats,
-    isFollowing,
-  ] = await Promise.all([
-    getUserProfile(username),
-    getUserFollowers(username),
-    getUserFollowing(username),
-    getProfileStats(username), // Use the new function here
-    checkIfFollowing(session?.userId, username),
-  ]);
+  const [viewedUserProfile, followers, following, stats, isFollowing] =
+    await Promise.all([
+      getUserProfile(username),
+      getUserFollowers(username),
+      getUserFollowing(username),
+      getProfileStats(username), // Use the new function here
+      checkIfFollowing(session?.userId, username),
+    ]);
 
   if (!viewedUserProfile) {
-    redirect('/404');
+    redirect("/404");
   }
 
   const profile: ProfilePageData = {
     id: viewedUserProfile.id,
-    name: viewedUserProfile.name ?? '',
-    username: viewedUserProfile.username ?? '',
+    name: viewedUserProfile.name ?? "",
+    username: viewedUserProfile.username ?? "",
     avatarUrl:
       viewedUserProfile.avatarUrl ??
       session?.user.user_metadata.avatar_url ??
-      '/placeholder.svg',
+      "/placeholder.svg",
     stats: stats ?? {
       // Use the fetched stats
       following: 0,

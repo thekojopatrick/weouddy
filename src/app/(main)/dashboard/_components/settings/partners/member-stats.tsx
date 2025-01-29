@@ -1,10 +1,6 @@
-import { Card } from '@/components/ui/card';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { getNameInitials } from '@/lib/utils';
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getNameInitials } from "@/lib/utils";
 
 interface StatCardProps {
   label: string;
@@ -23,10 +19,7 @@ function StatCard({ label, value, members }: StatCardProps) {
         {members && members.length > 0 && (
           <div className="flex -space-x-2">
             {members.map((member, i) => (
-              <Avatar
-                key={i}
-                className="border-2 border-background w-8 h-8"
-              >
+              <Avatar key={i} className="border-2 border-background w-8 h-8">
                 {member.image ? (
                   <AvatarImage src={member.image} alt={member.name} />
                 ) : (
@@ -76,10 +69,7 @@ export function MemberStats({ stats }: MemberStatsProps) {
         value={stats.members.count}
         members={stats.members.members}
       />
-      <StatCard
-        label="Limited access members"
-        value={stats.limited.count}
-      />
+      <StatCard label="Limited access members" value={stats.limited.count} />
       <StatCard label="Pending invites" value={stats.pending.count} />
     </div>
   );

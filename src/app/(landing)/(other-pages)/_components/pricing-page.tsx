@@ -1,64 +1,64 @@
-import { PricingCards } from './pricing-card';
+import { PricingCards } from "./pricing-card";
 
 const tiers = [
   {
-    name: 'SUPPORTER',
+    name: "SUPPORTER",
     price: 10,
-    interval: 'monthly',
-    description: 'Per month (+ local tax)',
+    interval: "monthly",
+    description: "Per month (+ local tax)",
     features: [
-      { name: 'Name listed on our website', included: true },
-      { name: 'Shoutout on social media', included: true },
-      { name: '24/7 email support', included: true },
+      { name: "Name listed on our website", included: true },
+      { name: "Shoutout on social media", included: true },
+      { name: "24/7 email support", included: true },
     ],
     cta: {
-      text: 'Start sponsorship',
-      href: '/signup',
+      text: "Start sponsorship",
+      href: "/signup",
     },
   },
   {
-    name: 'PARTNER',
+    name: "PARTNER",
     price: 50,
-    interval: 'monthly',
-    description: 'Per month (+ local tax)',
+    interval: "monthly",
+    description: "Per month (+ local tax)",
     features: [
-      { name: 'Profile insights and analytics.', included: true },
-      { name: 'Shoutout on social media', included: true },
-      { name: 'Logo placement on our website', included: true },
+      { name: "Profile insights and analytics.", included: true },
+      { name: "Shoutout on social media", included: true },
+      { name: "Logo placement on our website", included: true },
       {
-        name: 'Personalized thank-you video',
+        name: "Personalized thank-you video",
         included: true,
         highlight: true,
       },
     ],
     cta: {
-      text: 'Start sponsorship',
-      href: '/signup',
+      text: "Start sponsorship",
+      href: "/signup",
     },
   },
   {
-    name: 'CHAIRMAN',
+    name: "CHAIRMAN",
     price: 100,
-    interval: 'monthly',
-    description: 'Per month (+ local tax)',
+    interval: "monthly",
+    description: "Per month (+ local tax)",
     highlight: true,
     features: [
-      { name: 'Profile insights and analytics.', included: true },
+      { name: "Profile insights and analytics.", included: true },
       {
-        name: 'Exclusive early access to new features',
+        name: "Exclusive early access to new features",
         included: true,
       },
-      { name: 'Advanced analytics', included: true },
-      { name: '24/7 priority support', included: true },
+      { name: "Advanced analytics", included: true },
+      { name: "24/7 priority support", included: true },
       {
-        name: 'Supporter badge on WeOuddy and Posts.',
+        name: "Supporter badge on WeOuddy and Posts.",
         included: true,
         highlight: true,
       },
     ],
     cta: {
-      text: 'Start sponsorship',
-      onClick: () => console.log('Contact sales clicked'),
+      text: "Start sponsorship",
+      onClick: () => console.log("Contact sales clicked"),
     },
   },
 ];

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 import {
   Body,
@@ -12,10 +12,10 @@ import {
   Section,
   Tailwind,
   Text,
-} from '@react-email/components';
+} from "@react-email/components";
 
-import { env } from '@/env';
-import { applicationName } from '@/config/app';
+import { env } from "@/env";
+import { applicationName } from "@/config/app";
 
 export const BASE_URL = env.HOST_NAME;
 
@@ -41,8 +41,7 @@ export function MagicLinkEmail({ token }: { token: string }) {
 
               <Section className="text-center mt-[32px] mb-[32px]">
                 <Text className="text-black font-medium text-[14px] leading-[24px] mb-8">
-                  You&apos;re magic link login is below, click to
-                  login. group.
+                  You&apos;re magic link login is below, click to login. group.
                 </Text>
 
                 <Text className="text-black font-medium text-[14px] leading-[24px]">

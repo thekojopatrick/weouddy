@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 
 interface CustomSheetProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ interface CustomSheetProps {
   scrollableContent?: boolean;
   maxHeight?: string;
   maxWidth?: string;
-  side?: 'top' | 'right' | 'bottom' | 'left';
+  side?: "top" | "right" | "bottom" | "left";
   onScrollToBottom?: () => void;
   footerContent?: ReactNode;
 }
@@ -37,9 +37,9 @@ export default function CustomSheet({
   stickyHeader = false,
   stickyFooter = false,
   scrollableContent = true,
-  maxHeight = '80vh',
-  maxWidth = 'md',
-  side = 'right',
+  maxHeight = "80vh",
+  maxWidth = "md",
+  side = "right",
   onScrollToBottom,
   footerContent,
 }: CustomSheetProps) {
@@ -51,8 +51,7 @@ export default function CustomSheet({
     if (!content) return;
 
     const scrollPercentage =
-      content.scrollTop /
-      (content.scrollHeight - content.clientHeight);
+      content.scrollTop / (content.scrollHeight - content.clientHeight);
     if (scrollPercentage >= 0.99 && !hasReadToBottom) {
       setHasReadToBottom(true);
       onScrollToBottom?.();
@@ -68,13 +67,13 @@ export default function CustomSheet({
       >
         {headerContent ? (
           <SheetHeader
-            className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
+            className={`contents space-y-0 text-left ${stickyHeader ? "sticky top-0 z-10 bg-background" : ""}`}
           >
             {headerContent}
           </SheetHeader>
         ) : (
           <SheetHeader
-            className={`contents space-y-0 text-left ${stickyHeader ? 'sticky top-0 z-10 bg-background' : ''}`}
+            className={`contents space-y-0 text-left ${stickyHeader ? "sticky top-0 z-10 bg-background" : ""}`}
           >
             <SheetTitle className="border-b border-border px-6 py-4 text-base">
               {title}
@@ -86,16 +85,16 @@ export default function CustomSheet({
           ref={contentRef}
           onScroll={scrollableContent ? handleScroll : undefined}
           className={`
-            ${scrollableContent ? 'overflow-y-auto' : ''}
-            ${!stickyHeader && !stickyFooter ? 'grow' : ''}
-            ${side === 'left' || side === 'right' ? `max-h-[calc(100vh-8rem)]` : ''}
+            ${scrollableContent ? "overflow-y-auto" : ""}
+            ${!stickyHeader && !stickyFooter ? "grow" : ""}
+            ${side === "left" || side === "right" ? `max-h-[calc(100vh-8rem)]` : ""}
           `}
         >
           {content}
         </div>
         {footerContent && (
           <SheetFooter
-            className={`border-t border-border px-6 py-4 sm:items-center ${stickyFooter ? 'sticky bottom-0 z-10 bg-background' : ''}`}
+            className={`border-t border-border px-6 py-4 sm:items-center ${stickyFooter ? "sticky bottom-0 z-10 bg-background" : ""}`}
           >
             {footerContent}
           </SheetFooter>

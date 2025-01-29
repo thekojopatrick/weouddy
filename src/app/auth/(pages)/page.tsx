@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AuthForm } from '../../../components/auth/auth-form';
-import { createClient } from '@/utils/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AuthForm } from "../../../components/auth/auth-form";
+import { createClient } from "@/utils/supabase/client";
+import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ export default function AuthPage() {
 
       if (user) {
         setAuthenticated(true);
-        router.push('/discover');
+        router.push("/discover");
       } else {
         setLoading(false);
       }
@@ -34,7 +34,7 @@ export default function AuthPage() {
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setAuthenticated(true);
-        router.push('/discover');
+        router.push("/discover");
       }
     });
 

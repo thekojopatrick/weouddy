@@ -1,8 +1,8 @@
-'use client'; // Error boundaries must be Client Components
+"use client"; // Error boundaries must be Client Components
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Error({
   error,
@@ -27,18 +27,14 @@ export default function Error({
       </div>
       <div className="flex gap-x-3">
         <Button
-          variant={'default'}
+          variant={"default"}
           className="rounded-full"
           onClick={() => window.location.reload()}
         >
           Let&apos;s try again
         </Button>
-        <Button
-          variant={'secondary'}
-          className="rounded-full"
-          asChild
-        >
-          <Link href={'/contact'}>Contact Support</Link>
+        <Button variant={"secondary"} className="rounded-full" asChild>
+          <Link href={"/contact"}>Contact Support</Link>
         </Button>
       </div>
     </div>

@@ -1,12 +1,7 @@
-import React from 'react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
-import { type LucideIcon } from 'lucide-react';
+import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { type LucideIcon } from "lucide-react";
 
 export interface TabItem {
   value: string;
@@ -18,13 +13,13 @@ export interface TabItem {
 interface CustomTabsProps {
   items: TabItem[];
   variant?:
-    | 'pill'
-    | 'underline'
-    | 'icon'
-    | 'pill-leading-icon'
-    | 'pill-trailing-icon'
-    | 'underline-leading-icon'
-    | 'underline-trailing-icon';
+    | "pill"
+    | "underline"
+    | "icon"
+    | "pill-leading-icon"
+    | "pill-trailing-icon"
+    | "underline-leading-icon"
+    | "underline-trailing-icon";
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   className?: string;
@@ -32,87 +27,77 @@ interface CustomTabsProps {
 
 export function CustomTabs({
   items,
-  variant = 'pill',
+  variant = "pill",
   defaultValue = items[0]?.value,
   onValueChange,
   className,
 }: CustomTabsProps) {
   const getTabListClassName = () => {
     switch (variant) {
-      case 'pill':
-      case 'pill-leading-icon':
-      case 'pill-trailing-icon':
-        return 'gap-1 bg-transparent';
-      case 'underline':
-      case 'underline-leading-icon':
-      case 'underline-trailing-icon':
-        return 'h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground grid w-full grid-cols-3 md:grid-cols-4';
-      case 'icon':
-        return 'h-auto rounded-none border-b border-border bg-transparent p-0';
+      case "pill":
+      case "pill-leading-icon":
+      case "pill-trailing-icon":
+        return "gap-1 bg-transparent";
+      case "underline":
+      case "underline-leading-icon":
+      case "underline-trailing-icon":
+        return "h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground grid w-full grid-cols-3 md:grid-cols-4";
+      case "icon":
+        return "h-auto rounded-none border-b border-border bg-transparent p-0";
       default:
-        return '';
+        return "";
     }
   };
 
   const getTabTriggerClassName = () => {
     switch (variant) {
-      case 'pill':
-      case 'pill-leading-icon':
-      case 'pill-trailing-icon':
-        return 'rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none';
-      case 'underline':
-      case 'underline-leading-icon':
-      case 'underline-trailing-icon':
-        return 'relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent';
-      case 'icon':
-        return 'relative flex-col rounded-none px-4 py-2 text-xs after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary';
+      case "pill":
+      case "pill-leading-icon":
+      case "pill-trailing-icon":
+        return "rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none";
+      case "underline":
+      case "underline-leading-icon":
+      case "underline-trailing-icon":
+        return "relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent";
+      case "icon":
+        return "relative flex-col rounded-none px-4 py-2 text-xs after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary";
       default:
-        return '';
+        return "";
     }
   };
 
   const renderTabContent = (item: TabItem) => {
     const IconComponent = item.icon;
-    const [label, count] = item.label.split(' ');
+    const [label, count] = item.label.split(" ");
 
     switch (variant) {
-      case 'pill-leading-icon':
-      case 'underline-leading-icon':
+      case "pill-leading-icon":
+      case "underline-leading-icon":
         return (
           <>
             {IconComponent && (
-              <IconComponent
-                className="mr-2 h-4 w-4"
-                aria-hidden="true"
-              />
+              <IconComponent className="mr-2 h-4 w-4" aria-hidden="true" />
             )}
-            {label}{' '}
+            {label}{" "}
             {count && (
-              <span className="ml-2 text-muted-foreground">
-                {count}
-              </span>
+              <span className="ml-2 text-muted-foreground">{count}</span>
             )}
           </>
         );
-      case 'pill-trailing-icon':
-      case 'underline-trailing-icon':
+      case "pill-trailing-icon":
+      case "underline-trailing-icon":
         return (
           <>
-            {label}{' '}
+            {label}{" "}
             {count && (
-              <span className="ml-2 text-muted-foreground">
-                {count}
-              </span>
+              <span className="ml-2 text-muted-foreground">{count}</span>
             )}
             {IconComponent && (
-              <IconComponent
-                className="ml-2 h-4 w-4"
-                aria-hidden="true"
-              />
+              <IconComponent className="ml-2 h-4 w-4" aria-hidden="true" />
             )}
           </>
         );
-      case 'icon':
+      case "icon":
         return (
           <>
             {IconComponent && (
@@ -127,11 +112,9 @@ export function CustomTabs({
       default:
         return (
           <>
-            {label}{' '}
+            {label}{" "}
             {count && (
-              <span className="ml-2 text-muted-foreground">
-                {count}
-              </span>
+              <span className="ml-2 text-muted-foreground">{count}</span>
             )}
           </>
         );
@@ -142,7 +125,7 @@ export function CustomTabs({
     <Tabs
       defaultValue={defaultValue}
       onValueChange={onValueChange}
-      className={cn('container mx-auto px-4 py-6', className)}
+      className={cn("container mx-auto px-4 py-6", className)}
     >
       <TabsList className={cn(getTabListClassName())}>
         {items.map((item) => (
@@ -151,11 +134,11 @@ export function CustomTabs({
             value={item.value}
             className={cn(
               getTabTriggerClassName(),
-              (variant === 'pill-leading-icon' ||
-                variant === 'pill-trailing-icon' ||
-                variant === 'underline-leading-icon' ||
-                variant === 'underline-trailing-icon') &&
-                'flex items-center'
+              (variant === "pill-leading-icon" ||
+                variant === "pill-trailing-icon" ||
+                variant === "underline-leading-icon" ||
+                variant === "underline-trailing-icon") &&
+                "flex items-center",
             )}
           >
             {renderTabContent(item)}

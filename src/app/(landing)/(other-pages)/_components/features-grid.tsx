@@ -1,4 +1,4 @@
-import { FeatureCard } from './feature-card';
+import { FeatureCard } from "./feature-card";
 
 export const FeaturesGrid = () => (
   <div className="grid md:grid-cols-2 gap-8 mb-16">

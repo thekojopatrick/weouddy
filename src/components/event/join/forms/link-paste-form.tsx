@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { LinkIcon, QrCode } from 'lucide-react';
+import { LinkIcon, QrCode } from "lucide-react";
 
-import { LoadingButton } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { LoadingButton } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface LinkPasteFormProps {
   onSubmitAction: (link: string) => void;
@@ -18,7 +18,7 @@ export function LinkPasteForm({
   onScanQRAction,
   isLoading,
 }: LinkPasteFormProps) {
-  const [link, setLink] = useState('');
+  const [link, setLink] = useState("");
 
   return (
     <div className="space-y-6 pb-5 px-4 md:px-0 md:py-6">
@@ -57,9 +57,7 @@ export function LinkPasteForm({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            or
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">or</span>
         </div>
       </div>
 

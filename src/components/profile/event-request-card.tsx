@@ -1,17 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Check, X, RotateCcw } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Check, X, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 
 // Types for our components
-type RequestStatus = 'PENDING' | 'APPROVED' | 'DENIED';
+type RequestStatus = "PENDING" | "APPROVED" | "DENIED";
 
 interface AttendeeRequest {
   id: string;
@@ -34,10 +30,7 @@ export const RequestCard = ({
   onStatusChange,
 }: {
   request: AttendeeRequest;
-  onStatusChange: (
-    requestId: string,
-    newStatus: RequestStatus
-  ) => void;
+  onStatusChange: (requestId: string, newStatus: RequestStatus) => void;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,13 +38,11 @@ export const RequestCard = ({
     setIsLoading(true);
     try {
       await onStatusChange(request.id, newStatus);
-      toast.success(
-        `Request ${newStatus.toLowerCase()} successfully`
-      );
+      toast.success(`Request ${newStatus.toLowerCase()} successfully`);
     } catch (error) {
       console.log(error);
 
-      toast.error('Failed to update request status');
+      toast.error("Failed to update request status");
     } finally {
       setIsLoading(false);
     }
@@ -61,10 +52,7 @@ export const RequestCard = ({
     <div className="flex items-center justify-between p-4 border rounded-lg mb-4 bg-card">
       <div className="flex items-center gap-4">
         <Avatar className="h-10 w-10">
-          <AvatarImage
-            src={request.user.avatarUrl}
-            alt={request.user.name}
-          />
+          <AvatarImage src={request.user.avatarUrl} alt={request.user.name} />
           <AvatarFallback>{request.user.name[0]}</AvatarFallback>
         </Avatar>
         <div>
@@ -79,13 +67,13 @@ export const RequestCard = ({
       </div>
 
       <div className="flex gap-2">
-        {request.status === 'PENDING' && (
+        {request.status === "PENDING" && (
           <>
             <Button
               size="sm"
               variant="ghost"
               className="text-red-500 hover:text-red-600 hover:bg-red-50"
-              onClick={() => handleStatusChange('DENIED')}
+              onClick={() => handleStatusChange("DENIED")}
               disabled={isLoading}
             >
               <X className="h-4 w-4" />
@@ -94,19 +82,19 @@ export const RequestCard = ({
               size="sm"
               variant="ghost"
               className="text-green-500 hover:text-green-600 hover:bg-green-50"
-              onClick={() => handleStatusChange('APPROVED')}
+              onClick={() => handleStatusChange("APPROVED")}
               disabled={isLoading}
             >
               <Check className="h-4 w-4" />
             </Button>
           </>
         )}
-        {request.status === 'DENIED' && (
+        {request.status === "DENIED" && (
           <Button
             size="sm"
             variant="ghost"
             className="text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-            onClick={() => handleStatusChange('PENDING')}
+            onClick={() => handleStatusChange("PENDING")}
             disabled={isLoading}
           >
             <RotateCcw className="h-4 w-4" />

@@ -1,38 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { MessageSquare, Clock, Shield } from 'lucide-react';
-import type { ChatSettings } from '@/types/chat';
-import { updateChatSettings } from '@/server/actions/chat/mutations';
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { MessageSquare, Clock, Shield } from "lucide-react";
+import type { ChatSettings } from "@/types/chat";
+import { updateChatSettings } from "@/server/actions/chat/mutations";
 
 interface ChatSettingsProps {
   roomId: string;
   initialSettings: ChatSettings;
 }
 
-export function ChatSettings({
-  roomId,
-  initialSettings,
-}: ChatSettingsProps) {
+export function ChatSettings({ roomId, initialSettings }: ChatSettingsProps) {
   const [settings, setSettings] = useState(initialSettings);
 
   const handleSettingChange = async (
     key: keyof ChatSettings,
-    value: boolean | number
+    value: boolean | number,
   ) => {
     try {
       await updateChatSettings(roomId, { [key]: value });
       setSettings((prev) => ({ ...prev, [key]: value }));
     } catch (error) {
-      console.error('Failed to update chat settings:', error);
+      console.error("Failed to update chat settings:", error);
     }
   };
 
@@ -55,7 +47,7 @@ export function ChatSettings({
           <Switch
             checked={settings.isEnabled}
             onCheckedChange={(checked) =>
-              handleSettingChange('isEnabled', checked)
+              handleSettingChange("isEnabled", checked)
             }
           />
         </div>
@@ -70,7 +62,7 @@ export function ChatSettings({
           <Switch
             checked={settings.allowGuestMessages}
             onCheckedChange={(checked) =>
-              handleSettingChange('allowGuestMessages', checked)
+              handleSettingChange("allowGuestMessages", checked)
             }
           />
         </div>
@@ -84,14 +76,14 @@ export function ChatSettings({
             <Switch
               checked={settings.slowMode}
               onCheckedChange={(checked) =>
-                handleSettingChange('slowMode', checked)
+                handleSettingChange("slowMode", checked)
               }
             />
             {settings.slowMode && (
               <Slider
                 value={[settings.slowModeInterval]}
                 onValueChange={([value]) =>
-                  handleSettingChange('slowModeInterval', value)
+                  handleSettingChange("slowModeInterval", value)
                 }
                 min={5}
                 max={300}
@@ -102,7 +94,7 @@ export function ChatSettings({
             <div className="text-sm text-muted-foreground">
               {settings.slowMode
                 ? `Users must wait ${settings.slowModeInterval} seconds between messages`
-                : 'No delay between messages'}
+                : "No delay between messages"}
             </div>
           </div>
         </div>
@@ -120,7 +112,7 @@ export function ChatSettings({
           <Switch
             checked={settings.requireModeration}
             onCheckedChange={(checked) =>
-              handleSettingChange('requireModeration', checked)
+              handleSettingChange("requireModeration", checked)
             }
           />
         </div>

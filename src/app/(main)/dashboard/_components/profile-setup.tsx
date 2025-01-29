@@ -1,13 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Check, Building2, FolderKanban } from 'lucide-react';
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Check, Building2, FolderKanban } from "lucide-react";
+import React from "react";
+import { Button } from "@/components/ui/button";
 
 const ProfileSetupComponets = () => {
   return (
@@ -31,8 +26,8 @@ const ProfileSetupComponets = () => {
           </div>
 
           <p className="text-sm text-gray-500">
-            Your profile needs to be at least 50% complete to be
-            publicly visible.
+            Your profile needs to be at least 50% complete to be publicly
+            visible.
           </p>
 
           <div className="space-y-3">

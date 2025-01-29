@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { useMemo, useState } from 'react';
+} from "@/components/ui/popover";
+import { useMemo, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { SmilePlus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SmilePlus } from "lucide-react";
 
 interface Emoji {
   emoji: string;
@@ -17,43 +17,41 @@ interface Emoji {
 }
 
 const allEmojis: Emoji[] = [
-  { emoji: '😀', name: 'grinning face' },
-  { emoji: '😂', name: 'face with tears of joy' },
-  { emoji: '😍', name: 'smiling face with heart-eyes' },
-  { emoji: '🤔', name: 'thinking face' },
-  { emoji: '😎', name: 'smiling face with sunglasses' },
-  { emoji: '👍', name: 'thumbs up' },
-  { emoji: '❤️', name: 'red heart' },
-  { emoji: '🔥', name: 'fire' },
-  { emoji: '🎉', name: 'party popper' },
-  { emoji: '👏', name: 'clapping hands' },
-  { emoji: '🌟', name: 'glowing star' },
-  { emoji: '🍕', name: 'pizza' },
-  { emoji: '🎸', name: 'guitar' },
-  { emoji: '🚀', name: 'rocket' },
-  { emoji: '🌈', name: 'rainbow' },
-  { emoji: '🦄', name: 'unicorn' },
-  { emoji: '🍦', name: 'soft ice cream' },
-  { emoji: '🎭', name: 'performing arts' },
-  { emoji: '🌺', name: 'hibiscus' },
-  { emoji: '🐶', name: 'dog face' },
+  { emoji: "😀", name: "grinning face" },
+  { emoji: "😂", name: "face with tears of joy" },
+  { emoji: "😍", name: "smiling face with heart-eyes" },
+  { emoji: "🤔", name: "thinking face" },
+  { emoji: "😎", name: "smiling face with sunglasses" },
+  { emoji: "👍", name: "thumbs up" },
+  { emoji: "❤️", name: "red heart" },
+  { emoji: "🔥", name: "fire" },
+  { emoji: "🎉", name: "party popper" },
+  { emoji: "👏", name: "clapping hands" },
+  { emoji: "🌟", name: "glowing star" },
+  { emoji: "🍕", name: "pizza" },
+  { emoji: "🎸", name: "guitar" },
+  { emoji: "🚀", name: "rocket" },
+  { emoji: "🌈", name: "rainbow" },
+  { emoji: "🦄", name: "unicorn" },
+  { emoji: "🍦", name: "soft ice cream" },
+  { emoji: "🎭", name: "performing arts" },
+  { emoji: "🌺", name: "hibiscus" },
+  { emoji: "🐶", name: "dog face" },
 ];
 
 interface EmojiPickerProps {
   onEmojiSelectAction: (emoji: string) => void;
 }
 
-export function EmojiPicker({
-  onEmojiSelectAction,
-}: EmojiPickerProps) {
+export function EmojiPicker({ onEmojiSelectAction }: EmojiPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const filteredEmojis = useMemo(() => {
     return allEmojis.filter(
       (emoji) =>
         emoji.name.toLowerCase().includes(search.toLowerCase()) ||
-        emoji.emoji.includes(search)
+        emoji.emoji.includes(search),
     );
   }, [search]);
 

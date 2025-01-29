@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { db } from '@/server/db/prisma';
-import { EventActivityType } from '@prisma/client';
+import { z } from "zod";
+import { db } from "@/server/db/prisma";
+import { EventActivityType } from "@prisma/client";
 
 // Input validation schema
 const JoinEventSchema = z.object({
@@ -12,7 +12,7 @@ const JoinEventSchema = z.object({
 class JoinEventError extends Error {
   constructor(
     message: string,
-    public code: string
+    public code: string,
   ) {
     super(message);
   }
@@ -20,7 +20,7 @@ class JoinEventError extends Error {
 
 async function verifyPinCode(
   storedPinCode: string | null,
-  providedPin: string
+  providedPin: string,
 ): Promise<boolean> {
   if (!storedPinCode) return false;
   return storedPinCode.trim() === providedPin.trim();
@@ -38,7 +38,7 @@ async function fetchEventWithDetails(identifier: string) {
 async function createEventActivity(
   eventId: string,
   userId: string,
-  type: EventActivityType
+  type: EventActivityType,
 ) {
   return db.eventActivity.create({
     data: {
@@ -49,30 +49,27 @@ async function createEventActivity(
   });
 }
 
-export async function joinEvent(
-  input: z.infer<typeof JoinEventSchema>
-) {
+export async function joinEvent(input: z.infer<typeof JoinEventSchema>) {
   const { identifier, userId, pin } = JoinEventSchema.parse(input);
 
   // Fetch event details
   const event = await fetchEventWithDetails(identifier);
-  if (!event)
-    throw new JoinEventError('Event not found.', 'EVENT_NOT_FOUND');
+  if (!event) throw new JoinEventError("Event not found.", "EVENT_NOT_FOUND");
 
   // Check if event is disabled
   if (event.isDisabled) {
     throw new JoinEventError(
-      'This event is no longer available.',
-      'EVENT_DISABLED'
+      "This event is no longer available.",
+      "EVENT_DISABLED",
     );
   }
 
   // If user is the host, grant immediate access without creating attendee record
   if (event.hostId === userId) {
-    await createEventActivity(event.id, userId, 'JOIN');
+    await createEventActivity(event.id, userId, "JOIN");
     return {
       success: true,
-      status: 'JOINED',
+      status: "JOINED",
       event: {
         id: event.id,
         name: event.name,
@@ -83,7 +80,7 @@ export async function joinEvent(
   }
 
   // For invite-only events, create pending request
-  if (event.accessType === 'INVITE_ONLY') {
+  if (event.accessType === "INVITE_ONLY") {
     const attendee = await db.$transaction(async (tx) => {
       const attendee = await tx.attendee.upsert({
         where: {
@@ -92,14 +89,14 @@ export async function joinEvent(
         create: {
           eventId: event.id,
           userId,
-          status: 'PENDING',
+          status: "PENDING",
         },
         update: {
-          status: 'PENDING',
+          status: "PENDING",
         },
       });
 
-      await createEventActivity(event.id, userId, 'RESQUEST_PENDING');
+      await createEventActivity(event.id, userId, "RESQUEST_PENDING");
       return attendee;
     });
 
@@ -116,26 +113,24 @@ export async function joinEvent(
   }
 
   // Validate PIN if required
-  if (event.accessType === 'PIN_REQUIRED') {
+  if (event.accessType === "PIN_REQUIRED") {
     if (!pin) {
       throw new JoinEventError(
-        'PIN is required for this event.',
-        'PIN_REQUIRED'
+        "PIN is required for this event.",
+        "PIN_REQUIRED",
       );
     }
     if (!(await verifyPinCode(event.pinCode, pin))) {
-      await createEventActivity(event.id, userId, 'ACCESS_DENIED');
+      await createEventActivity(event.id, userId, "ACCESS_DENIED");
       throw new JoinEventError(
-        'Invalid PIN provided for this event.',
-        'INVALID_PIN'
+        "Invalid PIN provided for this event.",
+        "INVALID_PIN",
       );
     }
   }
 
   // Determine initial status based on approval requirements
-  const initialStatus = event.requiresApproval
-    ? 'PENDING'
-    : 'APPROVED';
+  const initialStatus = event.requiresApproval ? "PENDING" : "APPROVED";
 
   // Use transaction to ensure consistency
   const attendee = await db.$transaction(async (tx) => {
@@ -146,11 +141,11 @@ export async function joinEvent(
       },
     });
 
-    if (existingAttendee?.status === 'DENIED') {
-      await createEventActivity(event.id, userId, 'ACCESS_DENIED');
+    if (existingAttendee?.status === "DENIED") {
+      await createEventActivity(event.id, userId, "ACCESS_DENIED");
       throw new JoinEventError(
-        'Access to this event has been denied.',
-        'ACCESS_DENIED'
+        "Access to this event has been denied.",
+        "ACCESS_DENIED",
       );
     }
 
@@ -169,11 +164,11 @@ export async function joinEvent(
     });
 
     // Create appropriate activity log
-    if (initialStatus === 'APPROVED') {
-      await createEventActivity(event.id, userId, 'ACCESS_GRANTED');
-      await createEventActivity(event.id, userId, 'JOIN');
+    if (initialStatus === "APPROVED") {
+      await createEventActivity(event.id, userId, "ACCESS_GRANTED");
+      await createEventActivity(event.id, userId, "JOIN");
     } else {
-      await createEventActivity(event.id, userId, 'RESQUEST_PENDING');
+      await createEventActivity(event.id, userId, "RESQUEST_PENDING");
     }
 
     return attendee;
@@ -191,12 +186,9 @@ export async function joinEvent(
   };
 }
 
-export async function checkAttendeeStatus(
-  eventId: string,
-  userId: string
-) {
+export async function checkAttendeeStatus(eventId: string, userId: string) {
   const event = await db.event.findUnique({
-    where: { id: eventId ?? '' },
+    where: { id: eventId ?? "" },
     select: { hostId: true },
   });
 
@@ -204,7 +196,7 @@ export async function checkAttendeeStatus(
   if (event?.hostId === userId) {
     return {
       id: eventId,
-      status: 'JOINED',
+      status: "JOINED",
       event: { id: eventId },
     };
   }
@@ -213,7 +205,7 @@ export async function checkAttendeeStatus(
     where: {
       userId_eventId: {
         userId,
-        eventId: eventId ?? '',
+        eventId: eventId ?? "",
       },
     },
     select: {
@@ -226,14 +218,13 @@ export async function checkAttendeeStatus(
   if (!attendee) {
     return {
       id: eventId,
-      status: 'NOT_JOINED',
+      status: "NOT_JOINED",
     };
   }
 
   // Map APPROVED status to JOINED for consistency
   return {
     ...attendee,
-    status:
-      attendee.status === 'APPROVED' ? 'JOINED' : attendee.status,
+    status: attendee.status === "APPROVED" ? "JOINED" : attendee.status,
   };
 }

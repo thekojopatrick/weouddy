@@ -1,41 +1,37 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
-import { signInWithMagicLinkAction } from '@/app/actions/auth';
-import { useActionState, useState } from 'react';
-import { ActionState } from '@/utils/auth/middleware';
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
+import { signInWithMagicLinkAction } from "@/app/actions/auth";
+import { useActionState, useState } from "react";
+import { ActionState } from "@/utils/auth/middleware";
 
-import { createClient } from '@/utils/supabase/client';
-import { getURL } from '@/utils';
-import SVGLogo from '@/components/svg-logo';
+import { createClient } from "@/utils/supabase/client";
+import { getURL } from "@/utils";
+import SVGLogo from "@/components/svg-logo";
 
-export function Login({
-  mode = 'signin',
-}: {
-  mode?: 'signin' | 'signup';
-}) {
+export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect');
-  const priceId = searchParams.get('priceId');
-  const discountCode = searchParams.get('discountCode');
+  const redirect = searchParams.get("redirect");
+  const priceId = searchParams.get("priceId");
+  const discountCode = searchParams.get("discountCode");
 
   const handleGoogleSignIn = () => {
     const redirectTo = `${getURL()}auth/callback`;
     setLoading(true);
     const supabase = createClient();
     supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
       options: {
         redirectTo: `${redirectTo}?priceId=${encodeURIComponent(
-          priceId || ''
+          priceId || "",
         )}&discountCode=${encodeURIComponent(
-          discountCode || ''
-        )}&redirect=${encodeURIComponent('/test')}`,
+          discountCode || "",
+        )}&redirect=${encodeURIComponent("/test")}`,
       },
     });
     setLoading(false);
@@ -44,7 +40,7 @@ export function Login({
   const [magicLinkState, magicLinkAction, pending] = useActionState<
     ActionState,
     FormData
-  >(signInWithMagicLinkAction, { error: '', success: '' });
+  >(signInWithMagicLinkAction, { error: "", success: "" });
 
   return (
     <div className="min-h-[100dvh] bg-linear-to-b from-white to-gray-50 flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
@@ -54,12 +50,12 @@ export function Login({
         </div>
 
         <h1 className="mt-10 text-2xl font-semibold tracking-tight text-center text-gray-900">
-          {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+          {mode === "signin" ? "Welcome back" : "Create your account"}
         </h1>
         <p className="mt-2 text-sm text-center text-gray-600">
-          {mode === 'signin'
-            ? 'Sign in to continue to your account'
-            : 'Get started with your new account'}
+          {mode === "signin"
+            ? "Sign in to continue to your account"
+            : "Get started with your new account"}
         </p>
 
         <div className="mt-10">
@@ -69,8 +65,7 @@ export function Login({
                 Check your email
               </h3>
               <p className="mt-2 text-sm text-green-700">
-                We&apos;ve sent you a magic link to sign in to your
-                account.
+                We&apos;ve sent you a magic link to sign in to your account.
               </p>
             </div>
           ) : (
@@ -83,15 +78,11 @@ export function Login({
                   required
                   className="px-4 h-12 bg-white rounded-lg border-gray-200 shadow-xs transition-colors focus:border-blue-500 focus:ring-blue-500"
                 />
-                <input
-                  type="hidden"
-                  name="priceId"
-                  value={priceId || ''}
-                />
+                <input type="hidden" name="priceId" value={priceId || ""} />
                 <input
                   type="hidden"
                   name="discountCode"
-                  value={discountCode || ''}
+                  value={discountCode || ""}
                 />
 
                 <Button
@@ -101,7 +92,7 @@ export function Login({
                   {pending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    'Continue with Email'
+                    "Continue with Email"
                   )}
                 </Button>
               </form>
@@ -157,16 +148,16 @@ export function Login({
           )}
 
           <p className="mt-8 text-sm text-center text-gray-600">
-            {mode === 'signin'
-              ? 'New to our platform? '
-              : 'Already have an account? '}
+            {mode === "signin"
+              ? "New to our platform? "
+              : "Already have an account? "}
             <Link
-              href={`${mode === 'signin' ? '/sign-up' : '/sign-in'}${
-                redirect ? `?redirect=${redirect}` : ''
-              }${priceId ? `&priceId=${priceId}` : ''}`}
+              href={`${mode === "signin" ? "/sign-up" : "/sign-in"}${
+                redirect ? `?redirect=${redirect}` : ""
+              }${priceId ? `&priceId=${priceId}` : ""}`}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              {mode === 'signin' ? 'Create an account' : 'Sign in'}
+              {mode === "signin" ? "Create an account" : "Sign in"}
             </Link>
           </p>
         </div>

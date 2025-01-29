@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import {
   RiInstagramLine,
   RiSnapchatLine,
   RiTwitterXFill,
-} from '@remixicon/react';
+} from "@remixicon/react";
 
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion } from 'motion/react';
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "motion/react";
 
 export default function HeroSection() {
   return (
@@ -47,17 +47,17 @@ export default function HeroSection() {
         transition={{ duration: 0.8 }}
       >
         <div className="flex flex-wrap justify-center gap-2">
-          <Link prefetch href={'/discover'}>
+          <Link prefetch href={"/discover"}>
             <Button
               variant="outline"
-              size={'lg'}
+              size={"lg"}
               aria-label="Work with us"
               className="rounded-full h-12 font-semibold"
             >
               Explore Events
             </Button>
           </Link>
-          <Link href={'https://x.com/OfficialWeouddy'}>
+          <Link href={"https://x.com/OfficialWeouddy"}>
             <Button
               size="icon"
               variant="outline"
@@ -72,7 +72,7 @@ export default function HeroSection() {
               />
             </Button>
           </Link>
-          <Link href={'https://www.instagram.com/weouddy/'}>
+          <Link href={"https://www.instagram.com/weouddy/"}>
             <Button
               size="icon"
               variant="outline"

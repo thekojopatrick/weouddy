@@ -1,19 +1,15 @@
-'use client';
+"use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { FollowsDialog } from '@/components/profile/follows-dialog';
-import { Plus } from 'lucide-react';
-import InviteModal from './invite-modal';
-import { getNameInitials } from '@/lib/utils';
+import Link from "next/link";
+import { useState } from "react";
+import { FollowsDialog } from "@/components/profile/follows-dialog";
+import { Plus } from "lucide-react";
+import InviteModal from "./invite-modal";
+import { getNameInitials } from "@/lib/utils";
 
 interface ProfileHeaderProps {
   id: string;
@@ -70,9 +66,7 @@ export function ProfileHeader({
           {isOwnProfile && (
             <>
               <Button variant="outline" className="shadow-none">
-                <Link href={`/${username}/settings`}>
-                  Edit Profile
-                </Link>
+                <Link href={`/${username}/settings`}>Edit Profile</Link>
               </Button>
               <>
                 <InviteModal

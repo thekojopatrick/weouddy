@@ -1,8 +1,8 @@
-import { db } from '@/server/db/prisma';
-import { UserProfile } from './types';
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { FollowService } from './follow.service';
+import { db } from "@/server/db/prisma";
+import { UserProfile } from "./types";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { FollowService } from "./follow.service";
 
 const updateProfileSchema = z.object({
   name: z.string().min(2),
@@ -13,7 +13,7 @@ const updateProfileSchema = z.object({
 
 export class ProfileService {
   static async getUserProfile(
-    usernameOrId: string
+    usernameOrId: string,
   ): Promise<UserProfile | null> {
     return db.user.findFirst({
       where: {
@@ -33,7 +33,7 @@ export class ProfileService {
 
   static async updateProfile(
     userId: string,
-    data: z.infer<typeof updateProfileSchema>
+    data: z.infer<typeof updateProfileSchema>,
   ) {
     const validatedData = updateProfileSchema.parse(data);
 
@@ -42,7 +42,7 @@ export class ProfileService {
     });
 
     if (existingUser && existingUser.id !== userId) {
-      throw new Error('Username is already taken');
+      throw new Error("Username is already taken");
     }
 
     const updatedUser = await db.user.update({
@@ -62,10 +62,7 @@ export class ProfileService {
       FollowService.getFollowStats(user.id),
       db.event.count({
         where: {
-          OR: [
-            { hostId: user.id },
-            { members: { some: { id: user.id } } },
-          ],
+          OR: [{ hostId: user.id }, { members: { some: { id: user.id } } }],
         },
       }),
       db.post.count({

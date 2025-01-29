@@ -1,6 +1,6 @@
 interface PageHeaderProps {
-  title: string
-  description: string
+  title: string;
+  description: string;
 }
 
 export function PageHeader({ title, description }: PageHeaderProps) {
@@ -9,6 +9,5 @@ export function PageHeader({ title, description }: PageHeaderProps) {
       <h1 className="text-2xl font-semibold">{title}</h1>
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>
-  )
+  );
 }
-

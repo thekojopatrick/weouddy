@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
+import * as z from "zod";
 
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -10,15 +10,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 
-import { Button, LoadingButton } from '@/components/ui/button';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { loginSchema } from '@/types/validation';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, LoadingButton } from "@/components/ui/button";
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { loginSchema } from "@/types/validation";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface LoginFormProps {
   isLoading: boolean;
@@ -41,8 +41,8 @@ export function LoginForm({
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -60,9 +60,7 @@ export function LoginForm({
           height={48}
           className="h-12 w-12"
         />
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Welcome Back!
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome Back!</h1>
       </div>
 
       <Button
@@ -85,17 +83,12 @@ export function LoginForm({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            or
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">or</span>
         </div>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="grid gap-4"
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
           <FormField
             control={form.control}
             name="email"
@@ -126,7 +119,7 @@ export function LoginForm({
                   <div className="relative">
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Your password"
                       {...field}
                       className="rounded-full h-[44px] text-sm shadow-xs"
@@ -163,21 +156,21 @@ export function LoginForm({
 
           <LoadingButton
             type="submit"
-            className={`w-full rounded-full h-[44px] ${isLoading ? 'cursor-none' : 'cursor-default'}`}
+            className={`w-full rounded-full h-[44px] ${isLoading ? "cursor-none" : "cursor-default"}`}
             disabled={isLoading}
             loading={isLoading}
           >
-            {isLoading ? 'Authenticating..' : 'Continue'}
+            {isLoading ? "Authenticating.." : "Continue"}
           </LoadingButton>
         </form>
       </Form>
 
       <div className="text-center text-sm text-zinc-600">
-        By continuing, you agree to WeOuddy&apos;s{' '}
+        By continuing, you agree to WeOuddy&apos;s{" "}
         <Button variant="link" className="p-0 text-sm h-auto">
           Terms of Service
-        </Button>{' '}
-        and{' '}
+        </Button>{" "}
+        and{" "}
         <Button variant="link" className="p-0 text-sm h-auto">
           Privacy Policy
         </Button>

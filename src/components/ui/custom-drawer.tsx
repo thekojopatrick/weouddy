@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { ReactNode } from 'react';
-import { Drawer } from 'vaul';
-import { cn } from '@/lib/utils';
+import React, { ReactNode } from "react";
+import { Drawer } from "vaul";
+import { cn } from "@/lib/utils";
 
 interface CustomDrawerProps {
   isOpen: boolean;
@@ -28,22 +28,22 @@ export default function CustomDrawer({
   const rootProps = {
     open: isOpen,
     onOpenChange: onClose,
-    ...(side && { direction: 'right' as const }),
+    ...(side && { direction: "right" as const }),
   };
 
   const contentStyles = side
     ? {
         className:
-          'right-2 top-2 bottom-2 fixed z-50 outline-hidden w-[400px] flex rounded-xl!',
+          "right-2 top-2 bottom-2 fixed z-50 outline-hidden w-[400px] flex rounded-xl!",
         style: {
-          '--initial-transform': 'calc(100% + 8px)',
+          "--initial-transform": "calc(100% + 8px)",
         } as React.CSSProperties,
       }
     : {
         className: cn(
-          'bg-background flex flex-col mt-24 outline-hidden',
-          'h-fit fixed bottom-0 left-0 right-0 z-50',
-          'rounded-t-[10px]'
+          "bg-background flex flex-col mt-24 outline-hidden",
+          "h-fit fixed bottom-0 left-0 right-0 z-50",
+          "rounded-t-[10px]",
         ),
       };
 
@@ -56,9 +56,7 @@ export default function CustomDrawer({
           {side ? (
             <div className="bg-background h-full w-full grow overflow-hidden rounded-[16px] flex flex-col">
               {headerContent ? (
-                <div className="px-6 py-4 border-b">
-                  {headerContent}
-                </div>
+                <div className="px-6 py-4 border-b">{headerContent}</div>
               ) : (
                 title && (
                   <div className="px-6 py-4 border-b">
@@ -68,9 +66,7 @@ export default function CustomDrawer({
                   </div>
                 )
               )}
-              <div className="flex-1 overflow-y-auto px-6 py-4">
-                {content}
-              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-4">{content}</div>
               {footerContent && (
                 <div className="border-t px-6 py-4 bg-background">
                   {footerContent}
@@ -81,9 +77,7 @@ export default function CustomDrawer({
             <>
               <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
               {headerContent ? (
-                <div className="px-6 py-4 border-b">
-                  {headerContent}
-                </div>
+                <div className="px-6 py-4 border-b">{headerContent}</div>
               ) : (
                 title && (
                   <div className="px-6 py-4 border-b">

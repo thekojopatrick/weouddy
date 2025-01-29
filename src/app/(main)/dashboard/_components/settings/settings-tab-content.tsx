@@ -1,5 +1,5 @@
-import { TabsContent } from '@/components/ui/tabs';
-import { SettingsCard } from './settings-card';
+import { TabsContent } from "@/components/ui/tabs";
+import { SettingsCard } from "./settings-card";
 
 interface SettingsTabContentProps {
   value: string;

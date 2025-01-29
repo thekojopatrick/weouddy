@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Check, Copy } from 'lucide-react';
+import React from "react";
+import { Check, Copy } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 import {
   RiFacebookFill,
   RiLinksFill,
@@ -14,19 +14,19 @@ import {
   RiShareFill,
   RiTwitterXFill,
   RiWhatsappFill,
-} from '@remixicon/react';
+} from "@remixicon/react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { SharePlatform } from '@/types/enums';
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { SharePlatform } from "@/types/enums";
 
 interface ShareEventPopoverProp {
   inputRef: React.Ref<HTMLInputElement> | null;
@@ -43,20 +43,14 @@ const ShareEventPopover: React.FC<ShareEventPopoverProp> = ({
   copied,
   handleSocialShare,
 }) => {
-  const isSmallDevice = useMediaQuery(
-    'only screen and (max-width : 768px)'
-  );
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
   return (
     <>
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline">
-            <RiShareFill
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
+            <RiShareFill size={16} strokeWidth={2} aria-hidden="true" />
             {!isSmallDevice && <span>Share</span>}
           </Button>
         </PopoverTrigger>
@@ -70,54 +64,32 @@ const ShareEventPopover: React.FC<ShareEventPopoverProp> = ({
                 aria-label="Copy embed code"
                 onClick={() => handleCopy()}
               >
-                <RiLinksFill
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                <RiLinksFill size={16} strokeWidth={2} aria-hidden="true" />
               </Button>
               <Button
                 size="icon"
                 variant="outline"
                 aria-label="Share on WhatsApp"
-                onClick={() =>
-                  handleSocialShare(SharePlatform.WhatsApp)
-                }
+                onClick={() => handleSocialShare(SharePlatform.WhatsApp)}
                 className="bg-[#25D366] hover:bg-[#25D366]/90 text-white hover:text-white border-[#25D366]"
               >
-                <RiWhatsappFill
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                <RiWhatsappFill size={16} strokeWidth={2} aria-hidden="true" />
               </Button>
               <Button
                 size="icon"
                 variant="outline"
                 aria-label="Share on Twitter"
-                onClick={() =>
-                  handleSocialShare(SharePlatform.Twitter)
-                }
+                onClick={() => handleSocialShare(SharePlatform.Twitter)}
               >
-                <RiTwitterXFill
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                <RiTwitterXFill size={16} strokeWidth={2} aria-hidden="true" />
               </Button>
               <Button
                 size="icon"
                 variant="outline"
                 aria-label="Share on Facebook"
-                onClick={() =>
-                  handleSocialShare(SharePlatform.Facebook)
-                }
+                onClick={() => handleSocialShare(SharePlatform.Facebook)}
               >
-                <RiFacebookFill
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                <RiFacebookFill size={16} strokeWidth={2} aria-hidden="true" />
               </Button>
               <Button
                 size="icon"
@@ -125,11 +97,7 @@ const ShareEventPopover: React.FC<ShareEventPopoverProp> = ({
                 aria-label="Share via email"
                 onClick={() => handleSocialShare(SharePlatform.Email)}
               >
-                <RiMailLine
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
+                <RiMailLine size={16} strokeWidth={2} aria-hidden="true" />
               </Button>
             </div>
             <div className="space-y-2">
@@ -148,17 +116,15 @@ const ShareEventPopover: React.FC<ShareEventPopoverProp> = ({
                       <button
                         onClick={handleCopy}
                         className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
-                        aria-label={
-                          copied ? 'Copied' : 'Copy to clipboard'
-                        }
+                        aria-label={copied ? "Copied" : "Copy to clipboard"}
                         disabled={copied}
                       >
                         <div
                           className={cn(
-                            'transition-all',
+                            "transition-all",
                             copied
-                              ? 'scale-100 opacity-100'
-                              : 'scale-0 opacity-0'
+                              ? "scale-100 opacity-100"
+                              : "scale-0 opacity-0",
                           )}
                         >
                           <Check
@@ -170,17 +136,13 @@ const ShareEventPopover: React.FC<ShareEventPopoverProp> = ({
                         </div>
                         <div
                           className={cn(
-                            'absolute transition-all',
+                            "absolute transition-all",
                             copied
-                              ? 'scale-0 opacity-0'
-                              : 'scale-100 opacity-100'
+                              ? "scale-0 opacity-0"
+                              : "scale-100 opacity-100",
                           )}
                         >
-                          <Copy
-                            size={16}
-                            strokeWidth={2}
-                            aria-hidden="true"
-                          />
+                          <Copy size={16} strokeWidth={2} aria-hidden="true" />
                         </div>
                       </button>
                     </TooltipTrigger>

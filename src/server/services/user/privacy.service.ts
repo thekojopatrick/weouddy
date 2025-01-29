@@ -1,5 +1,5 @@
-import { db } from '@/server/db/prisma';
-import { revalidatePath } from 'next/cache';
+import { db } from "@/server/db/prisma";
+import { revalidatePath } from "next/cache";
 
 export class PrivacyService {
   static async updatePrivacySettings(
@@ -7,7 +7,7 @@ export class PrivacyService {
     settings: {
       isPrivateProfile?: boolean;
       allowFollowers?: boolean;
-    }
+    },
   ) {
     const updatedUser = await db.user.update({
       where: { id: userId },
@@ -18,19 +18,13 @@ export class PrivacyService {
     return { success: true };
   }
 
-  static async sendFollowRequest(
-    requestorId: string,
-    targetUserId: string
-  ) {
+  static async sendFollowRequest(requestorId: string, targetUserId: string) {
     const targetUser = await db.user.findUnique({
       where: { id: targetUserId },
     });
 
-    if (
-      !targetUser?.allowFollowers ||
-      !targetUser?.isPrivateProfile
-    ) {
-      throw new Error('Cannot send follow request');
+    if (!targetUser?.allowFollowers || !targetUser?.isPrivateProfile) {
+      throw new Error("Cannot send follow request");
     }
 
     const existingRequest = await db.followRequest.findUnique({
@@ -43,7 +37,7 @@ export class PrivacyService {
     });
 
     if (existingRequest) {
-      throw new Error('Follow request already sent');
+      throw new Error("Follow request already sent");
     }
 
     await db.followRequest.create({
@@ -59,21 +53,18 @@ export class PrivacyService {
   static async manageFollowRequest(
     requestId: string,
     targetUserId: string,
-    action: 'accept' | 'decline'
+    action: "accept" | "decline",
   ) {
     const followRequest = await db.followRequest.findUnique({
       where: { id: requestId },
       select: { targetUserId: true, requestorId: true },
     });
 
-    if (
-      !followRequest ||
-      followRequest.targetUserId !== targetUserId
-    ) {
-      throw new Error('Unauthorized to manage this request');
+    if (!followRequest || followRequest.targetUserId !== targetUserId) {
+      throw new Error("Unauthorized to manage this request");
     }
 
-    if (action === 'accept') {
+    if (action === "accept") {
       await db.follow.create({
         data: {
           followerId: followRequest.requestorId,

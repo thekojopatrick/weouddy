@@ -1,13 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
-const SplashScreen = ({
-  onLoadComplete,
-}: {
-  onLoadComplete: () => void;
-}) => {
+const SplashScreen = ({ onLoadComplete }: { onLoadComplete: () => void }) => {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
@@ -24,15 +20,15 @@ const SplashScreen = ({
   return (
     <div
       className={`fixed inset-0 bg-white flex items-center justify-center z-50 transition-opacity duration-500 ${
-        fadeOut ? 'opacity-0' : 'opacity-100'
+        fadeOut ? "opacity-0" : "opacity-100"
       }`}
     >
       <div className="flex flex-col items-center space-y-4">
         {/* App Logo/Icon */}
         <div className="w-16 h-16 relative text-center">
           <Image
-            src={'/brand/logomark.svg'}
-            alt={'WeOuddy'}
+            src={"/brand/logomark.svg"}
+            alt={"WeOuddy"}
             className="object-cover"
             width={60}
             height={60}

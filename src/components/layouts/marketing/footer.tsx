@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Button, LoadingButton } from '@/components/ui/button';
-import { CheckIcon, CopyIcon } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import { Button, LoadingButton } from "@/components/ui/button";
+import { CheckIcon, CopyIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
-const COMPANY_EMAIL = 'hello.weouddy@gmail.com';
+const COMPANY_EMAIL = "hello.weouddy@gmail.com";
 const CURRENT_YEAR = new Date().getFullYear();
 
 const Footer = () => {
@@ -27,8 +27,8 @@ const Footer = () => {
     try {
       await navigator.clipboard.writeText(COMPANY_EMAIL);
 
-      toast('Email copied!', {
-        description: 'Email address has been copied to clipboard',
+      toast("Email copied!", {
+        description: "Email address has been copied to clipboard",
       });
 
       if (copyTimeoutRef.current) {
@@ -39,11 +39,11 @@ const Footer = () => {
         setCopyState({ isCopying: false, isError: false });
       }, 2000);
     } catch (error) {
-      console.error('Failed to copy:', error);
+      console.error("Failed to copy:", error);
       setCopyState({ isCopying: false, isError: true });
 
-      toast('Failed to copy', {
-        description: 'Please try again or copy manually',
+      toast("Failed to copy", {
+        description: "Please try again or copy manually",
       });
     }
   };
@@ -72,8 +72,8 @@ const Footer = () => {
                     We dey outside
                   </h2>
                   <p className="text-white animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    Let us know the occasion—send the location, and
-                    let&apos;s make it a moment to remember!
+                    Let us know the occasion—send the location, and let&apos;s
+                    make it a moment to remember!
                   </p>
                 </div>
 
@@ -86,8 +86,8 @@ const Footer = () => {
                     loading={copyState.isCopying}
                     aria-label={
                       copyState.isCopying
-                        ? 'Copying email address'
-                        : 'Copy email address'
+                        ? "Copying email address"
+                        : "Copy email address"
                     }
                   >
                     {copyState.isCopying ? (
@@ -106,7 +106,7 @@ const Footer = () => {
                     variant="outline"
                     size="lg"
                     className="rounded-full  w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors"
-                    onClick={() => window.open('/sponsor', '_blank')}
+                    onClick={() => window.open("/sponsor", "_blank")}
                     aria-label="Open sponsorship page"
                   >
                     Sponsor us

@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Plus } from "lucide-react";
 
 interface PlanCardProps {
   name: string;
@@ -34,9 +34,7 @@ export function PlanCard({
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">${price}</div>
-            <div className="text-sm text-muted-foreground">
-              monthly
-            </div>
+            <div className="text-sm text-muted-foreground">monthly</div>
           </div>
         </div>
 

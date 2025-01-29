@@ -1,7 +1,7 @@
-import React from 'react';
-import { EventsStatsComponent } from '../_components/events-stats';
-import { getSession } from '@/lib/auth/server';
-import EventsOverview from '../_components/events/events-overview';
+import React from "react";
+import { EventsStatsComponent } from "../_components/events-stats";
+import { getSession } from "@/lib/auth/server";
+import EventsOverview from "../_components/events/events-overview";
 
 const page = async () => {
   const session = await getSession();

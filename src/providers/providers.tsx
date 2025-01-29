@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 //import posthog from "posthog-js";
 //import { PostHogProvider } from "posthog-js/react";
-import { ReactNode } from 'react';
-import TanstackQueryProvider from './tanstackQuery-provider';
-import { ThemeProvider } from './theme-provider';
+import { ReactNode } from "react";
+import TanstackQueryProvider from "./tanstackQuery-provider";
+import { ThemeProvider } from "./theme-provider";
 
 //import { env } from "@/env";
 //import { RootProvider } from "fumadocs-ui/provider";

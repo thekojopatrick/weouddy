@@ -1,18 +1,25 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Member {
-  name: string
-  image?: string
-  role: string
-  email: string
-  lastActivity: string
-  status: "active" | "inactive"
+  name: string;
+  image?: string;
+  role: string;
+  email: string;
+  lastActivity: string;
+  status: "active" | "inactive";
 }
 
 interface MemberTableProps {
-  members: Member[]
+  members: Member[];
 }
 
 export function MemberTable({ members }: MemberTableProps) {
@@ -36,7 +43,9 @@ export function MemberTable({ members }: MemberTableProps) {
                   {member.image ? (
                     <AvatarImage src={member.image} alt={member.name} />
                   ) : (
-                    <AvatarFallback>{member.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                      {member.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
                   )}
                 </Avatar>
                 <div>{member.name}</div>
@@ -46,12 +55,15 @@ export function MemberTable({ members }: MemberTableProps) {
             <TableCell>{member.email}</TableCell>
             <TableCell>{member.lastActivity}</TableCell>
             <TableCell>
-              <Badge variant={member.status === "active" ? "success" : "secondary"}>{member.status}</Badge>
+              <Badge
+                variant={member.status === "active" ? "success" : "secondary"}
+              >
+                {member.status}
+              </Badge>
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
-  )
+  );
 }
-

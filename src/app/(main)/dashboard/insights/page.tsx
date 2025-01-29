@@ -1,19 +1,19 @@
-import { getSession } from '@/lib/auth';
-import OverviewDashboard from '../_components/overview-dashboard';
-import { ProfilePageData } from '@/types/prisma.types';
-import { redirect } from 'next/navigation';
+import { getSession } from "@/lib/auth";
+import OverviewDashboard from "../_components/overview-dashboard";
+import { ProfilePageData } from "@/types/prisma.types";
+import { redirect } from "next/navigation";
 
 export default async function InsightsPage() {
   const session = await getSession();
 
   if (!session) {
-    redirect('/auth');
+    redirect("/auth");
   }
 
   const profile: ProfilePageData = {
     id: session.userId,
-    name: session?.user.name ?? '',
-    username: session?.user.username ?? '',
+    name: session?.user.name ?? "",
+    username: session?.user.username ?? "",
     avatarUrl: session.user.user_metadata.avatar_url,
     stats: {
       // Use the fetched stats

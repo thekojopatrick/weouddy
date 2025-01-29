@@ -1,30 +1,23 @@
-'use client';
+"use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import React, { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import React, { useState } from "react";
 import {
   RiChat1Fill,
   RiChat1Line,
   RiHeart3Fill,
   RiHeart3Line,
-} from '@remixicon/react';
-import { cn, getNameInitials } from '@/lib/utils';
+} from "@remixicon/react";
+import { cn, getNameInitials } from "@/lib/utils";
 
-import { Badge } from '@/components/ui/badge';
-import { Comments } from './comment-post-dialog';
-import { EventPostCardProps } from './post-card';
-import { PostMediaSlider } from '@/components/post/post-media-slider';
-import { formatTimeAgo } from '@/lib/formatters';
-import { usePostInteractions } from '@/hooks/post/use-post-interaction';
+import { Badge } from "@/components/ui/badge";
+import { Comments } from "./comment-post-dialog";
+import { EventPostCardProps } from "./post-card";
+import { PostMediaSlider } from "@/components/post/post-media-slider";
+import { formatTimeAgo } from "@/lib/formatters";
+import { usePostInteractions } from "@/hooks/post/use-post-interaction";
 
-export function EventPostWithMedia({
-  post,
-  userId,
-}: EventPostCardProps) {
+export function EventPostWithMedia({ post, userId }: EventPostCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const {
@@ -49,25 +42,20 @@ export function EventPostWithMedia({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Badge
-        variant="secondary"
-        className="absolute left-4 top-4 z-10"
-      >
-        {post.userId === userId ? 'Your post' : 'Member'}
+      <Badge variant="secondary" className="absolute left-4 top-4 z-10">
+        {post.userId === userId ? "Your post" : "Member"}
       </Badge>
 
       <PostMediaSlider
         media={post.media}
-        alt={post.caption || ''}
+        alt={post.caption || ""}
         isHovered={isHovered}
       />
 
       <div
         className={cn(
-          'absolute inset-0 bg-black/20 p-4 flex flex-col gap-2',
-          isHovered || window.innerWidth < 768
-            ? 'opacity-100'
-            : 'opacity-0'
+          "absolute inset-0 bg-black/20 p-4 flex flex-col gap-2",
+          isHovered || window.innerWidth < 768 ? "opacity-100" : "opacity-0",
         )}
       >
         <div className="flex items-start gap-2 mt-auto">
@@ -108,8 +96,8 @@ export function EventPostWithMedia({
           <button
             onClick={handleLike}
             className={cn(
-              'p-1 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors z-50',
-              currentUserLiked && 'text-red-500'
+              "p-1 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors z-50",
+              currentUserLiked && "text-red-500",
             )}
           >
             {currentUserLiked ? (

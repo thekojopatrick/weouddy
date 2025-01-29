@@ -1,19 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import {
-  MoreHorizontal,
-  MessageSquare,
-  Paperclip,
-} from 'lucide-react';
-import { getNameInitials } from '@/lib/utils';
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MoreHorizontal, MessageSquare, Paperclip } from "lucide-react";
+import { getNameInitials } from "@/lib/utils";
 
 const EventProjectCard = ({
   project,
@@ -58,21 +50,15 @@ const EventProjectCard = ({
           {/* Stats */}
           <div className="grid grid-cols-3 border-y border-gray-100 dark:border-gray-800">
             <div className="p-4 text-center">
-              <div className="text-2xl font-semibold">
-                {project.tasks}
-              </div>
+              <div className="text-2xl font-semibold">{project.tasks}</div>
               <div className="text-sm text-gray-500">Tasks</div>
             </div>
             <div className="p-4 text-center border-x border-gray-100 dark:border-gray-800">
-              <div className="text-2xl font-semibold">
-                {project.inProgress}
-              </div>
+              <div className="text-2xl font-semibold">{project.inProgress}</div>
               <div className="text-sm text-gray-500">In Progress</div>
             </div>
             <div className="p-4 text-center">
-              <div className="text-2xl font-semibold">
-                {project.completed}
-              </div>
+              <div className="text-2xl font-semibold">{project.completed}</div>
               <div className="text-sm text-gray-500">Completed</div>
             </div>
           </div>
@@ -88,9 +74,7 @@ const EventProjectCard = ({
                 <div className="text-sm text-gray-500">Category</div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      project.categoryColor
-                    }`}
+                    className={`w-2 h-2 rounded-full ${project.categoryColor}`}
                   />
                   {project.category}
                 </div>
@@ -103,7 +87,7 @@ const EventProjectCard = ({
                 <div className="flex items-center gap-2">
                   <Avatar className="h-5 w-5">
                     <AvatarImage
-                      src={'/placeholder.svg'}
+                      src={"/placeholder.svg"}
                       alt={project.assignee}
                     />
                     <AvatarFallback>
@@ -114,9 +98,7 @@ const EventProjectCard = ({
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-500">
-                  Last edited
-                </div>
+                <div className="text-sm text-gray-500">Last edited</div>
                 <div className="flex items-center gap-2">
                   <Avatar className="h-5 w-5">
                     {project.lastEditedAvatar}

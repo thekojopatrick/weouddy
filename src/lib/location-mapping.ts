@@ -19,7 +19,7 @@ export interface CategorizedLocation {
 
 export const locationMapping: LocationMapping = {
   cities: {
-    "accra": {
+    accra: {
       name: "Accra",
       country: "Ghana",
       region: "Africa",
@@ -27,7 +27,7 @@ export const locationMapping: LocationMapping = {
     // Add more cities as needed
   },
   countries: {
-    "ghana": {
+    ghana: {
       name: "Ghana",
       region: "Africa",
     },
@@ -37,9 +37,9 @@ export const locationMapping: LocationMapping = {
 
 export function categorizeLocation(location: string): CategorizedLocation {
   // Normalize input
-  const [rawCity, rawCountry] = location.split(",").map((l) =>
-    l.trim().toLowerCase()
-  );
+  const [rawCity, rawCountry] = location
+    .split(",")
+    .map((l) => l.trim().toLowerCase());
   const city = rawCity.charAt(0).toUpperCase() + rawCity.slice(1);
   const country = rawCountry
     ? rawCountry.charAt(0).toUpperCase() + rawCountry.slice(1)

@@ -1,5 +1,5 @@
-import React from 'react';
-import { DashboardUserEvents } from './user-events-list';
+import React from "react";
+import { DashboardUserEvents } from "./user-events-list";
 
 const EventsOverview = ({ userId }: { userId: string }) => {
   return (

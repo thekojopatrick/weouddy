@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Check } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 
 export function SuccessComponent() {
   return (

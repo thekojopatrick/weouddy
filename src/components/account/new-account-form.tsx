@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
+import * as z from "zod";
 
 import {
   Form,
@@ -10,35 +10,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 import {
   updateFollowSettings,
   updateProfile,
-} from '@/server/actions/user/profile';
+} from "@/server/actions/user/profile";
 
-import Avatar from './avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { updateUserPrivacy } from '@/server/actions/user/privacy';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import Avatar from "./avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { updateUserPrivacy } from "@/server/actions/user/privacy";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // Validation schema
 const profileSchema = z.object({
   avatarUrl: z.string().optional(),
-  name: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters' }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   username: z
     .string()
-    .min(3, { message: 'Username must be at least 3 characters' }),
+    .min(3, { message: "Username must be at least 3 characters" }),
   bio: z
     .string()
-    .max(500, { message: 'Bio cannot exceed 500 characters' })
+    .max(500, { message: "Bio cannot exceed 500 characters" })
     .optional(),
 });
 
@@ -67,10 +65,10 @@ export default function AccountForm({ user }: AccountFormProps) {
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user.name ?? '',
-      username: user.username ?? '',
-      bio: user.bio ?? '',
-      avatarUrl: user.avatarUrl ?? '',
+      name: user.name ?? "",
+      username: user.username ?? "",
+      bio: user.bio ?? "",
+      avatarUrl: user.avatarUrl ?? "",
     },
   });
 
@@ -83,45 +81,41 @@ export default function AccountForm({ user }: AccountFormProps) {
     },
   });
 
-  const handleProfileSubmit = async (
-    data: z.infer<typeof profileSchema>
-  ) => {
+  const handleProfileSubmit = async (data: z.infer<typeof profileSchema>) => {
     try {
       await updateProfile(user.id, data);
-      toast.success('Profile updated successfully');
+      toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (error) {
-      toast.error('Failed to update profile');
+      toast.error("Failed to update profile");
       console.error(error);
     }
   };
 
-  const handlePrivacySubmit = async (
-    data: z.infer<typeof privacySchema>
-  ) => {
+  const handlePrivacySubmit = async (data: z.infer<typeof privacySchema>) => {
     try {
       await Promise.all([
         updateFollowSettings(data.allowFollowers),
         updateUserPrivacy(data.isPrivateProfile),
       ]);
-      toast.success('Privacy settings updated');
+      toast.success("Privacy settings updated");
     } catch (error) {
-      toast.error('Failed to update privacy settings');
+      toast.error("Failed to update privacy settings");
       console.error(error);
     }
   };
 
   const handleAvatarUpload = async (url: string) => {
     const data = {
-      name: user.name ?? '',
-      username: user.username ?? '',
-      bio: user.bio ?? '',
+      name: user.name ?? "",
+      username: user.username ?? "",
+      bio: user.bio ?? "",
       avatarUrl: user.avatarUrl ?? url,
     };
 
     if (user.avatarUrl !== url) {
       await updateProfile(user.id, data);
-      toast.success('Profile picture updated successfully');
+      toast.success("Profile picture updated successfully");
     }
   };
 
@@ -134,7 +128,7 @@ export default function AccountForm({ user }: AccountFormProps) {
       <div className="flex justify-center mb-4">
         <Avatar
           uid={user?.id ?? null}
-          url={user.avatarUrl ?? ''}
+          url={user.avatarUrl ?? ""}
           size={150}
           onUploadAction={handleAvatarUpload}
         />
@@ -205,10 +199,7 @@ export default function AccountForm({ user }: AccountFormProps) {
 
           <div className="flex justify-end space-x-4">
             {!isEditing ? (
-              <Button
-                type="button"
-                onClick={() => setIsEditing(true)}
-              >
+              <Button type="button" onClick={() => setIsEditing(true)}>
                 Edit Profile
               </Button>
             ) : (
@@ -245,8 +236,7 @@ export default function AccountForm({ user }: AccountFormProps) {
                   <div className="space-y-0.5">
                     <FormLabel>Allow Followers</FormLabel>
                     <FormDescription>
-                      Enable or disable the ability for others to
-                      follow you
+                      Enable or disable the ability for others to follow you
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -267,8 +257,7 @@ export default function AccountForm({ user }: AccountFormProps) {
                   <div className="space-y-0.5">
                     <FormLabel>Private Profile</FormLabel>
                     <FormDescription>
-                      When enabled, only approved followers can see
-                      your profile
+                      When enabled, only approved followers can see your profile
                     </FormDescription>
                   </div>
                   <FormControl>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 interface CategoryFiltersProps {
   onCategoryChangeAction: (category: string) => void;
@@ -16,8 +16,8 @@ export function CategoryFilters({
 }: CategoryFiltersProps) {
   // Filter out duplicate categories and ensure 'All' is always first
   const uniqueCategories = [
-    'All',
-    ...new Set(categories.filter((cat) => cat !== 'All')),
+    "All",
+    ...new Set(categories.filter((cat) => cat !== "All")),
   ];
 
   return (
@@ -26,9 +26,7 @@ export function CategoryFilters({
         {uniqueCategories.map((category) => (
           <Button
             key={category}
-            variant={
-              currentCategory === category ? 'default' : 'secondary'
-            }
+            variant={currentCategory === category ? "default" : "secondary"}
             className="rounded-full capitalize"
             onClick={() => onCategoryChangeAction(category)}
           >

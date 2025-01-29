@@ -1,23 +1,23 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import type { Task } from '@/stores/use-kanban-store';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import type { Task } from "@/stores/use-kanban-store";
 
 interface TaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (task: Partial<Task>) => void;
   task?: Task;
-  status?: Task['status'];
+  status?: Task["status"];
 }
 
 export const TaskDialog = ({
@@ -27,16 +27,16 @@ export const TaskDialog = ({
   task,
   status,
 }: TaskDialogProps) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setDescription(task.description || '');
+      setDescription(task.description || "");
     } else {
-      setTitle('');
-      setDescription('');
+      setTitle("");
+      setDescription("");
     }
   }, [task]);
 
@@ -55,9 +55,7 @@ export const TaskDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
-            {task ? 'Edit Task' : 'Create Task'}
-          </DialogTitle>
+          <DialogTitle>{task ? "Edit Task" : "Create Task"}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
@@ -72,10 +70,7 @@ export const TaskDialog = ({
             />
           </div>
           <div className="grid gap-2">
-            <label
-              htmlFor="description"
-              className="text-sm font-medium"
-            >
+            <label htmlFor="description" className="text-sm font-medium">
               Description
             </label>
             <Textarea
@@ -87,10 +82,7 @@ export const TaskDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button onClick={handleSave}>Save</Button>

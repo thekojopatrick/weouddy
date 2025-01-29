@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 import {
   Body,
@@ -12,10 +12,10 @@ import {
   Section,
   Tailwind,
   Text,
-} from '@react-email/components';
+} from "@react-email/components";
 
-import { env } from '@/env';
-import { applicationName } from '@/config/app';
+import { env } from "@/env";
+import { applicationName } from "@/config/app";
 
 export const BASE_URL = env.HOST_NAME;
 

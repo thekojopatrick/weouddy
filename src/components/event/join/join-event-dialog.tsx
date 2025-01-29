@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-import { useJoinEvent } from '@/hooks/event/use-join-event';
-import { PinEntryForm } from './forms/pin-entry-form';
-import JoinEventSuccess from './forms/success';
-import { useCallback, useEffect } from 'react';
+import { useJoinEvent } from "@/hooks/event/use-join-event";
+import { PinEntryForm } from "./forms/pin-entry-form";
+import JoinEventSuccess from "./forms/success";
+import { useCallback, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 interface JoinEventDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   eventId: string;
-  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED' | 'INVITE_ONLY';
+  accessType: "DIRECT_PASS" | "PIN_REQUIRED" | "INVITE_ONLY";
   requiresApproval?: boolean;
-  userStatus: 'JOINED' | 'NOT_JOINED';
+  userStatus: "JOINED" | "NOT_JOINED";
 }
 
 export function JoinEventDialog({
@@ -47,13 +47,13 @@ export function JoinEventDialog({
     (identifier: string, pin: string) => {
       handlePinSubmit(identifier, pin);
     },
-    [handlePinSubmit]
+    [handlePinSubmit],
   );
 
   useEffect(() => {
     if (
       open &&
-      accessType === 'DIRECT_PASS' &&
+      accessType === "DIRECT_PASS" &&
       !isLoading &&
       !joinMutation.isSuccess
     ) {
@@ -85,7 +85,7 @@ export function JoinEventDialog({
 
   const handleCancel = useCallback(() => {
     onOpenChange(false);
-    router.push('/discover');
+    router.push("/discover");
   }, [onOpenChange, router]);
 
   // Determine what content to show based on the current state
@@ -95,7 +95,7 @@ export function JoinEventDialog({
     }
 
     if (joinMutation.isSuccess) {
-      if (joinMutation.data.status === 'PENDING') {
+      if (joinMutation.data.status === "PENDING") {
         return (
           <Alert>
             <AlertDescription>
@@ -107,10 +107,7 @@ export function JoinEventDialog({
       return <JoinEventSuccess isLoading={false} />;
     }
 
-    if (
-      accessType === 'PIN_REQUIRED' &&
-      userStatus === 'NOT_JOINED'
-    ) {
+    if (accessType === "PIN_REQUIRED" && userStatus === "NOT_JOINED") {
       return (
         <PinEntryForm
           onSubmitAction={handlePinSubmitWrapper}
@@ -140,11 +137,11 @@ export function JoinEventDialog({
       <AlertDialogContent className="gap-2">
         <AlertDialogHeader className="items-center">
           <AlertDialogTitle className="text-sm">
-            {accessType === 'PIN_REQUIRED'
-              ? 'Verify Event Access'
+            {accessType === "PIN_REQUIRED"
+              ? "Verify Event Access"
               : requiresApproval
-                ? 'Request Event Access'
-                : 'Join Event'}
+                ? "Request Event Access"
+                : "Join Event"}
           </AlertDialogTitle>
         </AlertDialogHeader>
         {renderContent()}

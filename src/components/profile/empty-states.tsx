@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export function EmptyEvents() {
   return (
@@ -7,8 +7,8 @@ export function EmptyEvents() {
       <div className="text-center">
         <h2 className="text-xl font-semibold mb-2">No events yet</h2>
         <p className="text-muted-foreground mb-6">
-          You have no public events yet. Once you make collections
-          public, they&apos;ll show up here
+          You have no public events yet. Once you make collections public,
+          they&apos;ll show up here
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           <Button>
@@ -25,21 +25,21 @@ export function EmptyEvents() {
   );
 }
 
-export type EventType = 'all' | 'hosted' | 'joined';
+export type EventType = "all" | "hosted" | "joined";
 
 export function FilterEmptyState({ type }: { type: EventType }) {
   return (
     <div className="text-center py-8">
       <h3 className="text-lg font-medium mb-2">
-        {type === 'hosted' ? 'No hosted events' : 'No joined events'}
+        {type === "hosted" ? "No hosted events" : "No joined events"}
       </h3>
       <p className="text-muted-foreground mb-4">
-        {type === 'hosted'
+        {type === "hosted"
           ? "You haven't hosted any events yet. Create one to get started!"
           : "You haven't joined any events yet. Find an event to participate in!"}
       </p>
       <Button variant="secondary">
-        {type === 'hosted' ? 'Create Event' : 'Find Events'}
+        {type === "hosted" ? "Create Event" : "Find Events"}
       </Button>
     </div>
   );

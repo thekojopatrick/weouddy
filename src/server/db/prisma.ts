@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -15,7 +15,7 @@ export const db =
   });
 
 // Only create a new instance in non-production environments
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = db;
   }

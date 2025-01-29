@@ -1,12 +1,12 @@
-'use client';
-import React, { useState } from 'react';
-import { EventFormValues } from '@/types/validation';
-import { useEvents } from '@/hooks/event/use-event';
-import { useToast } from '@/hooks/use-toast';
-import { CreateEventForm } from './create-event-form';
-import { SuccessStep } from './steps/success';
-import { getURL } from '@/lib/utils';
-import { createEvent } from '@/app/actions/create-event';
+"use client";
+import React, { useState } from "react";
+import { EventFormValues } from "@/types/validation";
+import { useEvents } from "@/hooks/event/use-event";
+import { useToast } from "@/hooks/use-toast";
+import { CreateEventForm } from "./create-event-form";
+import { SuccessStep } from "./steps/success";
+import { getURL } from "@/lib/utils";
+import { createEvent } from "@/app/actions/create-event";
 
 interface EventCreationManagerProps {
   onClose: () => void;
@@ -18,12 +18,9 @@ interface EventCreationResult {
   eventName: string;
 }
 
-export function EventCreationManager({
-  onClose,
-}: EventCreationManagerProps) {
+export function EventCreationManager({ onClose }: EventCreationManagerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [eventData, setEventData] =
-    useState<EventCreationResult | null>(null);
+  const [eventData, setEventData] = useState<EventCreationResult | null>(null);
   const { invalidateEvents } = useEvents();
   const { toast } = useToast();
   const baseUrl = getURL();
@@ -40,9 +37,8 @@ export function EventCreationManager({
 
         // Show success toast
         toast({
-          title: 'Event created!',
-          description:
-            'Your event room has been created successfully.',
+          title: "Event created!",
+          description: "Your event room has been created successfully.",
         });
 
         // Set event data for success step
@@ -54,14 +50,12 @@ export function EventCreationManager({
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred';
+        error instanceof Error ? error.message : "An unexpected error occurred";
 
       toast({
-        title: 'Error creating event',
+        title: "Error creating event",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsProcessing(false);

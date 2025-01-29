@@ -1,39 +1,39 @@
-import { InvoiceTable } from './billing/invoice-table';
-import { PlanCard } from './billing/plan-card';
-import { PaymentMethods } from './billing/payment-methods';
+import { InvoiceTable } from "./billing/invoice-table";
+import { PlanCard } from "./billing/plan-card";
+import { PaymentMethods } from "./billing/payment-methods";
 
 const paymentMethods = [
   {
-    type: 'visa' as const,
-    last4: '9016',
-    expiryDate: '12/25',
+    type: "visa" as const,
+    last4: "9016",
+    expiryDate: "12/25",
     isDefault: true,
   },
   {
-    type: 'mastercard' as const,
-    last4: '4242',
-    expiryDate: '04/24',
+    type: "mastercard" as const,
+    last4: "4242",
+    expiryDate: "04/24",
   },
 ];
 
 const invoices = [
   {
-    id: '25-02-2023',
-    date: '25 Feb, 2023',
+    id: "25-02-2023",
+    date: "25 Feb, 2023",
     amount: 39,
-    plan: 'Startup',
+    plan: "Startup",
   },
   {
-    id: '25-01-2023',
-    date: '25 Jan, 2023',
+    id: "25-01-2023",
+    date: "25 Jan, 2023",
     amount: 39,
-    plan: 'Startup',
+    plan: "Startup",
   },
   {
-    id: '25-12-2022',
-    date: '25 Dec, 2022',
+    id: "25-12-2022",
+    date: "25 Dec, 2022",
     amount: 39,
-    plan: 'Startup',
+    plan: "Startup",
   },
 ];
 

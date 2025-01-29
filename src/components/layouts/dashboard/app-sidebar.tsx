@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -10,10 +10,10 @@ import {
   Map,
   PieChart,
   Settings2,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { NavMain } from './nav-main';
-import { NavUser } from './nav-user';
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 import {
   Sidebar,
@@ -22,76 +22,76 @@ import {
   SidebarHeader,
   SidebarRail,
   useSidebar,
-} from '@/components/ui/sidebar';
-import { usePathname, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import Image from 'next/image';
-import { CurrentUser } from '@/types/prisma.types';
+} from "@/components/ui/sidebar";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
+import { CurrentUser } from "@/types/prisma.types";
 
 // This is sample data.
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: 'Acme Inc',
+      name: "Acme Inc",
       logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      plan: "Enterprise",
     },
   ],
   navMain: [
     {
-      title: 'Insights',
-      url: '/dashboard/insights',
+      title: "Insights",
+      url: "/dashboard/insights",
       icon: HomeIcon,
     },
     {
-      title: 'Events',
-      url: '/dashboard/events',
+      title: "Events",
+      url: "/dashboard/events",
       icon: Calendar,
     },
     {
-      title: 'Settings',
-      url: '/dashboard/settings',
+      title: "Settings",
+      url: "/dashboard/settings",
       icon: Settings2,
       items: [
         {
-          title: 'General',
-          url: '#',
+          title: "General",
+          url: "#",
         },
         {
-          title: 'Team',
-          url: '#',
+          title: "Team",
+          url: "#",
         },
         {
-          title: 'Billing',
-          url: '#',
+          title: "Billing",
+          url: "#",
         },
         {
-          title: 'Limits',
-          url: '#',
+          title: "Limits",
+          url: "#",
         },
       ],
     },
   ],
   projects: [
     {
-      name: 'Design Engineering',
-      url: '#',
+      name: "Design Engineering",
+      url: "#",
       icon: Frame,
     },
     {
-      name: 'Sales & Marketing',
-      url: '#',
+      name: "Sales & Marketing",
+      url: "#",
       icon: PieChart,
     },
     {
-      name: 'Travel',
-      url: '#',
+      name: "Travel",
+      url: "#",
       icon: Map,
     },
   ],
@@ -113,17 +113,14 @@ export function AppSidebar({
           variant="ghost"
           size="icon"
           className=""
-          onClick={() => router.push('/discover')}
+          onClick={() => router.push("/discover")}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Link
-          href="/"
-          className={state === 'collapsed' ? 'hidden' : 'block'}
-        >
+        <Link href="/" className={state === "collapsed" ? "hidden" : "block"}>
           <Image
-            src={isMobile ? '/brand/logomark.svg' : '/logo.svg'}
-            alt={'WeOuddy'}
+            src={isMobile ? "/brand/logomark.svg" : "/logo.svg"}
+            alt={"WeOuddy"}
             className="object-cover"
             width={isMobile ? 32 : 80}
             height={isMobile ? 32 : 80}
@@ -132,11 +129,7 @@ export function AppSidebar({
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain
-          items={data.navMain}
-          activeItem={pathname}
-          state={state}
-        />
+        <NavMain items={data.navMain} activeItem={pathname} state={state} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={props.user} />

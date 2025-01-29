@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { FC, useRef, useEffect } from 'react';
-import { ChatMessage } from '@/types/chat';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2 } from 'lucide-react';
-import { ChatMessageItem } from './chat-message';
+import { FC, useRef, useEffect } from "react";
+import { ChatMessage } from "@/types/chat";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader2 } from "lucide-react";
+import { ChatMessageItem } from "./chat-message";
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
@@ -31,7 +31,7 @@ export const ChatMessages: FC<ChatMessagesProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   if (isLoading) {

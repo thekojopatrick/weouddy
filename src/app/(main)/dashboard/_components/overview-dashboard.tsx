@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { AvatarFallback } from '@/components/ui/avatar';
-import { ChevronDown } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { AvatarFallback } from "@/components/ui/avatar";
+import { ChevronDown } from "lucide-react";
 
-import EventProjectCard from './event-project-card';
-import Image from 'next/image';
-import { ProfileHeader } from './profile-header';
-import { ProfileStatsComponent } from './profile-stats';
-import { ProfileViewStatsComponent } from './profile-view-stats';
-import ProfileSetupComponets from './profile-setup';
-import PartnersList from './partners-list';
+import EventProjectCard from "./event-project-card";
+import Image from "next/image";
+import { ProfileHeader } from "./profile-header";
+import { ProfileStatsComponent } from "./profile-stats";
+import { ProfileViewStatsComponent } from "./profile-view-stats";
+import ProfileSetupComponets from "./profile-setup";
+import PartnersList from "./partners-list";
 
 interface DashboardOverviewProps {
   profile: {
@@ -33,31 +33,19 @@ interface DashboardOverviewProps {
 
 const projects = [
   {
-    company: 'Slack Inc.',
-    title: 'Illustration of Materials Design',
-    logo: (
-      <Image
-        width={100}
-        height={100}
-        src="/placeholder.svg"
-        alt="Slack"
-      />
-    ),
+    company: "Slack Inc.",
+    title: "Illustration of Materials Design",
+    logo: <Image width={100} height={100} src="/placeholder.svg" alt="Slack" />,
     tasks: 34,
     inProgress: 19,
     completed: 14,
-    dueDate: '12 July, 2024',
-    category: 'Illustration',
-    categoryColor: 'bg-purple-400',
-    assignee: 'Amanda Harvey',
-    lastEdited: 'James Collins',
+    dueDate: "12 July, 2024",
+    category: "Illustration",
+    categoryColor: "bg-purple-400",
+    assignee: "Amanda Harvey",
+    lastEdited: "James Collins",
     lastEditedAvatar: (
-      <Image
-        width={100}
-        height={100}
-        src="/placeholder.svg"
-        alt="James"
-      />
+      <Image width={100} height={100} src="/placeholder.svg" alt="James" />
     ),
     team: [
       <Image
@@ -88,24 +76,19 @@ const projects = [
     progress: 38,
   },
   {
-    company: 'Notion',
-    title: 'Add missing plugin demos to docs',
-    logo: 'N',
+    company: "Notion",
+    title: "Add missing plugin demos to docs",
+    logo: "N",
     tasks: 9,
     inProgress: 0,
     completed: 9,
-    dueDate: '4 June, 2024',
-    category: 'UI/UX',
-    categoryColor: 'bg-red-400',
-    assignee: 'Daniel Hobbs',
-    lastEdited: 'Daniel Hobbs',
+    dueDate: "4 June, 2024",
+    category: "UI/UX",
+    categoryColor: "bg-red-400",
+    assignee: "Daniel Hobbs",
+    lastEdited: "Daniel Hobbs",
     lastEditedAvatar: (
-      <Image
-        width={100}
-        height={100}
-        src="/placeholder.svg"
-        alt="Daniel"
-      />
+      <Image width={100} height={100} src="/placeholder.svg" alt="Daniel" />
     ),
     team: [
       <Image
@@ -136,17 +119,17 @@ const projects = [
     progress: 100,
   },
   {
-    company: 'Dropbox Inc.',
-    title: 'Datatables integration',
-    logo: 'D',
+    company: "Dropbox Inc.",
+    title: "Datatables integration",
+    logo: "D",
     tasks: 101,
     inProgress: 51,
     completed: 50,
-    dueDate: '31 August, 2024',
-    category: 'Datatables',
-    categoryColor: 'bg-blue-400',
-    assignee: 'Amanda Harvey',
-    lastEdited: 'Liza Harrison',
+    dueDate: "31 August, 2024",
+    category: "Datatables",
+    categoryColor: "bg-blue-400",
+    assignee: "Amanda Harvey",
+    lastEdited: "Liza Harrison",
     lastEditedAvatar: <AvatarFallback>L</AvatarFallback>,
     team: [
       <Image
@@ -201,9 +184,7 @@ const OverviewDashboard = ({ profile }: DashboardOverviewProps) => {
         {/* Projects Section */}
         <div className="mt-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-black">
-              Projects
-            </h2>
+            <h2 className="text-xl font-semibold text-black">Projects</h2>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-400">Status:</span>
@@ -224,10 +205,7 @@ const OverviewDashboard = ({ profile }: DashboardOverviewProps) => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => (
-              <EventProjectCard
-                key={index}
-                project={project as never}
-              />
+              <EventProjectCard key={index} project={project as never} />
             ))}
           </div>
         </div>

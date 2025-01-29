@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 export function PersonalInfoForm() {
   return (
@@ -24,8 +24,7 @@ export function PersonalInfoForm() {
             className="shadow-xs text-sm"
           />
           <p className="text-sm text-muted-foreground">
-            Enter your full name, or a display name you are
-            comfortable with.
+            Enter your full name, or a display name you are comfortable with.
           </p>
         </div>
 
@@ -72,9 +71,7 @@ export function PersonalInfoForm() {
         </div>
 
         <div className="flex gap-4">
-          <Button className="shadow-xs rounded-lg">
-            Save changes
-          </Button>
+          <Button className="shadow-xs rounded-lg">Save changes</Button>
           <Button variant="outline" className="shadow-xs rounded-lg">
             Cancel
           </Button>

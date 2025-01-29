@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -10,46 +10,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import {
-  AlertTriangle,
-  Edit2,
-  Save,
-  User as UserIcon,
-} from 'lucide-react';
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle, Edit2, Save, User as UserIcon } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
-import Avatar from './avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { User } from '@supabase/supabase-js';
-import { useAccount } from '@/hooks/account/use-account';
-import { useState } from 'react';
+import Avatar from "./avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { User } from "@supabase/supabase-js";
+import { useAccount } from "@/hooks/account/use-account";
+import { useState } from "react";
 
 export default function AccountForm({ user }: { user: User | null }) {
   const { accountData, loading, updateProfile } = useAccount();
   const [isEditing, setIsEditing] = useState(false);
   const [localData, setLocalData] = useState({
-    fullname: accountData?.fullname ?? '',
-    username: accountData?.username ?? '',
+    fullname: accountData?.fullname ?? "",
+    username: accountData?.username ?? "",
   });
   const [updateStatus, setUpdateStatus] = useState<{
-    type: 'success' | 'error' | null;
+    type: "success" | "error" | null;
     message: string;
-  }>({ type: null, message: '' });
+  }>({ type: null, message: "" });
 
   const handleSave = async () => {
     const result = await updateProfile({
@@ -59,14 +54,14 @@ export default function AccountForm({ user }: { user: User | null }) {
 
     if (result?.success) {
       setUpdateStatus({
-        type: 'success',
+        type: "success",
         message: result.message,
       });
       setIsEditing(false);
     } else {
       setUpdateStatus({
-        type: 'error',
-        message: result?.message ?? 'Update failed',
+        type: "error",
+        message: result?.message ?? "Update failed",
       });
     }
   };
@@ -81,9 +76,7 @@ export default function AccountForm({ user }: { user: User | null }) {
         <CardTitle className="flex items-center">
           <UserIcon className="mr-2" /> Account Settings
         </CardTitle>
-        <CardDescription>
-          Manage your profile and preferences
-        </CardDescription>
+        <CardDescription>Manage your profile and preferences</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4 pt-6">
@@ -100,7 +93,7 @@ export default function AccountForm({ user }: { user: User | null }) {
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
-            value={accountData?.email ?? ''}
+            value={accountData?.email ?? ""}
             disabled
             className="bg-gray-100 cursor-not-allowed"
           />
@@ -121,9 +114,7 @@ export default function AccountForm({ user }: { user: User | null }) {
                       <Edit2 className="h-4 w-4 mr-2" /> Edit
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    Click to edit your profile
-                  </TooltipContent>
+                  <TooltipContent>Click to edit your profile</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : null}
@@ -131,9 +122,7 @@ export default function AccountForm({ user }: { user: User | null }) {
           <Input
             id="fullName"
             value={
-              isEditing
-                ? localData.fullname
-                : (accountData?.fullname ?? '')
+              isEditing ? localData.fullname : (accountData?.fullname ?? "")
             }
             onChange={(e) =>
               setLocalData((prev) => ({
@@ -144,8 +133,8 @@ export default function AccountForm({ user }: { user: User | null }) {
             disabled={!isEditing}
             className={
               isEditing
-                ? 'border-blue-500 focus:ring-2 focus:ring-blue-200'
-                : 'bg-gray-100 cursor-not-allowed'
+                ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
+                : "bg-gray-100 cursor-not-allowed"
             }
           />
         </div>
@@ -155,9 +144,7 @@ export default function AccountForm({ user }: { user: User | null }) {
           <Input
             id="username"
             value={
-              isEditing
-                ? localData.username
-                : (accountData?.username ?? '')
+              isEditing ? localData.username : (accountData?.username ?? "")
             }
             onChange={(e) =>
               setLocalData((prev) => ({
@@ -168,21 +155,17 @@ export default function AccountForm({ user }: { user: User | null }) {
             disabled={!isEditing}
             className={
               isEditing
-                ? 'border-blue-500 focus:ring-2 focus:ring-blue-200'
-                : 'bg-gray-100 cursor-not-allowed'
+                ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
+                : "bg-gray-100 cursor-not-allowed"
             }
           />
         </div>
 
         {isEditing && (
           <div className="flex space-x-2">
-            <Button
-              onClick={handleSave}
-              disabled={loading}
-              className="w-full"
-            >
+            <Button onClick={handleSave} disabled={loading} className="w-full">
               <Save className="mr-2 h-4 w-4" />
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? "Saving..." : "Save Changes"}
             </Button>
             <Button
               variant="outline"
@@ -197,9 +180,9 @@ export default function AccountForm({ user }: { user: User | null }) {
         {updateStatus.type && (
           <div
             className={`p-3 rounded-md ${
-              updateStatus.type === 'success'
-                ? 'bg-green-50 text-green-700'
-                : 'bg-red-50 text-red-700'
+              updateStatus.type === "success"
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
             }`}
           >
             {updateStatus.message}
@@ -225,9 +208,7 @@ export default function AccountForm({ user }: { user: User | null }) {
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <form action="/auth/signout" method="post">
-                <AlertDialogAction type="submit">
-                  Sign Out
-                </AlertDialogAction>
+                <AlertDialogAction type="submit">Sign Out</AlertDialogAction>
               </form>
             </AlertDialogFooter>
           </AlertDialogContent>

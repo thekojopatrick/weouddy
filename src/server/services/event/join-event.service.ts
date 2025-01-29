@@ -1,7 +1,7 @@
-import { cache } from '@/lib/redis';
-import { db } from '@/server/db/prisma';
-import { z } from 'zod';
-import { rateLimiter } from '../ratelimiter/rate-limiter.service';
+import { cache } from "@/lib/redis";
+import { db } from "@/server/db/prisma";
+import { z } from "zod";
+import { rateLimiter } from "../ratelimiter/rate-limiter.service";
 
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 100; // ms
@@ -14,11 +14,11 @@ const joinEventSchema = z.object({
 
 interface JoinEventResponse {
   success: boolean;
-  status: 'JOINED' | 'PENDING' | 'PENDING_APPROVAL';
+  status: "JOINED" | "PENDING" | "PENDING_APPROVAL";
   event?: {
     id: string;
     slug: string;
-    accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
+    accessType: "DIRECT_PASS" | "PIN_REQUIRED";
     requiresApproval: boolean;
   };
 }
@@ -26,16 +26,16 @@ interface JoinEventResponse {
 export class JoinEventError extends Error {
   constructor(
     message: string,
-    public code: string
+    public code: string,
   ) {
     super(message);
-    this.name = 'JoinEventError';
+    this.name = "JoinEventError";
   }
 }
 
 export class JoinEventService {
-  private static readonly EVENT_CACHE_PREFIX = 'event:';
-  private static readonly LOCK_KEY_PREFIX = 'event-join-lock:';
+  private static readonly EVENT_CACHE_PREFIX = "event:";
+  private static readonly LOCK_KEY_PREFIX = "event-join-lock:";
 
   static async joinEvent(input: unknown): Promise<JoinEventResponse> {
     let attempt = 0;
@@ -43,10 +43,7 @@ export class JoinEventService {
       try {
         return await this.attemptJoinEvent(input);
       } catch (error) {
-        if (
-          this.isRetryableError(error) &&
-          attempt < MAX_RETRIES - 1
-        ) {
+        if (this.isRetryableError(error) && attempt < MAX_RETRIES - 1) {
           const delay = this.calculateBackoff(attempt);
           await new Promise((resolve) => setTimeout(resolve, delay));
           attempt++;
@@ -56,28 +53,27 @@ export class JoinEventService {
       }
     }
     throw new JoinEventError(
-      'Failed to join event after maximum retries',
-      'MAX_RETRIES_EXCEEDED'
+      "Failed to join event after maximum retries",
+      "MAX_RETRIES_EXCEEDED",
     );
   }
 
   private static calculateBackoff(attempt: number): number {
     return (
-      RETRY_BASE_DELAY * Math.pow(2, attempt) +
-      Math.random() * RETRY_BASE_DELAY
+      RETRY_BASE_DELAY * Math.pow(2, attempt) + Math.random() * RETRY_BASE_DELAY
     );
   }
 
   private static isRetryableError(error: unknown): boolean {
-    const errorMessage = error instanceof Error ? error.message : '';
+    const errorMessage = error instanceof Error ? error.message : "";
     return (
-      errorMessage.includes('deadlock') ||
-      errorMessage.includes('write conflict')
+      errorMessage.includes("deadlock") ||
+      errorMessage.includes("write conflict")
     );
   }
 
   private static async attemptJoinEvent(
-    input: unknown
+    input: unknown,
   ): Promise<JoinEventResponse> {
     const startTime = Date.now();
     const { identifier, pin, userId } = joinEventSchema.parse(input);
@@ -91,15 +87,12 @@ export class JoinEventService {
 
     // Acquire distributed lock
     const lockKey = `${this.LOCK_KEY_PREFIX}${userId}-${identifier}`;
-    const lockAcquired = await cache.set(
-      lockKey,
-      Date.now().toString()
-    );
+    const lockAcquired = await cache.set(lockKey, Date.now().toString());
 
     if (!lockAcquired) {
       throw new JoinEventError(
-        'A join request is already in progress',
-        'CONCURRENT_JOIN_ATTEMPT'
+        "A join request is already in progress",
+        "CONCURRENT_JOIN_ATTEMPT",
       );
     }
 
@@ -121,32 +114,26 @@ export class JoinEventService {
       });
 
       if (!event) {
-        throw new JoinEventError('Event not found', 'NOT_FOUND');
+        throw new JoinEventError("Event not found", "NOT_FOUND");
       }
 
       if (event.isDisabled) {
-        throw new JoinEventError(
-          'Event is disabled',
-          'EVENT_DISABLED'
-        );
+        throw new JoinEventError("Event is disabled", "EVENT_DISABLED");
       }
 
       // PIN validation
-      if (
-        event.accessType === 'PIN_REQUIRED' &&
-        pin !== event.pinCode
-      ) {
+      if (event.accessType === "PIN_REQUIRED" && pin !== event.pinCode) {
         throw new JoinEventError(
-          !pin ? 'PIN is required' : 'Invalid PIN',
-          !pin ? 'PIN_REQUIRED' : 'INVALID_PIN'
+          !pin ? "PIN is required" : "Invalid PIN",
+          !pin ? "PIN_REQUIRED" : "INVALID_PIN",
         );
       }
 
       // Determine status
       const status =
         event.hostId === userId || !event.requiresApproval
-          ? 'APPROVED'
-          : 'PENDING';
+          ? "APPROVED"
+          : "PENDING";
 
       // Transactional join with conflict resolution
       const result = await db.$transaction(
@@ -185,7 +172,7 @@ export class JoinEventService {
               },
               select: { status: true },
             }),
-            status === 'APPROVED'
+            status === "APPROVED"
               ? prisma.event.update({
                   where: { id: event.id },
                   data: {
@@ -197,7 +184,7 @@ export class JoinEventService {
               data: {
                 eventId: event.id,
                 userId,
-                type: 'JOIN',
+                type: "JOIN",
               },
             }),
           ]);
@@ -206,8 +193,8 @@ export class JoinEventService {
         },
         {
           // Prisma transaction isolation for conflict handling
-          isolationLevel: 'Serializable',
-        }
+          isolationLevel: "Serializable",
+        },
       );
 
       const executionTime = Date.now() - startTime;
@@ -215,13 +202,11 @@ export class JoinEventService {
 
       return {
         success: true,
-        status: result.status === 'PENDING' ? 'PENDING' : 'JOINED',
+        status: result.status === "PENDING" ? "PENDING" : "JOINED",
         event: {
           id: event.id,
           slug: event.slug!,
-          accessType: event.accessType as
-            | 'DIRECT_PASS'
-            | 'PIN_REQUIRED',
+          accessType: event.accessType as "DIRECT_PASS" | "PIN_REQUIRED",
           requiresApproval: event.requiresApproval,
         },
       };

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Dialog,
@@ -6,14 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
-import { FollowRequests } from './follow-request';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { UserFollowers } from './user-followers';
-import { UserFollowing } from './user-following';
-import { useState } from 'react';
-import { CustomTabs, TabItem } from '../ui/custom-tabs';
+import { FollowRequests } from "./follow-request";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { UserFollowers } from "./user-followers";
+import { UserFollowing } from "./user-following";
+import { useState } from "react";
+import { CustomTabs, TabItem } from "../ui/custom-tabs";
 
 interface FollowsDialogProps {
   userId: string;
@@ -48,15 +48,12 @@ interface FollowsDialogProps {
   };
 }
 
-export function FollowsDialog({
-  currentUserId,
-  stats,
-}: FollowsDialogProps) {
+export function FollowsDialog({ currentUserId, stats }: FollowsDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const tabItems: TabItem[] = [
     {
-      value: 'followers',
+      value: "followers",
       label: `Followers ${stats.followers}`,
       content: (
         <ScrollArea className="h-[400px]">
@@ -65,7 +62,7 @@ export function FollowsDialog({
       ),
     },
     {
-      value: 'following',
+      value: "following",
       label: `Following ${stats.following}`,
       content: (
         <ScrollArea className="h-[400px]">
@@ -74,7 +71,7 @@ export function FollowsDialog({
       ),
     },
     {
-      value: 'requests',
+      value: "requests",
       label: `Requests`,
       content: (
         <ScrollArea className="h-[400px]">
@@ -88,23 +85,16 @@ export function FollowsDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <span className="font-medium text-foreground">{0}</span>{' '}
-          Requests ·{' '}
-          <span className="font-medium text-foreground">
-            {stats.followers}
-          </span>{' '}
-          Followers ·{' '}
-          <span className="font-medium text-foreground">
-            {stats.following}
-          </span>{' '}
+          <span className="font-medium text-foreground">{0}</span> Requests ·{" "}
+          <span className="font-medium text-foreground">{stats.followers}</span>{" "}
+          Followers ·{" "}
+          <span className="font-medium text-foreground">{stats.following}</span>{" "}
           Following
         </button>
       </DialogTrigger>
       <DialogContent className="min-h-screen grid grid-rows-[auto_1fr] p-4 md:p-6 sm:max-w-[540px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            People
-          </DialogTitle>
+          <DialogTitle className="flex items-center gap-2">People</DialogTitle>
         </DialogHeader>
         <CustomTabs
           items={tabItems}

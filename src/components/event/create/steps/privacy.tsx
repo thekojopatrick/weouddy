@@ -1,14 +1,14 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   FormControl,
   FormDescription,
   FormField,
   FormItem,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface PrivacyStepProps {
   onSubmit: () => void;
@@ -30,8 +30,8 @@ export function PrivacyStep({
           Lastly, Privacy Settings
         </h2>
         <p className="text-muted-foreground text-sm">
-          Choose who can see and join your event. You can always
-          update these settings later if you change your mind
+          Choose who can see and join your event. You can always update these
+          settings later if you change your mind
         </p>
       </div>
 
@@ -48,8 +48,8 @@ export function PrivacyStep({
             <div className="space-y-0.5">
               <FormDescription>Public</FormDescription>
               <FormDescription>
-                By turning it on anyone can discover, view, and join
-                your event/room.
+                By turning it on anyone can discover, view, and join your
+                event/room.
               </FormDescription>
             </div>
             <FormControl>
@@ -85,7 +85,7 @@ export function PrivacyStep({
               Creating...
             </>
           ) : (
-            'Finish'
+            "Finish"
           )}
         </Button>
       </div>

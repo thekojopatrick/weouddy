@@ -1,13 +1,13 @@
-import { type EventFormValues } from '@/types/validation';
-import { db } from '@/server/db/prisma';
-import { uploadEventCoverImage } from '@/lib/supabase/upload/event-cover-image';
-import { nanoid } from 'nanoid';
-import { generateQRCode } from '@/lib/qr/generator';
-import { storeQRCode } from '@/lib/qr/storage';
-import { AccessType, Prisma, PrismaClient } from '@prisma/client';
-import { getURL } from '@/lib/utils';
-import { cache } from '@/lib/redis';
-import { rateLimiter } from '../ratelimiter/rate-limiter.service';
+import { type EventFormValues } from "@/types/validation";
+import { db } from "@/server/db/prisma";
+import { uploadEventCoverImage } from "@/lib/supabase/upload/event-cover-image";
+import { nanoid } from "nanoid";
+import { generateQRCode } from "@/lib/qr/generator";
+import { storeQRCode } from "@/lib/qr/storage";
+import { AccessType, Prisma, PrismaClient } from "@prisma/client";
+import { getURL } from "@/lib/utils";
+import { cache } from "@/lib/redis";
+import { rateLimiter } from "../ratelimiter/rate-limiter.service";
 
 export class EventService {
   private static RATE_LIMIT_MS = 30000;
@@ -48,7 +48,7 @@ export class EventService {
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
         maxWait: 5000, // default: 2000
         timeout: 10000, // default: 5000
-      }
+      },
     );
   }
 
@@ -125,7 +125,7 @@ export class EventService {
       }));
 
     if (!event.id) {
-      return { message: 'Event Not Found' };
+      return { message: "Event Not Found" };
     }
 
     if (event) {
@@ -141,7 +141,7 @@ export class EventService {
     limit: number,
     location: string | null,
     category: string | null,
-    userId?: string
+    userId?: string,
   ) {
     const where = {
       ...(userId
@@ -153,8 +153,8 @@ export class EventService {
             ],
           }
         : { isPrivate: false }),
-      ...(location && location !== 'world' && { location }),
-      ...(category && category !== 'All' && { type: category }),
+      ...(location && location !== "world" && { location }),
+      ...(category && category !== "All" && { type: category }),
     };
 
     return db.event
@@ -172,21 +172,21 @@ export class EventService {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       })
       .then((events) =>
         events.map((event) => ({
           ...event,
           memberCount: event._count.members,
           attendeeCount: event._count.attendees,
-        }))
+        })),
       );
   }
 
   static async count(
     location: string | null,
     category: string | null,
-    userId?: string
+    userId?: string,
   ) {
     const where = {
       ...(userId
@@ -198,8 +198,8 @@ export class EventService {
             ],
           }
         : { isPrivate: false }),
-      ...(location && location !== 'world' && { location }),
-      ...(category && category !== 'All' && { type: category }),
+      ...(location && location !== "world" && { location }),
+      ...(category && category !== "All" && { type: category }),
     };
 
     return db.event.count({ where });
@@ -249,14 +249,9 @@ export class EventService {
   private static async checkRateLimit(
     tx: Omit<
       PrismaClient,
-      | '$connect'
-      | '$disconnect'
-      | '$on'
-      | '$transaction'
-      | '$use'
-      | '$extends'
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
     >,
-    userId: string
+    userId: string,
   ) {
     const recentEvent = await tx.event.findFirst({
       where: {
@@ -266,19 +261,16 @@ export class EventService {
     });
 
     if (recentEvent) {
-      throw new Error('Please wait before creating another event');
+      throw new Error("Please wait before creating another event");
     }
   }
 
   private static async processCoverImage(base64Image?: string) {
     if (!base64Image) return null;
 
-    const imageBuffer = Buffer.from(
-      base64Image.split(',')[1],
-      'base64'
-    );
+    const imageBuffer = Buffer.from(base64Image.split(",")[1], "base64");
     if (imageBuffer.length > this.MAX_IMAGE_SIZE) {
-      throw new Error('Image exceeds 5MB limit');
+      throw new Error("Image exceeds 5MB limit");
     }
 
     return uploadEventCoverImage(base64Image, nanoid(8));
@@ -287,14 +279,12 @@ export class EventService {
   private static async generateEventQR() {
     const baseUrl = getURL();
     const shortId = nanoid(8);
-    const qrCode = await generateQRCode(
-      `${baseUrl}events/${shortId}`
-    );
+    const qrCode = await generateQRCode(`${baseUrl}events/${shortId}`);
     return storeQRCode(shortId, qrCode);
   }
 
   private static parseDateTime(date: string, time: string) {
-    const [hours, minutes] = time.split(':');
+    const [hours, minutes] = time.split(":");
     const dateTime = new Date(date);
     dateTime.setHours(parseInt(hours), parseInt(minutes));
     return dateTime;
@@ -312,7 +302,7 @@ export class EventService {
       allowPosts: boolean;
       accessType: AccessType;
       pinCode: string | null;
-    }>
+    }>,
   ) {
     // Verify the user is the host
     const event = await db.event.findUnique({
@@ -320,14 +310,12 @@ export class EventService {
     });
 
     if (!event) {
-      throw new Error('Only the event host can modify settings');
+      throw new Error("Only the event host can modify settings");
     }
 
     // Generate PIN if access type requires it
     const pinCode =
-      settings.accessType === 'PIN_REQUIRED'
-        ? settings.pinCode
-        : null;
+      settings.accessType === "PIN_REQUIRED" ? settings.pinCode : null;
 
     const updatedEvent = await db.event.update({
       where: { id: eventId },
@@ -354,7 +342,7 @@ export class EventService {
       where: {
         id: eventId,
         pinCode: pinCode,
-        accessType: 'PIN_REQUIRED',
+        accessType: "PIN_REQUIRED",
       },
     });
 

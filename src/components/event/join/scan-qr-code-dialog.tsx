@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { DialogHeader } from '@/components/ui/dialog';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { DialogTitle } from '@/components/ui/dialog';
-import { useCallback } from 'react';
-import { QRScannerForm } from './forms/qr-scanner-form';
-import { JoinStep } from '@/types/event';
+import { DialogHeader } from "@/components/ui/dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { DialogTitle } from "@/components/ui/dialog";
+import { useCallback } from "react";
+import { QRScannerForm } from "./forms/qr-scanner-form";
+import { JoinStep } from "@/types/event";
 
-export type JoinEventAccessType = 'DIRECT_PASS' | 'PIN_REQUIRED';
+export type JoinEventAccessType = "DIRECT_PASS" | "PIN_REQUIRED";
 interface JoinEventDialogProps {
   eventId?: string;
   eventSlug?: string;
@@ -39,7 +39,7 @@ export function ScanQRCodeDialog({
       }
       onOpenChangeAction(isOpen);
     },
-    [onOpenChangeAction]
+    [onOpenChangeAction],
   );
 
   return (
@@ -49,9 +49,7 @@ export function ScanQRCodeDialog({
       className="py-2 pb-6 border"
     >
       <DialogHeader>
-        <DialogTitle className="text-sm">
-          Scan Event QR Code
-        </DialogTitle>
+        <DialogTitle className="text-sm">Scan Event QR Code</DialogTitle>
       </DialogHeader>
       <QRScannerForm
         onScanCompleteAction={() => {}} // This will be handled by the join mechanism

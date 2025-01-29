@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Dialog,
@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Lock,
   MessageCircle,
@@ -14,29 +14,27 @@ import {
   KeyRound,
   GlobeLock,
   Copy,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { EventWithDetails } from '@/types/prisma.types';
-import { Switch } from '@/components/ui/switch';
+import { Button } from "@/components/ui/button";
+import { EventWithDetails } from "@/types/prisma.types";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { AccessType } from '@prisma/client';
-import { toast } from 'sonner';
+} from "@/components/ui/select";
+import { AccessType } from "@prisma/client";
+import { toast } from "sonner";
 
 type EventSettingsModalProps = {
   event: EventWithDetails;
   isOpen: boolean;
   onOpenChangeAction: (open: boolean) => void;
-  onSaveSettingsAction: (
-    settings: Partial<EventWithDetails>
-  ) => Promise<void>;
+  onSaveSettingsAction: (settings: Partial<EventWithDetails>) => Promise<void>;
 };
 
 export function EventSettingsModal({
@@ -59,12 +57,10 @@ export function EventSettingsModal({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (settings.accessType === 'PIN_REQUIRED' && !settings.pinCode) {
-      const newPin = Math.floor(
-        100000 + Math.random() * 900000
-      ).toString();
+    if (settings.accessType === "PIN_REQUIRED" && !settings.pinCode) {
+      const newPin = Math.floor(100000 + Math.random() * 900000).toString();
       setSettings((prev) => ({ ...prev, pinCode: newPin }));
-    } else if (settings.accessType !== 'PIN_REQUIRED') {
+    } else if (settings.accessType !== "PIN_REQUIRED") {
       setSettings((prev) => ({ ...prev, pinCode: undefined }));
     }
   }, [settings?.accessType, settings?.pinCode]);
@@ -79,9 +75,9 @@ export function EventSettingsModal({
       ///setSettings(newSettings as never);
 
       onOpenChangeAction(false);
-      toast.success('Event settings updated successfully');
+      toast.success("Event settings updated successfully");
     } catch (error) {
-      toast.error('Failed to update settings');
+      toast.error("Failed to update settings");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -91,7 +87,7 @@ export function EventSettingsModal({
   const handleCopyPin = () => {
     if (settings.pinCode) {
       navigator.clipboard.writeText(settings.pinCode);
-      toast.success('PIN copied to clipboard');
+      toast.success("PIN copied to clipboard");
     }
   };
 
@@ -99,12 +95,9 @@ export function EventSettingsModal({
     <Dialog open={isOpen} onOpenChange={onOpenChangeAction}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl">
-            Event Settings
-          </DialogTitle>
+          <DialogTitle className="text-2xl">Event Settings</DialogTitle>
           <DialogDescription>
-            Customize your event&apos;s privacy and interaction
-            settings
+            Customize your event&apos;s privacy and interaction settings
           </DialogDescription>
         </DialogHeader>
 
@@ -128,40 +121,27 @@ export function EventSettingsModal({
                 <SelectValue placeholder="Select Access" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="DIRECT_PASS">
-                  Direct Access
-                </SelectItem>
-                <SelectItem value="PIN_REQUIRED">
-                  PIN Required
-                </SelectItem>
-                <SelectItem value="INVITE_ONLY">
-                  Invite Only
-                </SelectItem>
+                <SelectItem value="DIRECT_PASS">Direct Access</SelectItem>
+                <SelectItem value="PIN_REQUIRED">PIN Required</SelectItem>
+                <SelectItem value="INVITE_ONLY">Invite Only</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* PIN Display when Access Type is PIN_REQUIRED */}
-          {settings.accessType === 'PIN_REQUIRED' &&
-            settings.pinCode && (
-              <div className="bg-muted p-3 rounded-lg flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">
-                    Event Access PIN
-                  </p>
-                  <p className="text-2xl font-bold tracking-widest">
-                    {settings.pinCode}
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopyPin}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
+          {settings.accessType === "PIN_REQUIRED" && settings.pinCode && (
+            <div className="bg-muted p-3 rounded-lg flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Event Access PIN</p>
+                <p className="text-2xl font-bold tracking-widest">
+                  {settings.pinCode}
+                </p>
               </div>
-            )}
+              <Button variant="outline" size="icon" onClick={handleCopyPin}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           {/* Privacy Settings */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -239,7 +219,7 @@ export function EventSettingsModal({
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </DialogContent>

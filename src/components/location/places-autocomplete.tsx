@@ -1,9 +1,9 @@
 // components/PlacesAutocomplete.tsx
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useDebounce } from '@/hooks/useDebounce';
-import { searchPlaces } from '@/lib/google';
+import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { searchPlaces } from "@/lib/google";
 
 type Prediction = {
   description: string;
@@ -15,7 +15,7 @@ type Prediction = {
 };
 
 export default function PlacesAutocomplete() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,7 +34,7 @@ export default function PlacesAutocomplete() {
         const results = await searchPlaces(debouncedInput);
         setPredictions(results);
       } catch (error) {
-        console.error('Failed to fetch predictions:', error);
+        console.error("Failed to fetch predictions:", error);
         setPredictions([]);
       } finally {
         setIsLoading(false);
@@ -72,7 +72,7 @@ export default function PlacesAutocomplete() {
                 setInput(prediction.description);
                 setPredictions([]);
                 // Handle selection here
-                console.log('Selected:', prediction);
+                console.log("Selected:", prediction);
               }}
             >
               <div className="font-medium">

@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar } from '@/components/ui/avatar';
-import { Checkbox } from '@/components/ui/checkbox';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { MoreVertical, X, Copy } from 'lucide-react';
-import Image from 'next/image';
+} from "@/components/ui/select";
+import { MoreVertical, X, Copy } from "lucide-react";
+import Image from "next/image";
 
 const InviteModal = ({
   open,
@@ -29,41 +29,38 @@ const InviteModal = ({
   const [invitees] = useState([
     {
       id: 1,
-      name: 'James Collison',
-      email: 'james@site.com',
+      name: "James Collison",
+      email: "james@site.com",
       isYou: true,
-      avatar: '/api/placeholder/32/32',
-      role: 'Admin',
+      avatar: "/api/placeholder/32/32",
+      role: "Admin",
     },
     {
       id: 2,
-      name: 'Liza Harrison',
-      email: 'liza@site.com',
-      avatar: 'L',
-      role: 'Can view',
+      name: "Liza Harrison",
+      email: "liza@site.com",
+      avatar: "L",
+      role: "Can view",
     },
     {
       id: 3,
-      name: 'Daniel Hobbs',
-      email: 'dhobbs@site.com',
-      avatar: '/api/placeholder/32/32',
-      role: 'Can edit',
+      name: "Daniel Hobbs",
+      email: "dhobbs@site.com",
+      avatar: "/api/placeholder/32/32",
+      role: "Can edit",
     },
     {
       id: 4,
-      name: 'Anna Richard',
-      email: 'anna@site.com',
-      avatar: '/api/placeholder/32/32',
-      role: 'Can edit',
+      name: "Anna Richard",
+      email: "anna@site.com",
+      avatar: "/api/placeholder/32/32",
+      role: "Can edit",
     },
   ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[525px]"
-        closebtnstyle="hidden"
-      >
+      <DialogContent className="sm:max-w-[525px]" closebtnstyle="hidden">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Invite</DialogTitle>
           <Button
@@ -81,10 +78,7 @@ const InviteModal = ({
           <div>
             <h4 className="text-sm font-medium mb-3">Invite</h4>
             <div className="flex gap-2">
-              <Input
-                placeholder="Add name or emails"
-                className="flex-1"
-              />
+              <Input placeholder="Add name or emails" className="flex-1" />
               <Select defaultValue="view">
                 <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="Can view" />
@@ -99,10 +93,7 @@ const InviteModal = ({
             </div>
             <div className="flex items-center gap-2 mt-3">
               <Checkbox id="notify" defaultChecked />
-              <label
-                htmlFor="notify"
-                className="text-sm text-gray-500"
-              >
+              <label htmlFor="notify" className="text-sm text-gray-500">
                 Notify recipients via email
               </label>
             </div>
@@ -110,9 +101,7 @@ const InviteModal = ({
 
           {/* People Section */}
           <div>
-            <h4 className="text-sm font-medium mb-3">
-              From Htmlstream
-            </h4>
+            <h4 className="text-sm font-medium mb-3">From Htmlstream</h4>
             <div className="space-y-3">
               {invitees.map((invitee) => (
                 <div
@@ -121,7 +110,7 @@ const InviteModal = ({
                 >
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      {typeof invitee.avatar === 'string' &&
+                      {typeof invitee.avatar === "string" &&
                       invitee.avatar.length === 1 ? (
                         <div className="bg-blue-100 text-blue-600 w-full h-full flex items-center justify-center">
                           {invitee.avatar}
@@ -137,32 +126,24 @@ const InviteModal = ({
                     </Avatar>
                     <div>
                       <p className="text-sm font-medium">
-                        {invitee.name}{' '}
+                        {invitee.name}{" "}
                         {invitee.isYou && (
                           <span className="text-gray-500">(you)</span>
                         )}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {invitee.email}
-                      </p>
+                      <p className="text-sm text-gray-500">{invitee.email}</p>
                     </div>
                   </div>
                   <Select
-                    defaultValue={invitee.role
-                      .toLowerCase()
-                      .replace(' ', '-')}
+                    defaultValue={invitee.role.toLowerCase().replace(" ", "-")}
                   >
                     <SelectTrigger className="w-[110px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="can-edit">
-                        Can edit
-                      </SelectItem>
-                      <SelectItem value="can-view">
-                        Can view
-                      </SelectItem>
+                      <SelectItem value="can-edit">Can edit</SelectItem>
+                      <SelectItem value="can-view">Can view</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -175,9 +156,7 @@ const InviteModal = ({
 
           {/* Share Link Section */}
           <div>
-            <h4 className="text-sm font-medium mb-3">
-              Share read-only link
-            </h4>
+            <h4 className="text-sm font-medium mb-3">Share read-only link</h4>
             <div className="flex gap-2">
               <Input
                 readOnly

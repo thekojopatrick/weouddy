@@ -1,13 +1,13 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata, ResolvingMetadata } from "next";
 
-import EventRoom from '../_components/event-room';
-import { formatEventDateTime } from '@/lib/formatters';
-import { getSession } from '@/lib/auth';
-import { getURL } from '@/lib/utils';
-import { EventService } from '@/server/services/event';
-import EventAccessGuard from '../_components/event-access-guard';
-import { checkUserEventStatus } from '@/app/actions/check-user-event-status';
-import EventNotFound from '../_components/event-not-found';
+import EventRoom from "../_components/event-room";
+import { formatEventDateTime } from "@/lib/formatters";
+import { getSession } from "@/lib/auth";
+import { getURL } from "@/lib/utils";
+import { EventService } from "@/server/services/event";
+import EventAccessGuard from "../_components/event-access-guard";
+import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
+import EventNotFound from "../_components/event-not-found";
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -18,7 +18,7 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   // read route params
   const id = (await params).eventId;
@@ -29,9 +29,7 @@ export async function generateMetadata(
   // optionally access and extend (rather than replace) parent metadata
   const previousImages = (await parent).openGraph?.images || [];
 
-  const { date, time } = formatEventDateTime(
-    event?.dateTime as never
-  );
+  const { date, time } = formatEventDateTime(event?.dateTime as never);
   const siteUrl = getURL();
 
   return {
@@ -40,12 +38,9 @@ export async function generateMetadata(
     openGraph: {
       title: `${event?.name} | WeOuddy - Moments That Matter`,
       description:
-        'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
+        "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
       url: `${siteUrl}${event?.slug}`,
-      images: [
-        `${siteUrl}assets/default-event-cover.jpg`,
-        ...previousImages,
-      ],
+      images: [`${siteUrl}assets/default-event-cover.jpg`, ...previousImages],
     },
   };
 }
@@ -72,7 +67,7 @@ export default async function EventRoomPage(props: {
 
   console.log(userEventStatus);
 
-  const checkStatus = userEventStatus?.status === 'JOINED';
+  const checkStatus = userEventStatus?.status === "JOINED";
 
   console.log({ checkStatus });
 
@@ -80,7 +75,7 @@ export default async function EventRoomPage(props: {
     <EventAccessGuard
       user={session?.user}
       event={event || null}
-      userStatus={userEventStatus?.status || 'NOT_JOINED'}
+      userStatus={userEventStatus?.status || "NOT_JOINED"}
     >
       <EventRoom user={session.user} event={event as never} />
     </EventAccessGuard>

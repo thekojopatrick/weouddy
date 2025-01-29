@@ -1,4 +1,4 @@
-import { Post, Event } from '@prisma/client';
+import { Post, Event } from "@prisma/client";
 
 export interface UserProfile {
   id: string;
@@ -21,7 +21,7 @@ export interface FollowStats {
 
 export interface FollowRequestResult {
   success: boolean;
-  action: 'accept' | 'decline';
+  action: "accept" | "decline";
 }
 
 export interface FollowRequest {
@@ -90,6 +90,6 @@ export interface FollowButtonProps {
   isFollowing: boolean;
   isMutual?: boolean;
   onToggle: () => void;
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  size?: "default" | "sm" | "lg" | "icon";
   disabled?: boolean;
 }

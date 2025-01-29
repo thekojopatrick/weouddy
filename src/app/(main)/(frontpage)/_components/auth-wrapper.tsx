@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useUserStore } from '@/stores/user-store';
-import { createClient } from '@/utils/supabase/client';
-import SplashScreen from './splash-screen';
+import React, { useEffect, useState } from "react";
+import { useUserStore } from "@/stores/user-store";
+import { createClient } from "@/utils/supabase/client";
+import SplashScreen from "./splash-screen";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -29,7 +29,7 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
           await clearStore();
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error("Error initializing auth:", error);
         if (mounted) {
           clearStore();
         }
@@ -44,11 +44,11 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT') {
+      if (event === "SIGNED_OUT") {
         if (mounted) {
           await clearStore();
         }
-      } else if (event === 'SIGNED_IN' && session) {
+      } else if (event === "SIGNED_IN" && session) {
         if (mounted) {
           await initialize();
         }
@@ -65,9 +65,7 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   }, [initialize, clearStore]);
 
   if (isLoading) {
-    return (
-      <SplashScreen onLoadComplete={() => setIsLoading(false)} />
-    );
+    return <SplashScreen onLoadComplete={() => setIsLoading(false)} />;
   }
 
   return <>{children}</>;

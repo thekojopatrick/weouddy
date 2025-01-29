@@ -1,14 +1,14 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const ConnectAccounts = () => {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Connect accounts</h3>
       <p className="text-sm text-muted-foreground">
-        Access your Workspaces with any email address, or by
-        connecting an account.
+        Access your Workspaces with any email address, or by connecting an
+        account.
       </p>
 
       <div className="flex flex-wrap gap-4">

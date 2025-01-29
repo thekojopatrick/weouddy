@@ -1,6 +1,6 @@
-import { EventCache } from '@/types/event';
-import { EventWithDetails } from '@/types/prisma.types';
-import { create } from 'zustand';
+import { EventCache } from "@/types/event";
+import { EventWithDetails } from "@/types/prisma.types";
+import { create } from "zustand";
 
 export const useEventStore = create<{
   cache: Record<string, EventCache>;

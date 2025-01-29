@@ -1,5 +1,5 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -10,26 +10,23 @@ import {
   useSensors,
   DragStartEvent,
   DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-import { Column } from './column';
-import { TaskCard } from './task-card';
-import { TaskDialog } from './task-dialog';
+} from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { Column } from "./column";
+import { TaskCard } from "./task-card";
+import { TaskDialog } from "./task-dialog";
 
-import { useKanbanStore, Task } from '@/stores/use-kanban-store';
-import { useParams } from 'next/navigation';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Search, SlidersHorizontal } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useKanbanStore, Task } from "@/stores/use-kanban-store";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
-const COLUMNS: { id: Task['status']; title: string }[] = [
-  { id: 'no-status', title: 'To Do' },
-  { id: 'active', title: 'In Progress' },
-  { id: 'completed', title: 'Completed' },
+const COLUMNS: { id: Task["status"]; title: string }[] = [
+  { id: "no-status", title: "To Do" },
+  { id: "active", title: "In Progress" },
+  { id: "completed", title: "Completed" },
 ];
 
 const Index = () => {
@@ -39,13 +36,13 @@ const Index = () => {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [addingToStatus, setAddingToStatus] = useState<
-    Task['status'] | null
-  >(null);
+  const [addingToStatus, setAddingToStatus] = useState<Task["status"] | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!eventId) {
-      toast.error('No event ID provided');
+      toast.error("No event ID provided");
     }
   }, [eventId]);
 
@@ -53,7 +50,7 @@ const Index = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -74,7 +71,7 @@ const Index = () => {
 
     if (overColumn) {
       const updatedTasks = tasks.map((t) =>
-        t.id === activeTask.id ? { ...t, status: overColumn.id } : t
+        t.id === activeTask.id ? { ...t, status: overColumn.id } : t,
       );
       reorderTasks(updatedTasks);
     } else {
@@ -84,7 +81,7 @@ const Index = () => {
     }
   };
 
-  const handleAddTask = (status: Task['status']) => {
+  const handleAddTask = (status: Task["status"]) => {
     setAddingToStatus(status);
     setEditingTask(null);
     setDialogOpen(true);
@@ -137,10 +134,7 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <Button
-              onClick={() => setDialogOpen(true)}
-              className="btn-primary"
-            >
+            <Button onClick={() => setDialogOpen(true)} className="btn-primary">
               + New
             </Button>
           </div>
@@ -159,9 +153,7 @@ const Index = () => {
               key={column.id}
               id={column.id}
               title={column.title}
-              tasks={tasks.filter(
-                (task) => task.status === column.id
-              )}
+              tasks={tasks.filter((task) => task.status === column.id)}
               onAddTask={() => handleAddTask(column.id)}
               onEditTask={handleEditTask}
               onDeleteTask={deleteTask}
@@ -170,11 +162,7 @@ const Index = () => {
         </div>
         <DragOverlay>
           {activeTask ? (
-            <TaskCard
-              task={activeTask}
-              onEdit={() => {}}
-              onDelete={() => {}}
-            />
+            <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} />
           ) : null}
         </DragOverlay>
       </DndContext>

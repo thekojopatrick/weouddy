@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Command,
@@ -8,16 +8,14 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command';
-import { searchPlaces } from '@/lib/google';
-import { PlaceAutocompleteResult } from '@googlemaps/google-maps-services-js';
-import { useEffect, useState } from 'react';
+} from "@/components/ui/command";
+import { searchPlaces } from "@/lib/google";
+import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
+import { useEffect, useState } from "react";
 
 export default function AutocompleteInput() {
-  const [predictions, setPredictions] = useState<
-    PlaceAutocompleteResult[]
-  >([]);
-  const [input, setInput] = useState('');
+  const [predictions, setPredictions] = useState<PlaceAutocompleteResult[]>([]);
+  const [input, setInput] = useState("");
 
   console.log({ input });
 

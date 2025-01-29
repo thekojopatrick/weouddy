@@ -1,20 +1,17 @@
-import { useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useBatchEventStatuses } from './use-event';
+import { useState } from "react";
+import { useInView } from "react-intersection-observer";
+import { useBatchEventStatuses } from "./use-event";
 
 export function useVisibleEvents(eventIds: string[]) {
-  const [visibleEvents, setVisibleEvents] =
-    useState<string[]>(eventIds);
+  const [visibleEvents, setVisibleEvents] = useState<string[]>(eventIds);
 
   const { ref } = useInView({
     threshold: 0.1,
     onChange: (inView, entry) => {
       if (inView) {
-        const eventId = entry.target.getAttribute('data-event-id');
+        const eventId = entry.target.getAttribute("data-event-id");
         if (eventId) {
-          setVisibleEvents((prev) => [
-            ...new Set([...prev, eventId]),
-          ]);
+          setVisibleEvents((prev) => [...new Set([...prev, eventId])]);
         }
       }
     },

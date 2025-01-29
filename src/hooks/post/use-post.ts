@@ -1,11 +1,7 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { createPostSchema } from '@/types/post';
-import { Post } from '@prisma/client';
-import { PostWithDetails } from '@/types/prisma.types';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createPostSchema } from "@/types/post";
+import { Post } from "@prisma/client";
+import { PostWithDetails } from "@/types/prisma.types";
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
@@ -19,7 +15,7 @@ export const useCreatePost = () => {
       content?: string;
       media: Array<{
         url: string;
-        type: 'IMAGE' | 'VIDEO';
+        type: "IMAGE" | "VIDEO";
         order: number;
       }>;
       eventId: string;
@@ -30,36 +26,33 @@ export const useCreatePost = () => {
         media,
       });
 
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validatedData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create post');
+        throw new Error("Failed to create post");
       }
 
       return response.json();
     },
     onSuccess: (newPost) => {
       queryClient.invalidateQueries({
-        queryKey: ['posts', newPost.eventId],
+        queryKey: ["posts", newPost.eventId],
         exact: true,
       });
     },
   });
 };
 
-export function usePosts(
-  eventId: string,
-  initialPosts: PostWithDetails[]
-) {
+export function usePosts(eventId: string, initialPosts: PostWithDetails[]) {
   return useQuery({
-    queryKey: ['posts', eventId],
+    queryKey: ["posts", eventId],
     queryFn: async () => {
       const res = await fetch(`/api/events/${eventId}/posts`);
-      if (!res.ok) throw new Error('Failed to fetch posts');
+      if (!res.ok) throw new Error("Failed to fetch posts");
       return res.json();
     },
     initialData: initialPosts,
@@ -73,15 +66,15 @@ export function useToggleLike() {
   return useMutation({
     mutationFn: async (postId: string) => {
       const res = await fetch(`/api/posts/${postId}/like`, {
-        method: 'POST',
+        method: "POST",
       });
-      if (!res.ok) throw new Error('Failed to toggle like');
+      if (!res.ok) throw new Error("Failed to toggle like");
       return res.json();
     },
     onSuccess: (updatedPost) => {
-      queryClient.setQueryData(['posts'], (old: Post[] = []) => {
+      queryClient.setQueryData(["posts"], (old: Post[] = []) => {
         return old.map((post) =>
-          post.id === updatedPost.id ? updatedPost : post
+          post.id === updatedPost.id ? updatedPost : post,
         );
       });
     },

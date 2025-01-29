@@ -1,20 +1,11 @@
-import { EventWithDetails } from '@/types/prisma.types';
-import { Calendar, MapPin, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card';
-import Image from 'next/image';
-import Link from 'next/link';
+import { EventWithDetails } from "@/types/prisma.types";
+import { Calendar, MapPin, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
 
-export function DashboardEventCard({
-  event,
-}: {
-  event: EventWithDetails;
-}) {
+export function DashboardEventCard({ event }: { event: EventWithDetails }) {
   return (
     <Link href={`/dashboard/events/${event.slug}`}>
       <Card className="shadow-none hover:shadow-md transition-shadow overflow-hidden">
@@ -39,16 +30,14 @@ export function DashboardEventCard({
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <MapPin className="w-4 h-4 mr-2" />
-              {event.location || 'Online'}
+              {event.location || "Online"}
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <Users className="w-4 h-4 mr-2" />
               {event.memberCount} Members
             </div>
             <div className="flex justify-between items-center mt-4">
-              <span className="text-sm">
-                Hosted by {event.host.name}
-              </span>
+              <span className="text-sm">Hosted by {event.host.name}</span>
 
               <Button variant="outline" size="sm">
                 View Details

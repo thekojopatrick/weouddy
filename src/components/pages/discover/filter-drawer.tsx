@@ -1,7 +1,7 @@
-'use client';
-import { Drawer } from 'vaul';
+"use client";
+import { Drawer } from "vaul";
 
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from "lucide-react";
 
 interface FilterDrawerProps {
   categories: string[];
@@ -14,7 +14,7 @@ interface FilterDrawerProps {
 
 const FilterDrawer = ({
   categories,
-  locations = ['world', 'local'],
+  locations = ["world", "local"],
   currentCategory,
   currentLocation,
   onCategoryChange,
@@ -32,9 +32,7 @@ const FilterDrawer = ({
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
         <Drawer.Content className="fixed bottom-2 right-2 top-2 z-50 w-[320px] rounded-xl bg-white p-6 shadow-lg dark:bg-neutral-900">
-          <Drawer.Title className="mb-4 font-semibold">
-            Filter by
-          </Drawer.Title>
+          <Drawer.Title className="mb-4 font-semibold">Filter by</Drawer.Title>
           <div className="flex flex-col gap-6">
             <div>
               <h3 className="mb-3 font-medium">Location</h3>
@@ -45,8 +43,8 @@ const FilterDrawer = ({
                     onClick={() => onLocationChange(location)}
                     className={`rounded-full px-4 py-2 text-sm ${
                       currentLocation === location
-                        ? 'bg-black text-white dark:bg-white dark:text-black'
-                        : 'bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700'
+                        ? "bg-black text-white dark:bg-white dark:text-black"
+                        : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                     }`}
                   >
                     {location}
@@ -64,8 +62,8 @@ const FilterDrawer = ({
                     onClick={() => onCategoryChange(category)}
                     className={`rounded-full px-4 py-2 text-sm ${
                       currentCategory === category
-                        ? 'bg-black text-white dark:bg-white dark:text-black'
-                        : 'bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700'
+                        ? "bg-black text-white dark:bg-white dark:text-black"
+                        : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                     }`}
                   >
                     {category}

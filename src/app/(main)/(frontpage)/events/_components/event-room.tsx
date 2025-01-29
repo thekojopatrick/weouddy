@@ -1,46 +1,40 @@
-'use client';
+"use client";
 
-import { CalendarDays, MapPin, Settings, Users } from 'lucide-react';
+import { CalendarDays, MapPin, Settings, Users } from "lucide-react";
 
-import CreatePostButton from './create-post-button';
-import JoinChatRoom from './join-chat-room';
-import { EventSettingsModal } from '@/components/event/event-settings-modal';
-import { EventWithFullData } from '@/types/event';
+import CreatePostButton from "./create-post-button";
+import JoinChatRoom from "./join-chat-room";
+import { EventSettingsModal } from "@/components/event/event-settings-modal";
+import { EventWithFullData } from "@/types/event";
 
-import React from 'react';
-import { User } from '@supabase/supabase-js';
-import { cn } from '@/lib/utils';
-import { formatEventDateTime } from '@/lib/formatters';
-import { useAuthProtection } from '@/hooks/use-auth-protection';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import FeedbackDialog from '@/components/feedback-dialog';
+import React from "react";
+import { User } from "@supabase/supabase-js";
+import { cn } from "@/lib/utils";
+import { formatEventDateTime } from "@/lib/formatters";
+import { useAuthProtection } from "@/hooks/use-auth-protection";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import FeedbackDialog from "@/components/feedback-dialog";
 
-import { usePosts } from '@/hooks/post/use-post';
-import MasonryPosts from './masonry-posts';
-import ShareEventPopover from './share-event';
-import { Button } from '@/components/ui/button';
-import { SharePlatform } from '@/types/enums';
-import { updateEventSettings } from '@/app/actions/event-settings';
-import { EventWithDetails } from '@/types/prisma.types';
+import { usePosts } from "@/hooks/post/use-post";
+import MasonryPosts from "./masonry-posts";
+import ShareEventPopover from "./share-event";
+import { Button } from "@/components/ui/button";
+import { SharePlatform } from "@/types/enums";
+import { updateEventSettings } from "@/app/actions/event-settings";
+import { EventWithDetails } from "@/types/prisma.types";
 
 export default function EventRoom({
   user,
   event: initialEvent,
 }: {
-  user:
-    | (User & { username: string | null; avatarUrl: string | null })
-    | null;
+  user: (User & { username: string | null; avatarUrl: string | null }) | null;
   event: EventWithFullData;
 }) {
   const [event, setEvent] = React.useState(initialEvent);
   const { data: posts } = usePosts(event.id, event.posts as []);
 
-  const { date, time } = formatEventDateTime(
-    event?.dateTime as never
-  );
-  const isSmallDevice = useMediaQuery(
-    'only screen and (max-width : 638px)'
-  );
+  const { date, time } = formatEventDateTime(event?.dateTime as never);
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 638px)");
   const [showSettings, setShowSettings] = React.useState(false);
 
   const [copied, setCopied] = React.useState(false);
@@ -55,8 +49,7 @@ export default function EventRoom({
     }
   };
 
-  const shareUrl =
-    typeof window !== 'undefined' ? window.location.href : '';
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = `Join me at ${event.name}!`;
 
   const handleSocialShare = (platform: SharePlatform) => {
@@ -71,7 +64,7 @@ export default function EventRoom({
     };
 
     if (
-      platform === 'whatsapp' &&
+      platform === "whatsapp" &&
       /Android|iPhone/i.test(navigator.userAgent)
     ) {
       window.location.href = shareUrls[platform];
@@ -82,8 +75,8 @@ export default function EventRoom({
       const top = (window.screen.height - height) / 2;
       window.open(
         shareUrls[platform],
-        'share',
-        `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`
+        "share",
+        `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`,
       );
     }
   };
@@ -91,9 +84,7 @@ export default function EventRoom({
   // Check if current user is the host
   const isHost = user?.id === event.host.id;
 
-  const handleSaveSettings = async (
-    settings: Partial<EventWithDetails>
-  ) => {
+  const handleSaveSettings = async (settings: Partial<EventWithDetails>) => {
     try {
       // Immediately update local state
       setEvent((prevEvent: EventWithFullData) => {
@@ -161,9 +152,7 @@ export default function EventRoom({
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4" />
                   <span>{date}</span>
-                  <span className="text-muted-foreground">
-                    {time}
-                  </span>
+                  <span className="text-muted-foreground">{time}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
@@ -187,8 +176,8 @@ export default function EventRoom({
         {/* Action Buttons */}
         <div
           className={cn(
-            'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
-            isSmallDevice ? 'right-5' : 'right-8'
+            "fixed bottom-8 flex flex-col gap-4 z-50 items-end",
+            isSmallDevice ? "right-5" : "right-8",
           )}
         >
           {/* Wrap JoinChatRoom with auth protection */}
@@ -204,7 +193,7 @@ export default function EventRoom({
                     user={user as never}
                   />
                 ),
-                'join chat room'
+                "join chat room",
               )
             }
           >
@@ -228,7 +217,7 @@ export default function EventRoom({
                     user={user as never}
                   />
                 ),
-                'create a post'
+                "create a post",
               )
             }
           >
@@ -237,8 +226,8 @@ export default function EventRoom({
               eventId={event.id}
               user={{
                 id: user?.id,
-                userName: user?.user_metadata.full_name ?? '',
-                userAvatar: user?.avatarUrl ?? '',
+                userName: user?.user_metadata.full_name ?? "",
+                userAvatar: user?.avatarUrl ?? "",
               }}
             />
           </div>

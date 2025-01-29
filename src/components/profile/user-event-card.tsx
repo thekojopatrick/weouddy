@@ -1,9 +1,9 @@
-import { EventWithDetails } from '@/types/prisma.types';
-import { Calendar, MapPin, Users } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import Image from 'next/image';
-import Link from 'next/link';
+import { EventWithDetails } from "@/types/prisma.types";
+import { Calendar, MapPin, Users } from "lucide-react";
+import { Button } from "../ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import Image from "next/image";
+import Link from "next/link";
 
 export function EventCard({ event }: { event: EventWithDetails }) {
   return (
@@ -29,16 +29,14 @@ export function EventCard({ event }: { event: EventWithDetails }) {
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <MapPin className="w-4 h-4 mr-2" />
-            {event.location || 'Online'}
+            {event.location || "Online"}
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Users className="w-4 h-4 mr-2" />
             {event.memberCount} Members
           </div>
           <div className="flex justify-between items-center mt-4">
-            <span className="text-sm">
-              Hosted by {event.host.name}
-            </span>
+            <span className="text-sm">Hosted by {event.host.name}</span>
             <Link href={`/events/${event.slug}`}>
               <Button variant="outline" size="sm">
                 View Details

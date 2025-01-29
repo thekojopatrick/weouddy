@@ -1,16 +1,13 @@
-'use server';
+"use server";
 
-import {
-  EventWithDetails,
-  PostWithDetails,
-} from '@/types/prisma.types';
-import { EventActivityType } from '@prisma/client';
-import { Follow, UserProfile } from './types';
+import { EventWithDetails, PostWithDetails } from "@/types/prisma.types";
+import { EventActivityType } from "@prisma/client";
+import { Follow, UserProfile } from "./types";
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
 
 export async function getUserProfile(
-  usernameOrId: string
+  usernameOrId: string,
 ): Promise<UserProfile | null> {
   const user = await prisma.user.findFirst({
     where: { username: usernameOrId },
@@ -52,7 +49,7 @@ export async function getFollowStats(usernameOrId: string) {
 }
 
 export async function getUserFollowers(
-  usernameOrId: string
+  usernameOrId: string,
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
     where: { username: usernameOrId },
@@ -89,14 +86,14 @@ export async function getUserFollowers(
         ...follow,
         isMutual: !!isFollowingBack,
       };
-    })
+    }),
   );
 
   return followersWithMutual as Follow[];
 }
 
 export async function getUserFollowing(
-  usernameOrId: string
+  usernameOrId: string,
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
     where: { username: usernameOrId },
@@ -133,7 +130,7 @@ export async function getUserFollowing(
         ...follow,
         isMutual: !!isFollowedBack,
       };
-    })
+    }),
   );
 
   return followingWithMutual as Follow[];
@@ -141,7 +138,7 @@ export async function getUserFollowing(
 
 export async function checkIfFollowing(
   currentUserId: string,
-  targetUsername: string
+  targetUsername: string,
 ): Promise<boolean> {
   const targetUser = await prisma.user.findUnique({
     where: { username: targetUsername },
@@ -164,7 +161,7 @@ export async function checkIfFollowing(
 export async function fetchUserEvents(
   userId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<EventWithDetails[]> {
   return prisma.event
     .findMany({
@@ -188,7 +185,7 @@ export async function fetchUserEvents(
           },
         },
       },
-      orderBy: { dateTime: 'desc' },
+      orderBy: { dateTime: "desc" },
       take: limit,
       skip: (page - 1) * limit,
     })
@@ -197,14 +194,14 @@ export async function fetchUserEvents(
         ...event,
         memberCount: event._count.members,
         attendeeCount: event._count.attendees,
-      }))
+      })),
     ) as Promise<EventWithDetails[]>;
 }
 
 export async function fetchFollowers(
   userId: string,
   page: number = 1,
-  limit: number = 20
+  limit: number = 20,
 ): Promise<Follow[]> {
   return prisma.follow.findMany({
     where: { followingId: userId },
@@ -218,7 +215,7 @@ export async function fetchFollowers(
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
   }) as Promise<Follow[]>;
@@ -227,7 +224,7 @@ export async function fetchFollowers(
 export async function fetchUserPosts(
   userId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<PostWithDetails[]> {
   return prisma.post.findMany({
     where: { userId },
@@ -247,7 +244,7 @@ export async function fetchUserPosts(
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
   }) as Promise<PostWithDetails[]>;
@@ -256,7 +253,7 @@ export async function fetchUserPosts(
 export async function fetchFollowing(
   userId: string,
   page: number = 1,
-  limit: number = 20
+  limit: number = 20,
 ): Promise<Follow[]> {
   return prisma.follow.findMany({
     where: { followerId: userId },
@@ -270,16 +267,13 @@ export async function fetchFollowing(
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
   }) as Promise<Follow[]>;
 }
 
-export async function getUserEventStatus(
-  eventId: string,
-  userId: string
-) {
+export async function getUserEventStatus(eventId: string, userId: string) {
   const [membership, pendingRequest] = await Promise.all([
     prisma.event.findFirst({
       where: {
@@ -295,14 +289,14 @@ export async function getUserEventStatus(
       where: {
         eventId,
         userId,
-        status: 'PENDING',
+        status: "PENDING",
       },
     }),
   ]);
 
-  if (membership) return 'JOINED';
-  if (pendingRequest) return 'PENDING';
-  return 'NOT_JOINED';
+  if (membership) return "JOINED";
+  if (pendingRequest) return "PENDING";
+  return "NOT_JOINED";
 }
 
 export async function getProfileStats(usernameOrId: string) {
@@ -317,10 +311,7 @@ export async function getProfileStats(usernameOrId: string) {
     getFollowStats(usernameOrId),
     prisma.event.count({
       where: {
-        OR: [
-          { hostId: user.id },
-          { members: { some: { id: user.id } } },
-        ],
+        OR: [{ hostId: user.id }, { members: { some: { id: user.id } } }],
       },
     }),
     prisma.post.count({
@@ -343,7 +334,7 @@ export async function fetchPendingRequests(hostId: string) {
         hostId: hostId,
       },
       status: {
-        in: ['PENDING', 'DENIED'],
+        in: ["PENDING", "DENIED"],
       },
     },
     include: {
@@ -363,14 +354,14 @@ export async function fetchPendingRequests(hostId: string) {
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 }
 
 export async function updateRequestStatus(
   requestId: string,
-  status: 'APPROVED' | 'DENIED' | 'PENDING'
+  status: "APPROVED" | "DENIED" | "PENDING",
 ) {
   return prisma.$transaction(async (tx) => {
     const attendee = await tx.attendee.update({
@@ -384,11 +375,11 @@ export async function updateRequestStatus(
 
     // Create activity log based on status
     const activityType: EventActivityType =
-      status === 'APPROVED'
-        ? 'ACCESS_GRANTED'
-        : status === 'DENIED'
-          ? 'ACCESS_DENIED'
-          : 'RESQUEST_PENDING';
+      status === "APPROVED"
+        ? "ACCESS_GRANTED"
+        : status === "DENIED"
+          ? "ACCESS_DENIED"
+          : "RESQUEST_PENDING";
 
     await tx.eventActivity.create({
       data: {
@@ -399,12 +390,12 @@ export async function updateRequestStatus(
     });
 
     // If approved, create a JOIN activity
-    if (status === 'APPROVED') {
+    if (status === "APPROVED") {
       await tx.eventActivity.create({
         data: {
           eventId: attendee.eventId,
           userId: attendee.userId,
-          type: 'JOIN',
+          type: "JOIN",
         },
       });
     }

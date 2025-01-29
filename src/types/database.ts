@@ -49,18 +49,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: '_JoinedEvents_A_fkey';
-            columns: ['A'];
+            foreignKeyName: "_JoinedEvents_A_fkey";
+            columns: ["A"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: '_JoinedEvents_B_fkey';
-            columns: ['B'];
+            foreignKeyName: "_JoinedEvents_B_fkey";
+            columns: ["B"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -102,37 +102,37 @@ export type Database = {
           createdAt: string;
           eventId: string;
           id: string;
-          status: Database['public']['Enums']['AttendeeStatus'];
+          status: Database["public"]["Enums"]["AttendeeStatus"];
           userId: string;
         };
         Insert: {
           createdAt?: string;
           eventId: string;
           id: string;
-          status?: Database['public']['Enums']['AttendeeStatus'];
+          status?: Database["public"]["Enums"]["AttendeeStatus"];
           userId: string;
         };
         Update: {
           createdAt?: string;
           eventId?: string;
           id?: string;
-          status?: Database['public']['Enums']['AttendeeStatus'];
+          status?: Database["public"]["Enums"]["AttendeeStatus"];
           userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'Attendee_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "Attendee_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'Attendee_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "Attendee_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -143,7 +143,7 @@ export type Database = {
           eventId: string;
           id: string;
           isPinned: boolean;
-          status: Database['public']['Enums']['MessageStatus'];
+          status: Database["public"]["Enums"]["MessageStatus"];
           userId: string;
         };
         Insert: {
@@ -152,7 +152,7 @@ export type Database = {
           eventId: string;
           id: string;
           isPinned?: boolean;
-          status?: Database['public']['Enums']['MessageStatus'];
+          status?: Database["public"]["Enums"]["MessageStatus"];
           userId: string;
         };
         Update: {
@@ -161,23 +161,23 @@ export type Database = {
           eventId?: string;
           id?: string;
           isPinned?: boolean;
-          status?: Database['public']['Enums']['MessageStatus'];
+          status?: Database["public"]["Enums"]["MessageStatus"];
           userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'ChatMessage_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "ChatMessage_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'ChatMessage_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "ChatMessage_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -223,11 +223,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'ChatSettings_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "ChatSettings_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -258,24 +258,24 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'Comment_postId_fkey';
-            columns: ['postId'];
+            foreignKeyName: "Comment_postId_fkey";
+            columns: ["postId"];
             isOneToOne: false;
-            referencedRelation: 'Post';
-            referencedColumns: ['id'];
+            referencedRelation: "Post";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'Comment_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "Comment_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
       Event: {
         Row: {
-          accessType: Database['public']['Enums']['AccessType'];
+          accessType: Database["public"]["Enums"]["AccessType"];
           allowChat: boolean;
           allowComments: boolean;
           allowLikes: boolean;
@@ -298,7 +298,7 @@ export type Database = {
           updatedAt: string;
         };
         Insert: {
-          accessType?: Database['public']['Enums']['AccessType'];
+          accessType?: Database["public"]["Enums"]["AccessType"];
           allowChat?: boolean;
           allowComments?: boolean;
           allowLikes?: boolean;
@@ -321,7 +321,7 @@ export type Database = {
           updatedAt: string;
         };
         Update: {
-          accessType?: Database['public']['Enums']['AccessType'];
+          accessType?: Database["public"]["Enums"]["AccessType"];
           allowChat?: boolean;
           allowComments?: boolean;
           allowLikes?: boolean;
@@ -345,11 +345,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'Event_hostId_fkey';
-            columns: ['hostId'];
+            foreignKeyName: "Event_hostId_fkey";
+            columns: ["hostId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -358,37 +358,37 @@ export type Database = {
           createdAt: string;
           eventId: string;
           id: string;
-          type: Database['public']['Enums']['EventActivityType'];
+          type: Database["public"]["Enums"]["EventActivityType"];
           userId: string;
         };
         Insert: {
           createdAt?: string;
           eventId: string;
           id: string;
-          type: Database['public']['Enums']['EventActivityType'];
+          type: Database["public"]["Enums"]["EventActivityType"];
           userId: string;
         };
         Update: {
           createdAt?: string;
           eventId?: string;
           id?: string;
-          type?: Database['public']['Enums']['EventActivityType'];
+          type?: Database["public"]["Enums"]["EventActivityType"];
           userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'EventActivity_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "EventActivity_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'EventActivity_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "EventActivity_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -397,84 +397,84 @@ export type Database = {
           createdAt: string;
           eventId: string;
           id: string;
-          role: Database['public']['Enums']['Role'];
+          role: Database["public"]["Enums"]["Role"];
           userId: string;
         };
         Insert: {
           createdAt?: string;
           eventId: string;
           id: string;
-          role: Database['public']['Enums']['Role'];
+          role: Database["public"]["Enums"]["Role"];
           userId: string;
         };
         Update: {
           createdAt?: string;
           eventId?: string;
           id?: string;
-          role?: Database['public']['Enums']['Role'];
+          role?: Database["public"]["Enums"]["Role"];
           userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'EventRole_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "EventRole_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'EventRole_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "EventRole_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
       Feedback: {
         Row: {
-          category: Database['public']['Enums']['FeedbackCategory'];
+          category: Database["public"]["Enums"]["FeedbackCategory"];
           createdAt: string;
           id: string;
           message: string | null;
           metadata: Json | null;
           rating: number;
-          status: Database['public']['Enums']['FeedbackStatus'];
-          type: Database['public']['Enums']['FeedbackType'];
+          status: Database["public"]["Enums"]["FeedbackStatus"];
+          type: Database["public"]["Enums"]["FeedbackType"];
           updatedAt: string;
           userId: string;
         };
         Insert: {
-          category: Database['public']['Enums']['FeedbackCategory'];
+          category: Database["public"]["Enums"]["FeedbackCategory"];
           createdAt?: string;
           id: string;
           message?: string | null;
           metadata?: Json | null;
           rating: number;
-          status?: Database['public']['Enums']['FeedbackStatus'];
-          type: Database['public']['Enums']['FeedbackType'];
+          status?: Database["public"]["Enums"]["FeedbackStatus"];
+          type: Database["public"]["Enums"]["FeedbackType"];
           updatedAt: string;
           userId: string;
         };
         Update: {
-          category?: Database['public']['Enums']['FeedbackCategory'];
+          category?: Database["public"]["Enums"]["FeedbackCategory"];
           createdAt?: string;
           id?: string;
           message?: string | null;
           metadata?: Json | null;
           rating?: number;
-          status?: Database['public']['Enums']['FeedbackStatus'];
-          type?: Database['public']['Enums']['FeedbackType'];
+          status?: Database["public"]["Enums"]["FeedbackStatus"];
+          type?: Database["public"]["Enums"]["FeedbackType"];
           updatedAt?: string;
           userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'Feedback_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "Feedback_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -499,18 +499,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'Follow_followerId_fkey';
-            columns: ['followerId'];
+            foreignKeyName: "Follow_followerId_fkey";
+            columns: ["followerId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'Follow_followingId_fkey';
-            columns: ['followingId'];
+            foreignKeyName: "Follow_followingId_fkey";
+            columns: ["followingId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -535,18 +535,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'FollowRequest_requestorId_fkey';
-            columns: ['requestorId'];
+            foreignKeyName: "FollowRequest_requestorId_fkey";
+            columns: ["requestorId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'FollowRequest_targetUserId_fkey';
-            columns: ['targetUserId'];
+            foreignKeyName: "FollowRequest_targetUserId_fkey";
+            columns: ["targetUserId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -558,11 +558,9 @@ export type Database = {
           message: string | null;
           name: string | null;
           phone: string | null;
-          status:
-            | Database['public']['Enums']['NewsletterStatus']
-            | null;
+          status: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject: string | null;
-          type: Database['public']['Enums']['FormsType'];
+          type: Database["public"]["Enums"]["FormsType"];
           updatedAt: string;
           userId: string | null;
         };
@@ -573,11 +571,9 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           phone?: string | null;
-          status?:
-            | Database['public']['Enums']['NewsletterStatus']
-            | null;
+          status?: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject?: string | null;
-          type?: Database['public']['Enums']['FormsType'];
+          type?: Database["public"]["Enums"]["FormsType"];
           updatedAt: string;
           userId?: string | null;
         };
@@ -588,11 +584,9 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           phone?: string | null;
-          status?:
-            | Database['public']['Enums']['NewsletterStatus']
-            | null;
+          status?: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject?: string | null;
-          type?: Database['public']['Enums']['FormsType'];
+          type?: Database["public"]["Enums"]["FormsType"];
           updatedAt?: string;
           userId?: string | null;
         };
@@ -619,18 +613,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'Like_postId_fkey';
-            columns: ['postId'];
+            foreignKeyName: "Like_postId_fkey";
+            columns: ["postId"];
             isOneToOne: false;
-            referencedRelation: 'Post';
-            referencedColumns: ['id'];
+            referencedRelation: "Post";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'Like_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "Like_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -658,18 +652,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'MessageReaction_messageId_fkey';
-            columns: ['messageId'];
+            foreignKeyName: "MessageReaction_messageId_fkey";
+            columns: ["messageId"];
             isOneToOne: false;
-            referencedRelation: 'ChatMessage';
-            referencedColumns: ['id'];
+            referencedRelation: "ChatMessage";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'MessageReaction_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "MessageReaction_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -700,18 +694,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'Post_eventId_fkey';
-            columns: ['eventId'];
+            foreignKeyName: "Post_eventId_fkey";
+            columns: ["eventId"];
             isOneToOne: false;
-            referencedRelation: 'Event';
-            referencedColumns: ['id'];
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'Post_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: "Post_userId_fkey";
+            columns: ["userId"];
             isOneToOne: false;
-            referencedRelation: 'User';
-            referencedColumns: ['id'];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -721,7 +715,7 @@ export type Database = {
           id: string;
           order: number;
           postId: string;
-          type: Database['public']['Enums']['MediaType'];
+          type: Database["public"]["Enums"]["MediaType"];
           url: string;
         };
         Insert: {
@@ -729,7 +723,7 @@ export type Database = {
           id: string;
           order?: number;
           postId: string;
-          type: Database['public']['Enums']['MediaType'];
+          type: Database["public"]["Enums"]["MediaType"];
           url: string;
         };
         Update: {
@@ -737,16 +731,16 @@ export type Database = {
           id?: string;
           order?: number;
           postId?: string;
-          type?: Database['public']['Enums']['MediaType'];
+          type?: Database["public"]["Enums"]["MediaType"];
           url?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'PostMedia_postId_fkey';
-            columns: ['postId'];
+            foreignKeyName: "PostMedia_postId_fkey";
+            columns: ["postId"];
             isOneToOne: false;
-            referencedRelation: 'Post';
-            referencedColumns: ['id'];
+            referencedRelation: "Post";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -763,7 +757,7 @@ export type Database = {
           isPrivateProfile: boolean;
           lastActive: string;
           name: string | null;
-          role: Database['public']['Enums']['UserRole'];
+          role: Database["public"]["Enums"]["UserRole"];
           updatedAt: string;
           username: string | null;
         };
@@ -779,7 +773,7 @@ export type Database = {
           isPrivateProfile?: boolean;
           lastActive?: string;
           name?: string | null;
-          role?: Database['public']['Enums']['UserRole'];
+          role?: Database["public"]["Enums"]["UserRole"];
           updatedAt: string;
           username?: string | null;
         };
@@ -795,7 +789,7 @@ export type Database = {
           isPrivateProfile?: boolean;
           lastActive?: string;
           name?: string | null;
-          role?: Database['public']['Enums']['UserRole'];
+          role?: Database["public"]["Enums"]["UserRole"];
           updatedAt?: string;
           username?: string | null;
         };
@@ -809,44 +803,37 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      AccessType:
-        | 'DIRECT_PASS'
-        | 'PIN_REQUIRED'
-        | 'APPROVAL_REQUIRED';
-      AttendeeStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+      AccessType: "DIRECT_PASS" | "PIN_REQUIRED" | "APPROVAL_REQUIRED";
+      AttendeeStatus: "PENDING" | "APPROVED" | "REJECTED";
       EventActivityType:
-        | 'JOIN'
-        | 'LEAVE'
-        | 'POST'
-        | 'LIKE'
-        | 'COMMENT'
-        | 'DELETE'
-        | 'REPORT';
+        | "JOIN"
+        | "LEAVE"
+        | "POST"
+        | "LIKE"
+        | "COMMENT"
+        | "DELETE"
+        | "REPORT";
       FeedbackCategory:
-        | 'UI_UX'
-        | 'PERFORMANCE'
-        | 'FUNCTIONALITY'
-        | 'CONTENT'
-        | 'TECHNICAL'
-        | 'GENERAL';
-      FeedbackStatus:
-        | 'PENDING'
-        | 'REVIEWED'
-        | 'RESOLVED'
-        | 'ARCHIVED';
+        | "UI_UX"
+        | "PERFORMANCE"
+        | "FUNCTIONALITY"
+        | "CONTENT"
+        | "TECHNICAL"
+        | "GENERAL";
+      FeedbackStatus: "PENDING" | "REVIEWED" | "RESOLVED" | "ARCHIVED";
       FeedbackType:
-        | 'ACCOUNT_SETUP'
-        | 'EVENT_EXPERIENCE'
-        | 'APP_USABILITY'
-        | 'BUG_REPORT'
-        | 'FEATURE_REQUEST'
-        | 'OTHER';
-      FormsType: 'CONTACT' | 'NEWSLETTER';
-      MediaType: 'IMAGE' | 'VIDEO';
-      MessageStatus: 'SENT' | 'DELIVERED' | 'READ';
-      NewsletterStatus: 'APPROVED' | 'UNSUBSCRIBED' | 'AUTO_ARCHIVED';
-      Role: 'ADMIN' | 'MODERATOR' | 'MEMBER';
-      UserRole: 'ADMIN' | 'USER' | 'PARTNER' | 'MEMBER';
+        | "ACCOUNT_SETUP"
+        | "EVENT_EXPERIENCE"
+        | "APP_USABILITY"
+        | "BUG_REPORT"
+        | "FEATURE_REQUEST"
+        | "OTHER";
+      FormsType: "CONTACT" | "NEWSLETTER";
+      MediaType: "IMAGE" | "VIDEO";
+      MessageStatus: "SENT" | "DELIVERED" | "READ";
+      NewsletterStatus: "APPROVED" | "UNSUBSCRIBED" | "AUTO_ARCHIVED";
+      Role: "ADMIN" | "MODERATOR" | "MEMBER";
+      UserRole: "ADMIN" | "USER" | "PARTNER" | "MEMBER";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -854,29 +841,29 @@ export type Database = {
   };
 };
 
-type PublicSchema = Database[Extract<keyof Database, 'public'>];
+type PublicSchema = Database[Extract<keyof Database, "public">];
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-        Database[PublicTableNameOrOptions['schema']]['Views'])
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R;
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] &
-        PublicSchema['Views'])
-    ? (PublicSchema['Tables'] &
-        PublicSchema['Views'])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -885,21 +872,21 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema['Tables']
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I;
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Insert: infer I;
       }
       ? I
@@ -908,21 +895,21 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema['Tables']
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U;
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Update: infer U;
       }
       ? U
@@ -931,32 +918,32 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof PublicSchema['Enums']
+    | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
-    ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema['CompositeTypes']
+    | keyof PublicSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof Database;
 }
-  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
-    ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;

@@ -1,20 +1,20 @@
-import { EventService } from '@/server/services/event';
-import { getSession } from '@/lib/auth';
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import { EventService } from "@/server/services/event";
+import { getSession } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
-import { rateLimiter } from '@/server/services/ratelimiter/rate-limiter.service';
+import { rateLimiter } from "@/server/services/ratelimiter/rate-limiter.service";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = parseInt(searchParams.get('limit') || '12');
-  const location = searchParams.get('location');
-  const category = searchParams.get('category');
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "12");
+  const location = searchParams.get("location");
+  const category = searchParams.get("category");
 
   // Rate limit API requests - 30 requests per minute per IP
   await rateLimiter.limitByIp({
-    key: 'get-events',
+    key: "get-events",
     limit: 15,
     window: 60000,
   });
@@ -30,13 +30,9 @@ export async function GET(request: Request) {
         limit,
         location,
         category,
-        session?.userId || undefined
+        session?.userId || undefined,
       ),
-      EventService.count(
-        location,
-        category,
-        session?.userId || undefined
-      ),
+      EventService.count(location, category, session?.userId || undefined),
     ]);
 
     return NextResponse.json({
@@ -46,14 +42,11 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

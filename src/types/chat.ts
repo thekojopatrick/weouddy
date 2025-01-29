@@ -8,7 +8,7 @@ export interface ChatMessage {
   id: string;
   content: string;
   isPinned: boolean;
-  status: 'sent' | 'delivered' | 'read';
+  status: "sent" | "delivered" | "read";
   createdAt: string;
   userId: string;
   eventId: string;
@@ -33,7 +33,7 @@ export interface MessageStatus {
   id: string;
   messageId: string;
   userId: string;
-  status: 'delivered' | 'read';
+  status: "delivered" | "read";
   updatedAt: string;
 }
 
