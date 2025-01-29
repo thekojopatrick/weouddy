@@ -2,11 +2,6 @@
 
 import { CalendarIcon, Clock, MapPin } from 'lucide-react';
 import {
-  DateInput,
-  DateSegment,
-  TimeField,
-} from 'react-aria-components';
-import {
   FormControl,
   FormField,
   FormItem,
@@ -34,6 +29,12 @@ import { LocationModal } from '@/components/location/location-modal';
 import { cn } from '@/lib/utils';
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
+import { DropdownNavProps, DropdownProps } from 'react-day-picker';
+import {
+  DateField,
+  TimeField,
+  DateInput,
+} from '@/components/ui/datefield-rac';
 
 interface LocationTimeStepProps {
   onNext: () => void;
@@ -76,6 +77,18 @@ export function LocationTimeStep({
       const formattedTime = `${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}`;
       setValue('time', formattedTime);
     }
+  };
+
+  const handleCalendarChange = (
+    _value: string | number,
+    _e: React.ChangeEventHandler<HTMLSelectElement>
+  ) => {
+    const _event = {
+      target: {
+        value: String(_value),
+      },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    _e(_event);
   };
 
   return (
@@ -152,11 +165,53 @@ export function LocationTimeStep({
                     onSelect={(date) =>
                       field.onChange(date?.toISOString())
                     }
-                    disabled={(date) =>
-                      date < new Date() ||
-                      date < new Date('1900-01-01')
-                    }
                     initialFocus
+                    className="rounded-lg border border-border p-2"
+                    classNames={{
+                      month_caption: 'mx-0',
+                    }}
+                    captionLayout="dropdown"
+                    defaultMonth={new Date()}
+                    startMonth={new Date(1980, 6)}
+                    components={{
+                      DropdownNav: (props: DropdownNavProps) => {
+                        return (
+                          <div className="flex w-full items-center gap-2">
+                            {props.children}
+                          </div>
+                        );
+                      },
+                      Dropdown: (props: DropdownProps) => {
+                        return (
+                          <Select
+                            value={String(props.value)}
+                            onValueChange={(value) => {
+                              if (props.onChange) {
+                                handleCalendarChange(
+                                  value,
+                                  props.onChange
+                                );
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="h-8 w-fit font-medium first:grow">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[min(26rem,var(--radix-select-content-available-height))]">
+                              {props.options?.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={String(option.value)}
+                                  disabled={option.disabled}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        );
+                      },
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -196,16 +251,13 @@ export function LocationTimeStep({
                       : parseTime(format(new Date(), 'HH:mm'))
                   }
                   onChange={handleTimeChange}
-                  className="w-full rounded-full bg-zinc-50"
                 >
-                  <DateInput className="relative rounded-full inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap  border border-input bg-zinc-50 px-3 py-5 text-sm shadow-none shadow-black/5 transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/20">
-                    {(segment) => (
-                      <DateSegment
-                        segment={segment}
-                        className="inline rounded p-0.5 text-foreground caret-transparent outline outline-0 data-disabled:cursor-not-allowed data-focused:bg-accent data-invalid:data-focused:bg-destructive data-[type=literal]:px-0 data-focused:data-placeholder:text-foreground data-focused:text-foreground data-invalid:data-focused:data-placeholder:text-destructive-foreground data-invalid:data-focused:text-destructive-foreground data-invalid:data-placeholder:text-destructive data-invalid:text-destructive data-placeholder:text-muted-foreground/70 data-[type=literal]:text-muted-foreground/70 data-disabled:opacity-50"
-                      />
+                  <DateInput
+                    className={cn(
+                      'rounded-full bg-zinc-50 py-5',
+                      'relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap border border-input px-3 text-sm shadow-none shadow-black/5 transition-shadow data-[focus-within]:border-ring data-disabled:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20'
                     )}
-                  </DateInput>
+                  />
                 </TimeField>
               </FormControl>
               <Button
@@ -234,7 +286,6 @@ export function LocationTimeStep({
         <Button
           type="button"
           onClick={() => {
-            // Optional time handling
             if (!timeValue) {
               setValue('time', format(new Date(), 'HH:mm'));
             }
