@@ -63,7 +63,7 @@ export default function SearchDialog({}: {
         />
       </div>
 
-      <DialogContent className="w-full h-screen max-w-full md:max-w-screen-md mx-auto md:h-[60vh] rounded-none md:rounded-lg">
+      <DialogContent className="w-full h-screen max-w-full md:max-w-(--breakpoint-md) mx-auto md:h-[60vh] rounded-none md:rounded-lg">
         <DialogHeader className="p-4 border-b">
           <div className="flex items-center gap-2">
             <DialogClose className="static p-2 opacity-100 rounded-full" />

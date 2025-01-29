@@ -20,7 +20,7 @@ export function SettingsCard({
   actionButton,
 }: SettingsCardProps) {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xs">
       <CardHeader>
         <div className="flex justify-between flex-wrap gap-3">
           <div className="heading">

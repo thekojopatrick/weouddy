@@ -50,7 +50,7 @@ const AboutUsSection = () => {
           per="char"
           delay={2.5}
           className="text-sm md:text-xl font-medium text-center tracking-tight"
-          preset="blur"
+          preset="blur-sm"
         >
           Discover real-time moments, stories, and insights about
           events, businesses, startups, and creatives. It&apos;s your
@@ -63,7 +63,7 @@ const AboutUsSection = () => {
           per="char"
           delay={2.5}
           className="text-lg md:text-xl font-display text-center tracking-normal"
-          preset="blur"
+          preset="blur-sm"
         >
           See us in action
         </TextEffect>

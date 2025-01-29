@@ -120,7 +120,7 @@ export function EventCard({
         onClick={handleCardClick}
       >
         <CardHeader className="p-0">
-          <div className="relative aspect-[4/3]">
+          <div className="relative aspect-4/3">
             <Badge
               variant="secondary"
               className="absolute left-4 top-4 z-10"

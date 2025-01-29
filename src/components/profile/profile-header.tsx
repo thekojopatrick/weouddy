@@ -100,7 +100,7 @@ export function ProfileHeader({
             <Button
               onClick={handleFollow}
               variant={following ? 'outline' : 'default'}
-              className="shadow-sm"
+              className="shadow-xs"
             >
               {following ? 'Unfollow' : 'Follow'}
             </Button>

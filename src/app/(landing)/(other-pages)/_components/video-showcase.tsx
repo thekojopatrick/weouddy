@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export const VideoShowcase = () => (
   <div className="relative w-full h-[450px] min-h-96 max-h-[540px] mb-16 rounded-lg overflow-hidden">
-    <div className="absolute inset-0 bg-gradient-to-r from-green-100/20 to-transparent rounded-lg">
+    <div className="absolute inset-0 bg-linear-to-r from-green-100/20 to-transparent rounded-lg">
       <Image
         src="/placeholder.svg"
         alt="Nature background"

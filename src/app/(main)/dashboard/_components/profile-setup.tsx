@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 
 const ProfileSetupComponets = () => {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xs">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Profile setup</CardTitle>

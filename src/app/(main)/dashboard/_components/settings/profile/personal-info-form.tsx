@@ -21,7 +21,7 @@ export function PersonalInfoForm() {
           <Input
             id="name"
             placeholder="Enter full name"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
           <p className="text-sm text-muted-foreground">
             Enter your full name, or a display name you are
@@ -34,7 +34,7 @@ export function PersonalInfoForm() {
           <Input
             id="username"
             placeholder="Enter username"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
           <p className="text-sm text-muted-foreground">
             Enter your display name for public forums.
@@ -47,7 +47,7 @@ export function PersonalInfoForm() {
             id="email"
             type="email"
             placeholder="Enter email address"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
           <p className="text-sm text-muted-foreground">
             Enter the email address you want to use to log in.
@@ -72,10 +72,10 @@ export function PersonalInfoForm() {
         </div>
 
         <div className="flex gap-4">
-          <Button className="shadow-sm rounded-lg">
+          <Button className="shadow-xs rounded-lg">
             Save changes
           </Button>
-          <Button variant="outline" className="shadow-sm rounded-lg">
+          <Button variant="outline" className="shadow-xs rounded-lg">
             Cancel
           </Button>
         </div>

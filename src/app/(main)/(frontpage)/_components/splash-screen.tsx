@@ -42,7 +42,7 @@ const SplashScreen = ({
         {/* Loading indicator */}
         <div className="mt-8">
           <div className="h-1 w-24 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-black via-zinc-500 to-black w-full animate-loading" />
+            <div className="h-full bg-linear-to-r from-black via-zinc-500 to-black w-full animate-loading" />
           </div>
         </div>
 

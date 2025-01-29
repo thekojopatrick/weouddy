@@ -67,7 +67,7 @@ export default function CustomDialog({
 				<div
 					ref={contentRef}
 					onScroll={scrollableContent ? handleScroll : undefined}
-					className={`${scrollableContent ? 'overflow-y-auto' : ''} ${!stickyHeader && !stickyFooter ? 'flex-grow' : ''}`}
+					className={`${scrollableContent ? 'overflow-y-auto' : ''} ${!stickyHeader && !stickyFooter ? 'grow' : ''}`}
 				>
 					<DialogDescription asChild>{content}</DialogDescription>
 				</div>

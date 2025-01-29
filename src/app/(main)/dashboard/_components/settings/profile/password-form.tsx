@@ -38,7 +38,7 @@ export function PasswordForm() {
             id="current"
             type="password"
             placeholder="Enter current password"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
         </div>
 
@@ -48,7 +48,7 @@ export function PasswordForm() {
             id="new"
             type="password"
             placeholder="Enter new password"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
         </div>
 
@@ -58,7 +58,7 @@ export function PasswordForm() {
             id="confirm"
             type="password"
             placeholder="Repeat new password"
-            className="shadow-sm text-sm"
+            className="shadow-xs text-sm"
           />
         </div>
 
@@ -74,7 +74,7 @@ export function PasswordForm() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button className="rounded-lg shadow-sm">Change</Button>
+          <Button className="rounded-lg shadow-xs">Change</Button>
           <Link
             href="#"
             className="text-sm text-primary font-semibold hover:underline"

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 
 const PartnersList = () => {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xs">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Partners</CardTitle>

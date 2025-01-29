@@ -156,7 +156,7 @@ export function AuthForm({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-sm">
+    <Card className="w-full max-w-md mx-auto shadow-xs">
       <CardContent>
         {activeTab === 'login' ? (
           <LoginForm

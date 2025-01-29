@@ -164,7 +164,7 @@ const PrivacyPolicyPage = () => {
         <TableOfContents sections={sections} />
 
         {/* Main Content */}
-        <Card className="mb-8 shadow-sm">
+        <Card className="mb-8 shadow-xs">
           <CardContent className="p-8 sm:p-12">
             {/* Introduction */}
             <div className="prose prose-gray max-w-none">

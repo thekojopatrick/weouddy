@@ -100,7 +100,7 @@ export function FollowsDialog({
           Following
         </button>
       </DialogTrigger>
-      <DialogContent className="min-h-screen grid grid-rows-[auto,1fr] p-4 md:p-6 sm:max-w-[540px]">
+      <DialogContent className="min-h-screen grid grid-rows-[auto_1fr] p-4 md:p-6 sm:max-w-[540px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             People

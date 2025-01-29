@@ -157,7 +157,7 @@ export function Comments({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 disabled={isLoading}
-                className="rounded-full text-xs pr-10 shadow-sm"
+                className="rounded-full text-xs pr-10 shadow-xs"
               />
               <div className="absolute right-1">
                 <EmojiPicker

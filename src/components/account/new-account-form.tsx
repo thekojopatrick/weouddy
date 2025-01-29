@@ -157,7 +157,7 @@ export default function AccountForm({ user }: AccountFormProps) {
                     placeholder="Your full name"
                     {...field}
                     disabled={!isEditing}
-                    className="h-10 shadow-sm text-sm"
+                    className="h-10 shadow-xs text-sm"
                   />
                 </FormControl>
                 <FormMessage />
@@ -176,7 +176,7 @@ export default function AccountForm({ user }: AccountFormProps) {
                     placeholder="Choose a unique username"
                     {...field}
                     disabled={!isEditing}
-                    className="h-10 shadow-sm text-sm"
+                    className="h-10 shadow-xs text-sm"
                   />
                 </FormControl>
                 <FormMessage />
@@ -195,7 +195,7 @@ export default function AccountForm({ user }: AccountFormProps) {
                     placeholder="Tell us about yourself"
                     {...field}
                     disabled={!isEditing}
-                    className="shadow-sm h-40 text-sm"
+                    className="shadow-xs h-40 text-sm"
                   />
                 </FormControl>
                 <FormMessage />

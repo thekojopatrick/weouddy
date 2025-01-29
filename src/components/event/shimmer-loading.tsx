@@ -2,7 +2,7 @@ import React from 'react';
 
 export function EventCardShimmer() {
   return (
-    <div className="animate-pulse bg-gray-100 rounded-lg overflow-hidden shadow-sm">
+    <div className="animate-pulse bg-gray-100 rounded-lg overflow-hidden shadow-xs">
       <div className="h-48 bg-gray-200"></div>
       <div className="p-4 space-y-3">
         <div className="h-4 bg-gray-300 rounded w-3/4"></div>

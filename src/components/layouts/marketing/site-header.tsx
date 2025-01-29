@@ -30,7 +30,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
       <div className="flex h-16 items-center justify-between max-w-7xl px-5 md:px-6 mx-auto gap-x-2">
         {/* Announcement Banner - Mobile Only */}
 

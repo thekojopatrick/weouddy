@@ -18,7 +18,7 @@ export function ProgressBar({ current, total, estimatedTime }: ProgressBarProps)
       </div>
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-gray-700 to-gray-900 transition-all duration-500"
+          className="h-full bg-linear-to-r from-gray-700 to-gray-900 transition-all duration-500"
           style={{ width: `${progress}%` }}
         />
       </div>

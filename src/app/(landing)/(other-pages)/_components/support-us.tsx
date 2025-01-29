@@ -71,7 +71,7 @@ export default function SupportUsPage() {
           <h2 className="text-lg uppercase tracking-wider font-bold mb-8 text-center text-neutral-800">
             Our Sponsors
           </h2>
-          <div className="bg-white p-8 rounded-lg shadow-sm border text-center max-w-3xl mx-auto">
+          <div className="bg-white p-8 rounded-lg shadow-xs border text-center max-w-3xl mx-auto">
             <p className="text-base italic mb-4 text-neutral-600">
               &quot;Be the first to support us and leave your
               mark!&quot;

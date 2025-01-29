@@ -87,7 +87,7 @@ export default function CustomSheet({
           onScroll={scrollableContent ? handleScroll : undefined}
           className={`
             ${scrollableContent ? 'overflow-y-auto' : ''}
-            ${!stickyHeader && !stickyFooter ? 'flex-grow' : ''}
+            ${!stickyHeader && !stickyFooter ? 'grow' : ''}
             ${side === 'left' || side === 'right' ? `max-h-[calc(100vh-8rem)]` : ''}
           `}
         >

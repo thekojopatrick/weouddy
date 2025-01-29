@@ -41,7 +41,7 @@ const chartConfig = {
 
 export function ProfileStatsComponent() {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xs">
       <CardHeader>
         <CardTitle>Followers</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

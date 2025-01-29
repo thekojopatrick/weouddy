@@ -29,7 +29,7 @@ export const Column = ({
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div className="flex-shrink-0 w-80">
+    <div className="shrink-0 w-80">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full  border">
           <h2 className="font-medium text-gray-700 text-sm">

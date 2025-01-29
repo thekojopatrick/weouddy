@@ -13,19 +13,19 @@ export function SocialAccounts() {
         <div className="space-y-4">
           <Input
             placeholder="Link to social profile"
-            className="shadow-sm text-sm py-3"
+            className="shadow-xs text-sm py-3"
           />
           <Input
             placeholder="Link to social profile"
-            className="shadow-sm text-sm py-3 "
+            className="shadow-xs text-sm py-3 "
           />
           <Input
             placeholder="Link to social profile"
-            className="shadow-sm text-sm py-3"
+            className="shadow-xs text-sm py-3"
           />
           <Button
             variant="outline"
-            className="gap-2 shadow-sm border-dashed px-2 rounded-full"
+            className="gap-2 shadow-xs border-dashed px-2 rounded-full"
           >
             <Plus className="w-4 h-4" />
             Add link

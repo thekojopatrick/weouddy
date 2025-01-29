@@ -34,14 +34,14 @@ export default function CustomDrawer({
   const contentStyles = side
     ? {
         className:
-          'right-2 top-2 bottom-2 fixed z-50 outline-none w-[400px] flex !rounded-xl',
+          'right-2 top-2 bottom-2 fixed z-50 outline-hidden w-[400px] flex rounded-xl!',
         style: {
           '--initial-transform': 'calc(100% + 8px)',
         } as React.CSSProperties,
       }
     : {
         className: cn(
-          'bg-background flex flex-col mt-24 outline-none',
+          'bg-background flex flex-col mt-24 outline-hidden',
           'h-fit fixed bottom-0 left-0 right-0 z-50',
           'rounded-t-[10px]'
         ),

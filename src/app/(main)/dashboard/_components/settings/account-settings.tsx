@@ -79,7 +79,7 @@ export default function AccountSettings() {
           actionButton={
             <Button
               variant="outline"
-              className="gap-1 shadow-sm rounded-xl"
+              className="gap-1 shadow-xs rounded-xl"
             >
               <Gift className="h-5 w-5" />
               Gift PRO

@@ -25,7 +25,7 @@ export function SettingsTabs({
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:border-gray-200 border border-transparent py-1.5 transition-all ease-linear data-[state=active]:shadow-sm "
+            className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:border-gray-200 border border-transparent py-1.5 transition-all ease-linear data-[state=active]:shadow-xs "
           >
             {tab.label}
           </TabsTrigger>

@@ -126,7 +126,7 @@ export function LocationTimeStep({
                   asChild
                   className="py-5 bg-zinc-50 shadow-none rounded-full"
                 >
-                  <FormControl className="flex-grow">
+                  <FormControl className="grow">
                     <Button
                       variant={'outline'}
                       className={cn(
@@ -188,7 +188,7 @@ export function LocationTimeStep({
               What time is your event happening?
             </FormLabel>
             <div className="flex space-x-2 items-center">
-              <FormControl className="flex-grow">
+              <FormControl className="grow">
                 <TimeField
                   value={
                     field.value
@@ -198,11 +198,11 @@ export function LocationTimeStep({
                   onChange={handleTimeChange}
                   className="w-full rounded-full bg-zinc-50"
                 >
-                  <DateInput className="relative rounded-full inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap  border border-input bg-zinc-50 px-3 py-5 text-sm shadow-none shadow-black/5 transition-shadow data-[focus-within]:border-ring data-[disabled]:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20">
+                  <DateInput className="relative rounded-full inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap  border border-input bg-zinc-50 px-3 py-5 text-sm shadow-none shadow-black/5 transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/20">
                     {(segment) => (
                       <DateSegment
                         segment={segment}
-                        className="inline rounded p-0.5 text-foreground caret-transparent outline outline-0 data-[disabled]:cursor-not-allowed data-[focused]:bg-accent data-[invalid]:data-[focused]:bg-destructive data-[type=literal]:px-0 data-[focused]:data-[placeholder]:text-foreground data-[focused]:text-foreground data-[invalid]:data-[focused]:data-[placeholder]:text-destructive-foreground data-[invalid]:data-[focused]:text-destructive-foreground data-[invalid]:data-[placeholder]:text-destructive data-[invalid]:text-destructive data-[placeholder]:text-muted-foreground/70 data-[type=literal]:text-muted-foreground/70 data-[disabled]:opacity-50"
+                        className="inline rounded p-0.5 text-foreground caret-transparent outline outline-0 data-disabled:cursor-not-allowed data-focused:bg-accent data-invalid:data-focused:bg-destructive data-[type=literal]:px-0 data-focused:data-placeholder:text-foreground data-focused:text-foreground data-invalid:data-focused:data-placeholder:text-destructive-foreground data-invalid:data-focused:text-destructive-foreground data-invalid:data-placeholder:text-destructive data-invalid:text-destructive data-placeholder:text-muted-foreground/70 data-[type=literal]:text-muted-foreground/70 data-disabled:opacity-50"
                       />
                     )}
                   </DateInput>

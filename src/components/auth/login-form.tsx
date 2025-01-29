@@ -108,7 +108,7 @@ export function LoginForm({
                     type="email"
                     placeholder="Your email address"
                     {...field}
-                    className="rounded-full h-[44px] text-sm shadow-sm"
+                    className="rounded-full h-[44px] text-sm shadow-xs"
                   />
                 </FormControl>
                 <FormMessage />
@@ -129,7 +129,7 @@ export function LoginForm({
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Your password"
                       {...field}
-                      className="rounded-full h-[44px] text-sm shadow-sm"
+                      className="rounded-full h-[44px] text-sm shadow-xs"
                     />
                     <Button
                       type="button"

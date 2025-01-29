@@ -77,7 +77,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
   return (
     <Card className="max-w-md mx-auto shadow-lg mt-16">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 pb-4">
+      <CardHeader className="bg-linear-to-r from-blue-50 to-blue-100 pb-4">
         <CardTitle className="flex items-center">
           <UserIcon className="mr-2" /> Account Settings
         </CardTitle>

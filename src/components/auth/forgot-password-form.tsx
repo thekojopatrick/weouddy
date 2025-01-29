@@ -70,7 +70,7 @@ export function ForgotPasswordForm() {
                     type="email"
                     placeholder="Your email address"
                     {...field}
-                    className="rounded-xl px-4 h-12 bg-white text-sm shadow-sm"
+                    className="rounded-xl px-4 h-12 bg-white text-sm shadow-xs"
                   />
                 </FormControl>
                 <FormMessage />
@@ -80,7 +80,7 @@ export function ForgotPasswordForm() {
 
           <Button
             type="submit"
-            className="text-sm shadow-sm rounded-xl h-12"
+            className="text-sm shadow-xs rounded-xl h-12"
           >
             Reset Password
           </Button>

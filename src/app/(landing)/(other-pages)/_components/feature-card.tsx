@@ -10,7 +10,7 @@ export const FeatureCard = ({
   description: string;
   image: string;
 }) => (
-  <Card className="mb-8 shadow-sm">
+  <Card className="mb-8 shadow-xs">
     <CardContent className="p-6">
       <Image
         src={image}

@@ -39,7 +39,7 @@ export function ProfileViewStatsComponent() {
   const totalVisitors = chartData[0].desktop + chartData[0].mobile;
 
   return (
-    <Card className="flex flex-col shadow-sm">
+    <Card className="flex flex-col shadow-xs">
       <CardHeader className="items-center pb-0">
         <CardTitle>Page views</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

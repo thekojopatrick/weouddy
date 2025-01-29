@@ -198,7 +198,7 @@ export default function EventAccessGuard({
           <Card className="max-w-lg mx-auto mt-8 shadow-none">
             <CardContent className="pt-4 pr-3">
               <div className="flex items-center gap-2">
-                <div className="grid grid-cols-[auto,1fr] items-center gap-2">
+                <div className="grid grid-cols-[auto_1fr] items-center gap-2">
                   {event?.accessType === 'PIN_REQUIRED' ? (
                     <Lock
                       className="text-amber-500"

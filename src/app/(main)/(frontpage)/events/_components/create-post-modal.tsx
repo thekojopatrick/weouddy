@@ -171,7 +171,7 @@ export function CreatePostModal({
               disabled={uploadState.isUploading || isSubmitting}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full placeholder:text-sm h-full resize-none border-none focus-visible:ring-0 focus:outline-none bg-transparent placeholder:text-muted-foreground text-base"
+              className="w-full placeholder:text-sm h-full resize-none border-none focus-visible:ring-0 focus:outline-hidden bg-transparent placeholder:text-muted-foreground text-base"
             />
 
             {uploadState.files.length > 0 && (

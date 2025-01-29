@@ -130,7 +130,7 @@ const EventModal = memo(
             <Button
               variant="secondary"
               size="icon"
-              className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+              className="absolute top-4 right-4 bg-background/80 backdrop-blur-xs hover:bg-background/90"
               onClick={handleShare}
             >
               <Share2 className="h-4 w-4" />

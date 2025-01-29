@@ -49,14 +49,14 @@ export function InvoiceTable({ invoices }: InvoiceTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="shadow-sm rounded-lg"
+                  className="shadow-xs rounded-lg"
                 >
                   View
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="shadow-sm rounded-lg"
+                  className="shadow-xs rounded-lg"
                 >
                   <Download className="h-5 w-5" />
                 </Button>
