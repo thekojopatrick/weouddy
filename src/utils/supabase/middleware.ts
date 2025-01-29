@@ -4,6 +4,10 @@ import { type NextRequest, NextResponse } from 'next/server';
 const publicPaths = [
   '/',
   '/contact',
+  '/about',
+  '/pricing',
+  '/support-us',
+  '/privacy-policy',
   '/discover',
   '/sentry-example-page',
   '/api/events',
