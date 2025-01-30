@@ -1,31 +1,40 @@
-"use client";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
+'use client';
+import { useState } from 'react';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import type { DropdownNavProps, DropdownProps } from "react-day-picker";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import type {
+  DropdownNavProps,
+  DropdownProps,
+} from 'react-day-picker';
+import { cn } from '@/lib/utils';
 
-export default function CalendarWithDropdown() {
+interface DatePickerProps {
+  value?: Date;
+  onChange: (date: Date | undefined) => void;
+  className?: string;
+}
+
+export default function CalendarWithDropdown({}: DatePickerProps) {
   const [date, setDate] = useState<Date>();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleCalendarChange = (
     value: string | number,
-    onChange: React.ChangeEventHandler<HTMLSelectElement>,
+    onChange: React.ChangeEventHandler<HTMLSelectElement>
   ) => {
     const event = {
       target: {
@@ -42,11 +51,11 @@ export default function CalendarWithDropdown() {
           <Button
             variant="outline"
             className={cn(
-              "w-full justify-start text-left font-normal",
-              !date && "text-muted-foreground",
+              'w-full justify-start text-left font-normal',
+              !date && 'text-muted-foreground'
             )}
           >
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            {date ? format(date, 'PPP') : <span>Pick a date</span>}
             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -60,7 +69,7 @@ export default function CalendarWithDropdown() {
             }}
             className="rounded-lg border border-border p-2"
             classNames={{
-              month_caption: "mx-0",
+              month_caption: 'mx-0',
             }}
             captionLayout="dropdown"
             defaultMonth={date || new Date()}
