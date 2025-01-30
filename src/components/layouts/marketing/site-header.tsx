@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ChevronDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function SiteHeader() {
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
@@ -33,7 +34,7 @@ export function SiteHeader() {
         {/* Announcement Banner - Mobile Only */}
 
         {/* Logo */}
-        <Link href="/">
+        <Link href="/" className="relative">
           <Image
             src={isSmallDevice ? "/brand/logomark.svg" : "/logo.svg"}
             alt={"WeOuddy"}
@@ -41,13 +42,16 @@ export function SiteHeader() {
             width={isSmallDevice ? 40 : 120}
             height={isSmallDevice ? 40 : 120}
           />
+          <Badge className="bg-emerald-500 hover:bg-emerald-400 rounded-full absolute -right-4 md:-right-3 top-0 transform rotate-1 -translate-y-2 translate-x-1 md:translate-y-0 md:rotate-15 cursor-none">
+            Beta
+          </Badge>
           <span className="text-xl font-bold sr-only">WeOuddy</span>
         </Link>
 
         {/* Desktop Navigation */}
         {!isSmallDevice && (
           <>
-            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium ml-4">
               <Link
                 href="/"
                 className="transition-colors hover:text-foreground/80"

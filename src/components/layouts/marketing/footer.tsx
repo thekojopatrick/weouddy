@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button, LoadingButton } from "@/components/ui/button";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import Image from "next/image";
@@ -64,60 +65,8 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Logo and Main Content Section */}
-          <div className="col-span-full flex flex-col items-center gap-10 justify-center mb-10">
-            <div className="flex flex-col gap-6 max-w-md justify-center items-center">
-              <div className="space-y-10 text-center">
-                <div className="space-y-2">
-                  <h2 className="text-4xl md:text-6xl font-display tracking-tight text-[#efcc4e] animate-in fade-in slide-in-from-bottom-3 duration-500">
-                    We dey outside
-                  </h2>
-                  <p className="text-white animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    Let us know the occasion—send the location, and let&apos;s
-                    make it a moment to remember!
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 justify-center animate-in fade-in slide-in-from-bottom-5 duration-1000">
-                  <LoadingButton
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full w-auto group text-black dark:text-black"
-                    onClick={copyToClipboard}
-                    loading={copyState.isCopying}
-                    aria-label={
-                      copyState.isCopying
-                        ? "Copying email address"
-                        : "Copy email address"
-                    }
-                  >
-                    {copyState.isCopying ? (
-                      <>
-                        <CheckIcon className="mr-2 h-4 w-4" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <CopyIcon className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                        Copy mail
-                      </>
-                    )}
-                  </LoadingButton>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full  w-auto bg-[#efcc4e] border-[#efcc4e] hover:bg-[#e5c23d] hover:border-[#e5c23d] transition-colors"
-                    onClick={() => window.open("/sponsor", "_blank")}
-                    aria-label="Open sponsorship page"
-                  >
-                    Sponsor us
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="col-span-2 md:col-span-1">
-            <div className="relative w-24 h-24">
+            <div className="relative w-12 h-12">
               <Image
                 src="/brand/logomark-white-black-short.png"
                 alt="WeOuddy logo"
@@ -126,6 +75,15 @@ const Footer = () => {
                 priority
                 sizes="(max-width: 80px) 100vw, 80px"
               />
+              <Badge className="bg-emerald-500 rounded-full absolute left-4 top-0 ">
+                Beta
+              </Badge>
+            </div>
+            <h3 className="text-sm font-semibold">WeOuddy </h3>
+            <div className="space-y-3">
+              <p className="text-base md:text-lg font-display tracking-tight text-[#efcc4e] animate-in fade-in slide-in-from-bottom-3 duration-500">
+                We dey outside
+              </p>
             </div>
           </div>
 
