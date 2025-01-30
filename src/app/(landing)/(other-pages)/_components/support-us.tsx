@@ -1,5 +1,4 @@
 "use client";
-import { PricingPage } from "./pricing-page";
 
 export default function SupportUsPage() {
   return (
@@ -14,9 +13,17 @@ export default function SupportUsPage() {
             <p className="text-base text-left">
               Since last year late 2024 getting to Detty December, an idea of
               transforming how people connect, share, and remember their most
-              meaningful moments started with one person (@kojopatrick) What
-              started as a casual conversation between three friends over BBQ
-              has evolved into a platform designed to revolutionize event
+              meaningful moments started with one person{" "}
+              <a
+                href="http://x.com/_kojopatrick"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-900 dark:text-neutral-200"
+              >
+                (@kojopatrick)
+              </a>
+              . What started as a casual conversation between three friends over
+              BBQ has evolved into a platform designed to transform event
               experiences.
             </p>
             <p className="text-base text-left">
@@ -40,7 +47,7 @@ export default function SupportUsPage() {
               <div className="grid md:grid-cols-1 gap-2">
                 <p className="text-left text-base">
                   We&apos;re a small team of 3 passionate individuals working to
-                  revolutionize how people experience events.
+                  transform how people experience events.
                 </p>
                 <p className="text-left text-base">
                   Your support will help us cover operational costs, conduct
@@ -56,10 +63,14 @@ export default function SupportUsPage() {
         </section>
 
         {/* Why Support Us? */}
-        <section className="mb-16 max-w-3xl mx-auto"></section>
-
-        {/* Sponsorship Tiers */}
-        <PricingPage />
+        <section className="mb-16 max-w-3xl mx-auto">
+          {/* Sponsorship Tiers */}
+          <div className="grid place-content-center text-center">
+            <a href="https://www.buymeacoffee.com/kojopatrick">
+              <img src="https://img.buymeacoffee.com/button-api/?text=Buy us a coffee&emoji=☕&slug=kojopatrick&button_colour=FFDD00&font_colour=000000&font_family=Inter&outline_colour=000000&coffee_colour=ffffff" />
+            </a>
+          </div>
+        </section>
 
         {/* Testimonials */}
         <section className="my-16">
