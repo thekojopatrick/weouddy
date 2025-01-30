@@ -1,21 +1,23 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CountrySelector } from "@/components/country-selector";
-import Image from "next/image";
-import Link from "next/link";
+import { usePathname, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CountrySelector } from '@/components/country-selector';
+import Image from 'next/image';
+import Link from 'next/link';
 
 //import SearchDialog from './event/search-dialog';
 
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Container } from "@/components/common/container";
-import { UserProfileSidebar } from "./user-profile-sidebar";
-import { CurrentUser } from "@/types/prisma.types";
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { Container } from '@/components/common/container';
+import { UserProfileSidebar } from './user-profile-sidebar';
+import { CurrentUser } from '@/types/prisma.types';
 
 export function SiteHeader({ user }: { user: CurrentUser | null }) {
-  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+  const isSmallDevice = useMediaQuery(
+    'only screen and (max-width : 768px)'
+  );
   const pathname = usePathname();
   const router = useRouter();
   const showBackButton = !pathname.match(/^\/($|discover)/);
@@ -36,45 +38,51 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
           ) : (
             <Link href="/">
               <Image
-                src={isSmallDevice ? "/brand/logomark.svg" : "/logo.svg"}
-                alt={"WeOuddy"}
+                src={
+                  isSmallDevice ? '/brand/logomark.svg' : '/logo.svg'
+                }
+                alt={'WeOuddy'}
                 className="object-cover"
                 width={isSmallDevice ? 60 : 120}
                 height={isSmallDevice ? 60 : 120}
               />
-              <span className="text-xl font-bold sr-only">WeOuddy</span>
+              <span className="text-xl font-bold sr-only">
+                WeOuddy
+              </span>
             </Link>
           )}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link
-              href={user ? "/discover" : "/"}
+              href={user ? '/discover' : '/'}
               className="transition-colors hover:text-foreground/80"
               prefetch
             >
-              {user ? "Explore" : "Home"}
+              {user ? 'Explore' : 'Home'}
             </Link>
             <Link
-              href="/billboards"
-              className="transition-colors hover:text-foreground/80 hidden"
+              href="/about"
+              className="transition-colors hover:text-foreground/80"
             >
-              Billboards
+              About
             </Link>
             <Link
-              href="/services"
-              className="transition-colors hover:text-foreground/80 hidden"
+              href="/support-us"
+              className="transition-colors hover:text-foreground/80 whitespace-nowrap"
             >
-              Services
+              Support Us
             </Link>
           </nav>
-          <div className="relative w-full">{/* <SearchDialog /> */}</div>
+          <div className="relative w-full">
+            {/* <SearchDialog /> */}
+          </div>
           <div className="md:ml-auto flex items-center space-x-3">
             {user ? (
               <UserProfileSidebar
                 user={{
                   name: user.name!,
                   email: user.email!,
-                  avatar: (user.avatarUrl as never) ?? "",
-                  username: user.username ?? "",
+                  avatar: (user.avatarUrl as never) ?? '',
+                  username: user.username ?? '',
                 }}
               />
             ) : (
