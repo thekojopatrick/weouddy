@@ -16,31 +16,61 @@ const sections = [
     id: "personal-information",
     title: "Personal Information We Collect",
     content:
-      "We only collect Personal Information that you knowingly provide when purchasing products or services through our Website. This typically includes your email address, which is required to link your purchases to your identity.",
+      "We only collect Personal Information that you knowingly provide when signing up, purchasing products or services, or interacting with our platform. This may include your name, email address, profile details, and event-related interactions.",
   },
   {
     id: "non-personal-information",
     title: "Non-Personal Information We Collect",
     content:
-      "When you visit our Website, our servers automatically collect certain non-personal data, such as your IP address, browser type and version, operating system, language preferences, pages visited, time spent on those pages, search queries, and other related statistics.",
+      "When you visit our platform, we automatically collect certain non-personal data, such as your IP address, browser type, device information, operating system, language preferences, pages visited, time spent on those pages, and engagement metrics to improve user experience and platform security.",
+  },
+  {
+    id: "user-content",
+    title: "User-Generated Content & Public Information",
+    content:
+      "When you post content (photos, videos, comments) on our platform, it may be publicly visible to other users. By posting, you grant us a non-exclusive, royalty-free, worldwide license to store, display, and use this content to operate our services. You remain the owner of your content, and you may delete it at any time unless required for legal compliance or security purposes.",
   },
   {
     id: "purchases",
     title: "Purchases",
     content:
-      "All transactions made on the Website are processed through a third-party payment provider, Paddle (paddle.com). Paddle may collect personal and non-personal information such as your name, address, email, and payment details. Paddle operates under its own Privacy Policy (paddle.com/legal-buyers/), and WeOuddy does not control their data collection practices. For concerns regarding Paddle, please contact them directly.",
+      "All transactions made on our platform are processed through a third-party payment provider, Paddle (paddle.com). Paddle may collect personal and non-personal information such as your name, address, email, and payment details. Paddle operates under its own Privacy Policy (paddle.com/legal-buyers/), and we do not control their data collection practices. Please contact Paddle for any concerns regarding payment processing.",
   },
   {
     id: "newsletter",
     title: "Newsletter Subscriptions",
     content:
-      "If you sign up for our newsletter, either through a form or during the purchase process, this is managed by Loops (loops.so). Loops handles your information under its Privacy Policy (loops.so/privacy). For questions about Loops, contact them directly.",
+      "If you sign up for our newsletter, either through a form or during the sign-up process, this is managed by Resend (resend.com). Resend handles your information under its Privacy Policy (Resend/privacy). For questions about Resend, contact them directly.",
+  },
+  {
+    id: "cookies-tracking",
+    title: "Cookies & Tracking Technologies",
+    content:
+      "We use cookies and similar tracking technologies to analyze user activity, enhance platform functionality, and provide a personalized experience. By using our platform, you consent to our use of cookies. You can manage your cookie preferences in your browser settings.",
+  },
+  {
+    id: "data-retention",
+    title: "Data Retention",
+    content:
+      "We retain your personal information for as long as necessary to provide our services or as required by law. If you request deletion of your account, we will remove your data unless retention is necessary for legal or security reasons.",
+  },
+  {
+    id: "third-party-services",
+    title: "Third-Party Services & Integrations",
+    content:
+      "We may share data with trusted service providers (e.g., analytics tools, hosting providers, AI moderation services) to improve platform performance and user experience. These third parties are required to follow strict data protection laws. We do not sell your data to third parties.",
+  },
+  {
+    id: "age-restrictions",
+    title: "Age Restrictions",
+    content:
+      "Our platform is not intended for users under 13 (or the legal age in your country). If we discover that we have collected data from a minor without parental consent, we will delete it immediately.",
   },
   {
     id: "managing",
     title: "Managing Personal Information",
     content:
-      "You may request the deletion of your email address by contacting us. However, this will prevent you from accessing purchased products or subscriptions.",
+      "You may request the deletion of your personal information by contacting us. However, deleting certain data may prevent you from accessing features, purchases, or subscriptions on our platform.",
   },
   {
     id: "rights",
@@ -48,9 +78,9 @@ const sections = [
     content: (
       <ul className="list-disc pl-6 space-y-2">
         <li>Withdraw consent for processing your data</li>
-        <li>Access your data and obtain a copy</li>
-        <li>Update or correct inaccuracies</li>
-        <li>Restrict data processing in certain situations</li>
+        <li>Access and obtain a copy of your personal data</li>
+        <li>Update or correct inaccuracies in your data</li>
+        <li>Restrict data processing under certain conditions</li>
         <li>Request the deletion of your data</li>
         <li>Receive your data in a structured, machine-readable format</li>
       </ul>
@@ -152,7 +182,7 @@ const PrivacyPolicyPage = () => {
           <h1 className="text-4xl font-bold mb-4 text-gray-900">
             Privacy Policy
           </h1>
-          <p className="text-gray-600">Last updated: 12/11/24</p>
+          <p className="text-gray-600">Last updated: 30/01/25</p>
         </div>
 
         {/* Table of Contents */}
