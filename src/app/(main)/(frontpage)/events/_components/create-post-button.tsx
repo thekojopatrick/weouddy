@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { NotebookPen, Plus } from "lucide-react";
-import React, { useState } from "react";
+import { NotebookPen, Plus } from 'lucide-react';
+import React, { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { CreatePostModal } from "./create-post-modal";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { CreatePostDialog } from './test-create-post';
+import { cn } from '@/lib/utils';
 
 const CreatePostButton = ({
   isSmallDevice,
@@ -30,26 +30,24 @@ const CreatePostButton = ({
   return (
     <>
       <Button
-        variant={"outline"}
-        size={isSmallDevice ? "icon" : "lg"}
+        variant={'outline'}
+        size={isSmallDevice ? 'icon' : 'lg'}
         className={cn(
-          "rounded-full shadow-lg",
-          isSmallDevice ? "size-12" : "h-12",
+          'rounded-full shadow-lg',
+          isSmallDevice ? 'size-12' : 'h-12'
         )}
         onClick={handleClick}
       >
-        {isSmallDevice ? <NotebookPen /> : <Plus className={"size-6"} />}
-        <span className={isSmallDevice ? "sr-only" : "font-semibold"}>
+        {isSmallDevice ? (
+          <NotebookPen />
+        ) : (
+          <Plus className={'size-6'} />
+        )}
+        <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
           Create Post
         </span>
       </Button>
-      <CreatePostModal
-        open={showDialog}
-        eventId={eventId}
-        onOpenChangeAction={setShowDialog}
-        userName={user.userName ?? ""}
-        userAvatar={user.userAvatar ?? ""}
-      />
+      <CreatePostDialog eventId={eventId} userId={user.id!} />
     </>
   );
 };

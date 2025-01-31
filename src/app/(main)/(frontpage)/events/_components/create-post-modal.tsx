@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import {
-  ImageIcon,
-  Loader2,
-  Trash2,
-  VideoIcon,
-  X,
-} from 'lucide-react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -24,107 +13,103 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { EmojiPicker } from '@/components/emoji-picker';
-import { FileWithPreview } from '@/types/upload';
-import Image from 'next/image';
-import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useState } from 'react';
-import { useCreatePost } from '@/hooks/post/use-post';
+import { Progress } from '@/components/ui/progress';
+import {
+  ImageIcon,
+  Loader2,
+  Trash2,
+  VideoIcon,
+  X,
+} from 'lucide-react';
 import { useUploadFiles } from '@/hooks/use-upload-files';
+import { useCreatePost } from '@/hooks/post/use-post';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface CreatePostModalProps {
   open: boolean;
   eventId: string;
-  onOpenChangeAction: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
   userName: string | null;
   userAvatar: string | null;
 }
 
-export function CreatePostModal({
+export default function CreatePostModal({
   open,
+  onOpenChange,
   eventId,
-  onOpenChangeAction,
   userName,
   userAvatar,
 }: CreatePostModalProps) {
+  const [content, setContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { uploadState, handleFiles, uploadFiles, removeFile } =
+    useUploadFiles();
+  const createPost = useCreatePost();
   const isMobile = useMediaQuery(
     'only screen and (max-width : 639px)'
   );
-  const createPost = useCreatePost();
-  const { uploadState, handleFiles, uploadFiles, removeFile } =
-    useUploadFiles();
-  const [content, setContent] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (uploadState.isUploading || createPost.isPending) return;
-
-    try {
-      setIsSubmitting(true);
-
-      // Upload media files first
-      const mediaFiles = await uploadFiles(eventId);
-
-      // Filter out failed uploads
-      const validMediaFiles = mediaFiles.filter(
-        (
-          file
-        ): file is {
-          url: string;
-          type: 'IMAGE' | 'VIDEO';
-          order: number;
-        } =>
-          file !== null &&
-          typeof file.url === 'string' &&
-          (file.type === 'IMAGE' || file.type === 'VIDEO')
-      );
-
-      await createPost.mutateAsync({
-        content: content.trim(),
-        media: validMediaFiles,
-        eventId,
-      });
-
-      toast.success('Post created successfully');
-      setContent('');
-      onOpenChangeAction(false);
-    } catch (error) {
-      toast.error('Failed to create post');
-      console.error('Post creation failed:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const Wrapper = isMobile ? Drawer : Dialog;
   const WrapperContent = isMobile ? DrawerContent : DialogContent;
   const HeaderWrapper = isMobile ? DrawerHeader : DialogHeader;
   const TitleWrapper = isMobile ? DrawerTitle : DialogTitle;
 
+  const handleMediaSelect = async (e: any) => {
+    const files = e.target.files;
+    if (!files) return;
+    await handleFiles(files, eventId);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (uploadState.isUploading || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      const mediaFiles = await uploadFiles();
+
+      await createPost.mutateAsync({
+        content: content.trim(),
+        media: mediaFiles.filter((file) => file !== null),
+        eventId,
+      });
+
+      setContent('');
+      onOpenChange(false);
+      toast.success('Post created successfully');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create post');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Wrapper open={open} onOpenChange={onOpenChangeAction}>
+    <Wrapper open={open} onOpenChange={onOpenChange}>
       <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-screen max-h-[90vh] rounded-none' : 'h-fit'}`}
-        closebtnstyle="hidden"
+        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-[90vh] rounded-t-lg' : 'h-fit'}`}
       >
         <HeaderWrapper className="p-0">
-          {/* Header */}
           <div className="border-b p-4 flex items-center justify-between">
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-ful"
-              onClick={() => onOpenChangeAction(false)}
+              className="rounded-full"
+              onClick={() => onOpenChange(false)}
             >
               <X className="h-5 w-5" />
             </Button>
-            <TitleWrapper className="text-sm">
+            <TitleWrapper className="text-sm font-semibold">
               Create New Post
             </TitleWrapper>
             <Button
@@ -133,10 +118,11 @@ export function CreatePostModal({
               onClick={handleSubmit}
               disabled={
                 uploadState.isUploading ||
-                (!content.trim() && uploadState.files.length === 0)
+                isSubmitting ||
+                (!content.trim() && !uploadState.files.length)
               }
             >
-              {uploadState.isUploading || isSubmitting ? (
+              {isSubmitting || uploadState.isUploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Posting...
@@ -147,127 +133,110 @@ export function CreatePostModal({
             </Button>
           </div>
         </HeaderWrapper>
-        <form onSubmit={handleSubmit} className="">
-          {/* Content */}
-          <div
-            className={`flex flex-col ${isMobile ? 'h-fit' : 'h-[500px]'}`}
-          >
-            <div className="pt-4 px-4 flex gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={userAvatar ?? ''} />
-                <AvatarFallback>{userName?.[0]}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="font-semibold text-sm">
-                  {userName}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {new Date().toLocaleTimeString()}
-                </div>
-              </div>
-            </div>
-            <Textarea
-              placeholder="What's happening?"
-              disabled={uploadState.isUploading || isSubmitting}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full shadow-none placeholder:text-sm md:h-full min-h-[20vh] max-h-[40vh] resize-none border-none focus-visible:ring-0 focus:outline-hidden bg-transparent placeholder:text-muted-foreground text-base"
-            />
 
-            {uploadState.files.length > 0 && (
-              <div className="space-y-2">
-                <Progress
-                  value={uploadState.totalProgress}
-                  className="h-2"
-                />
-                <div className="flex flex-wrap gap-2">
-                  {uploadState.files.map(
-                    (file: FileWithPreview, index: number) => (
-                      <div
-                        key={index}
-                        className="relative aspect-square h-24 w-24"
-                      >
-                        {file.mediaType === 'IMAGE' ? (
-                          <Image
-                            src={file.preview}
-                            alt="Upload preview"
-                            className="rounded-lg object-cover"
-                            fill
-                          />
-                        ) : (
-                          <div className="rounded-lg bg-black/20 flex items-center justify-center h-full w-full">
-                            <VideoIcon className="text-white h-10 w-10" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/10 rounded-lg flex items-center justify-center">
-                          {file.uploading ? (
-                            <div className="text-white text-sm">
-                              {Math.round(file.progress)}%
-                            </div>
-                          ) : file.error ? (
-                            <div className="text-red-500 text-sm">
-                              Error
-                            </div>
-                          ) : null}
-                        </div>
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-8 w-8"
-                          onClick={() => removeFile(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          {/* Footer */}
-          <div className="border-t p-4">
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2 items-center">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="border-none rounded-full"
-                  onClick={() => {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.multiple = true;
-                    input.accept = 'image/*,video/*';
-                    input.onchange = (e) =>
-                      handleFiles(
-                        (e.target as HTMLInputElement).files,
-                        eventId
-                      );
-                    input.click();
-                  }}
-                  disabled={uploadState.files.length >= 5}
-                >
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
-                <EmojiPicker
-                  onEmojiSelectAction={(emoji) =>
-                    setContent((prev) => prev + emoji)
-                  }
-                />
-                {uploadState.files.length >= 5 && (
-                  <span className="text-xs text-red-400">
-                    Maximum 5 files allowed
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Anyone can comment
-              </div>
+        <div
+          className={`flex flex-col ${isMobile ? 'h-full' : 'h-[500px]'}`}
+        >
+          <div className="p-4 flex gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={userAvatar ?? ''} />
+              <AvatarFallback>{userName?.[0]}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <div className="font-semibold text-sm">{userName}</div>
+              <Textarea
+                placeholder="What's happening?"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full min-h-[100px] resize-none border-none shadow-none focus-visible:ring-0 p-0 text-base"
+                disabled={isSubmitting}
+              />
             </div>
           </div>
-        </form>
+
+          {uploadState.files.length > 0 && (
+            <div className="px-4 space-y-4">
+              {uploadState.totalProgress > 0 &&
+                uploadState.totalProgress < 100 && (
+                  <Progress
+                    value={uploadState.totalProgress}
+                    className="h-1"
+                  />
+                )}
+              <div className="grid grid-cols-2 gap-2">
+                {uploadState.files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-square bg-black/5 rounded-lg overflow-hidden"
+                  >
+                    {file.mediaType === 'IMAGE' ? (
+                      <Image
+                        src={file.preview}
+                        alt=""
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full">
+                        <video
+                          src={file.preview}
+                          className="h-full w-full object-cover"
+                          controls
+                          playsInline
+                        />
+                      </div>
+                    )}
+                    {file.progress > 0 && file.progress < 100 && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-medium">
+                        {Math.round(file.progress)}%
+                      </div>
+                    )}
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 h-6 w-6"
+                      onClick={() => removeFile(index)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="border-t p-4 mt-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.multiple = true;
+                  input.accept = 'image/*,video/*';
+                  input.onchange = handleMediaSelect;
+                  input.click();
+                }}
+                disabled={uploadState.files.length >= 5}
+              >
+                <ImageIcon className="h-5 w-5" />
+              </Button>
+              {uploadState.files.length >= 5 && (
+                <span className="text-xs text-red-500">
+                  Maximum 5 files allowed
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Anyone can reply
+            </span>
+          </div>
+        </div>
       </WrapperContent>
     </Wrapper>
   );

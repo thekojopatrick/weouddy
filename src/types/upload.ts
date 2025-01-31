@@ -4,6 +4,7 @@ export interface FileWithPreview {
   progress: number;
   uploading: boolean;
   mediaType: 'IMAGE' | 'VIDEO';
+  url?: string;
   error?: string; // Optional error field
 }
 

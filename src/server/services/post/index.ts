@@ -1,13 +1,18 @@
-import { db } from "@/server/db/prisma";
-import { CreatePostInput } from "@/types/post";
-import { revalidatePath } from "next/cache";
+import { db } from '@/server/db/prisma';
+import { CreatePostInput } from '@/types/post';
+import { revalidatePath } from 'next/cache';
 
 export class PostService {
   static async createPost(userId: string, data: CreatePostInput) {
     // Check if user has access to event
-    const hasAccess = await this.validateEventAccess(userId, data.eventId);
+    const hasAccess = await this.validateEventAccess(
+      userId,
+      data.eventId
+    );
     if (!hasAccess) {
-      throw new Error("Unauthorized access to event");
+      throw new Error(
+        'Unauthorized access to event: User is not the host or a member'
+      );
     }
 
     try {
@@ -45,8 +50,8 @@ export class PostService {
       revalidatePath(`/events/${data.eventId}`);
       return post;
     } catch (error) {
-      console.error("Post creation failed:", error);
-      throw new Error("Failed to create post");
+      console.error('Post creation failed:', error);
+      throw new Error('Failed to create post');
     }
   }
 
@@ -117,17 +122,37 @@ export class PostService {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  private static async validateEventAccess(userId: string, eventId: string) {
-    const event = await db.event.findFirst({
-      where: {
-        id: eventId,
-        OR: [{ hostId: userId }, { members: { some: { id: userId } } }],
+  private static async validateEventAccess(
+    userId: string,
+    eventId: string
+  ) {
+    const event = await db.event.findUnique({
+      where: { id: eventId },
+      include: {
+        host: true,
+        attendees: true,
       },
     });
-    return !!event;
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    // If the event is public, allow access
+    // if (!event.isPrivate) {
+    //   return true;
+    // }
+
+    // If the event is private, check if the user is the host or a member
+    const isHost = event.hostId === userId;
+    const isMember = event.attendees.some(
+      (member) => member.userId === userId
+    );
+
+    return isHost || isMember;
   }
 }

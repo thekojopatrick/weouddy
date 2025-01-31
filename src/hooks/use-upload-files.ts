@@ -1,14 +1,8 @@
 'use client';
 
-import { FileWithPreview, UploadState } from '@/types/upload';
-
-import { supabase } from '@/utils/supabase/client';
-import { toast } from 'sonner';
 import { useState } from 'react';
-import {
-  compressVideo,
-  compressImage,
-} from '@/lib/media-compression';
+import type { FileWithPreview, UploadState } from '@/types/upload';
+import { toast } from 'sonner';
 
 export function useUploadFiles() {
   const [uploadState, setUploadState] = useState<UploadState>({
@@ -17,169 +11,138 @@ export function useUploadFiles() {
     totalProgress: 0,
   });
 
-  // const handleFiles = async (incomingFiles: FileList | null) => {
-  //   if (!incomingFiles) return;
-
-  //   // Check if adding new files would exceed the limit
-  //   if (uploadState.files.length + incomingFiles.length > 5) {
-  //     //alert("You can only upload up to 5 files");
-
-  //     toast.warning(
-  //       'Please can only upload up to 5 files,Image, Videos or Gifs',
-  //       {}
-  //     );
-
-  //     return;
-  //   }
-
-  //   // Create preview and initial state for each file
-  //   const newFiles: FileWithPreview[] = Array.from(incomingFiles).map(
-  //     (file) => {
-  //       const mediaType = file.type.startsWith('video/')
-  //         ? 'VIDEO'
-  //         : 'IMAGE';
-  //       return {
-  //         file,
-  //         preview: URL.createObjectURL(file),
-  //         progress: 0,
-  //         uploading: false,
-  //         mediaType,
-  //       };
-  //     }
-  //   );
-
-  //   setUploadState((prev) => ({
-  //     ...prev,
-  //     files: [...prev.files, ...newFiles],
-  //   }));
-  // };
-
   const handleFiles = async (
     incomingFiles: FileList | null,
     eventId: string
   ) => {
     if (!incomingFiles) return;
 
-    // Check if adding new files would exceed the limit
     if (uploadState.files.length + incomingFiles.length > 5) {
       toast.warning(
-        'Please can only upload up to 5 files, Image, Videos or Gifs',
+        'You can only upload up to 5 files (Images, Videos, or GIFs)',
         {}
       );
       return;
     }
 
-    // Create preview and initial state for each file
-    const newFiles = await Promise.all(
-      Array.from(incomingFiles).map(async (file) => {
+    const newFiles: FileWithPreview[] = Array.from(incomingFiles).map(
+      (file) => {
         const mediaType = file.type.startsWith('video/')
           ? 'VIDEO'
           : 'IMAGE';
-
-        // Check file size and video length
-        if (mediaType === 'VIDEO') {
-          if (file.size > 1024 * 1024 * 1024) {
-            toast.error('Video file size must be less than 1 GB');
-            return null; // Return null for invalid files
-          }
-
-          const video = document.createElement('video');
-          video.src = URL.createObjectURL(file);
-          await new Promise(
-            (resolve) => (video.onloadedmetadata = resolve)
-          );
-          if (video.duration > 200) {
-            toast.error('Video length must be less than 200 seconds');
-            return null; // Return null for invalid files
-          }
-        } else if (file.size > 512 * 1024 * 1024) {
-          toast.error('File size must be less than 512 MB');
-          return null; // Return null for invalid files
-        }
-
-        // Compress media files
-        const compressedFile =
-          mediaType === 'VIDEO'
-            ? await compressVideo(file)
-            : await compressImage(file);
-
         return {
-          file: compressedFile,
-          preview: URL.createObjectURL(compressedFile),
+          file,
+          preview: URL.createObjectURL(file),
           progress: 0,
-          uploading: false,
+          uploading: true,
           mediaType,
         };
-      })
+      }
     );
 
-    // Filter out null values (invalid files)
-    const validFiles = newFiles.filter(
-      (file) => file !== null
-    ) as FileWithPreview[];
-
-    // Update the upload state with valid files
     setUploadState((prev) => ({
       ...prev,
-      files: [...prev.files, ...validFiles],
+      files: [...prev.files, ...newFiles],
+      isUploading: true,
     }));
 
-    // Start uploading immediately
-    uploadFiles(eventId);
+    // Start uploading each file immediately
+    newFiles.forEach((file, index) => {
+      uploadFile(file, eventId, uploadState.files.length + index);
+    });
   };
 
-  const uploadFiles = async (eventId: string) => {
-    setUploadState((prev) => ({ ...prev, isUploading: true }));
+  const uploadFile = async (
+    fileWithPreview: FileWithPreview,
+    eventId: string,
+    index: number
+  ) => {
+    const { file, mediaType } = fileWithPreview;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath =
+      mediaType === 'VIDEO'
+        ? `${eventId}/videos/${fileName}`
+        : `${eventId}/images/${fileName}`;
 
-    const uploads = uploadState.files.map(
-      async (fileWithPreview, index) => {
-        try {
-          const { file, mediaType } = fileWithPreview;
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Math.random()}.${fileExt}`;
-          //const filePath = `${eventId}/${fileName}`;
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-          // Determine storage bucket based on media type
-          const filePath =
-            mediaType === 'VIDEO'
-              ? `${eventId}/videos/${fileName}`
-              : `${eventId}/images/${fileName}`;
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `/api/upload?path=${filePath}`, true);
 
-          // Upload file to Supabase Storage
-          const { error: uploadError, data } = await supabase.storage
-            .from('posts')
-            .upload(filePath, file);
-
-          if (uploadError) throw uploadError;
-
-          console.log('Upload File', data);
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from('posts').getPublicUrl(filePath);
-
-          return {
-            url: publicUrl,
-            type: mediaType,
-            order: index,
-          };
-        } catch (error) {
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
           setUploadState((prev) => {
             const newFiles = [...prev.files];
             newFiles[index] = {
               ...newFiles[index],
-              error: 'Upload failed',
+              progress: progress,
             };
             return { ...prev, files: newFiles };
           });
-          console.error(error);
-          return null;
         }
-      }
-    );
+      };
 
-    const mediaFiles = await Promise.all(uploads);
-    setUploadState((prev) => ({ ...prev, isUploading: false }));
-    return mediaFiles.filter(Boolean);
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.response);
+          const publicUrl = response.url;
+
+          setUploadState((prev) => {
+            const newFiles = [...prev.files];
+            newFiles[index] = {
+              ...newFiles[index],
+              uploading: false,
+              url: publicUrl,
+            };
+            return {
+              ...prev,
+              files: newFiles,
+              isUploading: newFiles.some((f) => f.uploading),
+            };
+          });
+        } else {
+          throw new Error('Upload failed');
+        }
+      };
+
+      xhr.onerror = () => {
+        throw new Error('Upload failed');
+      };
+
+      xhr.send(formData);
+    } catch (error) {
+      setUploadState((prev) => {
+        const newFiles = [...prev.files];
+        newFiles[index] = {
+          ...newFiles[index],
+          error: 'Upload failed',
+          uploading: false,
+        };
+        return {
+          ...prev,
+          files: newFiles,
+          isUploading: newFiles.some((f) => f.uploading),
+        };
+      });
+      console.error(error);
+      return null;
+    }
+  };
+
+  const uploadFiles = async () => {
+    const mediaFiles = uploadState.files
+      .filter((file) => file.url)
+      .map((file, index) => ({
+        url: file.url!,
+        type: file.mediaType,
+        order: index,
+      }));
+
+    return mediaFiles;
   };
 
   const removeFile = (index: number) => {
@@ -193,8 +156,10 @@ export function useUploadFiles() {
 
   return {
     uploadState,
+    setUploadState,
     handleFiles,
     uploadFiles,
     removeFile,
+    uploadFile,
   };
 }
