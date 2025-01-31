@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { FileWithPreview, UploadState } from '@/types/upload';
-import { toast } from 'sonner';
-import throttle from 'lodash.throttle';
+import { useState } from "react";
+import type { FileWithPreview, UploadState } from "@/types/upload";
+import { toast } from "sonner";
+import throttle from "lodash.throttle";
 
 export function useUploadFiles() {
   const [uploadState, setUploadState] = useState<UploadState>({
@@ -14,23 +14,21 @@ export function useUploadFiles() {
 
   const handleFiles = async (
     incomingFiles: FileList | null,
-    eventId: string
+    eventId: string,
   ) => {
     if (!incomingFiles) return;
 
     if (uploadState.files.length + incomingFiles.length > 5) {
       toast.warning(
-        'You can only upload up to 5 files (Images, Videos, or GIFs)',
-        {}
+        "You can only upload up to 5 files (Images, Videos, or GIFs)",
+        {},
       );
       return;
     }
 
     const newFiles: FileWithPreview[] = Array.from(incomingFiles).map(
       (file) => {
-        const mediaType = file.type.startsWith('video/')
-          ? 'VIDEO'
-          : 'IMAGE';
+        const mediaType = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
         return {
           file,
           preview: URL.createObjectURL(file),
@@ -38,7 +36,7 @@ export function useUploadFiles() {
           uploading: true,
           mediaType,
         };
-      }
+      },
     );
 
     setUploadState((prev) => ({
@@ -140,22 +138,22 @@ export function useUploadFiles() {
   const uploadFile = async (
     fileWithPreview: FileWithPreview,
     eventId: string,
-    index: number
+    index: number,
   ) => {
     const { file, mediaType } = fileWithPreview;
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath =
-      mediaType === 'VIDEO'
+      mediaType === "VIDEO"
         ? `${eventId}/videos/${fileName}`
         : `${eventId}/images/${fileName}`;
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', `/api/upload?path=${filePath}`, true);
+      xhr.open("POST", `/api/upload?path=${filePath}`, true);
 
       // Throttle progress updates to improve performance
       const updateProgress = throttle((progress: number) => {
@@ -195,12 +193,12 @@ export function useUploadFiles() {
             };
           });
         } else {
-          throw new Error('Upload failed');
+          throw new Error("Upload failed");
         }
       };
 
       xhr.onerror = () => {
-        throw new Error('Upload failed');
+        throw new Error("Upload failed");
       };
 
       xhr.send(formData);
@@ -209,7 +207,7 @@ export function useUploadFiles() {
         const newFiles = [...prev.files];
         newFiles[index] = {
           ...newFiles[index],
-          error: 'Upload failed',
+          error: "Upload failed",
           uploading: false,
         };
         return {

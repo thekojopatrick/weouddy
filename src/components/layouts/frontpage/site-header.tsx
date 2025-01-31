@@ -29,7 +29,7 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
             <Button
               variant="ghost"
               size="icon"
-              className="mr-2"
+              className="size-8"
               onClick={() => router.back()}
             >
               <ArrowLeft className="h-5 w-5" />

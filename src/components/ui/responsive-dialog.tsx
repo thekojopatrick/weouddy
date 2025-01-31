@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Drawer } from 'vaul';
-import { useEffect, useState } from 'react';
-import { DialogTitle } from '@radix-ui/react-dialog';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Drawer } from "vaul";
+import { useEffect, useState } from "react";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { cn } from "@/lib/utils";
 
 interface ResponsiveDialogProps {
   open: boolean;
@@ -26,8 +26,8 @@ export function ResponsiveDialog({
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   if (isMobile) {
@@ -50,7 +50,7 @@ export function ResponsiveDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChangeAction}>
       <DialogContent
-        className={cn('sm:max-w-[425px]', className)}
+        className={cn("sm:max-w-[425px]", className)}
         closebtnstyle="border p-1.5 -mt-2 rounded-full hover:border-zinc-600"
       >
         <DialogTitle className="sr-only">Modal</DialogTitle>

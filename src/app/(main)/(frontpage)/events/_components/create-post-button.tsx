@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { CreatePostDialog } from './create-post-modal';
+import { CreatePostDialog } from "./create-post-modal";
 
 const CreatePostButton = ({
   eventId,

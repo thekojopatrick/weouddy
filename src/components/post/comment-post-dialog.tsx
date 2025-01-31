@@ -1,27 +1,23 @@
-'use client';
+"use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreVertical, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { EmojiPicker } from '@/components/emoji-picker';
-import { Input } from '@/components/ui/input';
-import { formatTimeAgo } from '@/lib/formatters';
-import { getNameInitials } from '@/lib/utils';
-import useCurrentUser from '@/hooks/account/use-current-user';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useState } from 'react';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { DialogTitle } from '@radix-ui/react-dialog';
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { EmojiPicker } from "@/components/emoji-picker";
+import { Input } from "@/components/ui/input";
+import { formatTimeAgo } from "@/lib/formatters";
+import { getNameInitials } from "@/lib/utils";
+import useCurrentUser from "@/hooks/account/use-current-user";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useState } from "react";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface Comment {
   id: string;
@@ -53,9 +49,9 @@ export function Comments({
   comments,
   currentUserId,
 }: CommentsProps) {
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const currentUser = useCurrentUser(currentUserId);
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -65,9 +61,9 @@ export function Comments({
     setIsLoading(true);
     try {
       await handleCommentAction(comment.trim());
-      setComment('');
+      setComment("");
     } catch (error) {
-      console.error('Error posting comment:', error);
+      console.error("Error posting comment:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,9 +75,7 @@ export function Comments({
         comments.map((comment) => (
           <div key={comment.id} className="flex gap-2 group">
             <Avatar className="size-5">
-              <AvatarImage
-                src={comment.user.avatarUrl || undefined}
-              />
+              <AvatarImage src={comment.user.avatarUrl || undefined} />
               <AvatarFallback className="text-xs">
                 {getNameInitials(comment.user.name)}
               </AvatarFallback>
@@ -104,7 +98,7 @@ export function Comments({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className={`h-8 w-8 p-0 ${isDesktop ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
+                    className={`h-8 w-8 p-0 ${isDesktop ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}
                   >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
@@ -112,9 +106,7 @@ export function Comments({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     className="text-destructive focus:text-destructive"
-                    onClick={() =>
-                      handleDeleteCommentAction(comment.id)
-                    }
+                    onClick={() => handleDeleteCommentAction(comment.id)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -140,13 +132,11 @@ export function Comments({
     >
       <div className="flex flex-col h-full">
         <DialogTitle className="border-b px-4 pb-3 md:py-3 ">
-          <h2 className="font-semibold text-sm text-center">
-            Comments
-          </h2>
+          <h2 className="font-semibold text-sm text-center">Comments</h2>
         </DialogTitle>
 
         <div
-          className={`flex-1 overflow-y-auto px-4 py-2 ${isDesktop ? 'h-[400px] min-h-[40vh]' : 'min-h-[40vh]'}`}
+          className={`flex-1 overflow-y-auto px-4 py-2 ${isDesktop ? "h-[400px] min-h-[40vh]" : "min-h-[40vh]"}`}
         >
           <CommentList />
         </div>
@@ -154,7 +144,7 @@ export function Comments({
         <div className="border-t px-4 py-3">
           <form onSubmit={onSubmit} className="flex gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={currentUser?.avatarUrl ?? ''} />
+              <AvatarImage src={currentUser?.avatarUrl ?? ""} />
               <AvatarFallback className="text-xs">
                 {getNameInitials(currentUser?.name as string)}
               </AvatarFallback>
