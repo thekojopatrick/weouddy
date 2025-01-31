@@ -24,8 +24,6 @@ import { Progress } from '@/components/ui/progress';
 import { EmojiPicker } from '@/components/emoji-picker';
 import {
   ImageIcon,
-  Smile,
-  MapPin,
   X,
   ImageIcon as GifIcon,
   NotebookPen,
@@ -42,10 +40,10 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { useUploadFiles } from '@/hooks/use-upload-files';
+import { useUploadFiles } from '@/hooks/post/use-upload-files';
 import { useCreatePost } from '@/hooks/post/use-post';
 import { useToast } from '@/hooks/use-toast';
-import { UploadState } from '@/types/upload';
+
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -166,7 +164,7 @@ export function CreatePostDialog({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="w-full min-h-[40px] resize-none border-none shadow-none focus-visible:ring-0 p-0 text-base"
-              disabled={isPosting || uploadState.isUploading}
+              disabled={isPosting}
             />
           </div>
         </div>
