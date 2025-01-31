@@ -5,11 +5,13 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
+  DrawerTitle,
 } from '@/components/ui/drawer';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -66,7 +68,7 @@ export function CreatePostDialog({
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isMobile = !useMediaQuery('(min-width: 768px)');
 
   const {
     handleFiles,
@@ -261,71 +263,48 @@ export function CreatePostDialog({
     [content, uploadState, isPosting, handleFileSelect, removeFile]
   );
 
+  // Wrapper components for mobile and desktop
+  const Wrapper = isMobile ? Drawer : Dialog;
+  const WrapperContent = isMobile ? DrawerContent : DialogContent;
+  const HeaderWrapper = isMobile ? DrawerHeader : DialogHeader;
+  const TitleWrapper = isMobile ? DrawerTitle : DialogTitle;
+
   return (
     <>
-      {isDesktop ? (
-        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-          <Button
-            variant={'outline'}
-            size={!isDesktop ? 'icon' : 'lg'}
-            className={cn(
-              'rounded-full shadow-lg',
-              !isDesktop ? 'size-12' : 'h-12'
-            )}
-            onClick={() => setIsOpen(true)}
+      <Wrapper open={isOpen} onOpenChange={handleOpenChange}>
+        <Button
+          variant={'outline'}
+          size={isMobile ? 'icon' : 'lg'}
+          className={cn(
+            'rounded-full shadow-lg',
+            isMobile ? 'size-12' : 'h-12'
+          )}
+          onClick={() => setIsOpen(true)}
+        >
+          {isMobile ? <NotebookPen /> : <Plus className={'size-6'} />}
+          <span className={isMobile ? 'sr-only' : 'font-semibold'}>
+            Create Post
+          </span>
+        </Button>
+        <WrapperContent
+          className={cn(
+            'bg-white text-black overflow-hidden flex flex-col',
+            isMobile ? 'h-[90vh]' : 'max-h-[80vh] top-[25%]'
+          )}
+        >
+          <HeaderWrapper className="flex-shrink-0">
+            <TitleWrapper className="text-base font-semibold">
+              New Post
+            </TitleWrapper>
+          </HeaderWrapper>
+          <div
+            className={`flex-grow overflow-y-auto ${isMobile ? 'px-4' : ''}`}
           >
-            {!isDesktop ? (
-              <NotebookPen />
-            ) : (
-              <Plus className={'size-6'} />
-            )}
-            <span
-              className={!isDesktop ? 'sr-only' : 'font-semibold'}
-            >
-              Create Post
-            </span>
-          </Button>
-          <DialogContent className="sm:max-w-[600px] bg-white text-black overflow-hidden flex flex-col max-h-[80vh]">
-            <DialogHeader className="flex-shrink-0">
-              <h2 className="text-lg font-semibold">New Post</h2>
-            </DialogHeader>
-            <div className="flex-grow overflow-y-auto">
-              {renderContent()}
-            </div>
-          </DialogContent>
-        </Dialog>
-      ) : (
-        <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-          <Button
-            variant={'outline'}
-            size={!isDesktop ? 'icon' : 'lg'}
-            className={cn(
-              'rounded-full shadow-lg',
-              !isDesktop ? 'size-12' : 'h-12'
-            )}
-            onClick={() => setIsOpen(true)}
-          >
-            {!isDesktop ? (
-              <NotebookPen />
-            ) : (
-              <Plus className={'size-6'} />
-            )}
-            <span
-              className={!isDesktop ? 'sr-only' : 'font-semibold'}
-            >
-              Create Post
-            </span>
-          </Button>
-          <DrawerContent className="bg-white text-black h-[90vh]">
-            <DrawerHeader className="border-b border-gray-200 flex-shrink-0">
-              <h2 className="text-lg font-semibold">New Post</h2>
-            </DrawerHeader>
-            <div className="flex-grow overflow-y-auto px-4 pt-4">
-              {renderContent()}
-            </div>
-          </DrawerContent>
-        </Drawer>
-      )}
+            {renderContent()}
+          </div>
+        </WrapperContent>
+      </Wrapper>
+
       <AlertDialog
         open={showCloseWarning}
         onOpenChange={setShowCloseWarning}
