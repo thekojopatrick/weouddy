@@ -1,11 +1,11 @@
-export type FileWithPreview = {
+export interface FileWithPreview {
   file: File;
-  mediaType: string;
   preview: string;
   progress: number;
   uploading: boolean;
-  error?: string;
-};
+  mediaType: 'IMAGE' | 'VIDEO';
+  error?: string; // Optional error field
+}
 
 export type UploadState = {
   files: FileWithPreview[];

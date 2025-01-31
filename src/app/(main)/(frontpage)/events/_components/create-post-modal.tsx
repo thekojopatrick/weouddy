@@ -242,7 +242,8 @@ export function CreatePostModal({
                     input.accept = 'image/*,video/*';
                     input.onchange = (e) =>
                       handleFiles(
-                        (e.target as HTMLInputElement).files
+                        (e.target as HTMLInputElement).files,
+                        eventId
                       );
                     input.click();
                   }}
@@ -256,7 +257,7 @@ export function CreatePostModal({
                   }
                 />
                 {uploadState.files.length >= 5 && (
-                  <span className="text-xs text-muted-foreground text-red-400">
+                  <span className="text-xs text-red-400">
                     Maximum 5 files allowed
                   </span>
                 )}
