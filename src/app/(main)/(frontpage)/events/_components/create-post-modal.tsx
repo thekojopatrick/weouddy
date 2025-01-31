@@ -287,7 +287,9 @@ export function CreatePostDialog({
         <WrapperContent
           className={cn(
             'bg-white text-black overflow-hidden flex flex-col',
-            isMobile ? 'h-[90vh]' : 'max-h-[80vh] top-[25%]'
+            isMobile
+              ? 'h-[90vh]'
+              : 'fixed top-[35%] left-1/2 transform -translate-x-1/2 min-h-[200px] max-h-[70vh] overflow-y-auto'
           )}
         >
           <HeaderWrapper className="flex-shrink-0">
