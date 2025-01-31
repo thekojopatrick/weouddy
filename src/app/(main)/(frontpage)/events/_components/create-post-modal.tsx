@@ -1,83 +1,81 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
-  DrawerTitle,
 } from '@/components/ui/drawer';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
+import { EmojiPicker } from '@/components/emoji-picker';
 import {
   ImageIcon,
-  Loader2,
-  Trash2,
-  VideoIcon,
+  Smile,
+  MapPin,
   X,
+  ImageIcon as GifIcon,
+  NotebookPen,
+  Plus,
 } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 import { useUploadFiles } from '@/hooks/use-upload-files';
 import { useCreatePost } from '@/hooks/post/use-post';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { toast } from 'sonner';
-import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { EmojiPicker } from '@/components/emoji-picker';
-import { ScrollBar } from '@/components/ui/scroll-area';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { UploadState } from '@/types/upload';
+import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
 
-interface CreatePostModalProps {
-  open: boolean;
+interface CreatePostDialogProps {
   eventId: string;
-  onOpenChange: (open: boolean) => void;
+  userId: string;
   userName: string | null;
   userAvatar: string | null;
 }
 
-export default function CreatePostModal({
-  open,
-  onOpenChange,
+export function CreatePostDialog({
   eventId,
+  userId,
   userName,
   userAvatar,
-}: CreatePostModalProps) {
-  const [content, setContent] = useState('');
+}: CreatePostDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
-
+  const [content, setContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
-    uploadState,
     handleFiles,
     uploadFiles,
     removeFile,
+    uploadState,
     setUploadState,
   } = useUploadFiles();
   const createPost = useCreatePost();
-  const isMobile = useMediaQuery(
-    'only screen and (max-width : 639px)'
-  );
-
-  const Wrapper = isMobile ? Drawer : Dialog;
-  const WrapperContent = isMobile ? DrawerContent : DialogContent;
-  const HeaderWrapper = isMobile ? DrawerHeader : DialogHeader;
-  const TitleWrapper = isMobile ? DrawerTitle : DialogTitle;
 
   const handleOpenChange = (open: boolean) => {
     if (!open && uploadState.files.some((f) => f.uploading)) {
@@ -242,6 +240,9 @@ export default function CreatePostModal({
                 setContent((prev) => prev + emoji)
               }
             />
+            <span className="text-xs text-muted-foreground">
+              Anyone can reply
+            </span>
           </div>
           <Button
             onClick={handlePost}
@@ -261,15 +262,99 @@ export default function CreatePostModal({
   );
 
   return (
-    <Wrapper open={open} onOpenChange={onOpenChange}>
-      <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-[90vh] rounded-t-lg' : 'h-fit'}`}
+    <>
+      {isDesktop ? (
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+          <Button
+            variant={'outline'}
+            size={!isDesktop ? 'icon' : 'lg'}
+            className={cn(
+              'rounded-full shadow-lg',
+              !isDesktop ? 'size-12' : 'h-12'
+            )}
+            onClick={() => setIsOpen(true)}
+          >
+            {!isDesktop ? (
+              <NotebookPen />
+            ) : (
+              <Plus className={'size-6'} />
+            )}
+            <span
+              className={!isDesktop ? 'sr-only' : 'font-semibold'}
+            >
+              Create Post
+            </span>
+          </Button>
+          <DialogContent className="sm:max-w-[600px] bg-white text-black overflow-hidden flex flex-col max-h-[80vh]">
+            <DialogHeader className="flex-shrink-0">
+              <h2 className="text-lg font-semibold">New Post</h2>
+            </DialogHeader>
+            <div className="flex-grow overflow-y-auto">
+              {renderContent()}
+            </div>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer open={isOpen} onOpenChange={handleOpenChange}>
+          <Button
+            variant={'outline'}
+            size={!isDesktop ? 'icon' : 'lg'}
+            className={cn(
+              'rounded-full shadow-lg',
+              !isDesktop ? 'size-12' : 'h-12'
+            )}
+            onClick={() => setIsOpen(true)}
+          >
+            {!isDesktop ? (
+              <NotebookPen />
+            ) : (
+              <Plus className={'size-6'} />
+            )}
+            <span
+              className={!isDesktop ? 'sr-only' : 'font-semibold'}
+            >
+              Create Post
+            </span>
+          </Button>
+          <DrawerContent className="bg-white text-black h-[90vh]">
+            <DrawerHeader className="border-b border-gray-200 flex-shrink-0">
+              <h2 className="text-lg font-semibold">New Post</h2>
+            </DrawerHeader>
+            <div className="flex-grow overflow-y-auto px-4 pt-4">
+              {renderContent()}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      )}
+      <AlertDialog
+        open={showCloseWarning}
+        onOpenChange={setShowCloseWarning}
       >
-        <HeaderWrapper className="p-0">
-          <div className="border-b p-4 flex items-center justify-between"></div>
-        </HeaderWrapper>
-        {renderContent()}
-      </WrapperContent>
-    </Wrapper>
+        <AlertDialogContent className="bg-white border border-gray-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hold that thought</AlertDialogTitle>
+            <AlertDialogDescription>
+              We are still uploading your media. Are you sure you want
+              to discard your post? Your draft and attachments will be
+              lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setShowCloseWarning(false)}
+              className="bg-transparent border-gray-300 hover:bg-gray-100"
+            >
+              Continue
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDiscard}
+              className="bg-red-500 text-white hover:bg-red-600"
+            >
+              Discard
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
