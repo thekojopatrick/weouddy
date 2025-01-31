@@ -1,31 +1,41 @@
-"use client";
+'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ImageIcon, Loader2, Trash2, VideoIcon, X } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
+import {
+  ImageIcon,
+  Loader2,
+  Trash2,
+  VideoIcon,
+  X,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/ui/drawer";
+} from '@/components/ui/drawer';
 
-import { Button } from "@/components/ui/button";
-import { EmojiPicker } from "@/components/emoji-picker";
-import { FileWithPreview } from "@/types/upload";
-import Image from "next/image";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useState } from "react";
-import { useCreatePost } from "@/hooks/post/use-post";
-import { useUploadFiles } from "@/hooks/use-upload-files";
+import { Button } from '@/components/ui/button';
+import { EmojiPicker } from '@/components/emoji-picker';
+import { FileWithPreview } from '@/types/upload';
+import Image from 'next/image';
+import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useState } from 'react';
+import { useCreatePost } from '@/hooks/post/use-post';
+import { useUploadFiles } from '@/hooks/use-upload-files';
 
 interface CreatePostModalProps {
   open: boolean;
@@ -42,11 +52,13 @@ export function CreatePostModal({
   userName,
   userAvatar,
 }: CreatePostModalProps) {
-  const isMobile = useMediaQuery("only screen and (max-width : 639px)");
+  const isMobile = useMediaQuery(
+    'only screen and (max-width : 639px)'
+  );
   const createPost = useCreatePost();
   const { uploadState, handleFiles, uploadFiles, removeFile } =
     useUploadFiles();
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,15 +74,15 @@ export function CreatePostModal({
       // Filter out failed uploads
       const validMediaFiles = mediaFiles.filter(
         (
-          file,
+          file
         ): file is {
           url: string;
-          type: "IMAGE" | "VIDEO";
+          type: 'IMAGE' | 'VIDEO';
           order: number;
         } =>
           file !== null &&
-          typeof file.url === "string" &&
-          (file.type === "IMAGE" || file.type === "VIDEO"),
+          typeof file.url === 'string' &&
+          (file.type === 'IMAGE' || file.type === 'VIDEO')
       );
 
       await createPost.mutateAsync({
@@ -79,12 +91,12 @@ export function CreatePostModal({
         eventId,
       });
 
-      toast.success("Post created successfully");
-      setContent("");
+      toast.success('Post created successfully');
+      setContent('');
       onOpenChangeAction(false);
     } catch (error) {
-      toast.error("Failed to create post");
-      console.error("Post creation failed:", error);
+      toast.error('Failed to create post');
+      console.error('Post creation failed:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +110,7 @@ export function CreatePostModal({
   return (
     <Wrapper open={open} onOpenChange={onOpenChangeAction}>
       <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? "h-screen max-h-[90vh] rounded-none" : "h-fit"}`}
+        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-screen max-h-[90vh] rounded-none' : 'h-fit'}`}
         closebtnstyle="hidden"
       >
         <HeaderWrapper className="p-0">
@@ -112,7 +124,9 @@ export function CreatePostModal({
             >
               <X className="h-5 w-5" />
             </Button>
-            <TitleWrapper className="text-sm">Create New Post</TitleWrapper>
+            <TitleWrapper className="text-sm">
+              Create New Post
+            </TitleWrapper>
             <Button
               variant="secondary"
               className="font-semibold rounded-full"
@@ -128,21 +142,25 @@ export function CreatePostModal({
                   Posting...
                 </>
               ) : (
-                "Post"
+                'Post'
               )}
             </Button>
           </div>
         </HeaderWrapper>
         <form onSubmit={handleSubmit} className="">
           {/* Content */}
-          <div className={`flex flex-col ${isMobile ? "h-fit" : "h-[500px]"}`}>
+          <div
+            className={`flex flex-col ${isMobile ? 'h-fit' : 'h-[500px]'}`}
+          >
             <div className="pt-4 px-4 flex gap-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={userAvatar ?? ""} />
+                <AvatarImage src={userAvatar ?? ''} />
                 <AvatarFallback>{userName?.[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <div className="font-semibold text-sm">{userName}</div>
+                <div className="font-semibold text-sm">
+                  {userName}
+                </div>
                 <div className="text-xs text-muted-foreground">
                   {new Date().toLocaleTimeString()}
                 </div>
@@ -153,12 +171,15 @@ export function CreatePostModal({
               disabled={uploadState.isUploading || isSubmitting}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full placeholder:text-sm h-full resize-none border-none focus-visible:ring-0 focus:outline-hidden bg-transparent placeholder:text-muted-foreground text-base"
+              className="w-full shadow-none placeholder:text-sm md:h-full min-h-[20vh] max-h-[40vh] resize-none border-none focus-visible:ring-0 focus:outline-hidden bg-transparent placeholder:text-muted-foreground text-base"
             />
 
             {uploadState.files.length > 0 && (
               <div className="space-y-2">
-                <Progress value={uploadState.totalProgress} className="h-2" />
+                <Progress
+                  value={uploadState.totalProgress}
+                  className="h-2"
+                />
                 <div className="flex flex-wrap gap-2">
                   {uploadState.files.map(
                     (file: FileWithPreview, index: number) => (
@@ -166,7 +187,7 @@ export function CreatePostModal({
                         key={index}
                         className="relative aspect-square h-24 w-24"
                       >
-                        {file.mediaType === "IMAGE" ? (
+                        {file.mediaType === 'IMAGE' ? (
                           <Image
                             src={file.preview}
                             alt="Upload preview"
@@ -184,7 +205,9 @@ export function CreatePostModal({
                               {Math.round(file.progress)}%
                             </div>
                           ) : file.error ? (
-                            <div className="text-red-500 text-sm">Error</div>
+                            <div className="text-red-500 text-sm">
+                              Error
+                            </div>
                           ) : null}
                         </div>
                         <Button
@@ -197,7 +220,7 @@ export function CreatePostModal({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>
@@ -213,12 +236,14 @@ export function CreatePostModal({
                   size="icon"
                   className="border-none rounded-full"
                   onClick={() => {
-                    const input = document.createElement("input");
-                    input.type = "file";
+                    const input = document.createElement('input');
+                    input.type = 'file';
                     input.multiple = true;
-                    input.accept = "image/*,video/*";
+                    input.accept = 'image/*,video/*';
                     input.onchange = (e) =>
-                      handleFiles((e.target as HTMLInputElement).files);
+                      handleFiles(
+                        (e.target as HTMLInputElement).files
+                      );
                     input.click();
                   }}
                   disabled={uploadState.files.length >= 5}
