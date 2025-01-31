@@ -1,31 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useRef, useCallback } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-} from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-} from '@/components/ui/drawer';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
+import { useState, useRef, useCallback } from "react";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   ChevronDown,
   ImageIcon,
@@ -33,8 +21,8 @@ import {
   MapPin,
   X,
   ImageIcon as GifIcon,
-} from 'lucide-react';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+} from "lucide-react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -44,36 +32,28 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@/components/ui/alert-dialog';
-import { useUploadFiles } from '@/hooks/use-upload-files';
-import { useCreatePost } from '@/hooks/post/use-post';
-import { useToast } from '@/hooks/use-toast';
-import { UploadState } from '@/types/upload';
+} from "@/components/ui/alert-dialog";
+import { useUploadFiles } from "@/hooks/use-upload-files";
+import { useCreatePost } from "@/hooks/post/use-post";
+import { useToast } from "@/hooks/use-toast";
+import { UploadState } from "@/types/upload";
 
 interface CreatePostDialogProps {
   eventId: string;
   userId: string;
 }
 
-export function CreatePostDialog({
-  eventId,
-  userId,
-}: CreatePostDialogProps) {
+export function CreatePostDialog({ eventId, userId }: CreatePostDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const {
-    handleFiles,
-    uploadFiles,
-    removeFile,
-    uploadState,
-    setUploadState,
-  } = useUploadFiles();
+  const { handleFiles, uploadFiles, removeFile, uploadState, setUploadState } =
+    useUploadFiles();
   const createPost = useCreatePost();
 
   const handleOpenChange = (open: boolean) => {
@@ -87,25 +67,23 @@ export function CreatePostDialog({
   const handleDiscard = useCallback(() => {
     setShowCloseWarning(false);
     setIsOpen(false);
-    setContent('');
-    uploadState.files.forEach((file) =>
-      URL.revokeObjectURL(file.preview)
-    );
+    setContent("");
+    uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, [uploadState.files]);
 
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       await handleFiles(e.target.files, eventId);
     },
-    [handleFiles, eventId]
+    [handleFiles, eventId],
   );
 
   const handlePost = async () => {
     if (uploadState.isUploading) {
       toast({
-        title: 'Please wait',
-        description: 'Wait for all media to finish uploading.',
-        variant: 'destructive',
+        title: "Please wait",
+        description: "Wait for all media to finish uploading.",
+        variant: "destructive",
       });
       return;
     }
@@ -121,27 +99,25 @@ export function CreatePostDialog({
       });
 
       toast({
-        title: 'Post created!',
-        description: 'Your post has been published successfully.',
+        title: "Post created!",
+        description: "Your post has been published successfully.",
       });
 
       // Reset the state
       setIsOpen(false);
-      setContent('');
-      uploadState.files.forEach((file) =>
-        URL.revokeObjectURL(file.preview)
-      );
+      setContent("");
+      uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
       setUploadState({
         files: [],
         isUploading: false,
         totalProgress: 0,
       });
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error("Error creating post:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to create post. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create post. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsPosting(false);
@@ -158,10 +134,7 @@ export function CreatePostDialog({
           </Avatar>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2"
-              >
+              <Button variant="outline" className="flex items-center gap-2">
                 Everyone
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -191,7 +164,7 @@ export function CreatePostDialog({
                   key={index}
                   className="relative shrink-0 rounded-xl overflow-hidden"
                 >
-                  {file.mediaType === 'VIDEO' ? (
+                  {file.mediaType === "VIDEO" ? (
                     <video
                       src={file.preview}
                       className="h-[280px] w-[280px] object-cover"
@@ -199,7 +172,7 @@ export function CreatePostDialog({
                     />
                   ) : (
                     <img
-                      src={file.preview || '/placeholder.svg'}
+                      src={file.preview || "/placeholder.svg"}
                       alt="Preview"
                       className="h-[280px] w-[280px] object-cover"
                     />
@@ -215,10 +188,7 @@ export function CreatePostDialog({
                   </Button>
                   {file.uploading && (
                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
-                      <Progress
-                        value={file.progress}
-                        className="h-1"
-                      />
+                      <Progress value={file.progress} className="h-1" />
                       <p className="text-xs mt-1">
                         Uploading ({Math.round(file.progress)}%)
                       </p>
@@ -249,25 +219,13 @@ export function CreatePostDialog({
             >
               <ImageIcon className="h-5 w-5" />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-blue-500"
-            >
+            <Button size="icon" variant="ghost" className="text-blue-500">
               <GifIcon className="h-5 w-5" />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-blue-500"
-            >
+            <Button size="icon" variant="ghost" className="text-blue-500">
               <Smile className="h-5 w-5" />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-blue-500"
-            >
+            <Button size="icon" variant="ghost" className="text-blue-500">
               <MapPin className="h-5 w-5" />
             </Button>
           </div>
@@ -280,12 +238,12 @@ export function CreatePostDialog({
               uploadState.isUploading
             }
           >
-            {isPosting ? 'Posting...' : 'Post'}
+            {isPosting ? "Posting..." : "Post"}
           </Button>
         </div>
       </>
     ),
-    [content, uploadState, isPosting, handleFileSelect, removeFile]
+    [content, uploadState, isPosting, handleFileSelect, removeFile],
   );
 
   return (
@@ -302,9 +260,7 @@ export function CreatePostDialog({
             <DialogHeader className="flex-shrink-0">
               <h2 className="text-lg font-semibold">New Post</h2>
             </DialogHeader>
-            <div className="flex-grow overflow-y-auto">
-              {renderContent()}
-            </div>
+            <div className="flex-grow overflow-y-auto">{renderContent()}</div>
           </DialogContent>
         </Dialog>
       ) : (
@@ -325,17 +281,13 @@ export function CreatePostDialog({
           </DrawerContent>
         </Drawer>
       )}
-      <AlertDialog
-        open={showCloseWarning}
-        onOpenChange={setShowCloseWarning}
-      >
+      <AlertDialog open={showCloseWarning} onOpenChange={setShowCloseWarning}>
         <AlertDialogContent className="bg-white border border-gray-200">
           <AlertDialogHeader>
             <AlertDialogTitle>Hold that thought</AlertDialogTitle>
             <AlertDialogDescription>
-              We are still uploading your media. Are you sure you want
-              to discard your post? Your draft and attachments will be
-              lost.
+              We are still uploading your media. Are you sure you want to
+              discard your post? Your draft and attachments will be lost.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

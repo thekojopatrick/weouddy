@@ -33,7 +33,9 @@ export const useCreatePost = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create post");
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        throw new Error(errorData.message || "Failed to create post");
       }
 
       return response.json();
@@ -43,6 +45,9 @@ export const useCreatePost = () => {
         queryKey: ["posts", newPost.eventId],
         exact: true,
       });
+    },
+    onError: (error) => {
+      console.error("Mutation Error:", error);
     },
   });
 };

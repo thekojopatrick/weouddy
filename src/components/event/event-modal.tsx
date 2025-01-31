@@ -1,30 +1,26 @@
-'use client';
+"use client";
 
-import * as Sentry from '@sentry/nextjs';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Calendar, MapPin, Share2, Users } from 'lucide-react';
-import { memo, useCallback, useMemo } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { toast } from 'sonner';
-import { useAccount } from '@/hooks/account/use-account';
-import { useRouter } from 'next/navigation';
-import { EventWithFullData } from '@/types/event';
-import { getNameInitials } from '@/lib/utils';
-import CustomDrawer from '../ui/custom-drawer';
-import { Drawer } from 'vaul';
+import * as Sentry from "@sentry/nextjs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Calendar, MapPin, Share2, Users } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { toast } from "sonner";
+import { useAccount } from "@/hooks/account/use-account";
+import { useRouter } from "next/navigation";
+import { EventWithFullData } from "@/types/event";
+import { getNameInitials } from "@/lib/utils";
+import CustomDrawer from "../ui/custom-drawer";
+import { Drawer } from "vaul";
 
 interface EventModalProps {
   isOpen: boolean;
   onCloseAction: () => void;
   event: EventWithFullData;
-  userStatus?: 'NOT_JOINED' | 'PENDING' | 'JOINED';
+  userStatus?: "NOT_JOINED" | "PENDING" | "JOINED";
 }
 
 const EventModal = memo(
@@ -32,11 +28,9 @@ const EventModal = memo(
     isOpen,
     onCloseAction,
     event,
-    userStatus = 'NOT_JOINED',
+    userStatus = "NOT_JOINED",
   }: EventModalProps) => {
-    const isMobile = useMediaQuery(
-      'only screen and (max-width : 638px)'
-    );
+    const isMobile = useMediaQuery("only screen and (max-width : 638px)");
     const { accountData } = useAccount();
     const eventUrl = `${window.location.origin}/events/${event.slug}`;
     const router = useRouter();
@@ -50,13 +44,13 @@ const EventModal = memo(
             url: eventUrl,
           });
         } else {
-          throw new Error('Share API not available');
+          throw new Error("Share API not available");
         }
       } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
+        if (err instanceof Error && err.name !== "AbortError") {
           navigator.clipboard.writeText(eventUrl);
-          toast.info('Link copied!', {
-            description: 'Event link has been copied to clipboard.',
+          toast.info("Link copied!", {
+            description: "Event link has been copied to clipboard.",
           });
         }
         Sentry.captureException(err);
@@ -65,8 +59,8 @@ const EventModal = memo(
 
     const handleJoinClick = useCallback(() => {
       if (!accountData?.id) {
-        toast.error('Please sign in to join this event');
-        router.push('/auth');
+        toast.error("Please sign in to join this event");
+        router.push("/auth");
         onCloseAction();
         return;
       } else {
@@ -76,31 +70,27 @@ const EventModal = memo(
 
     const buttonConfig = useMemo(() => {
       switch (userStatus) {
-        case 'JOINED':
+        case "JOINED":
           return {
-            text: 'Already Joined',
+            text: "Already Joined",
             disabled: true,
             action: () => {
               router.push(eventUrl);
             },
           };
-        case 'PENDING':
+        case "PENDING":
           return {
-            text: 'Waiting for Approval',
+            text: "Waiting for Approval",
             disabled: true,
             action: () => {
-              toast.info('Waiting for host to approve you');
+              toast.info("Waiting for host to approve you");
             },
           };
         default:
           const buttonText =
-            event.accessType === 'PIN_REQUIRED'
-              ? 'Join with PIN'
-              : 'Join Room';
+            event.accessType === "PIN_REQUIRED" ? "Join with PIN" : "Join Room";
           return {
-            text: event.requiresApproval
-              ? 'Request to Join'
-              : buttonText,
+            text: event.requiresApproval ? "Request to Join" : buttonText,
             disabled: false,
             action: handleJoinClick,
           };
@@ -147,9 +137,7 @@ const EventModal = memo(
               </h2>
               <div className="flex items-center gap-2 mt-2">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage
-                    src={event.host.avatarUrl ?? undefined}
-                  />
+                  <AvatarImage src={event.host.avatarUrl ?? undefined} />
                   <AvatarFallback>
                     {getNameInitials(event?.host?.name as string)}
                   </AvatarFallback>
@@ -165,20 +153,20 @@ const EventModal = memo(
           </div>
         </div>
       ),
-      [event, handleShare]
+      [event, handleShare],
     );
 
     const renderFooter = useMemo(
       () => (
         <div className="w-full space-y-4">
           <p className="text-sm text-center text-muted-foreground">
-            {userStatus === 'PENDING'
-              ? 'Your request is pending approval from the host.'
-              : userStatus === 'JOINED'
-                ? 'You are a member of this event.'
-                : event.accessType === 'PIN_REQUIRED'
-                  ? 'This event requires a PIN. You will need to enter the PIN to join.'
-                  : 'Join this event to connect with other attendees and get updates.'}
+            {userStatus === "PENDING"
+              ? "Your request is pending approval from the host."
+              : userStatus === "JOINED"
+                ? "You are a member of this event."
+                : event.accessType === "PIN_REQUIRED"
+                  ? "This event requires a PIN. You will need to enter the PIN to join."
+                  : "Join this event to connect with other attendees and get updates."}
           </p>
           <Drawer.Close asChild>
             <Button
@@ -191,7 +179,7 @@ const EventModal = memo(
           </Drawer.Close>
         </div>
       ),
-      [buttonConfig, userStatus, event.accessType]
+      [buttonConfig, userStatus, event.accessType],
     );
 
     return (
@@ -206,7 +194,7 @@ const EventModal = memo(
         />
       </>
     );
-  }
+  },
 );
 
 const EventDetails = memo(
@@ -233,9 +221,7 @@ const EventDetails = memo(
           <div className="font-semibold tracking-tight text-sm text-primary/80">
             {event.date}
           </div>
-          <div className="text-xs text-muted-foreground">
-            {event.time}
-          </div>
+          <div className="text-xs text-muted-foreground">{event.time}</div>
         </div>
       </div>
 
@@ -258,29 +244,23 @@ const EventDetails = memo(
         </div>
       </div>
       <div className="space-y-2">
-        <h3 className="font-semibold tracking-tight text-sm">
-          About event
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {event.description}
-        </p>
+        <h3 className="font-semibold tracking-tight text-sm">About event</h3>
+        <p className="text-sm text-muted-foreground">{event.description}</p>
       </div>
 
       {event.additionalInfo && (
         <div className="space-y-2">
-          <h3 className="font-semibold text-sm">
-            Additional information
-          </h3>
+          <h3 className="font-semibold text-sm">Additional information</h3>
           <p className="text-sm text-muted-foreground">
             {event.additionalInfo}
           </p>
         </div>
       )}
     </div>
-  )
+  ),
 );
 
-EventDetails.displayName = 'EventDetails';
-EventModal.displayName = 'EventModal';
+EventDetails.displayName = "EventDetails";
+EventModal.displayName = "EventModal";
 
 export default EventModal;

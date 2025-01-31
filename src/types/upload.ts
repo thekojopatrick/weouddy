@@ -3,7 +3,7 @@ export interface FileWithPreview {
   preview: string;
   progress: number;
   uploading: boolean;
-  mediaType: 'IMAGE' | 'VIDEO';
+  mediaType: "IMAGE" | "VIDEO";
   url?: string;
   error?: string; // Optional error field
 }

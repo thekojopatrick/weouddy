@@ -1,38 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-} from '@/components/ui/drawer';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
-import {
-  ImageIcon,
-  Loader2,
-  Trash2,
-  VideoIcon,
-  X,
-} from 'lucide-react';
-import { useUploadFiles } from '@/hooks/use-upload-files';
-import { useCreatePost } from '@/hooks/post/use-post';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { toast } from 'sonner';
-import Image from 'next/image';
+} from "@/components/ui/drawer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { ImageIcon, Loader2, Trash2, VideoIcon, X } from "lucide-react";
+import { useUploadFiles } from "@/hooks/use-upload-files";
+import { useCreatePost } from "@/hooks/post/use-post";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { toast } from "sonner";
+import Image from "next/image";
 
 interface CreatePostModalProps {
   open: boolean;
@@ -49,14 +39,12 @@ export default function CreatePostModal({
   userName,
   userAvatar,
 }: CreatePostModalProps) {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { uploadState, handleFiles, uploadFiles, removeFile } =
     useUploadFiles();
   const createPost = useCreatePost();
-  const isMobile = useMediaQuery(
-    'only screen and (max-width : 639px)'
-  );
+  const isMobile = useMediaQuery("only screen and (max-width : 639px)");
 
   const Wrapper = isMobile ? Drawer : Dialog;
   const WrapperContent = isMobile ? DrawerContent : DialogContent;
@@ -83,12 +71,12 @@ export default function CreatePostModal({
         eventId,
       });
 
-      setContent('');
+      setContent("");
       onOpenChange(false);
-      toast.success('Post created successfully');
+      toast.success("Post created successfully");
     } catch (error) {
       console.error(error);
-      toast.error('Failed to create post');
+      toast.error("Failed to create post");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +85,7 @@ export default function CreatePostModal({
   return (
     <Wrapper open={open} onOpenChange={onOpenChange}>
       <WrapperContent
-        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? 'h-[90vh] rounded-t-lg' : 'h-fit'}`}
+        className={`sm:max-w-[425px] p-0 gap-0 ${isMobile ? "h-[90vh] rounded-t-lg" : "h-fit"}`}
       >
         <HeaderWrapper className="p-0">
           <div className="border-b p-4 flex items-center justify-between">
@@ -128,18 +116,16 @@ export default function CreatePostModal({
                   Posting...
                 </>
               ) : (
-                'Post'
+                "Post"
               )}
             </Button>
           </div>
         </HeaderWrapper>
 
-        <div
-          className={`flex flex-col ${isMobile ? 'h-full' : 'h-[500px]'}`}
-        >
+        <div className={`flex flex-col ${isMobile ? "h-full" : "h-[500px]"}`}>
           <div className="p-4 flex gap-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={userAvatar ?? ''} />
+              <AvatarImage src={userAvatar ?? ""} />
               <AvatarFallback>{userName?.[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
@@ -158,10 +144,7 @@ export default function CreatePostModal({
             <div className="px-4 space-y-4">
               {uploadState.totalProgress > 0 &&
                 uploadState.totalProgress < 100 && (
-                  <Progress
-                    value={uploadState.totalProgress}
-                    className="h-1"
-                  />
+                  <Progress value={uploadState.totalProgress} className="h-1" />
                 )}
               <div className="grid grid-cols-2 gap-2">
                 {uploadState.files.map((file, index) => (
@@ -169,7 +152,7 @@ export default function CreatePostModal({
                     key={index}
                     className="relative aspect-square bg-black/5 rounded-lg overflow-hidden"
                   >
-                    {file.mediaType === 'IMAGE' ? (
+                    {file.mediaType === "IMAGE" ? (
                       <Image
                         src={file.preview}
                         alt=""
@@ -215,10 +198,10 @@ export default function CreatePostModal({
                 size="icon"
                 className="rounded-full"
                 onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
+                  const input = document.createElement("input");
+                  input.type = "file";
                   input.multiple = true;
-                  input.accept = 'image/*,video/*';
+                  input.accept = "image/*,video/*";
                   input.onchange = handleMediaSelect;
                   input.click();
                 }}
