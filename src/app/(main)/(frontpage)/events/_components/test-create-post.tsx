@@ -240,6 +240,9 @@ export function CreatePostDialog({
                 setContent((prev) => prev + emoji)
               }
             />
+            <span className="text-xs text-muted-foreground">
+              Anyone can reply
+            </span>
           </div>
           <Button
             onClick={handlePost}
