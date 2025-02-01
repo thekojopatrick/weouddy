@@ -25,6 +25,7 @@ model User {
   updatedAt        DateTime  @updatedAt
 
   //Relations
+  vendors                Vendor[]
   posts                  Post[]
   comments               Comment[]
   likes                  Like[]
@@ -39,6 +40,7 @@ model User {
   receivedFollowRequests FollowRequest[]   @relation("Target")
   feedbacks              Feedback[]
   messageReactions       MessageReaction[]
+  vendorReviews          VendorReview[]
 }
 
 model Event {
@@ -53,6 +55,8 @@ model Event {
   slug        String?  @unique
   pinCode     String?  @unique // Optional field to store PIN code (if accessType = PIN_REQUIRED)
 
+  vendorBudget     Float?
+  vendorCosts      Json? // {bookedVendors: [{id: "ven_123", cost: 2000}]}
   // Settings
   isPrivate        Boolean    @default(false)
   requiresApproval Boolean    @default(false)
@@ -75,6 +79,7 @@ model Event {
   chatSettings ChatSettings?
   roles        EventRole[]
   eventLogs    EventActivity[]
+  eventVendors EventVendor[]
 
   @@index([hostId])
   @@index([createdAt])
@@ -138,6 +143,9 @@ model Post {
   event     Event       @relation(fields: [eventId], references: [id])
   comments  Comment[]
   likes     Like[]
+
+  @@index([eventId])
+  @@index([userId])
 }
 
 model PostMedia {
@@ -164,6 +172,9 @@ model Comment {
   postId    String
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
+
+  @@index([postId])
+  @@index([userId])
 }
 
 model Like {
@@ -216,6 +227,10 @@ model ChatMessage {
   user      User              @relation(fields: [userId], references: [id])
   event     Event             @relation(fields: [eventId], references: [id])
   reactions MessageReaction[]
+
+  // Add vendor context
+  vendorId String? // Reference to vendor being discussed
+  vendor   Vendor? @relation(fields: [vendorId], references: [id])
 
   @@index([eventId])
   @@index([userId])
@@ -361,4 +376,109 @@ enum FeedbackStatus {
   REVIEWED
   RESOLVED
   ARCHIVED
+}
+
+//Vendors Management
+
+enum VendorType {
+  VENUE
+  CATERER
+  PHOTOGRAPHER
+  VIDEOGRAPHER
+  ENTERTAINMENT
+  DECOR
+  TRANSPORTATION
+  PLANNER
+}
+
+enum PriceRange {
+  BUDGET
+  MIDRANGE
+  LUXURY
+  CUSTOM
+}
+
+model Vendor {
+  id           String     @id @default(cuid())
+  name         String
+  type         VendorType
+  services     String[] // ["Wedding Photography", "Corporate Events"]
+  priceRange   PriceRange
+  location     String? // Geocodable address
+  website      String?
+  contactEmail String?
+  phone        String?
+  rating       Float?     @default(0)
+  aiMetadata   Json? // For ML features (embedding vectors, etc)
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relations
+  events     EventVendor[]
+  reviews    VendorReview[]
+  attributes VendorAttribute[]
+  packages   VendorPackage[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  ChatMessage ChatMessage[]
+
+  @@index([type])
+  @@index([location])
+  @@index([priceRange])
+  @@index([rating])
+  @@index([userId])
+}
+
+model VendorAttribute {
+  id       String @id @default(cuid())
+  vendorId String
+  key      String // "capacity", "menuType", "equipment"
+  value    String // "500", "Vegetarian", "4K Cameras"
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  @@unique([vendorId, key])
+}
+
+model VendorPackage {
+  id          String   @id @default(cuid())
+  vendorId    String
+  name        String // "Premium Wedding Package"
+  description String?
+  price       Float?
+  inclusions  String[] // ["8hr Coverage", "2 Photographers", "Edited Photos"]
+  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+}
+
+model EventVendor {
+  id       String       @id @default(cuid())
+  eventId  String
+  vendorId String
+  status   VendorStatus @default(PENDING)
+  notes    String?
+  event    Event        @relation(fields: [eventId], references: [id])
+  vendor   Vendor       @relation(fields: [vendorId], references: [id])
+
+  @@unique([eventId, vendorId])
+}
+
+model VendorReview {
+  id       String  @id @default(cuid())
+  rating   Int
+  comment  String?
+  userId   String  @db.Uuid
+  vendorId String
+  user     User    @relation(fields: [userId], references: [id])
+  vendor   Vendor  @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+  @@index([userId])
+}
+
+enum VendorStatus {
+  PENDING
+  CONTACTED
+  BOOKED
+  DECLINED
 }
