@@ -73,7 +73,7 @@ export default function SupportUsPage() {
           {/* Sponsorship Tiers */}
           <div className="grid place-content-center text-center">
             <a href="https://www.buymeacoffee.com/kojopatrick">
-              <Image
+              <img
                 alt="buymeacoffee"
                 width={200}
                 height={100}

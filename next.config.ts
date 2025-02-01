@@ -1,18 +1,18 @@
-import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
+import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   /* config options here */
   async redirects() {
     return [
       {
-        source: "/pricing",
-        destination: "/about/pricing",
+        source: '/pricing',
+        destination: '/support-us',
         permanent: true,
       },
       {
-        source: "/supporters",
-        destination: "/about/pricing",
+        source: '/supporters',
+        destination: '/support-us',
         permanent: true,
       },
     ];
@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
 
   experimental: {
     serverActions: {
-      bodySizeLimit: "6mb",
+      bodySizeLimit: '6mb',
     },
   },
   typescript: {
@@ -31,17 +31,18 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      { hostname: "public.blob.vercel-storage.com" },
-      { hostname: "tuffqbszruravurjwsei.supabase.co" },
-      { hostname: "res.cloudinary.com" },
-      { hostname: "abs.twimg.com" },
-      { hostname: "pbs.twimg.com" },
-      { hostname: "avatar.vercel.sh" },
-      { hostname: "avatars.githubusercontent.com" },
-      { hostname: "images.unsplash.com" },
-      { hostname: "lh3.googleusercontent.com" },
-      { hostname: "flag.vercel.app" },
-      { hostname: "illustrations.popsy.co" },
+      { hostname: 'public.blob.vercel-storage.com' },
+      { hostname: 'tuffqbszruravurjwsei.supabase.co' },
+      { hostname: 'res.cloudinary.com' },
+      { hostname: 'abs.twimg.com' },
+      { hostname: 'pbs.twimg.com' },
+      { hostname: 'avatar.vercel.sh' },
+      { hostname: 'avatars.githubusercontent.com' },
+      { hostname: 'images.unsplash.com' },
+      { hostname: 'lh3.googleusercontent.com' },
+      { hostname: 'flag.vercel.app' },
+      { hostname: 'illustrations.popsy.co' },
+      { hostname: 'img.buymeacoffee.com' },
     ],
   },
 };
@@ -50,8 +51,8 @@ export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: "eadith-studios",
-  project: "weouddy-nextjs",
+  org: 'eadith-studios',
+  project: 'weouddy-nextjs',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
