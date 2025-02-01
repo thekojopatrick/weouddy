@@ -1,9 +1,6 @@
-import { EventService } from "@/server/services/event";
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/lib/auth/server";
+import { EventService } from "@/server/services/event/get-event";
 import { NextResponse } from "next/server";
-import { z } from "zod";
-
-import { rateLimiter } from "@/server/services/ratelimiter/rate-limiter.service";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,40 +9,28 @@ export async function GET(request: Request) {
   const location = searchParams.get("location");
   const category = searchParams.get("category");
 
-  // Rate limit API requests - 30 requests per minute per IP
-  await rateLimiter.limitByIp({
-    key: "get-events",
-    limit: 15,
-    window: 60000,
-  });
-
   try {
     const session = await getSession();
-
     const skip = (page - 1) * limit;
 
-    const [events, total] = await Promise.all([
-      EventService.getAll(
-        skip,
-        limit,
-        location,
-        category,
-        session?.userId || undefined,
-      ),
-      EventService.count(location, category, session?.userId || undefined),
-    ]);
+    const events = await EventService.getAll({
+      skip,
+      limit,
+      location,
+      category,
+      userId: session?.userId,
+      includeVendors: searchParams.get("includeVendors") === "true",
+    });
 
     return NextResponse.json({
       events,
-      hasMore: skip + limit < total,
-      nextPage: page + 1,
+      page,
+      limit,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
-    }
+    console.error("Route error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to fetch events" },
       { status: 500 },
     );
   }

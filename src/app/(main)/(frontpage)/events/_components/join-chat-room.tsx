@@ -36,6 +36,8 @@ const JoinChatRoom = ({
 
   const handleSendMessage = async (content: string) => {
     try {
+      console.log({ content });
+
       await sendMessage(content);
     } catch (error) {
       console.error("Failed to send message:", error);

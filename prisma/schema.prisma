@@ -83,7 +83,9 @@ model Event {
 
   @@index([hostId])
   @@index([createdAt])
-  @@index([location, type])
+  @@index([isDisabled, isPrivate, location, type])
+  @@index([hostId, createdAt])
+  @@index([isDisabled, createdAt])
 }
 
 model Attendee {
@@ -100,6 +102,7 @@ model Attendee {
   @@unique([userId, eventId])
   @@index([eventId, userId])
   @@index([userId, status])
+  @@index([eventId, status])
 }
 
 model EventActivity {
