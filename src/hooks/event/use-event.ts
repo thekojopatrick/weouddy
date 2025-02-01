@@ -82,6 +82,10 @@ export const useBatchEventStatuses = (eventIds: string[]) => {
     queryKey: ['eventStatuses', eventIds],
     queryFn: async () => {
       try {
+        // Add timeout to the fetch
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
         const response = await fetch('/api/events/batch-status', {
           method: 'POST',
           headers: {
@@ -89,6 +93,8 @@ export const useBatchEventStatuses = (eventIds: string[]) => {
           },
           body: JSON.stringify({ eventIds }),
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           console.error('API Response Error:', await response.text());

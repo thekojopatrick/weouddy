@@ -77,6 +77,10 @@ model Event {
   chatSettings ChatSettings?
   roles        EventRole[]
   eventLogs    EventActivity[]
+
+  @@index([hostId])
+  @@index([createdAt])
+  @@index([location, type])
 }
 
 model EventActivity {
@@ -197,6 +201,8 @@ model Attendee {
   event Event @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
+  @@index([eventId, userId])
+  @@index([userId, status])
 }
 
 model ChatMessage {
