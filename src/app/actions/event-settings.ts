@@ -12,13 +12,15 @@ const EventSettingsSchema = z.object({
   allowLikes: z.boolean().optional(),
   allowChat: z.boolean().optional(),
   allowPosts: z.boolean().optional(),
-  pinCode: z.string().optional(),
+  pinCode: z.string().nullable().optional(),
   accessType: z.enum(["DIRECT_PASS", "PIN_REQUIRED", "INVITE_ONLY"]).optional(),
 });
 
+export type EventSettings = z.infer<typeof EventSettingsSchema>;
+
 export async function updateEventSettings(
   eventId: string,
-  settings: z.infer<typeof EventSettingsSchema>,
+  settings: Partial<EventSettings>,
 ) {
   const session = await getSession();
 
@@ -27,7 +29,7 @@ export async function updateEventSettings(
   }
 
   try {
-    const validatedSettings = EventSettingsSchema.parse(settings);
+    const validatedSettings = EventSettingsSchema.partial().parse(settings);
 
     await EventService.updateEventSettings(
       eventId,

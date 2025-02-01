@@ -176,7 +176,7 @@ export class JoinEventService {
               ? prisma.event.update({
                   where: { id: event.id },
                   data: {
-                    members: { connect: { id: userId } },
+                    attendees: { connect: { id: userId } },
                   },
                 })
               : Promise.resolve(),

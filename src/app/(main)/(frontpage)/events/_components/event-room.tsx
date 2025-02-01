@@ -20,7 +20,10 @@ import MasonryPosts from "./masonry-posts";
 import ShareEventPopover from "./share-event";
 import { Button } from "@/components/ui/button";
 import { SharePlatform } from "@/types/enums";
-import { updateEventSettings } from "@/app/actions/event-settings";
+import {
+  EventSettings,
+  updateEventSettings,
+} from "@/app/actions/event-settings";
 import { EventWithDetails } from "@/types/prisma.types";
 
 export default function EventRoom({
@@ -84,15 +87,13 @@ export default function EventRoom({
   // Check if current user is the host
   const isHost = user?.id === event.host.id;
 
-  const handleSaveSettings = async (settings: Partial<EventWithDetails>) => {
+  const handleSaveSettings = async (settings: Partial<EventSettings>) => {
     try {
       // Immediately update local state
       setEvent((prevEvent: EventWithFullData) => {
         return {
           ...prevEvent,
           ...settings,
-          location: settings.location ?? prevEvent.location,
-          coverImage: settings.coverImage ?? prevEvent.coverImage,
         } as EventWithFullData;
       });
 

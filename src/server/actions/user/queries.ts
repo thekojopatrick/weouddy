@@ -18,9 +18,10 @@ export async function getUserProfile(
       email: true,
       avatarUrl: true,
       bio: true,
+      isPrivateProfile: true,
       allowFollowers: true,
       posts: true,
-      joinedEvents: true,
+      attendeeEvents: true,
       hostedEvents: true,
     },
   });
@@ -167,14 +168,13 @@ export async function fetchUserEvents(
     .findMany({
       where: {
         OR: [
-          { hostId: userId }, // Events hosted by user
-          { members: { some: { id: userId } } }, // Events user is a member of
+          { hostId: userId },
+          { attendees: { some: { userId: userId } } }, // Updated to use attendees relation
         ],
       },
       include: {
         _count: {
           select: {
-            members: true,
             attendees: true,
           },
         },
@@ -192,7 +192,6 @@ export async function fetchUserEvents(
     .then((events) =>
       events.map((event) => ({
         ...event,
-        memberCount: event._count.members,
         attendeeCount: event._count.attendees,
       })),
     ) as Promise<EventWithDetails[]>;
@@ -273,32 +272,6 @@ export async function fetchFollowing(
   }) as Promise<Follow[]>;
 }
 
-export async function getUserEventStatus(eventId: string, userId: string) {
-  const [membership, pendingRequest] = await Promise.all([
-    prisma.event.findFirst({
-      where: {
-        id: eventId,
-        members: {
-          some: {
-            id: userId,
-          },
-        },
-      },
-    }),
-    prisma.attendee.findFirst({
-      where: {
-        eventId,
-        userId,
-        status: "PENDING",
-      },
-    }),
-  ]);
-
-  if (membership) return "JOINED";
-  if (pendingRequest) return "PENDING";
-  return "NOT_JOINED";
-}
-
 export async function getProfileStats(usernameOrId: string) {
   const user = await prisma.user.findFirst({
     where: { username: usernameOrId },
@@ -311,7 +284,7 @@ export async function getProfileStats(usernameOrId: string) {
     getFollowStats(usernameOrId),
     prisma.event.count({
       where: {
-        OR: [{ hostId: user.id }, { members: { some: { id: user.id } } }],
+        OR: [{ hostId: user.id }, { attendees: { some: { id: user.id } } }],
       },
     }),
     prisma.post.count({

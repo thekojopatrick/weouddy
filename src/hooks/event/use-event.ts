@@ -1,22 +1,22 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useEffect } from 'react';
-import { EventWithDetails } from '@/types/prisma.types';
-import { UserEventStatus } from '@/types/event';
-import * as Sentry from '@sentry/nextjs';
-import { useEventStore } from './use-event-cache';
+import { useEffect } from "react";
+import { EventWithDetails } from "@/types/prisma.types";
+import { UserEventStatus } from "@/types/event";
+import * as Sentry from "@sentry/nextjs";
+import { useEventStore } from "./use-event-cache";
 
-export function useEvents(location = 'world', category = 'All') {
+export function useEvents(location = "world", category = "All") {
   const queryClient = useQueryClient();
   const { cache, setCache } = useEventStore();
   const cacheKey = `${location}-${category}`;
   const cachedData = cache[cacheKey];
 
   const { data, isLoading } = useQuery({
-    queryKey: ['events', location, category],
+    queryKey: ["events", location, category],
     queryFn: async () => {
-      const res = await fetch('/api/events');
-      if (!res.ok) throw new Error('Failed to fetch events');
+      const res = await fetch("/api/events");
+      if (!res.ok) throw new Error("Failed to fetch events");
       return res.json();
     },
     staleTime: 60000,
@@ -32,7 +32,7 @@ export function useEvents(location = 'world', category = 'All') {
 
   // Expose invalidate function
   const invalidateEvents = () => {
-    queryClient.invalidateQueries({ queryKey: ['events'] });
+    queryClient.invalidateQueries({ queryKey: ["events"] });
   };
 
   return { events: data, isLoading, invalidateEvents };
@@ -40,10 +40,10 @@ export function useEvents(location = 'world', category = 'All') {
 
 export const useEventBySlug = (slug: string) => {
   return useQuery({
-    queryKey: ['event', slug],
+    queryKey: ["event", slug],
     queryFn: async () => {
       const res = await fetch(`/api/events/${slug}`);
-      if (!res.ok) throw new Error('Failed to fetch events');
+      if (!res.ok) throw new Error("Failed to fetch events");
       return res.json();
     },
     enabled: !!slug,
@@ -52,12 +52,12 @@ export const useEventBySlug = (slug: string) => {
 
 export const useEventStatus = (eventId: string) => {
   return useQuery({
-    queryKey: ['eventStatus', eventId],
+    queryKey: ["eventStatus", eventId],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/events/${eventId}/status`);
         if (!response.ok) {
-          throw new Error('Failed to fetch event status');
+          throw new Error("Failed to fetch event status");
         }
         const data = await response.json();
         return data.status as UserEventStatus;
@@ -72,24 +72,23 @@ export const useEventStatus = (eventId: string) => {
     gcTime: 10 * 60 * 1000,
     // Retry 3 times with exponential backoff
     retry: 3,
-    retryDelay: (attemptIndex) =>
-      Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 };
 
 export const useBatchEventStatuses = (eventIds: string[]) => {
   return useQuery({
-    queryKey: ['eventStatuses', eventIds],
+    queryKey: ["eventStatuses", eventIds],
     queryFn: async () => {
       try {
         // Add timeout to the fetch
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-        const response = await fetch('/api/events/batch-status', {
-          method: 'POST',
+        const response = await fetch("/api/events/batch-status", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ eventIds }),
         });
@@ -97,15 +96,13 @@ export const useBatchEventStatuses = (eventIds: string[]) => {
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          console.error('API Response Error:', await response.text());
-          throw new Error('Failed to fetch event statuses');
+          console.error("API Response Error:", await response.text());
+          throw new Error("Failed to fetch event statuses");
         }
 
-        return response.json() as Promise<
-          Record<string, UserEventStatus>
-        >;
+        return response.json() as Promise<Record<string, UserEventStatus>>;
       } catch (error) {
-        console.error('Error fetching event statuses:', error);
+        console.error("Error fetching event statuses:", error);
         Sentry.captureException(error);
         throw error;
       }
@@ -113,7 +110,6 @@ export const useBatchEventStatuses = (eventIds: string[]) => {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 3, // Retry 3 times
-    retryDelay: (attemptIndex) =>
-      Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 };

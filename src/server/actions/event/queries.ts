@@ -2,6 +2,7 @@ import { EventSettings } from "./types";
 import QRCode from "qrcode";
 import { prisma } from "@/lib/prisma";
 import { cache } from "@/lib/redis";
+import { AttendeeStatus } from "@prisma/client";
 
 export async function generateEventQRCode(eventId: string, baseUrl: string) {
   const eventUrl = `${baseUrl}/events/${eventId}/room`;
@@ -13,7 +14,7 @@ export async function getEventById(eventId: string) {
     where: { id: eventId },
     include: {
       host: true,
-      members: true,
+      attendees: true,
       posts: {
         include: {
           user: true,
@@ -39,7 +40,7 @@ export async function getEventBySlug(slug: string) {
       where: { slug },
       include: {
         host: true,
-        members: true,
+
         attendees: true,
         posts: {
           include: {
@@ -57,7 +58,6 @@ export async function getEventBySlug(slug: string) {
         },
         _count: {
           select: {
-            members: true,
             posts: true,
             attendees: true,
           },
@@ -66,7 +66,7 @@ export async function getEventBySlug(slug: string) {
     })
     .then((event) => ({
       ...event,
-      memberCount: event?._count.members,
+
       attendeeCount: event?._count.attendees,
     }));
 
@@ -87,14 +87,17 @@ export async function getAllEvents(userId?: string) {
           OR: [
             { isPrivate: false },
             { hostId: userId },
-            { members: { some: { id: userId } } },
+            {
+              attendees: {
+                some: { id: userId, status: AttendeeStatus.APPROVED },
+              },
+            },
           ],
         },
         include: {
           host: true,
           _count: {
             select: {
-              members: true,
               posts: true,
               attendees: true,
             },
@@ -107,7 +110,6 @@ export async function getAllEvents(userId?: string) {
       .then((events) =>
         events.map((event) => ({
           ...event,
-          memberCount: event._count.members,
           attendeeCount: event._count.attendees,
         })),
       );
@@ -122,7 +124,6 @@ export async function getAllEvents(userId?: string) {
           host: true,
           _count: {
             select: {
-              members: true,
               posts: true,
               attendees: true,
             },
@@ -135,7 +136,7 @@ export async function getAllEvents(userId?: string) {
       .then((events) =>
         events.map((event) => ({
           ...event,
-          memberCount: event._count.members,
+
           attendeeCount: event._count.attendees,
         })),
       );
@@ -176,7 +177,7 @@ export async function getEventStats(eventId: string) {
       where: { id: eventId },
       select: {
         _count: {
-          select: { members: true },
+          select: { attendees: true },
         },
       },
     }),
@@ -185,7 +186,7 @@ export async function getEventStats(eventId: string) {
     }),
     prisma.user.count({
       where: {
-        joinedEvents: {
+        attendeeEvents: {
           some: {
             id: eventId,
           },
@@ -198,7 +199,7 @@ export async function getEventStats(eventId: string) {
   ]);
 
   return {
-    memberCount: memberCount?._count.members ?? 0,
+    memberCount,
     postCount,
     activeMembers,
   };
