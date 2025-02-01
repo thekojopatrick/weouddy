@@ -1,6 +1,6 @@
 // types.ts
-import { FollowRelation } from "@/server/services/user";
-import { Post, Event, Attendee, User as PrismaUser } from "@prisma/client";
+import { FollowRelation } from '@/server/services/user';
+import { Post, Event, Attendee } from '@prisma/client';
 
 export interface UserProfile {
   id: string;
@@ -65,6 +65,6 @@ export interface FollowButtonProps {
   isFollowing: boolean;
   isMutual?: boolean;
   onToggle: () => void;
-  size?: "default" | "sm" | "lg" | "icon";
+  size?: 'default' | 'sm' | 'lg' | 'icon';
   disabled?: boolean;
 }

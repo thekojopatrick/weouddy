@@ -1,62 +1,14 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Button, LoadingButton } from "@/components/ui/button";
-import { CheckIcon, CopyIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 
-import { toast } from "sonner";
-
-const COMPANY_EMAIL = "hello.weouddy@gmail.com";
+//const COMPANY_EMAIL = 'hello.weouddy@gmail.com';
 const CURRENT_YEAR = new Date().getFullYear();
 
 const Footer = () => {
-  const [copyState, setCopyState] = React.useState({
-    isCopying: false,
-    isError: false,
-  });
-
-  const copyTimeoutRef = React.useRef<NodeJS.Timeout>(null);
-
-  const copyToClipboard = async () => {
-    if (copyState.isCopying) return;
-
-    setCopyState({ isCopying: true, isError: false });
-
-    try {
-      await navigator.clipboard.writeText(COMPANY_EMAIL);
-
-      toast("Email copied!", {
-        description: "Email address has been copied to clipboard",
-      });
-
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
-
-      copyTimeoutRef.current = setTimeout(() => {
-        setCopyState({ isCopying: false, isError: false });
-      }, 2000);
-    } catch (error) {
-      console.error("Failed to copy:", error);
-      setCopyState({ isCopying: false, isError: true });
-
-      toast("Failed to copy", {
-        description: "Please try again or copy manually",
-      });
-    }
-  };
-
-  React.useEffect(() => {
-    return () => {
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
-    };
-  }, []);
-
   return (
     <footer
       className="w-full bg-black text-white py-16 px-6"
