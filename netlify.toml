@@ -1,9 +1,6 @@
-[[plugins]]
-package = "@netlify/plugin-nextjs"
-
 [build]
   command = "pnpm run build"
-  publish = "out"
+  publish = ".next"
 
 [functions]
   [functions.timeout]
