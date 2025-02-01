@@ -1,14 +1,18 @@
-import "./styles/globals.css";
+import './styles/globals.css';
 
-import { cabinetGrotesk, geistMono, geistSans } from "@/components/ui/fonts";
+import {
+  cabinetGrotesk,
+  geistMono,
+  geistSans,
+} from '@/components/ui/fonts';
 
-import type { Metadata } from "next";
-import { Toaster as SonnerToaster } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { siteMeta } from "@/config/site";
-import Provider from "./provider";
-import Script from "next/script";
-import { env } from "@/env";
+import type { Metadata } from 'next';
+import { Toaster as SonnerToaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
+import { siteMeta } from '@/config/site';
+import Provider from './provider';
+import Script from 'next/script';
+import { env } from '@/env';
 
 export const metadata: Metadata = siteMeta;
 
@@ -49,7 +53,7 @@ export default function RootLayout({
         </Script>
         <Script
           id="map"
-          defer
+          async
           src={`https://maps.googleapis.com/maps/api/js?key=${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         />
       </body>
