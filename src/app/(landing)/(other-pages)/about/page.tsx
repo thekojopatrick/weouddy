@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import { getURL } from '@/utils';
-import { ResolvingMetadata, Metadata } from 'next';
-import AboutPage from '../_components/about-page';
+import { getURL } from "@/utils";
+import { ResolvingMetadata, Metadata } from "next";
+import AboutPage from "../_components/about-page";
 
 export async function generateMetadata(
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   // read route params
 
@@ -25,12 +25,9 @@ export async function generateMetadata(
     openGraph: {
       title: `About | WeOuddy - Moments That Matter`,
       description:
-        'Join a vibrant platform where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
+        "Join a vibrant platform where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
       url: `${siteUrl}/about`,
-      images: [
-        `${siteUrl}assets/default-event-cover.jpg`,
-        ...previousImages,
-      ],
+      images: [`${siteUrl}assets/default-event-cover.jpg`, ...previousImages],
     },
   };
 }

@@ -1,30 +1,24 @@
-'use client';
-import React, { useMemo } from 'react';
-import { Progress } from '@/components/ui/progress';
-import { X } from 'lucide-react';
-import Image from 'next/image';
+"use client";
+import React, { useMemo } from "react";
+import { Progress } from "@/components/ui/progress";
+import { X } from "lucide-react";
+import Image from "next/image";
 
 interface FileUploadProps {
   files: Array<{
     progress: number;
     preview: string;
     uploading: boolean;
-    mediaType: 'IMAGE' | 'VIDEO';
+    mediaType: "IMAGE" | "VIDEO";
   }>;
   removeFile: (index: number) => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({
-  files,
-  removeFile,
-}) => {
+const FileUpload: React.FC<FileUploadProps> = ({ files, removeFile }) => {
   const fileItems = useMemo(() => {
     return files.map((file, index) => (
-      <div
-        key={index}
-        className="relative shrink-0 rounded-xl overflow-hidden"
-      >
-        {file.mediaType === 'VIDEO' ? (
+      <div key={index} className="relative shrink-0 rounded-xl overflow-hidden">
+        {file.mediaType === "VIDEO" ? (
           <video
             src={file.preview}
             className="h-[280px] w-[280px] object-cover"
@@ -32,7 +26,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           />
         ) : (
           <Image
-            src={file.preview || '/placeholder.svg'}
+            src={file.preview || "/placeholder.svg"}
             alt="Preview"
             className="h-[280px] w-[280px] object-cover"
             fill

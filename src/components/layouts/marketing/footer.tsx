@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 //const COMPANY_EMAIL = 'hello.weouddy@gmail.com';
 const CURRENT_YEAR = new Date().getFullYear();

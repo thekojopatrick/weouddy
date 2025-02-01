@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/image";
 
 export const VideoShowcase = () => (
   <div className="relative w-full h-[450px] min-h-96 max-h-[540px] mb-16 rounded-lg overflow-hidden">
@@ -11,7 +11,7 @@ export const VideoShowcase = () => (
         height={500}
       />
     </div>
-    <div className="absolute inset-0 flex items-center justify-center hidden">
+    <div className="absolute inset-0 items-center justify-center hidden">
       <button className="bg-black text-white px-6 py-2 rounded-full">
         Watch film
       </button>
