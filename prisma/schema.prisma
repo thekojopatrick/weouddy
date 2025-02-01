@@ -29,11 +29,10 @@ model User {
   comments               Comment[]
   likes                  Like[]
   hostedEvents           Event[]           @relation("HostedEvents")
-  joinedEvents           Event[]           @relation("JoinedEvents")
+  attendeeEvents         Attendee[]        @relation("UserAttendee")
   following              Follow[]          @relation("Following")
   followers              Follow[]          @relation("Followers")
   roles                  EventRole[]
-  attendees              Attendee[]
   chats                  ChatMessage[]
   eventLogs              EventActivity[]
   sentFollowRequests     FollowRequest[]   @relation("Requestor")
@@ -70,8 +69,7 @@ model Event {
   host      User     @relation("HostedEvents", fields: [hostId], references: [id])
 
   // Relations
-  members      User[]          @relation("JoinedEvents")
-  attendees    Attendee[]
+  attendees    Attendee[]      @relation("EventAttendee")
   posts        Post[]
   chats        ChatMessage[]
   chatSettings ChatSettings?
@@ -81,6 +79,22 @@ model Event {
   @@index([hostId])
   @@index([createdAt])
   @@index([location, type])
+}
+
+model Attendee {
+  id        String         @id @default(cuid())
+  userId    String         @db.Uuid
+  eventId   String
+  status    AttendeeStatus @default(APPROVED)
+  createdAt DateTime       @default(now())
+
+  // Relations
+  user  User  @relation("UserAttendee", fields: [userId], references: [id])
+  event Event @relation("EventAttendee", fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+  @@index([eventId, userId])
+  @@index([userId, status])
 }
 
 model EventActivity {
@@ -187,22 +201,6 @@ model FollowRequest {
   target    User @relation("Target", fields: [targetUserId], references: [id])
 
   @@unique([requestorId, targetUserId])
-}
-
-model Attendee {
-  id        String         @id @default(cuid())
-  userId    String         @db.Uuid
-  eventId   String
-  status    AttendeeStatus @default(APPROVED)
-  createdAt DateTime       @default(now())
-
-  // Relations
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-  @@index([eventId, userId])
-  @@index([userId, status])
 }
 
 model ChatMessage {
