@@ -1,4 +1,3 @@
-// create-event-form.tsx
 "use client";
 
 import { useState } from "react";
@@ -11,8 +10,6 @@ import { EventDetailsStep } from "./steps/event-details";
 import { LocationTimeStep } from "./steps/location-time-step";
 import { PrivacyStep } from "./steps/privacy";
 import { WelcomeStep } from "./steps/welcome";
-
-// ... (keep existing imports)
 
 interface CreateEventFormProps {
   onCloseAction: () => void;

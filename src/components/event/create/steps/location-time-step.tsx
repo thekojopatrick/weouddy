@@ -139,10 +139,10 @@ export function LocationTimeStep({
               When is your event happening?
             </FormLabel>
             <div className="flex space-x-2">
-              <Popover>
+              <Popover modal={true}>
                 <PopoverTrigger
                   asChild
-                  className="py-5 bg-zinc-50 shadow-none rounded-full z-50"
+                  className="py-5 bg-zinc-50 shadow-none rounded-full"
                 >
                   <FormControl className="grow">
                     <Button
@@ -161,11 +161,17 @@ export function LocationTimeStep({
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50" align="start">
+                <PopoverContent
+                  className="w-auto p-0"
+                  align="start"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                >
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={(date) => field.onChange(date?.toISOString())}
+                    onSelect={(date) => {
+                      field.onChange(date?.toISOString());
+                    }}
                     disabled={(date) =>
                       date < new Date() || date < new Date("1900-01-01")
                     }
