@@ -1,3 +1,5 @@
+import { MessageStatus as MessageStatusType } from "@prisma/client";
+
 export interface ReactionInfo {
   emoji: string;
   count: number;
@@ -8,15 +10,15 @@ export interface ChatMessage {
   id: string;
   content: string;
   isPinned: boolean;
-  status: "sent" | "delivered" | "read";
+  status: MessageStatusType;
   createdAt: string;
   userId: string;
   eventId: string;
   user: {
     id: string;
     name: string | null;
-    username: string | null;
-    avatarUrl: string | null;
+    username?: string | null;
+    avatarUrl?: string | null;
   };
   reactions?: ReactionInfo[];
 }

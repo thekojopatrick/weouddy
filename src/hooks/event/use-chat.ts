@@ -1,16 +1,19 @@
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { ChatMessage } from "@/types/chat";
+import type { ChatMessage, ChatSettings } from "@/types/chat";
 
 export const useEventChat = (eventId: string, userId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [settings, setSettings] = useState<ChatSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchMessages();
-
-    const channel = supabase
+    fetchChatSettings();
+    console.log("Start chat:");
+    // Subscribe to chat messages
+    const messageChannel = supabase
       .channel(`event-chat-${eventId}`)
       .on(
         "postgres_changes",
@@ -41,8 +44,28 @@ export const useEventChat = (eventId: string, userId: string) => {
       )
       .subscribe();
 
+    // Subscribe to chat settings changes
+    const settingsChannel = supabase
+      .channel(`chat-settings-${eventId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "ChatSettings",
+          filter: `eventId=eq.${eventId}`,
+        },
+        (payload) => {
+          if (payload.eventType === "UPDATE") {
+            setSettings(payload.new as ChatSettings);
+          }
+        },
+      )
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(messageChannel);
+      supabase.removeChannel(settingsChannel);
     };
   }, [eventId]);
 
@@ -58,6 +81,11 @@ export const useEventChat = (eventId: string, userId: string) => {
             username,
             avatarUrl,
             name
+          ),
+          reactions:MessageReaction (
+            id,
+            emoji,
+            userId
           )
         `,
         )
@@ -65,16 +93,36 @@ export const useEventChat = (eventId: string, userId: string) => {
         .order("createdAt", { ascending: true });
 
       if (error) throw error;
-      setMessages(data as []);
+      setMessages(data as unknown as ChatMessage[]);
     } catch (error) {
       toast.error("Failed to load chat messages");
       console.error("Error fetching messages:", error);
+    }
+  };
+
+  const fetchChatSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("ChatSettings")
+        .select("*")
+        .eq("eventId", eventId)
+        .single();
+
+      if (error) throw error;
+      setSettings(data as ChatSettings);
+    } catch (error) {
+      console.error("Error fetching chat settings:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const sendMessage = async (content: string) => {
+    if (!settings?.isEnabled) {
+      toast.error("Chat is currently disabled");
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("ChatMessage")
@@ -86,6 +134,7 @@ export const useEventChat = (eventId: string, userId: string) => {
             id: crypto.randomUUID(),
             createdAt: new Date().toISOString(),
             isPinned: false,
+            status: "SENT",
           },
         ])
         .select(
@@ -100,8 +149,6 @@ export const useEventChat = (eventId: string, userId: string) => {
         `,
         )
         .single();
-
-      console.log("message:", data);
 
       if (error) throw error;
       return data;
@@ -143,11 +190,48 @@ export const useEventChat = (eventId: string, userId: string) => {
     }
   };
 
+  const addReaction = async (messageId: string, emoji: string) => {
+    try {
+      const { error } = await supabase.from("MessageReaction").insert([
+        {
+          id: crypto.randomUUID(), // Add id field
+          messageId,
+          userId,
+          emoji,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) throw error;
+    } catch (error) {
+      toast.error("Failed to add reaction");
+      console.error("Error adding reaction:", error);
+    }
+  };
+
+  const removeReaction = async (reactionId: string) => {
+    try {
+      const { error } = await supabase
+        .from("MessageReaction")
+        .delete()
+        .eq("id", reactionId)
+        .eq("userId", userId);
+
+      if (error) throw error;
+    } catch (error) {
+      toast.error("Failed to remove reaction");
+      console.error("Error removing reaction:", error);
+    }
+  };
+
   return {
     messages,
+    settings,
     isLoading,
     sendMessage,
     deleteMessage,
     pinMessage,
+    addReaction,
+    removeReaction,
   };
 };

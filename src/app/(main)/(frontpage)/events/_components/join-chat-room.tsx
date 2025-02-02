@@ -6,7 +6,7 @@ import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessages } from "@/components/chat/message-list";
 import { Button } from "@/components/ui/button";
 import CustomDrawer from "@/components/ui/custom-drawer";
-import { useEventChat } from "@/hooks/event/use-event-chat";
+import { useEventChat } from "@/hooks/event/use-chat";
 import { cn } from "@/lib/utils";
 import { RiChat1Fill } from "@remixicon/react";
 

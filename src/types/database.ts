@@ -34,36 +34,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      _JoinedEvents: {
-        Row: {
-          A: string;
-          B: string;
-        };
-        Insert: {
-          A: string;
-          B: string;
-        };
-        Update: {
-          A?: string;
-          B?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "_JoinedEvents_A_fkey";
-            columns: ["A"];
-            isOneToOne: false;
-            referencedRelation: "Event";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "_JoinedEvents_B_fkey";
-            columns: ["B"];
-            isOneToOne: false;
-            referencedRelation: "User";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       _prisma_migrations: {
         Row: {
           applied_steps_count: number;
@@ -145,6 +115,7 @@ export type Database = {
           isPinned: boolean;
           status: Database["public"]["Enums"]["MessageStatus"];
           userId: string;
+          vendorId: string | null;
         };
         Insert: {
           content: string;
@@ -154,6 +125,7 @@ export type Database = {
           isPinned?: boolean;
           status?: Database["public"]["Enums"]["MessageStatus"];
           userId: string;
+          vendorId?: string | null;
         };
         Update: {
           content?: string;
@@ -163,6 +135,7 @@ export type Database = {
           isPinned?: boolean;
           status?: Database["public"]["Enums"]["MessageStatus"];
           userId?: string;
+          vendorId?: string | null;
         };
         Relationships: [
           {
@@ -177,6 +150,13 @@ export type Database = {
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ChatMessage_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
             referencedColumns: ["id"];
           },
         ];
@@ -296,6 +276,8 @@ export type Database = {
           slug: string | null;
           type: string;
           updatedAt: string;
+          vendorBudget: number | null;
+          vendorCosts: Json | null;
         };
         Insert: {
           accessType?: Database["public"]["Enums"]["AccessType"];
@@ -319,6 +301,8 @@ export type Database = {
           slug?: string | null;
           type: string;
           updatedAt: string;
+          vendorBudget?: number | null;
+          vendorCosts?: Json | null;
         };
         Update: {
           accessType?: Database["public"]["Enums"]["AccessType"];
@@ -342,6 +326,8 @@ export type Database = {
           slug?: string | null;
           type?: string;
           updatedAt?: string;
+          vendorBudget?: number | null;
+          vendorCosts?: Json | null;
         };
         Relationships: [
           {
@@ -427,6 +413,45 @@ export type Database = {
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      EventVendor: {
+        Row: {
+          eventId: string;
+          id: string;
+          notes: string | null;
+          status: Database["public"]["Enums"]["VendorStatus"];
+          vendorId: string;
+        };
+        Insert: {
+          eventId: string;
+          id: string;
+          notes?: string | null;
+          status?: Database["public"]["Enums"]["VendorStatus"];
+          vendorId: string;
+        };
+        Update: {
+          eventId?: string;
+          id?: string;
+          notes?: string | null;
+          status?: Database["public"]["Enums"]["VendorStatus"];
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "EventVendor_eventId_fkey";
+            columns: ["eventId"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "EventVendor_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
             referencedColumns: ["id"];
           },
         ];
@@ -795,6 +820,168 @@ export type Database = {
         };
         Relationships: [];
       };
+      Vendor: {
+        Row: {
+          aiMetadata: Json | null;
+          contactEmail: string | null;
+          createdAt: string;
+          id: string;
+          location: string | null;
+          name: string;
+          phone: string | null;
+          priceRange: Database["public"]["Enums"]["PriceRange"];
+          rating: number | null;
+          services: string[] | null;
+          type: Database["public"]["Enums"]["VendorType"];
+          updatedAt: string;
+          userId: string;
+          website: string | null;
+        };
+        Insert: {
+          aiMetadata?: Json | null;
+          contactEmail?: string | null;
+          createdAt?: string;
+          id: string;
+          location?: string | null;
+          name: string;
+          phone?: string | null;
+          priceRange: Database["public"]["Enums"]["PriceRange"];
+          rating?: number | null;
+          services?: string[] | null;
+          type: Database["public"]["Enums"]["VendorType"];
+          updatedAt: string;
+          userId: string;
+          website?: string | null;
+        };
+        Update: {
+          aiMetadata?: Json | null;
+          contactEmail?: string | null;
+          createdAt?: string;
+          id?: string;
+          location?: string | null;
+          name?: string;
+          phone?: string | null;
+          priceRange?: Database["public"]["Enums"]["PriceRange"];
+          rating?: number | null;
+          services?: string[] | null;
+          type?: Database["public"]["Enums"]["VendorType"];
+          updatedAt?: string;
+          userId?: string;
+          website?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Vendor_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorAttribute: {
+        Row: {
+          id: string;
+          key: string;
+          value: string;
+          vendorId: string;
+        };
+        Insert: {
+          id: string;
+          key: string;
+          value: string;
+          vendorId: string;
+        };
+        Update: {
+          id?: string;
+          key?: string;
+          value?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorAttribute_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorPackage: {
+        Row: {
+          description: string | null;
+          id: string;
+          inclusions: string[] | null;
+          name: string;
+          price: number | null;
+          vendorId: string;
+        };
+        Insert: {
+          description?: string | null;
+          id: string;
+          inclusions?: string[] | null;
+          name: string;
+          price?: number | null;
+          vendorId: string;
+        };
+        Update: {
+          description?: string | null;
+          id?: string;
+          inclusions?: string[] | null;
+          name?: string;
+          price?: number | null;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorPackage_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorReview: {
+        Row: {
+          comment: string | null;
+          id: string;
+          rating: number;
+          userId: string;
+          vendorId: string;
+        };
+        Insert: {
+          comment?: string | null;
+          id: string;
+          rating: number;
+          userId: string;
+          vendorId: string;
+        };
+        Update: {
+          comment?: string | null;
+          id?: string;
+          rating?: number;
+          userId?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorReview_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "VendorReview_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -803,8 +990,8 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      AccessType: "DIRECT_PASS" | "PIN_REQUIRED" | "APPROVAL_REQUIRED";
-      AttendeeStatus: "PENDING" | "APPROVED" | "REJECTED";
+      AccessType: "DIRECT_PASS" | "PIN_REQUIRED" | "INVITE_ONLY";
+      AttendeeStatus: "JOINED" | "PENDING" | "APPROVED" | "DENIED";
       EventActivityType:
         | "JOIN"
         | "LEAVE"
@@ -812,7 +999,10 @@ export type Database = {
         | "LIKE"
         | "COMMENT"
         | "DELETE"
-        | "REPORT";
+        | "REPORT"
+        | "RESQUEST_PENDING"
+        | "ACCESS_DENIED"
+        | "ACCESS_GRANTED";
       FeedbackCategory:
         | "UI_UX"
         | "PERFORMANCE"
@@ -832,8 +1022,19 @@ export type Database = {
       MediaType: "IMAGE" | "VIDEO";
       MessageStatus: "SENT" | "DELIVERED" | "READ";
       NewsletterStatus: "APPROVED" | "UNSUBSCRIBED" | "AUTO_ARCHIVED";
+      PriceRange: "BUDGET" | "MIDRANGE" | "LUXURY" | "CUSTOM";
       Role: "ADMIN" | "MODERATOR" | "MEMBER";
       UserRole: "ADMIN" | "USER" | "PARTNER" | "MEMBER";
+      VendorStatus: "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
+      VendorType:
+        | "VENUE"
+        | "CATERER"
+        | "PHOTOGRAPHER"
+        | "VIDEOGRAPHER"
+        | "ENTERTAINMENT"
+        | "DECOR"
+        | "TRANSPORTATION"
+        | "PLANNER";
     };
     CompositeTypes: {
       [_ in never]: never;
