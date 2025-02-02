@@ -37,9 +37,7 @@ export const eventFormSchema = z.object({
   type: z.string().min(1, "Type is required"),
   description: z.string().min(1, "Description is required"),
   location: z.string().min(1, "Location is required"),
-  date: z.date({
-    required_error: "A Date is required.",
-  }),
+  date: z.string().min(1, "Date is required"),
   time: z
     .string()
     .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),

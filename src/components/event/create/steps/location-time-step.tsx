@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, MapPin } from "lucide-react";
+import { CalendarIcon, Clock, MapPin } from "lucide-react";
 import {
   FormControl,
   FormField,
@@ -12,23 +12,40 @@ import { addDays, format, subDays } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { LocationModal } from "@/components/location/location-modal";
 import { cn } from "@/lib/utils";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, UseFormReturn } from "react-hook-form";
 import { useState } from "react";
 import { TimeField, DateInput } from "@/components/ui/datefield-rac";
 import { TimeValue } from "react-aria-components";
-import { DatePicker } from "@/components/ui/date-picker";
+
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getLocalTimeZone, now, parseTime } from "@internationalized/date";
+import { DatePicker } from "@/components/ui/date-picker";
+import { EventFormValues } from "@/types/validation";
 
 interface LocationTimeStepProps {
   onNext: () => void;
   onBack: () => void;
   disabled?: boolean;
+  form: UseFormReturn<EventFormValues>;
 }
 
 export function LocationTimeStep({
   onNext,
   onBack,
   disabled = false,
+  form,
 }: LocationTimeStepProps) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const { setValue, watch } = useFormContext();
@@ -57,21 +74,11 @@ export function LocationTimeStep({
 
   const handleTimeChange = (newTime: TimeValue | null) => {
     if (newTime) {
-      const formattedTime = `${newTime.hour.toString().padStart(2, "0")}:${newTime.minute.toString().padStart(2, "0")}`;
+      const formattedTime = `${newTime.hour
+        .toString()
+        .padStart(2, "0")}:${newTime.minute.toString().padStart(2, "0")}`;
       setValue("time", formattedTime);
     }
-  };
-
-  const handleCalendarChange = (
-    value: string | number,
-    onChange: React.ChangeEventHandler<HTMLSelectElement>,
-  ) => {
-    const event = {
-      target: {
-        value: String(value),
-      },
-    } as React.ChangeEvent<HTMLSelectElement>;
-    onChange(event);
   };
 
   const getTimeValue = (
@@ -124,126 +131,64 @@ export function LocationTimeStep({
       />
 
       <FormField
-        name="date"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Select a date</FormLabel>
-            <FormControl>
-              <DatePicker value={field.value} onChange={field.onChange} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/**
-      <FormField
+        control={form.control}
         name="date"
         render={({ field }) => (
           <FormItem className="flex flex-col">
             <FormLabel className="font-medium">
               When is your event happening?
             </FormLabel>
-            <FormControl>
-              <div className="flex space-x-2">
-                <Popover
-                  open={isCalendarOpen}
-                  onOpenChange={setIsCalendarOpen}
+            <div className="flex space-x-2">
+              <Popover>
+                <PopoverTrigger
+                  asChild
+                  className="py-5 bg-zinc-50 shadow-none rounded-full z-50"
                 >
-                  <PopoverTrigger asChild>
+                  <FormControl className="grow">
                     <Button
-                      variant="outline"
+                      variant={"outline"}
                       className={cn(
-                        'w-full pl-4 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
+                        "w-full pl-4 text-left font-normal",
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
-                        format(new Date(field.value), 'PPP')
+                        format(new Date(field.value), "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto p-0"
-                    align="start"
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      className="rounded-lg border border-border p-2"
-                      autoFocus
-                      captionLayout="dropdown"
-                      defaultMonth={field.value || new Date()}
-                      components={{
-                        DropdownNav: (props: DropdownNavProps) => (
-                          <div className="flex w-full items-center gap-2">
-                            {props.children}
-                          </div>
-                        ),
-                        Dropdown: (props: DropdownProps) => (
-                          <Select
-                            value={String(props.value)}
-                            onValueChange={(value) => {
-                              if (props.onChange) {
-                                handleCalendarChange(
-                                  value,
-                                  props.onChange
-                                );
-                              }
-                            }}
-                          >
-                            <SelectTrigger className="h-8 w-fit font-medium first:grow">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent
-                              className="max-h-[min(26rem,var(--radix-select-content-available-height))]"
-                              onCloseAutoFocus={(e) =>
-                                e.preventDefault()
-                              }
-                            >
-                              {props.options?.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={String(option.value)}
-                                  disabled={option.disabled}
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ),
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <Select onValueChange={handleTimeQuickSelect}>
-                  <SelectTrigger className="w-[120px] rounded-full shadow-none py-5 text-sm">
-                    <SelectValue
-                      placeholder="Quick Date"
-                      className="text-xs"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="now">Now</SelectItem>
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="tomorrow">Tomorrow</SelectItem>
-                    <SelectItem value="yesterday">
-                      Yesterday
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </FormControl>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-50" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value ? new Date(field.value) : undefined}
+                    onSelect={(date) => field.onChange(date?.toISOString())}
+                    disabled={(date) =>
+                      date < new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <Select onValueChange={handleTimeQuickSelect}>
+                <SelectTrigger className="w-[120px] rounded-full shadow-none py-5 text-sm">
+                  <SelectValue placeholder="Quick Date" className="text-sm" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="now">Now</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="tomorrow">Tomorrow</SelectItem>
+                  <SelectItem value="yesterday">Yesterday</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <FormMessage />
           </FormItem>
         )}
       />
- */}
 
       <FormField
         name="time"

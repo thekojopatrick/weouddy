@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CalendarWithDropdown from "./components/calendar-comp";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export default async function TestPage() {
   const supabase = await createClient();
@@ -31,7 +32,7 @@ export default async function TestPage() {
         </Button>
       </form>
       <div className="grid">
-        <CalendarWithDropdown />
+        <DatePicker />
       </div>
     </div>
   ) : (

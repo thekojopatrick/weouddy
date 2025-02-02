@@ -29,7 +29,7 @@ const DEFAULT_VALUES: EventFormValues = {
   type: "", // Provide a default value for type
   description: "",
   location: "",
-  date: new Date(), // Default to today's date
+  date: new Date().toISOString().split("T")[0], // Default to today's date
   time: new Date().toLocaleTimeString("en-US", {
     hour12: false,
     hour: "2-digit",
@@ -129,6 +129,7 @@ export function CreateEventForm({
               onNext={() => handleStepChange("cover")}
               onBack={() => setStep("details")}
               disabled={disabled}
+              form={form}
             />
           )}
 
