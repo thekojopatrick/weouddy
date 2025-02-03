@@ -43,6 +43,7 @@ export async function generateMetadata(
         'Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.',
       url: `${siteUrl}${event?.slug}`,
       images: [
+        `${event?.coverImage}`,
         `${siteUrl}assets/default-event-cover.jpg`,
         ...previousImages,
       ],
