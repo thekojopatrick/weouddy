@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -13,6 +13,7 @@ import { EventDetailsStep } from './steps/event-details';
 import { LocationTimeStep } from './steps/location-time-step';
 import { PrivacyStep } from './steps/privacy';
 import { WelcomeStep } from './steps/welcome';
+import { useCreateEventStore } from '@/stores/use-create-event-store'; // Import the new store
 
 interface CreateEventFormProps {
   onCloseAction: () => void;
@@ -26,15 +27,15 @@ const MAX_COVER_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const DEFAULT_VALUES: EventFormValues = {
   name: '',
-  type: '', // Provide a default value for type
+  type: '',
   description: '',
   location: '',
-  date: new Date().toISOString().split('T')[0], // Default to today's date
+  date: new Date().toISOString().split('T')[0],
   time: new Date().toLocaleTimeString('en-US', {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
-  }), // Default current time
+  }),
   coverImage: '',
   isPublic: false,
   requiresApproval: false,
@@ -43,19 +44,48 @@ const DEFAULT_VALUES: EventFormValues = {
 export function CreateEventForm({
   onCloseAction,
   onSubmit,
-  disabled = false, // Ensure disabled has a default value
+  disabled = false,
 }: CreateEventFormProps) {
-  const [step, setStep] = useState<Step>('welcome');
+  // Use the Zustand store
+  const {
+    formData,
+    currentStep: storedStep,
+    updateFormData,
+    updateStep,
+    resetStore,
+  } = useCreateEventStore();
+
+  const [step, setStep] = useState<Step>(
+    (storedStep as Step) || 'welcome'
+  );
   const [error, setError] = useState<string | null>(null);
+
+  // Merge stored form data with default values
+  const mergedDefaultValues = { ...DEFAULT_VALUES, ...formData };
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: mergedDefaultValues,
     mode: 'onChange',
   });
 
+  // Sync form changes with store
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      // Only update non-empty values
+      const filteredValues = Object.fromEntries(
+        Object.entries(values).filter(
+          ([_, v]) => v !== undefined && v !== ''
+        )
+      );
+      updateFormData(filteredValues);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form.watch, updateFormData]);
+
   const validateCoverImage = (imageData: string) => {
-    if (!imageData) return; // Skip validation if no image
+    if (!imageData) return;
 
     if (!imageData.startsWith('data:image')) {
       throw new Error('Invalid image format');
@@ -72,6 +102,8 @@ export function CreateEventForm({
     try {
       validateCoverImage(data.coverImage);
       await onSubmit(data);
+      // Reset store after successful submission
+      resetStore();
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -101,11 +133,20 @@ export function CreateEventForm({
         }
       }
 
+      // Update both local and store step
       setStep(nextStep);
+      updateStep(nextStep);
     } catch (error) {
       console.error('Step change error:', error);
       setError('Failed to proceed to next step');
     }
+  };
+
+  // Handle closing the form
+  const handleCloseAction = () => {
+    onCloseAction();
+    // Optionally, you might want to keep the data or reset based on requirements
+    // resetStore(); // Uncomment if you want to clear data on close
   };
 
   return (
@@ -115,7 +156,7 @@ export function CreateEventForm({
           {step === 'welcome' && (
             <WelcomeStep
               onNext={() => setStep('details')}
-              onSkip={onCloseAction}
+              onSkip={handleCloseAction}
             />
           )}
 
