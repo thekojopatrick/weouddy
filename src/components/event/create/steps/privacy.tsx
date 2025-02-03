@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/form';
 
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
 interface PrivacyStepProps {
@@ -93,6 +93,19 @@ export function PrivacyStep({
           </FormItem>
         )}
       />
+
+      <div className="rounded-lg border border-border px-4 py-3">
+        <p className="text-sm">
+          <Info
+            className="-mt-0.5 me-3 inline-flex text-blue-500"
+            size={16}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+          If you don’t require approval, you can generate a PIN in
+          Event Settings to share with participants.
+        </p>
+      </div>
 
       <div className="flex justify-between">
         <Button
