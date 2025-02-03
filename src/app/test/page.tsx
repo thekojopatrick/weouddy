@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import CalendarWithDropdown from './components/calendar-comp';
 import { DatePicker } from '@/components/ui/date-picker';
 import PlaceholderImage from '@/components/placeholder-image';
+import SVGPlaceholder from '@/components/svg-placeholder';
 
 export default async function TestPage() {
   const supabase = await createClient();
@@ -37,12 +38,70 @@ export default async function TestPage() {
       <div className="grid">{/* <DatePicker /> */}</div>
       <div>
         <h1>User Placeholder Image</h1>
-        <PlaceholderImage name="John Doe" width={150} height={150} />
-        <PlaceholderImage
-          name="Jane Smith"
-          backgroundColor="#ffcc00"
-          textColor="#000000"
-        />
+        <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
+          <PlaceholderImage
+            name="John Doe"
+            width={400}
+            height={300}
+          />
+          <PlaceholderImage
+            name="Jane Smith"
+            backgroundColor="#ffcc00"
+            textColor="#000000"
+            width={400}
+            height={300}
+          />
+          <PlaceholderImage
+            name="John Doe"
+            width={400}
+            height={300}
+            backgroundColor="#2196F3" // Theme 1: Classic Blue
+            textColor="#FFFFFF"
+          />
+
+          <PlaceholderImage
+            name="Jane Smith"
+            width={400}
+            height={300}
+            backgroundColor="#FF9800" // Theme 2: Sunset Orange
+            textColor="#000000"
+          />
+
+          <PlaceholderImage
+            name="Alice Johnson"
+            width={400}
+            height={300}
+            backgroundColor="#4CAF50" // Theme 3: Forest Green
+            textColor="#FFFFFF"
+          />
+
+          <PlaceholderImage
+            name="Bob Brown"
+            width={400}
+            height={300}
+            backgroundColor="#673AB7" // Theme 4: Deep Purple
+            textColor="#FFFFFF"
+          />
+
+          <PlaceholderImage
+            name="Charlie Davis"
+            width={400}
+            height={300}
+            backgroundColor="#E91E63" // Theme 5: Coral Pink
+            textColor="#FFFFFF"
+          />
+        </div>
+      </div>
+      <div>
+        <h1>User Placeholder Image</h1>
+        <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
+          <SVGPlaceholder name="John Doe" />
+          <SVGPlaceholder
+            name="Jane Smith"
+            backgroundColor="#FF9800"
+            textColor="#000000"
+          />
+        </div>
       </div>
     </div>
   ) : (
