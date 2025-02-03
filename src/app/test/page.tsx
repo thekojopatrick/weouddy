@@ -26,7 +26,7 @@ export default async function TestPage() {
   };
 
   const eventTypes = [
-    'Birthday',
+    'Happy Birthday',
     'Anniversary',
     'Church',
     'Wedding',
@@ -63,7 +63,16 @@ export default async function TestPage() {
             logoUrl="/brand/wordmark-black.png" // Replace with your logo URL
           />
           <PlaceholderImage
-            title={eventTypes[0]}
+            title={eventTypes[7]}
+            name="Jane Smith"
+            width={800}
+            height={600}
+            backgroundColor="#fafafa"
+            textColor="#1E1E1E"
+            logoUrl="/brand/wordmark-black.png" // Replace with your logo URL
+          />
+          <PlaceholderImage
+            title={eventTypes[3]}
             name="John Doe"
             width={800}
             height={600}
@@ -76,6 +85,7 @@ export default async function TestPage() {
             textColor="#000000"
             width={800}
             height={600}
+            logoUrl="/brand/wordmark-black.png"
           />
           <PlaceholderImage
             title={eventTypes[2]}
@@ -84,24 +94,7 @@ export default async function TestPage() {
             height={600}
             backgroundColor="#2196F3" // Theme 1: Classic Blue
             textColor="#FFFFFF"
-          />
-
-          <PlaceholderImage
-            title={eventTypes[3]}
-            name="Jane Smith"
-            width={800}
-            height={600}
-            backgroundColor="#FF9800" // Theme 2: Sunset Orange
-            textColor="#000000"
-          />
-
-          <PlaceholderImage
-            title={eventTypes[4]}
-            name="Alice Johnson"
-            width={800}
-            height={600}
-            backgroundColor="#4CAF50" // Theme 3: Forest Green
-            textColor="#FFFFFF"
+            logoUrl="/brand/wordmark-black.png"
           />
 
           <PlaceholderImage
@@ -111,6 +104,7 @@ export default async function TestPage() {
             height={600}
             backgroundColor="#673AB7" // Theme 4: Deep Purple
             textColor="#FFFFFF"
+            logoUrl="/brand/wordmark-black.png"
           />
 
           <PlaceholderImage
@@ -120,17 +114,7 @@ export default async function TestPage() {
             height={600}
             backgroundColor="#E91E63" // Theme 5: Coral Pink
             textColor="#FFFFFF"
-          />
-        </div>
-      </div>
-      <div>
-        <h1>User Placeholder Image</h1>
-        <div className="grid gap-2 grid-cols-2 md:grid-cols-5">
-          <SVGPlaceholder name="John Doe" />
-          <SVGPlaceholder
-            name="Jane Smith"
-            backgroundColor="#FF9800"
-            textColor="#000000"
+            logoUrl="/brand/wordmark-black.png"
           />
         </div>
       </div>

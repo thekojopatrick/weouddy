@@ -59,7 +59,7 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
         ctx.fillText('X', width / 2, height / 2 + spacing);
 
         // Draw initials (2x size, medium)
-        ctx.font = `${baseFontSize * 2}px Inter`;
+        ctx.font = `${baseFontSize * 1.5}px Inter`;
         ctx.fillText(initials, width / 2, height / 2 + spacing * 5);
 
         // Draw logo if provided
