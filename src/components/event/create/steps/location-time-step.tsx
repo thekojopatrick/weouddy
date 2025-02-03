@@ -1,38 +1,36 @@
-"use client";
+'use client';
 
-import { CalendarIcon, Clock, MapPin } from "lucide-react";
+import { CalendarIcon, Clock, MapPin } from 'lucide-react';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { addDays, format, subDays } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { LocationModal } from "@/components/location/location-modal";
-import { cn } from "@/lib/utils";
-import { useFormContext, UseFormReturn } from "react-hook-form";
-import { useState } from "react";
-import { TimeField, DateInput } from "@/components/ui/datefield-rac";
-import { TimeValue } from "react-aria-components";
+} from '@/components/ui/form';
+import { addDays, format, subDays } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { LocationModal } from '@/components/location/location-modal';
+import { cn } from '@/lib/utils';
+import { useFormContext, UseFormReturn } from 'react-hook-form';
+import { useState } from 'react';
+import { TimeField, DateInput } from '@/components/ui/datefield-rac';
+import { TimeValue } from 'react-aria-components';
 
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getLocalTimeZone, now, parseTime } from "@internationalized/date";
-import { DatePicker } from "@/components/ui/date-picker";
-import { EventFormValues } from "@/types/validation";
+} from '@/components/ui/select';
+import {
+  getLocalTimeZone,
+  now,
+  parseTime,
+} from '@internationalized/date';
+import { DatePicker } from '@/components/ui/date-picker';
+import { EventFormValues } from '@/types/validation';
 
 interface LocationTimeStepProps {
   onNext: () => void;
@@ -49,25 +47,25 @@ export function LocationTimeStep({
 }: LocationTimeStepProps) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const { setValue, watch } = useFormContext();
-  const timeValue = watch("time");
+  const timeValue = watch('time');
 
   const handleTimeQuickSelect = (quickTime: string) => {
     const now = new Date();
     switch (quickTime) {
-      case "now":
-        setValue("date", now.toISOString());
-        setValue("time", format(now, "HH:mm"));
+      case 'now':
+        setValue('date', now.toISOString());
+        setValue('time', format(now, 'HH:mm'));
         break;
-      case "today":
-        setValue("date", now.toISOString());
+      case 'today':
+        setValue('date', now.toISOString());
         break;
-      case "tomorrow":
+      case 'tomorrow':
         const tomorrow = addDays(now, 1);
-        setValue("date", tomorrow.toISOString());
+        setValue('date', tomorrow.toISOString());
         break;
-      case "yesterday":
+      case 'yesterday':
         const yesterday = subDays(now, 1);
-        setValue("date", yesterday.toISOString());
+        setValue('date', yesterday.toISOString());
         break;
     }
   };
@@ -76,13 +74,16 @@ export function LocationTimeStep({
     if (newTime) {
       const formattedTime = `${newTime.hour
         .toString()
-        .padStart(2, "0")}:${newTime.minute.toString().padStart(2, "0")}`;
-      setValue("time", formattedTime);
+        .padStart(
+          2,
+          '0'
+        )}:${newTime.minute.toString().padStart(2, '0')}`;
+      setValue('time', formattedTime);
     }
   };
 
   const getTimeValue = (
-    timeString: string | null | undefined,
+    timeString: string | null | undefined
   ): TimeValue | null => {
     if (!timeString) return null;
     try {
@@ -103,7 +104,8 @@ export function LocationTimeStep({
           Location & DateTime
         </h2>
         <p className="text-muted-foreground text-sm">
-          Turn your gathering into a celebration and let your world shine.
+          Turn your gathering into a celebration and let your world
+          shine.
         </p>
       </div>
 
@@ -118,11 +120,13 @@ export function LocationTimeStep({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start truncate py-5 rounded-full shadow-none bg-zinc-50"
+                className="w-full justify-start py-5 rounded-full shadow-none bg-zinc-50 pr-3"
                 onClick={() => setShowLocationModal(true)}
               >
                 <MapPin className="h-4 w-4 text-zinc-500" />
-                {field.value || "Select location"}
+                <span className="truncate">
+                  {field.value || 'Select location'}
+                </span>
               </Button>
             </FormControl>
             <FormMessage />
@@ -139,49 +143,21 @@ export function LocationTimeStep({
               When is your event happening?
             </FormLabel>
             <div className="flex space-x-2">
-              <Popover modal={true}>
-                <PopoverTrigger
-                  asChild
-                  className="py-5 bg-zinc-50 shadow-none rounded-full"
-                >
-                  <FormControl className="grow">
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-4 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? (
-                        format(new Date(field.value), "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0"
-                  align="start"
-                  onOpenAutoFocus={(e) => e.preventDefault()}
-                >
-                  <Calendar
-                    mode="single"
-                    selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={(date) => {
-                      field.onChange(date?.toISOString());
-                    }}
-                    disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="grow">
+                <DatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={(date) =>
+                    date < new Date() || date < new Date('1900-01-01')
+                  }
+                />
+              </div>
               <Select onValueChange={handleTimeQuickSelect}>
                 <SelectTrigger className="w-[120px] rounded-full shadow-none py-5 text-sm">
-                  <SelectValue placeholder="Quick Date" className="text-sm" />
+                  <SelectValue
+                    placeholder="Quick Date"
+                    className="text-sm"
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="now">Now</SelectItem>
@@ -211,8 +187,8 @@ export function LocationTimeStep({
                 >
                   <DateInput
                     className={cn(
-                      "rounded-full bg-zinc-50 py-5",
-                      "relative inline-flex h-9 w-full items-center outline-0 overflow-hidden whitespace-nowrap border border-input px-3 text-sm shadow-none shadow-black/5 transition-shadow data-[focus-within]:border-ring data-disabled:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20",
+                      'rounded-full bg-zinc-50 py-5',
+                      'relative inline-flex h-9 w-full items-center outline-0 overflow-hidden whitespace-nowrap border border-input px-3 text-sm shadow-none shadow-black/5 transition-shadow data-[focus-within]:border-ring data-disabled:opacity-50 data-[focus-within]:outline-none data-[focus-within]:ring-[3px] data-[focus-within]:ring-ring/20'
                     )}
                   />
                 </TimeField>
@@ -221,7 +197,7 @@ export function LocationTimeStep({
                 type="button"
                 variant="outline"
                 className="rounded-full py-5"
-                onClick={() => handleTimeQuickSelect("now")}
+                onClick={() => handleTimeQuickSelect('now')}
               >
                 <Clock className="h-4 w-4" /> Now
               </Button>
@@ -244,7 +220,7 @@ export function LocationTimeStep({
           type="button"
           onClick={() => {
             if (!timeValue) {
-              setValue("time", format(new Date(), "HH:mm"));
+              setValue('time', format(new Date(), 'HH:mm'));
             }
             onNext();
           }}
@@ -259,7 +235,7 @@ export function LocationTimeStep({
         open={showLocationModal}
         onOpenChangeAction={setShowLocationModal}
         onSelectLocationAction={(location) => {
-          setValue("location", location.name);
+          setValue('location', location.name);
         }}
       />
     </div>

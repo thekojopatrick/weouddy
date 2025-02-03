@@ -1,52 +1,68 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import * as React from 'react';
+import {
+  format,
+  getMonth,
+  getYear,
+  setMonth,
+  setYear,
+} from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./select";
+} from '@/components/ui/select';
+import { FormControl } from '@/components/ui/form';
 
 interface DatePickerProps {
   startYear?: number;
   endYear?: number;
+  value?: Date | string;
+  onChange?: (date: string | undefined) => void;
+  disabled?: (date: Date) => boolean;
 }
+
 export function DatePicker({
   startYear = getYear(new Date()) - 100,
   endYear = getYear(new Date()) + 100,
+  value,
+  onChange,
+  disabled,
 }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>(new Date());
+  const [date, setDate] = React.useState<Date>(
+    value ? new Date(value) : new Date()
+  );
 
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
+
   const years = Array.from(
     { length: endYear - startYear + 1 },
-    (_, i) => startYear + i,
+    (_, i) => startYear + i
   );
 
   const handleMonthChange = (month: string) => {
@@ -59,27 +75,38 @@ export function DatePicker({
     setDate(newDate);
   };
 
-  const handleSelect = (selectedData: Date | undefined) => {
-    if (selectedData) {
-      setDate(selectedData);
+  const handleSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+      onChange?.(selectedDate.toISOString());
     }
   };
 
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className={cn(
-            "w-[250px] justify-start text-left font-normal",
-            !date && "text-muted-foreground",
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
-        </Button>
+        <FormControl>
+          <Button
+            variant="outline"
+            className={cn(
+              'w-full pl-4 text-left font-normal py-5 bg-zinc-50 shadow-none rounded-full',
+              !value && 'text-muted-foreground'
+            )}
+          >
+            {value ? (
+              format(new Date(value), 'PPP')
+            ) : (
+              <span>Pick a date</span>
+            )}
+            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          </Button>
+        </FormControl>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent
+        className="w-auto p-0"
+        align="start"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <div className="flex justify-between p-2">
           <Select
             onValueChange={handleMonthChange}
@@ -112,11 +139,11 @@ export function DatePicker({
             </SelectContent>
           </Select>
         </div>
-
         <Calendar
           mode="single"
-          selected={date}
+          selected={value ? new Date(value) : undefined}
           onSelect={handleSelect}
+          disabled={disabled}
           initialFocus
           month={date}
           onMonthChange={setDate}
