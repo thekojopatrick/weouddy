@@ -266,6 +266,7 @@ export function CoverUploadStep({
         onOpenChange={setShowCreateCoverModal}
         onSelectCover={(cover) => {
           setPreviewImage(cover);
+          setValue('coverImage', cover);
         }}
       />
     </>

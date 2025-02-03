@@ -24,21 +24,22 @@ interface CreateCoverModalProps {
 export function CreateCoverModal({
   open,
   onOpenChange,
+  onSelectCover,
 }: CreateCoverModalProps) {
   const [name, setName] = React.useState('BlacVolta');
+  const [generatedImageUrl, setGeneratedImageUrl] = React.useState<
+    string | null
+  >(null);
   const [selectedTheme, setSelectedTheme] = React.useState(
     coverThemes[0]
   );
 
   const handleSave = () => {
     // Handle save logic here
-    console.log(
-      'Saving cover with name:',
-      name,
-      'and theme:',
-      selectedTheme
-    );
-    onOpenChange(false);
+    if (generatedImageUrl) {
+      onSelectCover(generatedImageUrl);
+      onOpenChange(false);
+    }
   };
 
   return (
@@ -52,7 +53,7 @@ export function CreateCoverModal({
         </DialogHeader>
 
         {/* Preview Area */}
-        <div className="py-4">
+        <div className="py-4 aspect-square">
           <PlaceholderImage
             title="Outdoor party"
             name={name}
@@ -60,7 +61,10 @@ export function CreateCoverModal({
             height={600}
             backgroundColor={selectedTheme.backgroundColor}
             textColor={selectedTheme.textColor}
-            logoUrl="/brand/wordmark-black.png" // Replace with your logo URL
+            logoUrl="/brand/wordmark-black.png"
+            onImageGenerated={(imageUrl) =>
+              setGeneratedImageUrl(imageUrl)
+            }
           />
         </div>
 
@@ -89,10 +93,17 @@ export function CreateCoverModal({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="rounded-full"
           >
             Back
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button
+            onClick={handleSave}
+            disabled={!generatedImageUrl}
+            className="rounded-full"
+          >
+            Save
+          </Button>
         </div>
       </div>
     </ResponsiveDialog>

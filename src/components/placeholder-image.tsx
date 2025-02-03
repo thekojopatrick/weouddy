@@ -8,7 +8,8 @@ interface PlaceholderImageProps {
   height?: number;
   backgroundColor?: string;
   textColor?: string;
-  logoUrl?: string; // URL of the logo image
+  logoUrl?: string;
+  onImageGenerated?: (imageUrl: string) => void;
 }
 
 const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
@@ -19,6 +20,7 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
   backgroundColor = '#cccccc',
   textColor = '#ffffff',
   logoUrl,
+  onImageGenerated,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageUrl, setImageUrl] = useState<string>('');
@@ -79,15 +81,35 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
             ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
 
             // Convert canvas to data URL
-            setImageUrl(canvas.toDataURL());
+            const generatedImageUrl = canvas.toDataURL();
+            setImageUrl(generatedImageUrl);
+
+            // Call the callback if provided
+            if (onImageGenerated) {
+              onImageGenerated(generatedImageUrl);
+            }
           };
         } else {
           // Convert canvas to data URL if no logo
-          setImageUrl(canvas.toDataURL());
+          const generatedImageUrl = canvas.toDataURL();
+          setImageUrl(generatedImageUrl);
+
+          // Call the callback if provided
+          if (onImageGenerated) {
+            onImageGenerated(generatedImageUrl);
+          }
         }
       }
     }
-  }, [name, width, height, backgroundColor, textColor, logoUrl]);
+  }, [
+    name,
+    width,
+    height,
+    backgroundColor,
+    textColor,
+    logoUrl,
+    onImageGenerated,
+  ]);
 
   return (
     <div>
