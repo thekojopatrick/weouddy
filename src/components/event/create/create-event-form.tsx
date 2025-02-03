@@ -146,7 +146,7 @@ export function CreateEventForm({
   const handleCloseAction = () => {
     onCloseAction();
     // Optionally, you might want to keep the data or reset based on requirements
-    // resetStore(); // Uncomment if you want to clear data on close
+    resetStore(); // Uncomment if you want to clear data on close
   };
 
   return (

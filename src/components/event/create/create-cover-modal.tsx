@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { ThemeSelector } from './cover-theme-selector';
 import { coverThemes } from './cover-themes';
 import PlaceholderImage from '@/components/placeholder-image';
+import { useCreateEventStore } from '@/stores/use-create-event-store';
 
 interface CreateCoverModalProps {
   open: boolean;
@@ -26,7 +27,8 @@ export function CreateCoverModal({
   onOpenChange,
   onSelectCover,
 }: CreateCoverModalProps) {
-  const [name, setName] = React.useState('BlacVolta');
+  const { formData } = useCreateEventStore();
+  const [name, setName] = React.useState('WeOuddy');
   const [generatedImageUrl, setGeneratedImageUrl] = React.useState<
     string | null
   >(null);
@@ -53,9 +55,13 @@ export function CreateCoverModal({
         </DialogHeader>
 
         {/* Preview Area */}
-        <div className="py-4 aspect-square">
+        <div className="py-4 max-w-full max-h-fit">
           <PlaceholderImage
-            title="Outdoor party"
+            title={
+              formData.type === 'other'
+                ? 'We dey outside'
+                : formData.type!
+            }
             name={name}
             width={800}
             height={600}
