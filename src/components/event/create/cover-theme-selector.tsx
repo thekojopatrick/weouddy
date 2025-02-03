@@ -15,7 +15,7 @@ export function ThemeSelector({
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">Select Theme</label>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
         {themes.map((theme) => (
           <button
             key={theme.id}

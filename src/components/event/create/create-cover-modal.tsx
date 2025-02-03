@@ -44,7 +44,7 @@ export function CreateCoverModal({
 
   return (
     <ResponsiveDialog open={open} onOpenChangeAction={onOpenChange}>
-      <div className="pb-4 sm:pb-0 sm:max-w-md">
+      <div className="p-4 pt-0 sm:pb-0 sm:max-w-full">
         <DialogHeader>
           <DialogTitle>Create cover</DialogTitle>
           <DialogDescription>
