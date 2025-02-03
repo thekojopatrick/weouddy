@@ -1,37 +1,40 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { LoadingButton } from "@/components/ui/button";
+import { useState } from 'react';
+import { LoadingButton } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { FeedbackCategory, FeedbackType } from "@prisma/client";
+} from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { FeedbackCategory, FeedbackType } from '@prisma/client';
 
 const FeedbackDialog = ({
-  type = "ACCOUNT_SETUP",
+  type = 'ACCOUNT_SETUP',
   metadata = {},
-  title = "",
+  title = '',
   trigger = <></>,
 }) => {
   const [open, setOpen] = useState(false);
-  const [rating, setRating] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [category, setCategory] = useState("GENERAL");
+  const [rating, setRating] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [category, setCategory] = useState('GENERAL');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -40,9 +43,9 @@ const FeedbackDialog = ({
 
     if (!rating) {
       toast({
-        title: "Rating required",
-        description: "Please select a rating before submitting",
-        variant: "destructive",
+        title: 'Rating required',
+        description: 'Please select a rating before submitting',
+        variant: 'destructive',
       });
       return;
     }
@@ -50,10 +53,10 @@ const FeedbackDialog = ({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/feedback", {
-        method: "POST",
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           rating: parseInt(rating),
@@ -65,24 +68,24 @@ const FeedbackDialog = ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit feedback");
+        throw new Error('Failed to submit feedback');
       }
 
       toast({
-        title: "Thank you for your feedback!",
-        description: "Your response has been recorded.",
+        title: 'Thank you for your feedback!',
+        description: 'Your response has been recorded.',
       });
 
       // Reset form and close dialog
-      setRating("");
-      setFeedback("");
-      setCategory("GENERAL");
+      setRating('');
+      setFeedback('');
+      setCategory('GENERAL');
       setOpen(false);
     } catch (error) {
       toast({
-        title: "Something went wrong",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive",
+        title: 'Something went wrong',
+        description: 'Failed to submit feedback. Please try again.',
+        variant: 'destructive',
       });
       console.error(error);
     } finally {
@@ -114,7 +117,7 @@ const FeedbackDialog = ({
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((number) => (
                       <label
                         key={number}
-                        className="relative flex size-9 flex-1 cursor-pointer flex-col items-center justify-center gap-3 border border-input text-center text-sm outline-offset-2 transition-colors first:rounded-s-lg last:rounded-e-lg has-data-[state=checked]:z-10 has-data-disabled:cursor-not-allowed has-data-[state=checked]:border-ring has-data-[state=checked]:bg-accent has-data-disabled:opacity-50 has-focus-visible:outline has-focus-visible:outline-2 has-focus-visible:outline-ring/70"
+                        className="relative flex size-9 flex-1 cursor-pointer flex-col items-center justify-center gap-3 border border-input text-center text-sm outline-offset-2 transition-colors first:rounded-s-lg last:rounded-e-lg has-data-[state=checked]:z-10 has-data-disabled:cursor-not-allowed has-data-[state=checked]:border-ring has-data-[state=checked]:bg-accent has-data-disabled:opacity-50 has-focus-visible:outline has-focus-visible:outline-ring/70"
                       >
                         <RadioGroupItem
                           id={`radio-17-r${number}`}
@@ -142,17 +145,25 @@ const FeedbackDialog = ({
                     <SelectItem value="UI_UX">
                       User Interface & Experience
                     </SelectItem>
-                    <SelectItem value="PERFORMANCE">Performance</SelectItem>
-                    <SelectItem value="FUNCTIONALITY">Functionality</SelectItem>
+                    <SelectItem value="PERFORMANCE">
+                      Performance
+                    </SelectItem>
+                    <SelectItem value="FUNCTIONALITY">
+                      Functionality
+                    </SelectItem>
                     <SelectItem value="CONTENT">Content</SelectItem>
-                    <SelectItem value="TECHNICAL">Technical</SelectItem>
+                    <SelectItem value="TECHNICAL">
+                      Technical
+                    </SelectItem>
                     <SelectItem value="GENERAL">General</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="feedback">Why did you give this rating?</Label>
+                <Label htmlFor="feedback">
+                  Why did you give this rating?
+                </Label>
                 <Textarea
                   id="feedback"
                   value={feedback}
@@ -168,7 +179,7 @@ const FeedbackDialog = ({
               loading={isSubmitting}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Send feedback"}
+              {isSubmitting ? 'Sending...' : 'Send feedback'}
             </LoadingButton>
           </form>
         </div>
