@@ -35,7 +35,8 @@ export const resetPasswordSchema = z.object({
 export const eventFormSchema = z.object({
   name: z.string().min(1, 'Title is required'),
   type: z.string().min(1, 'Type is required'),
-  description: z.string().min(1, 'Description is required'),
+  //description: z.string().min(1, "Description is required"),
+  description: z.string().nullable().optional(),
   location: z.string().min(1, 'Location is required'),
   date: z.string().min(1, 'Date is required'),
   time: z

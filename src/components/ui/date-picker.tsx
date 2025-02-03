@@ -1,30 +1,24 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import {
-  format,
-  getMonth,
-  getYear,
-  setMonth,
-  setYear,
-} from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import * as React from "react";
+import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { FormControl } from '@/components/ui/form';
+} from "@/components/ui/select";
+import { FormControl } from "@/components/ui/form";
 
 interface DatePickerProps {
   startYear?: number;
@@ -42,27 +36,27 @@ export function DatePicker({
   disabled,
 }: DatePickerProps) {
   const [date, setDate] = React.useState<Date>(
-    value ? new Date(value) : new Date()
+    value ? new Date(value) : new Date(),
   );
 
   const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const years = Array.from(
     { length: endYear - startYear + 1 },
-    (_, i) => startYear + i
+    (_, i) => startYear + i,
   );
 
   const handleMonthChange = (month: string) => {
@@ -89,15 +83,11 @@ export function DatePicker({
           <Button
             variant="outline"
             className={cn(
-              'w-full pl-4 text-left font-normal py-5 bg-zinc-50 shadow-none rounded-full',
-              !value && 'text-muted-foreground'
+              "w-full pl-4 text-left font-normal py-5 bg-zinc-50 shadow-none rounded-full",
+              !value && "text-muted-foreground",
             )}
           >
-            {value ? (
-              format(new Date(value), 'PPP')
-            ) : (
-              <span>Pick a date</span>
-            )}
+            {value ? format(new Date(value), "PPP") : <span>Pick a date</span>}
             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
           </Button>
         </FormControl>

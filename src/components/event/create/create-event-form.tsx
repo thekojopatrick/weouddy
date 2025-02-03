@@ -1,19 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  eventFormSchema,
-  type EventFormValues,
-} from '@/types/validation';
-import { Form } from '@/components/ui/form';
-import { CoverUploadStep } from './steps/cover-upload';
-import { EventDetailsStep } from './steps/event-details';
-import { LocationTimeStep } from './steps/location-time-step';
-import { PrivacyStep } from './steps/privacy';
-import { WelcomeStep } from './steps/welcome';
-import { useCreateEventStore } from '@/stores/use-create-event-store'; // Import the new store
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { eventFormSchema, type EventFormValues } from "@/types/validation";
+import { Form } from "@/components/ui/form";
+import { CoverUploadStep } from "./steps/cover-upload";
+import { EventDetailsStep } from "./steps/event-details";
+import { LocationTimeStep } from "./steps/location-time-step";
+import { PrivacyStep } from "./steps/privacy";
+import { WelcomeStep } from "./steps/welcome";
+import { useCreateEventStore } from "@/stores/use-create-event-store"; // Import the new store
 
 interface CreateEventFormProps {
   onCloseAction: () => void;
@@ -21,22 +18,22 @@ interface CreateEventFormProps {
   disabled?: boolean;
 }
 
-type Step = 'welcome' | 'details' | 'location' | 'cover' | 'privacy';
+type Step = "welcome" | "details" | "location" | "cover" | "privacy";
 
 const MAX_COVER_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const DEFAULT_VALUES: EventFormValues = {
-  name: '',
-  type: '',
-  description: '',
-  location: '',
-  date: new Date().toISOString().split('T')[0],
-  time: new Date().toLocaleTimeString('en-US', {
+  name: "",
+  type: "",
+  description: "",
+  location: "",
+  date: new Date().toISOString().split("T")[0],
+  time: new Date().toLocaleTimeString("en-US", {
     hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
   }),
-  coverImage: '',
+  coverImage: "",
   isPublic: false,
   requiresApproval: false,
 };
@@ -55,9 +52,7 @@ export function CreateEventForm({
     resetStore,
   } = useCreateEventStore();
 
-  const [step, setStep] = useState<Step>(
-    (storedStep as Step) || 'welcome'
-  );
+  const [step, setStep] = useState<Step>((storedStep as Step) || "welcome");
   const [error, setError] = useState<string | null>(null);
 
   // Merge stored form data with default values
@@ -66,7 +61,7 @@ export function CreateEventForm({
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: mergedDefaultValues,
-    mode: 'onChange',
+    mode: "onChange",
   });
 
   // Sync form changes with store
@@ -74,9 +69,7 @@ export function CreateEventForm({
     const subscription = form.watch((values) => {
       // Only update non-empty values
       const filteredValues = Object.fromEntries(
-        Object.entries(values).filter(
-          ([_, v]) => v !== undefined && v !== ''
-        )
+        Object.entries(values).filter(([_, v]) => v !== undefined && v !== ""),
       );
       updateFormData(filteredValues);
     });
@@ -87,14 +80,14 @@ export function CreateEventForm({
   const validateCoverImage = (imageData: string) => {
     if (!imageData) return;
 
-    if (!imageData.startsWith('data:image')) {
-      throw new Error('Invalid image format');
+    if (!imageData.startsWith("data:image")) {
+      throw new Error("Invalid image format");
     }
 
-    const base64Data = imageData.split(',')[1];
-    const sizeInBytes = Buffer.from(base64Data, 'base64').length;
+    const base64Data = imageData.split(",")[1];
+    const sizeInBytes = Buffer.from(base64Data, "base64").length;
     if (sizeInBytes > MAX_COVER_IMAGE_SIZE) {
-      throw new Error('Cover image must be less than 5MB');
+      throw new Error("Cover image must be less than 5MB");
     }
   };
 
@@ -106,9 +99,7 @@ export function CreateEventForm({
       resetStore();
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred';
+        error instanceof Error ? error.message : "An unexpected error occurred";
       setError(errorMessage);
     }
   };
@@ -117,10 +108,10 @@ export function CreateEventForm({
     setError(null);
 
     const fieldsToValidate = {
-      details: ['name', 'type', 'description'],
-      location: ['location', 'date', 'time'],
-      cover: ['coverImage'],
-      privacy: ['isPublic'],
+      details: ["name", "type", "description"],
+      location: ["location", "date", "time"],
+      cover: ["coverImage"],
+      privacy: ["isPublic"],
       welcome: [],
     }[step] as (keyof EventFormValues)[];
 
@@ -128,7 +119,7 @@ export function CreateEventForm({
       if (fieldsToValidate.length > 0) {
         const isValid = await form.trigger(fieldsToValidate);
         if (!isValid) {
-          setError('Please fill in all required fields correctly');
+          setError("Please fill in all required fields correctly");
           return;
         }
       }
@@ -137,8 +128,8 @@ export function CreateEventForm({
       setStep(nextStep);
       updateStep(nextStep);
     } catch (error) {
-      console.error('Step change error:', error);
-      setError('Failed to proceed to next step');
+      console.error("Step change error:", error);
+      setError("Failed to proceed to next step");
     }
   };
 
@@ -153,44 +144,44 @@ export function CreateEventForm({
     <div className="max-w-2xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          {step === 'welcome' && (
+          {step === "welcome" && (
             <WelcomeStep
-              onNext={() => setStep('details')}
+              onNext={() => setStep("details")}
               onSkip={handleCloseAction}
             />
           )}
 
-          {step === 'details' && (
+          {step === "details" && (
             <EventDetailsStep
-              onNext={() => handleStepChange('location')}
-              onBack={() => setStep('welcome')}
+              onNext={() => handleStepChange("location")}
+              onBack={() => setStep("welcome")}
               disabled={disabled}
             />
           )}
 
-          {step === 'location' && (
+          {step === "location" && (
             <LocationTimeStep
-              onNext={() => handleStepChange('cover')}
-              onBack={() => setStep('details')}
+              onNext={() => handleStepChange("cover")}
+              onBack={() => setStep("details")}
               disabled={disabled}
               form={form}
             />
           )}
 
-          {step === 'cover' && (
+          {step === "cover" && (
             <CoverUploadStep
-              onNext={() => handleStepChange('privacy')}
-              onBack={() => setStep('location')}
+              onNext={() => handleStepChange("privacy")}
+              onBack={() => setStep("location")}
               maxSize={MAX_COVER_IMAGE_SIZE}
               onError={(error) => setError(error)}
               disabled={disabled}
             />
           )}
 
-          {step === 'privacy' && (
+          {step === "privacy" && (
             <PrivacyStep
               onSubmit={form.handleSubmit(handleSubmit)}
-              onBack={() => setStep('cover')}
+              onBack={() => setStep("cover")}
               isSubmitting={disabled}
               error={error}
             />

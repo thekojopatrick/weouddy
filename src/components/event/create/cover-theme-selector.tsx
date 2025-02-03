@@ -1,5 +1,5 @@
-import { Check } from 'lucide-react';
-import type { CoverTheme } from './cover-themes';
+import { Check } from "lucide-react";
+import type { CoverTheme } from "./cover-themes";
 
 interface ThemeSelectorProps {
   themes: CoverTheme[];
@@ -27,9 +27,7 @@ export function ThemeSelector({
               className="h-8 w-full rounded"
               style={{ backgroundColor: theme.backgroundColor }}
             />
-            <span className="mt-1 text-xs font-medium">
-              {theme.name}
-            </span>
+            <span className="mt-1 text-xs font-medium">{theme.name}</span>
             {selectedTheme.id === theme.id && (
               <div className="absolute -right-1 -top-1 rounded-full bg-primary p-0.5">
                 <Check className="h-3 w-3 text-primary-foreground" />

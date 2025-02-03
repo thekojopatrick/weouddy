@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SVGPlaceholderProps {
   name: string;
@@ -12,14 +12,14 @@ const SVGPlaceholder: React.FC<SVGPlaceholderProps> = ({
   name,
   width = 400,
   height = 300,
-  backgroundColor = '#1E1E1E',
-  textColor = '#FEF7FF',
+  backgroundColor = "#1E1E1E",
+  textColor = "#FEF7FF",
 }) => {
   // Extract initials from the name
   const initials = name
-    .split(' ')
+    .split(" ")
     .map((part) => part[0])
-    .join('')
+    .join("")
     .toUpperCase();
 
   return (

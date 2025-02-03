@@ -1,15 +1,15 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 
-import { Button } from '@/components/ui/button';
-import { Info, Loader2 } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
+import { Button } from "@/components/ui/button";
+import { Info, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface PrivacyStepProps {
   onSubmit: () => void;
@@ -31,8 +31,8 @@ export function PrivacyStep({
           Lastly, Privacy Settings
         </h2>
         <p className="text-muted-foreground text-sm">
-          Choose who can see and join your event. You can always
-          update these settings later if you change your mind
+          Choose who can see and join your event. You can always update these
+          settings later if you change your mind
         </p>
       </div>
 
@@ -71,12 +71,9 @@ export function PrivacyStep({
         render={({ field }) => (
           <FormItem className="flex flex-row gap-1 items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-              <FormLabel className="">
-                Require approval for access
-              </FormLabel>
+              <FormLabel className="">Require approval for access</FormLabel>
               <FormDescription>
-                Turn this on to approve each participant before they
-                can enter.
+                Turn this on to approve each participant before they can enter.
               </FormDescription>
             </div>
             <FormControl>
@@ -102,8 +99,8 @@ export function PrivacyStep({
             strokeWidth={2}
             aria-hidden="true"
           />
-          If you don’t require approval, you can generate a PIN in
-          Event Settings to share with participants.
+          If you don’t require approval, you can generate a PIN in Event
+          Settings to share with participants.
         </p>
       </div>
 
@@ -129,7 +126,7 @@ export function PrivacyStep({
               Creating...
             </>
           ) : (
-            'Finish'
+            "Finish"
           )}
         </Button>
       </div>

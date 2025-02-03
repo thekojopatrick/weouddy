@@ -1,51 +1,49 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useInView } from 'react-intersection-observer';
+import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 
 //components
-import { CategoryFilters } from './category-filters';
-import { CreateEventButton } from '@/components/event/create/create-event-button';
-import { EventCard } from '@/components/event/event-card';
-import { EventListShimmer } from '@/components/event/shimmer-loading';
-import { ScanEventButton } from '@/components/event/join/scan-event-button';
-import { LocationFilters } from './location-filters';
+import { CategoryFilters } from "./category-filters";
+import { CreateEventButton } from "@/components/event/create/create-event-button";
+import { EventCard } from "@/components/event/event-card";
+import { EventListShimmer } from "@/components/event/shimmer-loading";
+import { ScanEventButton } from "@/components/event/join/scan-event-button";
+import { LocationFilters } from "./location-filters";
 
 //types
-import { EventWithDetails } from '@/types/prisma.types';
-import { User } from '@supabase/supabase-js';
+import { EventWithDetails } from "@/types/prisma.types";
+import { User } from "@supabase/supabase-js";
 
 //utils
-import { cn } from '@/lib/utils';
-import { formatEventDateTime } from '@/lib/formatters';
+import { cn } from "@/lib/utils";
+import { formatEventDateTime } from "@/lib/formatters";
 
 //hooks
-import { useAuthProtection } from '@/hooks/use-auth-protection';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useInfiniteEvents } from '@/hooks/event/use-infinite-events';
-import { useVisibleEvents } from '@/hooks/event/use-visible-events';
-import { Container } from '@/components/common/container';
-import FilterDrawer from './filter-drawer';
-import { EmptyEventsState } from './empty-events-state';
-import { EmptyEventsSearchState } from './empty-events-search-state';
+import { useAuthProtection } from "@/hooks/use-auth-protection";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useInfiniteEvents } from "@/hooks/event/use-infinite-events";
+import { useVisibleEvents } from "@/hooks/event/use-visible-events";
+import { Container } from "@/components/common/container";
+import FilterDrawer from "./filter-drawer";
+import { EmptyEventsState } from "./empty-events-state";
+import { EmptyEventsSearchState } from "./empty-events-search-state";
 
 export default function DiscoverPage({
   user,
 }: {
   user: User & { username: string | null; avatarUrl: string | null };
 }) {
-  const isSmallDevice = useMediaQuery(
-    'only screen and (max-width : 768px)'
-  );
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const searchParams = useSearchParams();
   const router = useRouter();
   const { protectAction } = useAuthProtection();
 
   const [currentLocation, setCurrentLocation] = useState(
-    searchParams.get('location') || 'world'
+    searchParams.get("location") || "world",
   );
-  const [currentCategory, setCurrentCategory] = useState('All');
+  const [currentCategory, setCurrentCategory] = useState("All");
 
   const {
     events: allEvents,
@@ -57,10 +55,9 @@ export default function DiscoverPage({
   const filteredEvents = useMemo(
     () =>
       allEvents.filter(
-        (event) =>
-          currentCategory === 'All' || event.type === currentCategory
+        (event) => currentCategory === "All" || event.type === currentCategory,
       ),
-    [allEvents, currentCategory]
+    [allEvents, currentCategory],
   );
 
   const eventIds =
@@ -84,12 +81,10 @@ export default function DiscoverPage({
   // Compute available categories
   const availableCategories = useMemo(
     () => [
-      'All',
-      ...new Set(
-        allEvents?.flatMap((event: EventWithDetails) => event.type)
-      ),
+      "All",
+      ...new Set(allEvents?.flatMap((event: EventWithDetails) => event.type)),
     ],
-    [allEvents] // Use allEvents instead of filteredEvents
+    [allEvents], // Use allEvents instead of filteredEvents
   );
 
   return (
@@ -97,12 +92,10 @@ export default function DiscoverPage({
       <Container>
         <section className="flex-1">
           <div className="flex flex-col gap-4">
-            <h1 className="text-3xl font-bold tracking-tighter">
-              Discover
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tighter">Discover</h1>
             <p className="text-muted-foreground">
-              Explore events, moments near you, browse by category, or
-              search events by name.
+              Explore events, moments near you, browse by category, or search
+              events by name.
             </p>
           </div>
           <div className="mt-4">
@@ -121,31 +114,29 @@ export default function DiscoverPage({
                 </div>
               ) : (
                 <>
-                  <div className="">
-                    <div className="flex items-center justify-between py-4">
-                      <CategoryFilters
-                        onCategoryChangeAction={setCurrentCategory}
-                        currentCategory={currentCategory}
-                        categories={availableCategories}
-                      />
-                      <FilterDrawer
-                        categories={availableCategories}
-                        locations={['world', 'africa']}
-                        currentCategory={currentCategory}
-                        currentLocation={currentLocation}
-                        onCategoryChange={setCurrentCategory}
-                        onLocationChange={handleLocationChange}
-                      />
-                    </div>
+                  <div className="flex items-center justify-between py-4">
+                    <CategoryFilters
+                      onCategoryChangeAction={setCurrentCategory}
+                      currentCategory={currentCategory}
+                      categories={availableCategories}
+                    />
+                    <FilterDrawer
+                      categories={availableCategories}
+                      locations={["world", "africa"]}
+                      currentCategory={currentCategory}
+                      currentLocation={currentLocation}
+                      onCategoryChange={setCurrentCategory}
+                      onLocationChange={handleLocationChange}
+                    />
                   </div>
 
                   {filteredEvents.length === 0 ? (
                     <EmptyEventsSearchState />
                   ) : (
-                    <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                       {filteredEvents.map((event) => {
                         const { date, time } = formatEventDateTime(
-                          event.dateTime as never
+                          event.dateTime as never,
                         );
                         return (
                           <div
@@ -183,8 +174,8 @@ export default function DiscoverPage({
 
       <div
         className={cn(
-          'fixed bottom-8 flex flex-col gap-4 z-50 items-end',
-          isSmallDevice ? 'right-5' : 'right-8'
+          "fixed bottom-8 flex flex-col gap-4 z-50 items-end",
+          isSmallDevice ? "right-5" : "right-8",
         )}
       >
         {/* Wrap JoinEventButton with auth protection */}
@@ -198,14 +189,11 @@ export default function DiscoverPage({
                   user={user as never}
                 />
               ),
-              'Scan an event'
+              "Scan an event",
             )
           }
         >
-          <ScanEventButton
-            isSmallDevice={isSmallDevice}
-            user={user as never}
-          />
+          <ScanEventButton isSmallDevice={isSmallDevice} user={user as never} />
         </div>
 
         {/* Wrap CreateEventButton with auth protection */}
@@ -219,7 +207,7 @@ export default function DiscoverPage({
                   user={user as never}
                 />
               ),
-              'create an event'
+              "create an event",
             )
           }
         >

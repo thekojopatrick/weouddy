@@ -142,7 +142,10 @@ export function EventCard({
           <h3 className="font-semibold text-sm leading-none tracking-tight max-w-40 truncate">
             {name}
           </h3>
-          <Badge variant="outline" className="capitalize">
+          <Badge
+            variant="outline"
+            className="capitalize whitespace-nowrap truncate"
+          >
             {type}
           </Badge>
         </CardContent>

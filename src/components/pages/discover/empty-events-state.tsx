@@ -1,5 +1,5 @@
-import { EmptyState } from '@/components/ui/empty-state';
-import { Search, FileQuestion } from 'lucide-react';
+import { EmptyState } from "@/components/ui/empty-state";
+import { Search, FileQuestion } from "lucide-react";
 
 export function EmptyEventsState() {
   return (

@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
-import { Input } from '@/components/ui/input';
-import { ThemeSelector } from './cover-theme-selector';
-import { coverThemes } from './cover-themes';
-import PlaceholderImage from '@/components/placeholder-image';
-import { useCreateEventStore } from '@/stores/use-create-event-store';
+} from "@/components/ui/dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { Input } from "@/components/ui/input";
+import { ThemeSelector } from "./cover-theme-selector";
+import { coverThemes } from "./cover-themes";
+import PlaceholderImage from "@/components/placeholder-image";
+import { useCreateEventStore } from "@/stores/use-create-event-store";
 
 interface CreateCoverModalProps {
   open: boolean;
@@ -28,13 +28,11 @@ export function CreateCoverModal({
   onSelectCover,
 }: CreateCoverModalProps) {
   const { formData } = useCreateEventStore();
-  const [name, setName] = React.useState('WeOuddy');
+  const [name, setName] = React.useState("WeOuddy");
   const [generatedImageUrl, setGeneratedImageUrl] = React.useState<
     string | null
   >(null);
-  const [selectedTheme, setSelectedTheme] = React.useState(
-    coverThemes[0]
-  );
+  const [selectedTheme, setSelectedTheme] = React.useState(coverThemes[0]);
 
   const handleSave = () => {
     // Handle save logic here
@@ -58,9 +56,7 @@ export function CreateCoverModal({
         <div className="py-4 max-w-full max-h-fit">
           <PlaceholderImage
             title={
-              formData.type === 'other'
-                ? 'We dey outside'
-                : formData.type!
+              formData.type === "other" ? "We dey outside" : formData.type!
             }
             name={name}
             width={800}
@@ -68,9 +64,7 @@ export function CreateCoverModal({
             backgroundColor={selectedTheme.backgroundColor}
             textColor={selectedTheme.textColor}
             logoUrl="/brand/wordmark-black.png"
-            onImageGenerated={(imageUrl) =>
-              setGeneratedImageUrl(imageUrl)
-            }
+            onImageGenerated={(imageUrl) => setGeneratedImageUrl(imageUrl)}
           />
         </div>
 

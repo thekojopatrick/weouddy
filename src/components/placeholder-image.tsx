@@ -1,5 +1,5 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 
 interface PlaceholderImageProps {
   title: string;
@@ -17,18 +17,18 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
   name,
   width = 100,
   height = 100,
-  backgroundColor = '#cccccc',
-  textColor = '#ffffff',
+  backgroundColor = "#cccccc",
+  textColor = "#ffffff",
   logoUrl,
   onImageGenerated,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (ctx) {
         // Set canvas dimensions
         canvas.width = width;
@@ -46,19 +46,19 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
         // Text properties
         const baseFontSize = Math.min(width, height) / 18; // Base font size
         const spacing = 16; // Spacing between text elements
-        const wordSpacing = '16';
+        const wordSpacing = "16";
 
         // Draw "Title" (3x size, bold)
         ctx.font = `bold ${baseFontSize * 2}px Inter`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = textColor;
         ctx.letterSpacing = wordSpacing;
         ctx.fillText(titleText, width / 2, height / 2 - spacing * 3);
 
         // Draw "x" (1x size, medium)
         ctx.font = `${baseFontSize}px Inter`;
-        ctx.fillText('X', width / 2, height / 2 + spacing);
+        ctx.fillText("X", width / 2, height / 2 + spacing);
 
         // Draw initials (2x size, medium)
         ctx.font = `${baseFontSize * 1.5}px Inter`;
@@ -113,10 +113,8 @@ const PlaceholderImage: React.FC<PlaceholderImageProps> = ({
 
   return (
     <div>
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {imageUrl && (
-        <img src={imageUrl} alt={`Placeholder for ${name}`} />
-      )}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+      {imageUrl && <img src={imageUrl} alt={`Placeholder for ${name}`} />}
     </div>
   );
 };
