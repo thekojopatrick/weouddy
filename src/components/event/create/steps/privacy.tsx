@@ -1,14 +1,15 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   FormControl,
   FormDescription,
   FormField,
   FormItem,
-} from "@/components/ui/form";
+  FormLabel,
+} from '@/components/ui/form';
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 interface PrivacyStepProps {
   onSubmit: () => void;
@@ -30,8 +31,8 @@ export function PrivacyStep({
           Lastly, Privacy Settings
         </h2>
         <p className="text-muted-foreground text-sm">
-          Choose who can see and join your event. You can always update these
-          settings later if you change your mind
+          Choose who can see and join your event. You can always
+          update these settings later if you change your mind
         </p>
       </div>
 
@@ -44,20 +45,50 @@ export function PrivacyStep({
       <FormField
         name="isPublic"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row gap-1 items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-              <FormDescription>Public</FormDescription>
+              <FormLabel>Public Access</FormLabel>
               <FormDescription>
-                By turning it on anyone can discover, view, and join your
-                event/room.
+                Turn this on to let anyone discover, view, and join.
               </FormDescription>
             </div>
             <FormControl>
-              <Switch
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                disabled={isSubmitting}
-              />
+              <div className="flex gap-1 items-center">
+                <span className="text-xs">No</span>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={isSubmitting}
+                />
+                <span className="text-xs">Yes</span>
+              </div>
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        name="requiresApproval"
+        render={({ field }) => (
+          <FormItem className="flex flex-row gap-1 items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="">
+                Require approval for access
+              </FormLabel>
+              <FormDescription>
+                Turn this on to approve each participant before they
+                can enter.
+              </FormDescription>
+            </div>
+            <FormControl>
+              <div className="flex gap-1 items-center">
+                <span className="text-xs">No</span>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={isSubmitting}
+                />
+                <span className="text-xs">Yes</span>
+              </div>
             </FormControl>
           </FormItem>
         )}
@@ -85,7 +116,7 @@ export function PrivacyStep({
               Creating...
             </>
           ) : (
-            "Finish"
+            'Finish'
           )}
         </Button>
       </div>
