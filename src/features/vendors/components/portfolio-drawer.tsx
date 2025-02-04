@@ -1,18 +1,18 @@
-'use client';
-import { Button } from '@/components/ui/button';
+"use client";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-} from '@/components/ui/drawer';
-import { X } from 'lucide-react';
-import Image from 'next/image';
-import type { PortfolioItem } from '../types';
+} from "@/components/ui/drawer";
+import { X } from "lucide-react";
+import Image from "next/image";
+import type { PortfolioItem } from "../types";
 
 interface PortfolioDrawerProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   item: PortfolioItem | null;
 }
 
@@ -30,23 +30,18 @@ export default function PortfolioDrawer({
               {item?.title}
             </DrawerTitle>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
         </DrawerHeader>
         {item && (
           <div className="space-y-4">
-            <div className="relative aspect-video w-full rounded-lg overflow-hidden">
+            <div className="relative aspect-video w-full max-w-[400px] rounded-lg overflow-hidden">
               <Image
-                src={item.imageUrl || '/placeholder.svg'}
+                src={item.imageUrl || "/placeholder.svg"}
                 alt={item.title}
                 className="object-cover"
                 fill
               />
             </div>
-            <p className="text-muted-foreground">
-              {item.description}
-            </p>
+            <p className="text-muted-foreground">{item.description}</p>
             <div className="flex gap-2">
               <Button className="bg-black text-white hover:bg-black/90">
                 Download

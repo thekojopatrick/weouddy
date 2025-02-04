@@ -1,24 +1,22 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Bookmark, Clock, Globe, Package } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import PortfolioDrawer from './portfolio-drawer';
-import { PortfolioItem } from '../types';
-import { designers, portfolioItems } from '../dummy-data';
-import ContactDialog from './contact-dialog';
-import MiniProfileDrawer from './mini-profile-dialog';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Bookmark, Clock, Globe, Package } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import PortfolioDrawer from "./portfolio-drawer";
+import { PortfolioItem } from "../types";
+import { designers, portfolioItems } from "../dummy-data";
+import ContactDialog from "./contact-dialog";
+import MiniProfileDrawer from "./mini-profile-dialog";
 
 export default function ProfileCard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isProfileDrawerOpen, setIsProfileDrawerOpen] =
-    useState(false);
-  const [selectedItem, setSelectedItem] =
-    useState<PortfolioItem | null>(null);
+  const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
   const [currentDesignerIndex, setCurrentDesignerIndex] = useState(0);
 
   const handleImageClick = (item: PortfolioItem) => {
@@ -28,19 +26,19 @@ export default function ProfileCard() {
 
   const handlePreviousDesigner = () => {
     setCurrentDesignerIndex((prev) =>
-      prev === 0 ? designers.length - 1 : prev - 1
+      prev === 0 ? designers.length - 1 : prev - 1,
     );
   };
 
   const handleNextDesigner = () => {
     setCurrentDesignerIndex((prev) =>
-      prev === designers.length - 1 ? 0 : prev + 1
+      prev === designers.length - 1 ? 0 : prev + 1,
     );
   };
 
   return (
     <>
-      <Card className="max-w-5xl mx-auto">
+      <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between p-6">
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16">
@@ -54,10 +52,7 @@ export default function ProfileCard() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h2 className="text-2xl font-semibold">Ramy Wafaa</h2>
-                <Badge
-                  variant="default"
-                  className="bg-black text-white"
-                >
+                <Badge variant="default" className="bg-black text-white">
                   PRO
                 </Badge>
               </div>
@@ -101,7 +96,7 @@ export default function ProfileCard() {
                 className="aspect-square relative rounded-lg overflow-hidden bg-muted hover:opacity-90 transition-opacity"
               >
                 <Image
-                  src={item.imageUrl || '/placeholder.svg'}
+                  src={item.imageUrl || "/placeholder.svg"}
                   alt={item.title}
                   className="object-cover"
                   fill
@@ -111,12 +106,12 @@ export default function ProfileCard() {
           </div>
           <div className="flex flex-wrap gap-2">
             {[
-              'character illustration',
-              'ux design',
-              'ui design',
-              'icon design',
-              'icongraphy',
-              'logo design',
+              "character illustration",
+              "ux design",
+              "ui design",
+              "icon design",
+              "icongraphy",
+              "logo design",
             ].map((skill) => (
               <Badge
                 key={skill}
