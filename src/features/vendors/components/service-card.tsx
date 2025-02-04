@@ -1,7 +1,8 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Clock, RefreshCcw } from "lucide-react";
-import Image from "next/image";
+'use client';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Clock, RefreshCcw } from 'lucide-react';
+import Image from 'next/image';
 
 interface ServiceCardProps {
   images: string[];
@@ -38,7 +39,7 @@ export default function ServiceCard({
               className="relative aspect-square rounded-lg overflow-hidden"
             >
               <Image
-                src={image || "/placeholder.svg"}
+                src={image || '/placeholder.svg'}
                 alt={`${title} preview ${index + 1}`}
                 fill
                 className="object-cover"
@@ -71,7 +72,7 @@ export default function ServiceCard({
         <div className="flex items-center gap-3 pt-4 border-t">
           <div className="relative h-10 w-10">
             <Image
-              src={provider.image || "/placeholder.svg"}
+              src={provider.image || '/placeholder.svg'}
               alt={provider.name}
               fill
               className="rounded-full object-cover"
@@ -85,8 +86,12 @@ export default function ServiceCard({
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">{provider.location}</span>
-              <span className="text-green-600">{provider.responseTime}</span>
+              <span className="text-muted-foreground">
+                {provider.location}
+              </span>
+              <span className="text-green-600">
+                {provider.responseTime}
+              </span>
             </div>
           </div>
         </div>

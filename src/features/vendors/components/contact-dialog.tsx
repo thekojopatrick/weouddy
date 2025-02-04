@@ -1,28 +1,44 @@
-"use client";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+'use client';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+} from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+} from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { MessageSquare, X } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MessageSquare, X } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface ContactDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function ContactDialog({ isOpen, onClose }: ContactDialogProps) {
+export default function ContactDialog({
+  isOpen,
+  onClose,
+}: ContactDialogProps) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -30,29 +46,36 @@ export default function ContactDialog({ isOpen, onClose }: ContactDialogProps) {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const content = (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-G07MTCX6YYJi40S63uPYuNdbnJLeum.png"
+          src="/placeholder.svg"
           alt="Profile picture"
           width={56}
           height={56}
           className="rounded-full"
         />
         <div className="space-y-1">
-          <h2 className="text-xl font-semibold">Connect with Ramy Wafaa</h2>
-          <p className="text-sm text-muted-foreground">Responds within a day</p>
+          <h2 className="text-xl font-semibold">
+            Connect with Ramy Wafaa
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Responds within a day
+          </p>
         </div>
       </div>
 
       <Tabs defaultValue="message">
         <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="message" className="flex items-center gap-2">
+          <TabsTrigger
+            value="message"
+            className="flex items-center gap-2"
+          >
             <MessageSquare className="w-4 h-4" />
             Message
           </TabsTrigger>
@@ -62,7 +85,8 @@ export default function ContactDialog({ isOpen, onClose }: ContactDialogProps) {
         <TabsContent value="message" className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="project-details">
-              Project Details <span className="text-destructive">*</span>
+              Project Details{' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="project-details"
@@ -84,16 +108,23 @@ export default function ContactDialog({ isOpen, onClose }: ContactDialogProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="1-week">Within 1 week</SelectItem>
-                <SelectItem value="2-weeks">Within 2 weeks</SelectItem>
-                <SelectItem value="1-month">Within 1 month</SelectItem>
-                <SelectItem value="flexible">Flexible timeline</SelectItem>
+                <SelectItem value="2-weeks">
+                  Within 2 weeks
+                </SelectItem>
+                <SelectItem value="1-month">
+                  Within 1 month
+                </SelectItem>
+                <SelectItem value="flexible">
+                  Flexible timeline
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="budget">
-              Project Budget <span className="text-destructive">*</span>
+              Project Budget{' '}
+              <span className="text-destructive">*</span>
             </Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">

@@ -1,7 +1,17 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+'use client';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+} from '@/components/ui/drawer';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,9 +20,9 @@ import {
   Share2,
   Star,
   X,
-} from "lucide-react";
-import Image from "next/image";
-import type { Designer } from "../types";
+} from 'lucide-react';
+import Image from 'next/image';
+import type { Designer } from '../types';
 
 interface MiniProfileDrawerProps {
   isOpen: boolean;
@@ -47,7 +57,7 @@ export default function MiniProfileDrawer({
               <div className="relative inline-block">
                 <div className="relative h-24 w-24 mx-auto">
                   <Image
-                    src={designer.avatar || "/placeholder.svg"}
+                    src={designer.avatar || '/placeholder.svg'}
                     alt={designer.name}
                     fill
                     className="rounded-full object-cover"
@@ -61,7 +71,9 @@ export default function MiniProfileDrawer({
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">{designer.name}</h2>
+                <h2 className="text-2xl font-bold">
+                  {designer.name}
+                </h2>
                 <div className="flex items-center justify-center gap-2 text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>{designer.location}</span>
@@ -112,7 +124,7 @@ export default function MiniProfileDrawer({
                       className="relative aspect-square rounded-lg overflow-hidden bg-muted"
                     >
                       <Image
-                        src={item.imageUrl || "/placeholder.svg"}
+                        src={item.imageUrl || '/placeholder.svg'}
                         alt={item.title}
                         fill
                         className="object-cover"
