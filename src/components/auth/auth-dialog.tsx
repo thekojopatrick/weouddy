@@ -7,7 +7,7 @@ import { LoginForm } from "./login-form";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { SignUpForm } from "./signup-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   signInAction,
@@ -29,17 +29,23 @@ export function AuthDialog({
   const [view, setView] = useState<"login" | "signup">(defaultView);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get redirect path from URL parameters and decode it
+  const redirectPath = decodeURIComponent(
+    searchParams.get("redirect") || "/discover",
+  );
 
   const handleAuthSuccess = async (
     message: string,
     description: string,
-    redirectPath: string = "/discover",
+    redirectTo: string = redirectPath,
   ) => {
     toast.success(message, { description });
     onOpenChangeAction(false);
     // Use setTimeout to ensure state updates complete before navigation
     setTimeout(() => {
-      router.push(redirectPath);
+      router.push(redirectTo);
     }, 0);
   };
 
@@ -51,6 +57,12 @@ export function AuthDialog({
       Object.entries(values).forEach(([key, value]) => {
         formData.append(key, value);
       });
+
+      // Add the redirect path from URL params
+      const redirect = searchParams.get("redirect");
+      if (redirect) {
+        formData.append("redirect", redirect);
+      }
 
       const response = await signInAction({}, formData);
 

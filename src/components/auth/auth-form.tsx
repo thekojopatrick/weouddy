@@ -1,11 +1,9 @@
 "use client";
 
 import * as z from "zod";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { LoginFormValues, signUpSchema } from "@/types/validation";
 import { useEffect, useState } from "react";
-
 import { LoginForm } from "@/components/auth/login-form";
 import { SignUpForm } from "@/components/auth/signup-form";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -22,6 +20,11 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Get redirect path from URL parameters and decode it
+  const redirectPath = decodeURIComponent(
+    searchParams.get("redirect") || "/discover",
+  );
+
   // Initialize tab from URL on mount
   useEffect(() => {
     const view = searchParams.get("view");
@@ -33,13 +36,13 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const handleAuthSuccess = async (
     message: string,
     description: string,
-    redirectPath: string = "/discover",
+    redirectTo: string = redirectPath,
   ) => {
     toast.success(message, { description });
 
     // Use setTimeout to ensure state updates complete before navigation
     setTimeout(() => {
-      router.push(redirectPath);
+      router.push(redirectTo);
     }, 0);
   };
 
@@ -52,7 +55,14 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
         formData.append(key, value);
       });
 
-      const { error, success } = await signUpAction({}, formData);
+      // Add redirect path to form data
+      formData.append("redirect", redirectPath);
+
+      const {
+        error,
+        success,
+        redirectPath: resultPath,
+      } = await signUpAction({}, formData);
 
       if (error) {
         toast.error("Error", {
@@ -64,6 +74,7 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
         await handleAuthSuccess(
           "Account created!",
           "Please check your email to verify your account.",
+          resultPath || redirectPath,
         );
       }
 
@@ -81,7 +92,9 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      // Pass the redirect path to the Google sign-in action
       const result = await signInWithGoogleAction();
+
       if (!result.success && result.error) {
         toast.error("Error", {
           description: result.error,
@@ -109,9 +122,16 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
     try {
       const formData = new FormData();
 
+      // Add the form values
       Object.entries(values).forEach(([key, value]) => {
         formData.append(key, value);
       });
+
+      // Add the redirect path from URL params
+      const redirect = searchParams.get("redirect");
+      if (redirect) {
+        formData.append("redirect", redirect);
+      }
 
       const response = await signInAction({}, formData);
 
@@ -120,11 +140,15 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
       }
 
       if (response.success && response.user) {
+        // Use the response's redirectPath or fall back to the URL param redirect
+        const redirectTo = response.redirectPath || redirect || "/discover";
+
         await handleAuthSuccess(
           "Welcome back!",
           "You have successfully signed in.",
+          redirectTo,
         );
-        return; // Exit early after successful auth
+        return;
       }
     } catch (error) {
       toast.error("Authentication Failed", {
@@ -138,7 +162,9 @@ export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   };
 
   const handleForgotPassword = () => {
-    router.push("/auth/forgot-password");
+    router.push(
+      `/auth/forgot-password?redirect=${encodeURIComponent(redirectPath)}`,
+    );
   };
 
   return (

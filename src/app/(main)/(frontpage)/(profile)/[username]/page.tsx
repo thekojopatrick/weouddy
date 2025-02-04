@@ -10,7 +10,7 @@ import {
 } from "@/server/actions/user/queries";
 import { ProfilePageData } from "@/types/prisma.types";
 
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 interface ProfilePageProps {
   params: {
@@ -38,7 +38,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     ]);
 
   if (!viewedUserProfile) {
-    redirect("/404");
+    notFound();
   }
 
   const profile: ProfilePageData = {

@@ -71,9 +71,14 @@ export async function updateSession(request: NextRequest) {
       !request.nextUrl.pathname.startsWith("/sign-up") &&
       !request.nextUrl.pathname.startsWith("/auth")
     ) {
-      // no user, potentially respond by redirecting the user to the login page
+      // Preserve the original URL the user was trying to access
       const url = request.nextUrl.clone();
+      const originalPath = url.pathname + url.search;
+
+      // Create the redirect URL to the auth page with the redirect parameter
       url.pathname = "/auth";
+      url.searchParams.set("redirect", originalPath);
+
       return NextResponse.redirect(url);
     }
 

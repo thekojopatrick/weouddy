@@ -77,8 +77,14 @@ export const signInWithMagicLinkAction = validatedAction(
 
 export const signInAction = validatedAction(
   signInSchema,
-  async (data): Promise<AuthResult> => {
+  async (data, formData): Promise<AuthResult> => {
     const supabase = await createClient();
+    const headersList = await headers();
+    const redirectPath = headersList.get("x-invoke-path") || "/discover";
+
+    // Get the redirect path from the FormData
+    const redirect = formData.get("redirect") as string;
+    const finalRedirectPath = redirect || "/discover";
 
     try {
       const { data: authData, error: signInError } =
@@ -103,10 +109,17 @@ export const signInAction = validatedAction(
 
       revalidatePath("/", "layout");
 
+      // Save the original path in the session
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          originalPath: redirectPath !== "/auth" ? redirectPath : "/discover",
+        },
+      });
+
       return {
         success: true,
         user: authData.user,
-        redirectPath: "/discover",
+        redirectPath: finalRedirectPath,
       };
     } catch (error) {
       console.error("Sign in error:", error);
@@ -122,6 +135,8 @@ export const signUpAction = validatedAction(
   signUpSchema,
   async (data): Promise<AuthResult> => {
     const supabase = await createClient();
+    const headersList = await headers();
+    const redirectPath = headersList.get("x-invoke-path") || "/discover";
 
     try {
       const { data: authData, error: signUpError } = await supabase.auth.signUp(
@@ -131,6 +146,8 @@ export const signUpAction = validatedAction(
           options: {
             data: {
               full_name: data.name,
+              originalPath:
+                redirectPath !== "/auth" ? redirectPath : "/discover",
             },
           },
         },
@@ -155,7 +172,7 @@ export const signUpAction = validatedAction(
       return {
         success: true,
         user: authData.user,
-        redirectPath: "/discover",
+        redirectPath: redirectPath !== "/auth" ? redirectPath : "/discover",
       };
     } catch (error) {
       console.error("Sign up error:", error);
@@ -170,12 +187,19 @@ export const signUpAction = validatedAction(
 export const signInWithGoogleAction = async (): Promise<AuthResult> => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
+  const headersList = await headers();
+  const redirectPath = headersList.get("x-invoke-path") || "/discover";
+
+  // Encode the original path to include in the OAuth redirect
+  const encodedRedirectPath = encodeURIComponent(
+    redirectPath !== "/auth" ? redirectPath : "/discover",
+  );
 
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${origin}/auth/callback`,
+        redirectTo: `${origin}/auth/callback?redirect=${encodedRedirectPath}`,
         queryParams: {
           access_type: "offline",
           prompt: "consent",

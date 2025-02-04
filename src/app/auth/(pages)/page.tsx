@@ -19,8 +19,16 @@ export default function AuthPage() {
       } = await supabase.auth.getUser();
 
       if (user) {
+        // Check if there's a stored original path
+        const originalPath = user.user_metadata?.originalPath || "/discover";
+
+        // Clear the stored path to prevent repeated redirects
+        await supabase.auth.updateUser({
+          data: { originalPath: null },
+        });
+
         setAuthenticated(true);
-        router.push("/discover");
+        router.push(originalPath);
       } else {
         setLoading(false);
       }
@@ -31,10 +39,19 @@ export default function AuthPage() {
     // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        // Check if there's a stored original path
+        const originalPath =
+          session.user.user_metadata?.originalPath || "/discover";
+
+        // Clear the stored path to prevent repeated redirects
+        await supabase.auth.updateUser({
+          data: { originalPath: null },
+        });
+
         setAuthenticated(true);
-        router.push("/discover");
+        router.push(originalPath);
       }
     });
 
