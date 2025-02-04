@@ -2,10 +2,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import CalendarWithDropdown from "./components/calendar-comp";
-import { DatePicker } from "@/components/ui/date-picker";
 import PlaceholderImage from "@/components/placeholder-image";
-import SVGPlaceholder from "@/components/svg-placeholder";
 
 export default async function TestPage() {
   const supabase = await createClient();

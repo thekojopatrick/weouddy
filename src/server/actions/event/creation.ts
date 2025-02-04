@@ -69,7 +69,7 @@ export async function createEventAction(data: EventFormValues, userId: string) {
 
     const event = await prisma.event.create({
       data: {
-        name: data.title,
+        name: data.name,
         description: data.description,
         type: data.type,
         location: data.location,

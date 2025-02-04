@@ -75,6 +75,9 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       const originalPath = url.pathname + url.search;
 
+      console.log("User:", user);
+      console.log("Original Path:", originalPath);
+
       // Create the redirect URL to the auth page with the redirect parameter
       url.pathname = "/auth";
       url.searchParams.set("redirect", originalPath);

@@ -249,7 +249,7 @@ export class JoinEventService {
           await tx.event.update({
             where: { id: event.id },
             data: {
-              members: { connect: { id: userId } },
+              attendees: { connect: { id: userId } },
             },
           });
         } else {
