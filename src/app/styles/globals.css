@@ -1,6 +1,6 @@
-@import url("cabinet-grotesk.css") layer(base);
+@import url('cabinet-grotesk.css') layer(base);
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
 
@@ -53,9 +53,13 @@
   --color-sidebar: hsl(var(--sidebar-background));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary-foreground: hsl(
+    var(--sidebar-primary-foreground)
+  );
   --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent-foreground: hsl(
+    var(--sidebar-accent-foreground)
+  );
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
@@ -84,7 +88,7 @@
 
 @layer utilities {
   :root {
-    --font-cabinet-grotesk: "cabinetGrotesk";
+    --font-cabinet-grotesk: 'cabinetGrotesk';
     --font-size: 14px;
     --secondary-type-size: 12px;
     --line-height: 1.6;
@@ -173,7 +177,7 @@
   }
 
   body {
-    font-family: "geistSans", Helvetica, sans-serif;
+    font-family: 'geistSans', Helvetica, sans-serif;
   }
 }
 @layer base {
@@ -256,6 +260,9 @@
 }
 
 @layer base {
+  :target {
+    scroll-margin-top: var(--scroll-offset, 4rem);
+  }
   * {
     @apply border-border;
   }
@@ -263,15 +270,6 @@
     font-size: var(--font-size);
     line-height: var(--line-height);
     @apply bg-background text-foreground font-sans;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
 
