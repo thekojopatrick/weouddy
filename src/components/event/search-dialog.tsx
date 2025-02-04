@@ -1,46 +1,36 @@
-'use client';
+"use client";
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   MotionDialog,
-} from '@/components/ui/custom-motion-dialog';
-import { Loader2, Search } from 'lucide-react';
+} from "@/components/ui/custom-motion-dialog";
+import { Loader2, Search } from "lucide-react";
 
-import { EventCard } from '@/components/event/event-card';
-import { EventWithDetails } from '@/types/prisma.types';
-import { Input } from '@/components/ui/input';
-import { formatEventDateTime } from '@/lib/formatters';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { ScrollArea } from '../ui/scroll-area';
-import { useEvents } from '@/hooks/event/use-event';
+import { EventCard } from "@/components/event/event-card";
+import { EventWithDetails } from "@/types/prisma.types";
+import { Input } from "@/components/ui/input";
+import { formatEventDateTime } from "@/lib/formatters";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
+import { useEvents } from "@/hooks/event/use-event";
 
-export default function SearchDialog({}: {
-  events?: EventWithDetails[];
-}) {
+export default function SearchDialog({}: { events?: EventWithDetails[] }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
   const { events } = useEvents();
-
-  console.log({ events });
 
   // Filter events based on search query
   // In search-dialog.tsx
   const filteredEvents =
     events?.events.filter(
       (event: EventWithDetails) =>
-        event.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        event.description
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        event.location
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase())
+        event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.location?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) || []; // Provide an empty array as fallback
 
   const handleSearch = (value: string) => {
@@ -70,7 +60,7 @@ export default function SearchDialog({}: {
         />
       </div>
 
-      <DialogContent className="w-full h-screen max-w-full md:max-w-(--breakpoint-md) mx-auto md:h-[60vh] rounded-none md:rounded-lg">
+      <DialogContent className="w-full min-h-screen h-screen max-w-full md:max-w-(--breakpoint-md) mx-auto md:my-auto md:max-h-[60vh] md:min-h-[60vh] md:h-[60vh] rounded-none md:rounded-lg">
         <DialogHeader className="p-4 border-b">
           <div className="flex items-center gap-2">
             <DialogClose className="static p-2 opacity-100 rounded-full" />
@@ -92,9 +82,7 @@ export default function SearchDialog({}: {
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : searchQuery &&
-              filteredEvents &&
-              filteredEvents.length === 0 ? (
+            ) : searchQuery && filteredEvents && filteredEvents.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground text-sm">
                   No events found for &quot;{searchQuery}&quot;
@@ -104,7 +92,7 @@ export default function SearchDialog({}: {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredEvents.map((event: EventWithDetails) => {
                   const { date, time } = formatEventDateTime(
-                    event.dateTime as never
+                    event.dateTime as never,
                   );
                   return (
                     <div

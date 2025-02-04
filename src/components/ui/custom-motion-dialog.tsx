@@ -234,7 +234,7 @@ function DialogContent({ children, className, container }: DialogContentProps) {
           onAnimationComplete={onAnimationComplete}
           className={cn(
             "fixed rounded-lg border border-zinc-200 p-0 shadow-lg dark:border dark:border-zinc-700",
-            "backdrop:bg-black/50 backdrop:backdrop-blur-xs",
+            "backdrop:bg-black/10 backdrop:backdrop-blur-none",
             "open:flex open:flex-col",
             className,
           )}
