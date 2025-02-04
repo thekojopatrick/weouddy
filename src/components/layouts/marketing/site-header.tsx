@@ -1,33 +1,31 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { CountrySelector } from '@/components/country-selector';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { CountrySelector } from "@/components/country-selector";
+import Image from "next/image";
+import Link from "next/link";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { ChevronDown } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/sheet";
+import { ChevronDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function SiteHeader() {
-  const isSmallDevice = useMediaQuery(
-    'only screen and (max-width : 768px)'
-  );
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const [isOpen, setIsOpen] = useState(false);
 
   const mobileMenuItems = [
-    { title: 'Front page', href: '/discover' },
-    { title: 'Blog', href: '/blog' },
-    { title: 'About', href: '/about' },
-    { title: 'Support us', href: '/support-us' },
-    { title: 'Contact', href: '/contact' },
+    { title: "Front page", href: "/discover" },
+    { title: "Blog", href: "/blog" },
+    { title: "About", href: "/about" },
+    { title: "Support us", href: "/support-us" },
+    { title: "Contact", href: "/contact" },
   ];
 
   return (
@@ -38,8 +36,8 @@ export function SiteHeader() {
         {/* Logo */}
         <Link href="/" className="relative">
           <Image
-            src={isSmallDevice ? '/brand/logomark.svg' : '/logo.svg'}
-            alt={'WeOuddy'}
+            src={isSmallDevice ? "/brand/logomark.svg" : "/logo.svg"}
+            alt={"WeOuddy"}
             className="object-cover"
             width={isSmallDevice ? 40 : 120}
             height={isSmallDevice ? 40 : 120}
@@ -87,11 +85,7 @@ export function SiteHeader() {
               >
                 Contact
               </Link>
-              <Button
-                variant="default"
-                className="rounded-full"
-                asChild
-              >
+              <Button variant="default" className="rounded-full" asChild>
                 <Link href="/discover">Back to Explore</Link>
               </Button>
               <CountrySelector />

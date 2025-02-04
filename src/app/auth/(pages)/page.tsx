@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AuthForm } from '@/components/auth/auth-form';
-import { createClient, supabase } from '@/utils/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AuthForm } from "@/components/auth/auth-form";
+import { createClient, supabase } from "@/utils/supabase/client";
+import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,6 @@ export default function AuthPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    console.log('Calling 1');
 
     const checkAuth = async () => {
       const {
@@ -21,51 +20,33 @@ export default function AuthPage() {
         error,
       } = await supabase.auth.getUser();
 
-      console.log('Calling 2');
-      console.log('User:', user);
-      console.log('Error:', error);
-
       if (user) {
         // Check if there's a stored original path
-        const originalPath =
-          user.user_metadata?.originalPath || '/discover';
+        const originalPath = user.user_metadata?.originalPath || "/discover";
 
         // Clear the stored path to prevent repeated redirects
-        const { error: updateError } = await supabase.auth.updateUser(
-          {
-            data: { originalPath: null },
-          }
-        );
-        console.log('Update User Error:', updateError);
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { originalPath: null },
+        });
 
-        console.log('Calling 3');
         setAuthenticated(true);
         router.push(originalPath);
       } else {
-        console.log('Calling 4');
         setLoading(false);
       }
     };
+
+    checkAuth();
 
     // Set up auth state listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth State Change - Event:', event);
-      console.log('Auth State Change - Session:', session);
-      if (session) {
-        console.log('Calling session 2');
+      if (session?.user) {
         setAuthenticated(true);
-        router.push(
-          session.user.user_metadata?.originalPath || '/discover'
-        );
+        router.push(session.user.user_metadata?.originalPath || "/discover");
       }
     });
-
-    checkAuth();
-
-    console.log('Calling session 3');
-    console.log({ subscription });
 
     setLoading(false);
 
