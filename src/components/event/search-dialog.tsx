@@ -1,34 +1,47 @@
+'use client';
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   MotionDialog,
-} from "@/components/ui/custom-motion-dialog";
-import { Loader2, Search } from "lucide-react";
+} from '@/components/ui/custom-motion-dialog';
+import { Loader2, Search } from 'lucide-react';
 
-import { EventCard } from "@/components/event/event-card";
-import { EventWithDetails } from "@/types/prisma.types";
-import { Input } from "@/components/ui/input";
-import { formatEventDateTime } from "@/lib/formatters";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
-import { useEvents } from "@/hooks/event/use-event";
+import { EventCard } from '@/components/event/event-card';
+import { EventWithDetails } from '@/types/prisma.types';
+import { Input } from '@/components/ui/input';
+import { formatEventDateTime } from '@/lib/formatters';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { ScrollArea } from '../ui/scroll-area';
+import { useEvents } from '@/hooks/event/use-event';
 
-export default function SearchDialog({}: { events?: EventWithDetails[] }) {
+export default function SearchDialog({}: {
+  events?: EventWithDetails[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
   const { events } = useEvents();
 
+  console.log({ events });
+
   // Filter events based on search query
-  const filteredEvents = events?.filter(
-    (event: EventWithDetails) =>
-      event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location?.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // In search-dialog.tsx
+  const filteredEvents =
+    events?.events.filter(
+      (event: EventWithDetails) =>
+        event.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        event.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        event.location
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase())
+    ) || []; // Provide an empty array as fallback
 
   const handleSearch = (value: string) => {
     setIsSearching(true);
@@ -79,17 +92,19 @@ export default function SearchDialog({}: { events?: EventWithDetails[] }) {
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : searchQuery && filteredEvents.length === 0 ? (
+            ) : searchQuery &&
+              filteredEvents &&
+              filteredEvents.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground text-sm">
                   No events found for &quot;{searchQuery}&quot;
                 </p>
               </div>
-            ) : searchQuery ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredEvents?.map((event: EventWithDetails) => {
+            ) : searchQuery && filteredEvents ? (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredEvents.map((event: EventWithDetails) => {
                   const { date, time } = formatEventDateTime(
-                    event.dateTime as never,
+                    event.dateTime as never
                   );
                   return (
                     <div
@@ -106,6 +121,12 @@ export default function SearchDialog({}: { events?: EventWithDetails[] }) {
                         category={event.type}
                         location={event.location!}
                         slug={event.slug!}
+                        host={{
+                          name: event.host.name!,
+                          id: event.hostId,
+                          username: event.host.username,
+                          avatarUrl: event.host.avatarUrl,
+                        }}
                         accessType={event.accessType as never}
                         description={event.description!}
                       />
