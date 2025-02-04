@@ -25,6 +25,7 @@ export function SiteHeader() {
     { title: "Blog", href: "/blog" },
     { title: "About", href: "/about" },
     { title: "Support us", href: "/support-us" },
+    { title: "Help center", href: "/help" },
     { title: "Contact", href: "/contact" },
   ];
 

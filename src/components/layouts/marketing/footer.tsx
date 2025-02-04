@@ -50,6 +50,18 @@ const Footer = () => {
                 About us
               </Link>
               <Link
+                href="/support-us"
+                className="block text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                Support us
+              </Link>
+              <Link
+                href="/help"
+                className="block text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                Help center
+              </Link>
+              <Link
                 href="/contact"
                 className="block text-sm text-gray-400 hover:text-white transition-colors"
               >
