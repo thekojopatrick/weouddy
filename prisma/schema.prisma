@@ -41,6 +41,7 @@ model User {
   feedbacks              Feedback[]
   messageReactions       MessageReaction[]
   vendorReviews          VendorReview[]
+  Booking                Booking[]
 }
 
 model Event {
@@ -279,6 +280,7 @@ enum Role {
 enum UserRole {
   ADMIN
   USER
+  VENDOR
   PARTNER
   MEMBER
 }
@@ -392,6 +394,9 @@ enum VendorType {
   DECOR
   TRANSPORTATION
   PLANNER
+  STYLIST
+  RENTAL
+  CORPORATE
 }
 
 enum PriceRange {
@@ -401,6 +406,13 @@ enum PriceRange {
   CUSTOM
 }
 
+enum TravelScope {
+  LOCAL_ONLY
+  NATIONAL
+  INTERNATIONAL
+  NATIONAL_AND_INTERNATIONAL
+}
+
 model Vendor {
   id           String     @id @default(cuid())
   name         String
@@ -408,30 +420,66 @@ model Vendor {
   services     String[] // ["Wedding Photography", "Corporate Events"]
   priceRange   PriceRange
   location     String? // Geocodable address
-  website      String?
+  rating       Float?     @default(0)
+  totalReviews Int        @default(0)
+
+  // AI
+  aiTags     String[] // AI-generated tags for filtering and recommendations
+  aiMetadata Json? // For ML features (embedding vectors, etc)
+
+  // Contact info
   contactEmail String?
   phone        String?
-  rating       Float?     @default(0)
-  aiMetadata   Json? // For ML features (embedding vectors, etc)
+  website      String?
+
+  // Preferences
+  travelScope   TravelScope @default(LOCAL_ONLY)
+  travelFee     Float?
+  servingCities String[] // Cities vendor primarily serves
+  travelNotes   String? // Additional travel policy details
 
   userId String @db.Uuid
   user   User   @relation(fields: [userId], references: [id])
 
   // Relations
-  events     EventVendor[]
-  reviews    VendorReview[]
+  operations VendorOperations?
   attributes VendorAttribute[]
   packages   VendorPackage[]
+  events     EventVendor[]
+  reviews    VendorReview[]
+  messages   ChatMessage[]
+  bookings   Booking[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  ChatMessage ChatMessage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([type])
   @@index([location])
   @@index([priceRange])
   @@index([rating])
   @@index([userId])
+}
+
+model VendorOperations {
+  id       String @id @default(cuid())
+  vendorId String @unique // Links to VendorMetadata
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  // Business hours
+  businessHours Json?
+
+  // Availability
+  availability Json? // Store time slots as JSON (e.g., {"2024-09-01": ["9:00 AM", "2:00 PM"]})
+
+  // Performance metrics
+  completionRate   Float? // % of bookings completed successfully
+  responseTime     Int? // Average time to respond to inquiries
+  cancellationRate Float? // % of bookings cancelled
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
 }
 
 model VendorAttribute {
@@ -445,13 +493,20 @@ model VendorAttribute {
 }
 
 model VendorPackage {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   vendorId    String
   name        String // "Premium Wedding Package"
   description String?
   price       Float?
-  inclusions  String[] // ["8hr Coverage", "2 Photographers", "Edited Photos"]
-  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+
+  inclusions String[] // ["8hr Coverage", "2 Photographers", "Edited Photos"]
+
+  basePrice     Float
+  surgePrice    Float? // For high-demand periods
+  discountRules Json? // E.g., {"earlyBird": 0.1, "groupDiscount": 0.15}
+
+  vendor  Vendor    @relation(fields: [vendorId], references: [id])
+  Booking Booking[]
 }
 
 model EventVendor {
@@ -466,14 +521,49 @@ model EventVendor {
   @@unique([eventId, vendorId])
 }
 
+model Booking {
+  id       String        @id @default(cuid())
+  date     DateTime
+  timeSlot String // "9:00 AM"
+  status   BookingStatus @default(PENDING)
+  notes    String?
+
+  vendorId  String
+  userId    String  @db.Uuid
+  packageId String?
+
+  vendor  Vendor         @relation(fields: [vendorId], references: [id])
+  user    User           @relation(fields: [userId], references: [id])
+  package VendorPackage? @relation(fields: [packageId], references: [id])
+
+  reviews VendorReview[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
+  @@index([userId])
+  @@index([date])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
 model VendorReview {
-  id       String  @id @default(cuid())
-  rating   Int
-  comment  String?
-  userId   String  @db.Uuid
-  vendorId String
-  user     User    @relation(fields: [userId], references: [id])
-  vendor   Vendor  @relation(fields: [vendorId], references: [id])
+  id        String  @id @default(cuid())
+  rating    Int
+  comment   String?
+  userId    String  @db.Uuid
+  vendorId  String
+  bookingId String?
+
+  user    User     @relation(fields: [userId], references: [id])
+  vendor  Vendor   @relation(fields: [vendorId], references: [id])
+  booking Booking? @relation(fields: [bookingId], references: [id])
 
   @@index([vendorId])
   @@index([userId])
