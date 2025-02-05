@@ -41,7 +41,9 @@ model User {
   feedbacks              Feedback[]
   messageReactions       MessageReaction[]
   vendorReviews          VendorReview[]
-  Booking                Booking[]
+  bookings               Booking[]
+  notifications          Notification[]
+  vendorPageVisits       VendorPageVisit[]
 }
 
 model Event {
@@ -81,6 +83,7 @@ model Event {
   roles        EventRole[]
   eventLogs    EventActivity[]
   eventVendors EventVendor[]
+  Notification Notification[]
 
   @@index([hostId])
   @@index([createdAt])
@@ -138,17 +141,18 @@ model ChatSettings {
 }
 
 model Post {
-  id        String      @id @default(cuid())
-  caption   String?
-  media     PostMedia[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  userId    String      @db.Uuid
-  eventId   String
-  user      User        @relation(fields: [userId], references: [id])
-  event     Event       @relation(fields: [eventId], references: [id])
-  comments  Comment[]
-  likes     Like[]
+  id           String         @id @default(cuid())
+  caption      String?
+  media        PostMedia[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userId       String         @db.Uuid
+  eventId      String
+  user         User           @relation(fields: [userId], references: [id])
+  event        Event          @relation(fields: [eventId], references: [id])
+  comments     Comment[]
+  likes        Like[]
+  Notification Notification[]
 
   @@index([eventId])
   @@index([userId])
@@ -376,6 +380,7 @@ enum FeedbackCategory {
   CONTENT
   TECHNICAL
   GENERAL
+  SUGGESTION
 }
 
 enum FeedbackStatus {
@@ -383,6 +388,60 @@ enum FeedbackStatus {
   REVIEWED
   RESOLVED
   ARCHIVED
+}
+
+enum InvitationStatus {
+  PENDING  @map("pending")
+  ACCEPTED @map("accepted")
+  REVOKED  @map("revoked")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType // Use enum for consistent types
+  userId    String           @db.Uuid // Required: Notifications are always tied to a user
+  eventId   String? // Optional: Not all notifications are tied to events
+  postId    String? // Optional: Not all notifications are tied to posts
+  subject   String?          @db.VarChar(128) // Short subject line
+  content   String           @db.VarChar(2000) // Reasonable length for notification content
+  link      String?          @db.VarChar(500) // Shorter URL length
+  seenAt    DateTime? // Timestamp when the notification was seen
+  dismissed Boolean          @default(false) // Whether the notification was dismissed
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  post  Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([userId]) // For fetching all notifications for a user
+  @@index([eventId]) // For fetching notifications tied to an event
+  @@index([postId]) // For fetching notifications tied to a post
+  @@index([createdAt]) // For sorting notifications by creation time
+}
+
+// Enum for notification types
+enum NotificationType {
+  EVENT_REMINDER // "Your event starts in 1 hour"
+  EVENT_UPDATE // "The event location has changed"
+  POST_LIKE // "John liked your post"
+  POST_COMMENT // "Jane commented on your post"
+  NEW_FOLLOWER // "You have a new follower"
+  MESSAGE // "You have a new message"
+  SYSTEM // General system notifications
+
+  // Vendor-specific types
+  BOOKING_REQUEST
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  PAYMENT_RECEIVED
+  REVIEW_RECEIVED
+  VENDOR_INVITATION
+  VENDOR_ACCOUNT_UPDATE
+  VENDOR_PERFORMANCE_METRICS
+  VENDOR_PROMOTION
 }
 
 //Vendors Management
@@ -452,8 +511,9 @@ model Vendor {
   messages   Message[]
   bookings   Booking[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  VendorPageVisit VendorPageVisit[]
 
   @@index([type])
   @@index([location])
@@ -569,6 +629,18 @@ model VendorReview {
 
   @@index([vendorId])
   @@index([userId])
+}
+
+model VendorPageVisit {
+  id        String   @id @default(cuid())
+  vendorId  String   @db.Uuid
+  userId    String?  @db.Uuid
+  timestamp DateTime @default(now())
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([vendorId], map: "IX_VendorPageVisit_vendorId")
+  @@index([userId], map: "IX_VendorPageVisit_userId")
 }
 
 enum VendorStatus {
