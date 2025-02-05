@@ -17,6 +17,16 @@ export interface Designer {
   portfolioItems: PortfolioItem[];
 }
 
+export interface FilterState {
+  priceRange: PriceRange[];
+  vendorType: VendorType[];
+  rating: number;
+  location: string;
+  availableOnly: boolean;
+  sortBy: 'rating' | 'price_low' | 'price_high' | 'reviews';
+  category: string;
+}
+
 export interface Availability {
   date: Date;
   timeSlots: {
@@ -27,16 +37,31 @@ export interface Availability {
 }
 
 export type VendorType =
-  | "VENUE"
-  | "CATERER"
-  | "PHOTOGRAPHER"
-  | "VIDEOGRAPHER"
-  | "ENTERTAINMENT"
-  | "DECOR"
-  | "TRANSPORTATION"
-  | "PLANNER";
-export type PriceRange = "BUDGET" | "MIDRANGE" | "LUXURY" | "CUSTOM";
-export type VendorStatus = "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
+  | 'VENUE'
+  | 'PHOTOGRAPHER'
+  | 'VIDEOGRAPHER'
+  | 'RENTAL'
+  | 'DECOR'
+  | 'PLANNER'
+  | 'CATERER'
+  | 'ENTERTAINMENT'
+  | 'STYLIST';
+
+// export type VendorType =
+//   | 'VENUE'
+//   | 'CATERER'
+//   | 'PHOTOGRAPHER'
+//   | 'VIDEOGRAPHER'
+//   | 'ENTERTAINMENT'
+//   | 'DECOR'
+//   | 'TRANSPORTATION'
+//   | 'PLANNER';
+export type PriceRange = 'BUDGET' | 'MIDRANGE' | 'LUXURY' | 'CUSTOM';
+export type VendorStatus =
+  | 'PENDING'
+  | 'CONTACTED'
+  | 'BOOKED'
+  | 'DECLINED';
 
 export interface Vendor {
   id: string;
@@ -54,6 +79,7 @@ export interface Vendor {
   attributes: VendorAttribute[];
   packages: VendorPackage[];
   reviews: VendorReview[];
+  isAvailable?: boolean;
   //availability?: Availability[];
   createdAt: Date;
   updatedAt: Date;

@@ -1,12 +1,10 @@
-import Header from "@/features/vendors/components/header";
-import ProfileCard from "./components/profile-card";
-import VendorsPage from "./components/vendors";
+import { vendorsData } from './dummy-data';
+import Marketplace from './components/new-marketplace';
 
 export default function FindProfessionalsPage() {
   return (
-    <main className="container max-w-7xl mx-auto px-4">
-      <Header />
-      <VendorsPage />
+    <main className="container max-w-7xl mx-auto px-4 min-h-screen">
+      <Marketplace vendors={vendorsData} />
     </main>
   );
 }
