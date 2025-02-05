@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Comments } from "./comment-post-dialog";
 import { EventPostCardProps } from "./post-card";
 import { PostMediaSlider } from "@/components/post/post-media-slider";
-import { formatTimeAgo } from "@/lib/formatters";
+import { formatTimeAgo } from "@/lib/utils/formatters";
 import { usePostInteractions } from "@/hooks/post/use-post-interaction";
 
 export function EventPostWithMedia({ post, userId }: EventPostCardProps) {

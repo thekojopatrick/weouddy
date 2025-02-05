@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Comments } from "./comment-post-dialog";
 import { EventPostCardProps } from "./post-card";
 import React from "react";
-import { formatTimeAgo } from "@/lib/formatters";
+import { formatTimeAgo } from "@/lib/utils/formatters";
 import { getNameInitials } from "@/lib/utils";
 import { usePostInteractions } from "@/hooks/post/use-post-interaction";
 

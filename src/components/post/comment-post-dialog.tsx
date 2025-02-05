@@ -11,7 +11,7 @@ import { MoreVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmojiPicker } from "@/components/emoji-picker";
 import { Input } from "@/components/ui/input";
-import { formatTimeAgo } from "@/lib/formatters";
+import { formatTimeAgo } from "@/lib/utils/formatters";
 import { getNameInitials } from "@/lib/utils";
 import useCurrentUser from "@/hooks/account/use-current-user";
 import { useMediaQuery } from "@/hooks/useMediaQuery";

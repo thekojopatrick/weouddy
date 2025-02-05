@@ -18,7 +18,7 @@ import { User } from "@supabase/supabase-js";
 
 //utils
 import { cn } from "@/lib/utils";
-import { formatEventDateTime } from "@/lib/formatters";
+import { formatEventDateTime } from "@/lib/utils/formatters";
 
 //hooks
 import { useAuthProtection } from "@/hooks/use-auth-protection";

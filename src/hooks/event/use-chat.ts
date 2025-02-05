@@ -2,13 +2,11 @@ import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { ChatMessage, ChatSettings } from "@/types/chat";
-import { useRouter } from "next/navigation";
 
 export const useEventChat = (eventId: string, userId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [settings, setSettings] = useState<ChatSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     console.log("Starting chat subscription for eventId:", eventId);

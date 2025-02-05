@@ -10,7 +10,7 @@ import { Loader2, Search } from "lucide-react";
 import { EventCard } from "@/components/event/event-card";
 import { EventWithDetails } from "@/types/prisma.types";
 import { Input } from "@/components/ui/input";
-import { formatEventDateTime } from "@/lib/formatters";
+import { formatEventDateTime } from "@/lib/utils/formatters";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";

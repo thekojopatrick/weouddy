@@ -1,4 +1,4 @@
-import { supabase } from "../client";
+import { supabase } from "@/utils/supabase/client";
 
 export async function uploadToSupabase(
   file: File,

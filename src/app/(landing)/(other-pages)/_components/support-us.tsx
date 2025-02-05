@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 export default function SupportUsPage() {
   return (
     <div className="min-h-screen bg-white">

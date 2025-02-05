@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Vendor } from "../types";
 import type { ContactFormData } from "../vaildation";
 import { contactFormSchema } from "../vaildation";

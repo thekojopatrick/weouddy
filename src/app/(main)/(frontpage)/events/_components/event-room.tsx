@@ -10,7 +10,7 @@ import { EventWithFullData } from "@/types/event";
 import React from "react";
 import { User } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
-import { formatEventDateTime } from "@/lib/formatters";
+import { formatEventDateTime } from "@/lib/utils/formatters";
 import { useAuthProtection } from "@/hooks/use-auth-protection";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import FeedbackDialog from "@/components/feedback-dialog";

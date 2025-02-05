@@ -2,7 +2,7 @@ import { env } from "@/env";
 import { RateLimitError } from "./errors";
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
-import { getIp } from "@/lib/get-ip";
+import { getIp } from "@/lib/utils/get-ip";
 
 export class RateLimiterService {
   private static instance: RateLimiterService;
