@@ -319,7 +319,7 @@ export function CreatePostDialog({
               Discard
             </AlertDialogCancel>
             <AlertDialogAction
-              //onClick={() => setShowCloseWarning(false)}
+              onClick={() => setShowCloseWarning(false)}
               className="bg-transparent border-gray-300 text-black hover:bg-gray-100 shadow-xs border rounded-xl"
             >
               Continue
