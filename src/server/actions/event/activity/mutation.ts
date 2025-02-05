@@ -1,12 +1,12 @@
-import { getSession } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function joinEvent(eventId: string) {
   // Get the current authenticated user
   const session = await getSession();
 
   if (!session?.user) {
-    throw new Error('User must be authenticated to join a event');
+    throw new Error("User must be authenticated to join a event");
   }
 
   // Check if user is already a member to prevent duplicates
@@ -22,7 +22,7 @@ export async function joinEvent(eventId: string) {
   });
 
   if (existingMembership) {
-    return { message: 'Already a member', status: 'existing' };
+    return { message: "Already a member", status: "existing" };
   }
 
   // Add user to event members
@@ -43,13 +43,13 @@ export async function joinEvent(eventId: string) {
     data: {
       eventId: eventId,
       userId: session.userId,
-      type: 'JOIN',
+      type: "JOIN",
     },
   });
 
   return {
-    message: 'Joined event successfully',
-    status: 'joined',
+    message: "Joined event successfully",
+    status: "joined",
     membersCount: updatedevent.attendees.length,
   };
 }
