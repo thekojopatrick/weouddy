@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChatHeader } from '@/components/chat/chat-header';
-import { ChatInput } from '@/components/chat/chat-input';
-import { ChatMessages } from '@/components/chat/message-list';
-import { Button } from '@/components/ui/button';
-import CustomDrawer from '@/components/ui/custom-drawer';
-import { useEventChat } from '@/hooks/event/use-chat';
-import { cn } from '@/lib/utils';
-import { RiChat1Fill } from '@remixicon/react';
+import { useState } from "react";
+import { ChatHeader } from "@/components/chat/chat-header";
+import { ChatInput } from "@/components/chat/chat-input";
+import { ChatMessages } from "@/components/chat/message-list";
+import { Button } from "@/components/ui/button";
+import CustomDrawer from "@/components/ui/custom-drawer";
+import { useEventChat } from "@/hooks/event/use-chat";
+import { cn } from "@/lib/utils";
+import { RiChat1Fill } from "@remixicon/react";
 
 const JoinChatRoom = ({
   isSmallDevice,
@@ -25,13 +25,8 @@ const JoinChatRoom = ({
     avatarUrl: string;
   };
 }) => {
-  const {
-    messages,
-    isLoading,
-    sendMessage,
-    deleteMessage,
-    pinMessage,
-  } = useEventChat(eventId, user.id);
+  const { messages, isLoading, sendMessage, deleteMessage, pinMessage } =
+    useEventChat(eventId, user.id);
   const [showDialog, setShowDialog] = useState(false);
 
   console.log({ isLoading });
@@ -47,7 +42,7 @@ const JoinChatRoom = ({
 
       await sendMessage(content);
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error("Failed to send message:", error);
     }
   };
 
@@ -55,19 +50,15 @@ const JoinChatRoom = ({
     <>
       <Button
         variant="outline"
-        size={isSmallDevice ? 'icon' : 'lg'}
+        size={isSmallDevice ? "icon" : "lg"}
         className={cn(
-          'rounded-full shadow-lg',
-          isSmallDevice ? 'size-12' : 'h-12'
+          "rounded-full shadow-lg",
+          isSmallDevice ? "size-12" : "h-12",
         )}
         onClick={handleClick}
       >
-        {isSmallDevice ? (
-          <RiChat1Fill />
-        ) : (
-          <RiChat1Fill className="size-6" />
-        )}
-        <span className={isSmallDevice ? 'sr-only' : 'font-semibold'}>
+        {isSmallDevice ? <RiChat1Fill /> : <RiChat1Fill className="size-6" />}
+        <span className={isSmallDevice ? "sr-only" : "font-semibold"}>
           Vibez
         </span>
       </Button>
@@ -93,9 +84,7 @@ const JoinChatRoom = ({
             />
           </div>
         }
-        footerContent={
-          <ChatInput onSendMessage={handleSendMessage} />
-        }
+        footerContent={<ChatInput onSendMessage={handleSendMessage} />}
       />
     </>
   );

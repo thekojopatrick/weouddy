@@ -3,7 +3,6 @@
 import { CalendarDays, MapPin, Settings, Users } from "lucide-react";
 
 import CreatePostButton from "./create-post-button";
-import JoinChatRoom from "./join-chat-room";
 import { EventSettingsModal } from "@/components/event/event-settings-modal";
 import { EventWithFullData } from "@/types/event";
 
@@ -180,7 +179,9 @@ export default function EventRoom({
             isSmallDevice ? "right-5" : "right-8",
           )}
         >
-          {/* Wrap JoinChatRoom with auth protection */}
+          {/* 
+       
+          // Wrap JoinChatRoom with auth protection //
           <div
             onClick={() =>
               protectAction(
@@ -203,7 +204,8 @@ export default function EventRoom({
               eventName={event.name}
               user={user as never}
             />
-          </div>
+          </div> 
+          */}
 
           {/* Wrap CreatePostButton with auth protection */}
           <div
