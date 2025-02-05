@@ -39,10 +39,10 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
                 src={isSmallDevice ? "/brand/logomark.svg" : "/logo.svg"}
                 alt={"WeOuddy"}
                 className="object-cover"
-                width={isSmallDevice ? 60 : 120}
-                height={isSmallDevice ? 60 : 120}
+                width={isSmallDevice ? 40 : 120}
+                height={isSmallDevice ? 40 : 120}
               />
-              <Badge className="bg-emerald-500 hover:bg-emerald-400 rounded-full absolute -right-4 md:-right-2 top-0 transform rotate-1 -translate-y-2 md:translate-y-0 md:rotate-10">
+              <Badge className="bg-emerald-500 hover:bg-emerald-400 rounded-full absolute -right-4 md:-right-3 top-0 transform rotate-1 -translate-y-2 translate-x-1 md:translate-y-0 md:rotate-15 cursor-pointer text-[8px]">
                 Beta
               </Badge>
               <span className="text-xl font-bold sr-only">WeOuddy</span>
