@@ -185,7 +185,8 @@ enum AnalyticsType {
 //USER MANAGEMENT
 
 model User {
-    id               String    @id @db.Uuid
+    id               String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId         String    @unique @default(cuid()) // External ID (CUID)
     email            String?   @unique
     username         String?   @unique
     name             String?
@@ -230,7 +231,8 @@ model User {
 //EVENT MANAGEMENT
 
 model Event {
-    id          String   @id @default(cuid())
+    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId    String   @unique @default(cuid()) // External ID (CUID)
     name        String
     type        String
     description String?
@@ -278,9 +280,10 @@ model Event {
 }
 
 model Attendee {
-    id        String         @id @default(cuid())
+    id        String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String         @unique @default(cuid()) // External ID (CUID)
     userId    String         @db.Uuid
-    eventId   String
+    eventId   String         @db.Uuid
     status    AttendeeStatus @default(APPROVED)
     createdAt DateTime       @default(now())
 
@@ -295,10 +298,11 @@ model Attendee {
 }
 
 model EventTeam {
-    id      String @id @default(cuid())
-    eventId String
-    name    String // Team name (e.g., "Event Coordination Team")
-    event   Event  @relation(fields: [eventId], references: [id])
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    eventId  String @db.Uuid
+    name     String // Team name (e.g., "Event Coordination Team")
+    event    Event  @relation(fields: [eventId], references: [id])
 
     // Relations
     members EventTeamMember[]
@@ -307,8 +311,9 @@ model EventTeam {
 }
 
 model EventTeamMember {
-    id          String   @id @default(cuid())
-    eventTeamId String
+    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId    String   @unique @default(cuid()) // External ID (CUID)
+    eventTeamId String   @db.Uuid
     userId      String   @db.Uuid
     role        String // Role in the team (e.g., "Coordinator", "Assistant")
     createdAt   DateTime @default(now())
@@ -323,8 +328,9 @@ model EventTeamMember {
 }
 
 model EventActivity {
-    id        String            @id @default(cuid())
-    eventId   String
+    id        String            @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String            @unique @default(cuid()) // External ID (CUID)
+    eventId   String            @db.Uuid
     userId    String            @db.Uuid
     type      EventActivityType
     createdAt DateTime          @default(now())
@@ -337,13 +343,14 @@ model EventActivity {
 }
 
 model Message {
-    id        String        @id @default(cuid())
+    id        String        @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String        @unique @default(cuid()) // External ID (CUID)
     content   String
     isPinned  Boolean       @default(false)
     status    MessageStatus @default(SENT)
     createdAt DateTime      @default(now())
     userId    String        @db.Uuid
-    eventId   String
+    eventId   String        @db.Uuid
 
     // Relations
     user      User              @relation(fields: [userId], references: [id])
@@ -351,7 +358,7 @@ model Message {
     reactions MessageReaction[]
 
     // Add vendor context
-    vendorId String? // Reference to vendor being discussed
+    vendorId String? @db.Uuid // Reference to vendor being discussed
     vendor   Vendor? @relation(fields: [vendorId], references: [id])
 
     @@index([eventId])
@@ -359,9 +366,10 @@ model Message {
 }
 
 model MessageReaction {
-    id        String   @id @default(cuid())
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
     emoji     String
-    messageId String
+    messageId String   @db.Uuid
     userId    String   @db.Uuid
     createdAt DateTime @default(now())
     message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
@@ -372,8 +380,9 @@ model MessageReaction {
 }
 
 model ChatSettings {
-    id                 String   @id @default(cuid())
-    eventId            String   @unique
+    id                 String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId           String   @unique @default(cuid()) // External ID (CUID)
+    eventId            String   @unique @db.Uuid
     isEnabled          Boolean  @default(true)
     allowGuestMessages Boolean  @default(true)
     slowMode           Boolean  @default(false)
@@ -391,13 +400,14 @@ model ChatSettings {
 //POST AND CONTENT MANAGEMENT
 
 model Post {
-    id           String         @id @default(cuid())
+    id           String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String         @unique @default(cuid()) // External ID (CUID)
     caption      String?
     media        PostMedia[]
     createdAt    DateTime       @default(now())
     updatedAt    DateTime       @updatedAt
     userId       String         @db.Uuid
-    eventId      String
+    eventId      String         @db.Uuid
     user         User           @relation(fields: [userId], references: [id])
     event        Event          @relation(fields: [eventId], references: [id])
     comments     Comment[]
@@ -409,8 +419,9 @@ model Post {
 }
 
 model PostMedia {
-    id        String    @id @default(cuid())
-    postId    String
+    id        String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String    @unique @default(cuid()) // External ID (CUID)
+    postId    String    @db.Uuid
     url       String
     type      MediaType
     order     Int       @default(0)
@@ -419,12 +430,13 @@ model PostMedia {
 }
 
 model Comment {
-    id        String   @id @default(cuid())
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
     content   String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     userId    String   @db.Uuid
-    postId    String
+    postId    String   @db.Uuid
     user      User     @relation(fields: [userId], references: [id])
     post      Post     @relation(fields: [postId], references: [id])
 
@@ -433,10 +445,11 @@ model Comment {
 }
 
 model Like {
-    id        String   @id @default(cuid())
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
     createdAt DateTime @default(now())
     userId    String   @db.Uuid
-    postId    String
+    postId    String   @db.Uuid
     user      User     @relation(fields: [userId], references: [id])
     post      Post     @relation(fields: [postId], references: [id])
 
@@ -446,7 +459,8 @@ model Like {
 //FOLLOW AND NOTIFICATION MANAGEMENT
 
 model Follow {
-    id          String   @id @default(cuid())
+    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId    String   @unique @default(cuid()) // External ID (CUID)
     followerId  String   @db.Uuid
     followingId String   @db.Uuid
     createdAt   DateTime @default(now())
@@ -459,7 +473,8 @@ model Follow {
 }
 
 model FollowRequest {
-    id           String   @id @default(cuid())
+    id           String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String   @unique @default(cuid()) // External ID (CUID)
     requestorId  String   @db.Uuid
     targetUserId String   @db.Uuid
     createdAt    DateTime @default(now())
@@ -475,8 +490,8 @@ model Notification {
     id        String           @id @default(cuid())
     type      NotificationType
     userId    String           @db.Uuid
-    eventId   String?
-    postId    String?
+    eventId   String?          @db.Uuid
+    postId    String?          @db.Uuid
     subject   String?          @db.VarChar(128)
     content   String           @db.VarChar(2000)
     link      String?          @db.VarChar(500)
@@ -499,7 +514,8 @@ model Notification {
 //VENDOR MANAGEMENT
 
 model Vendor {
-    id            String      @id @default(cuid())
+    id            String      @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId      String      @unique @default(cuid()) // External ID (CUID)
     name          String
     type          VendorType
     services      String[]
@@ -544,8 +560,9 @@ model Vendor {
 }
 
 model VendorOperations {
-    id               String   @id @default(cuid())
-    vendorId         String   @unique
+    id               String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId         String   @unique @default(cuid()) // External ID (CUID)
+    vendorId         String   @unique @db.Uuid
     vendor           Vendor   @relation(fields: [vendorId], references: [id])
     businessHours    Json?
     availability     Json?
@@ -559,8 +576,9 @@ model VendorOperations {
 }
 
 model VendorAttribute {
-    id       String @id @default(cuid())
-    vendorId String
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    vendorId String @db.Uuid
     key      String
     value    String
     vendor   Vendor @relation(fields: [vendorId], references: [id])
@@ -569,8 +587,9 @@ model VendorAttribute {
 }
 
 model VendorPackage {
-    id            String    @id @default(cuid())
-    vendorId      String
+    id            String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId      String    @unique @default(cuid()) // External ID (CUID)
+    vendorId      String    @db.Uuid
     name          String
     description   String?
     price         Float?
@@ -583,9 +602,10 @@ model VendorPackage {
 }
 
 model EventVendor {
-    id       String       @id @default(cuid())
-    eventId  String
-    vendorId String
+    id       String       @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String       @unique @default(cuid()) // External ID (CUID)
+    eventId  String       @db.Uuid
+    vendorId String       @db.Uuid
     status   VendorStatus @default(PENDING)
     notes    String?
     event    Event        @relation(fields: [eventId], references: [id])
@@ -595,14 +615,15 @@ model EventVendor {
 }
 
 model Booking {
-    id        String         @id @default(cuid())
+    id        String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String         @unique @default(cuid()) // External ID (CUID)
     date      DateTime
     timeSlot  String
     status    BookingStatus  @default(PENDING)
     notes     String?
-    vendorId  String
+    vendorId  String         @db.Uuid
     userId    String         @db.Uuid
-    packageId String?
+    packageId String?        @db.Uuid
     vendor    Vendor         @relation(fields: [vendorId], references: [id])
     user      User           @relation(fields: [userId], references: [id])
     package   VendorPackage? @relation(fields: [packageId], references: [id])
@@ -616,12 +637,13 @@ model Booking {
 }
 
 model VendorReview {
-    id        String   @id @default(cuid())
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
     rating    Int
     comment   String?
     userId    String   @db.Uuid
-    vendorId  String
-    bookingId String?
+    vendorId  String   @db.Uuid
+    bookingId String?  @db.Uuid
     user      User     @relation(fields: [userId], references: [id])
     vendor    Vendor   @relation(fields: [vendorId], references: [id])
     booking   Booking? @relation(fields: [bookingId], references: [id])
@@ -631,8 +653,9 @@ model VendorReview {
 }
 
 model VendorPageVisit {
-    id        String   @id @default(cuid())
-    vendorId  String
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
+    vendorId  String   @db.Uuid
     userId    String?  @db.Uuid
     timestamp DateTime @default(now())
     vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -643,8 +666,9 @@ model VendorPageVisit {
 }
 
 model VendorTeam {
-    id       String @id @default(cuid())
-    vendorId String
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    vendorId String @db.Uuid
     name     String // Team name (e.g., "Wedding Photography Team")
     vendor   Vendor @relation(fields: [vendorId], references: [id])
 
@@ -655,8 +679,9 @@ model VendorTeam {
 }
 
 model VendorTeamMember {
-    id           String   @id @default(cuid())
-    vendorTeamId String
+    id           String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String   @unique @default(cuid()) // External ID (CUID)
+    vendorTeamId String   @db.Uuid
     userId       String   @db.Uuid
     role         String // Role in the team (e.g., "Lead Photographer", "Assistant")
     createdAt    DateTime @default(now())
@@ -671,8 +696,9 @@ model VendorTeamMember {
 }
 
 model VendorContact {
-    id           String      @id @default(cuid())
-    vendorId     String // Vendor who owns this contact
+    id           String      @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String      @unique @default(cuid()) // External ID (CUID)
+    vendorId     String      @db.Uuid // Vendor who owns this contact
     contactType  ContactType // Type of contact (USER, EXTERNAL)
     userId       String?     @db.Uuid // If the contact is a user on the platform
     name         String? // Name of the contact (required for external contacts)
@@ -688,7 +714,7 @@ model VendorContact {
     // Relations
     vendor  Vendor        @relation(fields: [vendorId], references: [id])
     user    User?         @relation(fields: [userId], references: [id])
-    groupId String?
+    groupId String?       @db.Uuid
     group   ContactGroup? @relation(fields: [groupId], references: [id])
 
     // Indexes
@@ -699,8 +725,9 @@ model VendorContact {
 }
 
 model ContactGroup {
-    id        String          @id @default(cuid())
-    vendorId  String
+    id        String          @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String          @unique @default(cuid()) // External ID (CUID)
+    vendorId  String          @db.Uuid
     name      String
     contacts  VendorContact[] // Many-to-many relation with VendorContact
     createdAt DateTime        @default(now())
@@ -715,11 +742,12 @@ model ContactGroup {
 //INVITATION MANGEMENT
 
 model Invitation {
-    id           String           @id @default(cuid())
+    id           String           @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String           @unique @default(cuid()) // External ID (CUID)
     type         InvitationType // Type of invitation (USER, VENDOR_TEAM, EVENT_TEAM)
     status       InvitationStatus @default(PENDING)
-    inviterId    String // ID of the inviter (user, vendor, or event)
-    inviteeId    String? // ID of the invitee (user, if already registered)
+    inviterId    String           @db.Uuid // ID of the inviter (user, vendor, or event)
+    inviteeId    String?          @db.Uuid // ID of the invitee (user, if already registered)
     inviteeEmail String? // Email of the invitee (if not yet registered)
     role         String? // Role for team invitations (e.g., "Photographer", "Coordinator")
     createdAt    DateTime         @default(now())
@@ -742,13 +770,14 @@ model Invitation {
 // ANALYSTICS 
 
 model Analytics {
-    id         String        @id @default(cuid())
+    id         String        @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId   String        @unique @default(cuid()) // External ID (CUID)
     type       AnalyticsType // Type of analytics (VENDOR, EVENT, USER)
     metric     String // Metric being tracked (e.g., "page_views", "bookings")
     value      Float // Value of the metric (e.g., 100, 5000.50)
     dimensions Json? // Additional context (e.g., { "eventId": "123", "date": "2023-10-01" })
-    vendorId   String? // Vendor ID (if related to a vendor)
-    eventId    String? // Event ID (if related to an event)
+    vendorId   String?       @db.Uuid // Vendor ID (if related to a vendor)
+    eventId    String?       @db.Uuid // Event ID (if related to an event)
     userId     String?       @db.Uuid // User ID (if related to a user)
     createdAt  DateTime      @default(now())
 
@@ -769,7 +798,8 @@ model Analytics {
 // APP MODELS
 
 model Forms {
-    id        String            @id @default(cuid())
+    id        String            @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String            @unique @default(cuid()) // External ID (CUID)
     createdAt DateTime          @default(now())
     updatedAt DateTime          @updatedAt
     email     String
@@ -785,7 +815,8 @@ model Forms {
 }
 
 model Feedback {
-    id        String           @id @default(cuid())
+    id        String           @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String           @unique @default(cuid()) // External ID (CUID)
     userId    String           @db.Uuid
     type      FeedbackType
     rating    Int
