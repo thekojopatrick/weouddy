@@ -93,9 +93,9 @@ export function EventSettingsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChangeAction}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Event Settings</DialogTitle>
+      <DialogContent className="max-w-md rounded-2xl">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl">Event Settings</DialogTitle>
           <DialogDescription>
             Customize your event&apos;s privacy and interaction settings
           </DialogDescription>
@@ -117,7 +117,7 @@ export function EventSettingsModal({
                 }))
               }
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] rounded-xl">
                 <SelectValue placeholder="Select Access" />
               </SelectTrigger>
               <SelectContent>
@@ -193,7 +193,7 @@ export function EventSettingsModal({
             />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="hidden items-center justify-between">
             <div className="flex items-center gap-2">
               <KeyRound className="size-4" />
               <span className="text-sm">Allow Chat</span>
@@ -206,6 +206,7 @@ export function EventSettingsModal({
                   allowChat: checked,
                 }))
               }
+              disabled
             />
           </div>
         </div>
@@ -215,10 +216,15 @@ export function EventSettingsModal({
             variant="outline"
             onClick={() => onOpenChangeAction(false)}
             disabled={isLoading}
+            className="rounded-xl"
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
+          <Button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="rounded-xl"
+          >
             {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </div>
