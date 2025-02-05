@@ -1,5 +1,5 @@
-import { FilterState, Vendor, VendorType } from './types';
-import { vendorsData } from './dummy-data';
+import { FilterState, Vendor, VendorType } from "./types";
+import { vendorsData } from "./dummy-data";
 
 // export const generateTimeSlots = (date: Date): Availability['timeSlots'] => {
 //   const slots = [];
@@ -24,22 +24,20 @@ export const getVendorById = (id: string): Vendor | undefined => {
   return vendorsData.find((vendor) => vendor.id === id);
 };
 
-export const getVendorsByType = (type: Vendor['type']): Vendor[] => {
+export const getVendorsByType = (type: Vendor["type"]): Vendor[] => {
   return vendorsData.filter((vendor) => vendor.type === type);
 };
 
 export const getVendorsByPriceRange = (
-  priceRange: Vendor['priceRange']
+  priceRange: Vendor["priceRange"],
 ): Vendor[] => {
-  return vendorsData.filter(
-    (vendor) => vendor.priceRange === priceRange
-  );
+  return vendorsData.filter((vendor) => vendor.priceRange === priceRange);
 };
 
 // Helper function to get related vendors (same type, different vendor)
 export const getRelatedVendors = (
   vendorId: string,
-  limit: number = 3
+  limit: number = 3,
 ): Vendor[] => {
   const vendor = getVendorById(vendorId);
   if (!vendor) return [];
@@ -51,9 +49,7 @@ export const getRelatedVendors = (
 
 // Helper function to get top-rated vendors
 export const getTopRatedVendors = (limit: number = 5): Vendor[] => {
-  return [...vendorsData]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, limit);
+  return [...vendorsData].sort((a, b) => b.rating - a.rating).slice(0, limit);
 };
 
 // Helper function to search vendors
@@ -63,30 +59,27 @@ export const searchVendors = (query: string): Vendor[] => {
     (vendor) =>
       vendor.name.toLowerCase().includes(lowercaseQuery) ||
       vendor.services.some((service) =>
-        service.toLowerCase().includes(lowercaseQuery)
+        service.toLowerCase().includes(lowercaseQuery),
       ) ||
-      vendor.location?.toLowerCase().includes(lowercaseQuery)
+      vendor.location?.toLowerCase().includes(lowercaseQuery),
   );
 };
 
-export const applyFilters = (
-  vendors: Vendor[],
-  filters: FilterState
-) => {
+export const applyFilters = (vendors: Vendor[], filters: FilterState) => {
   return vendors
     .filter((vendor) => {
       // Category filter
-      if (filters.category !== 'All') {
+      if (filters.category !== "All") {
         const categoryMap: { [key: string]: VendorType } = {
-          Photographers: 'PHOTOGRAPHER',
-          Videographers: 'VIDEOGRAPHER',
-          Rentals: 'RENTAL',
-          Decor: 'DECOR',
-          Planners: 'PLANNER',
-          Venus: 'VENUE',
-          Cooks: 'CATERER',
-          Djs: 'ENTERTAINMENT',
-          'Hair stylist': 'STYLIST',
+          Photographers: "PHOTOGRAPHER",
+          Videographers: "VIDEOGRAPHER",
+          Rentals: "RENTAL",
+          Decor: "DECOR",
+          Planners: "PLANNER",
+          Venus: "VENUE",
+          Cooks: "CATERER",
+          Djs: "ENTERTAINMENT",
+          "Hair stylist": "STYLIST",
         };
         if (vendor.type !== categoryMap[filters.category]) {
           return false;
@@ -111,9 +104,7 @@ export const applyFilters = (
       }
       if (
         filters.location &&
-        !vendor.location
-          ?.toLowerCase()
-          .includes(filters.location.toLowerCase())
+        !vendor.location?.toLowerCase().includes(filters.location.toLowerCase())
       ) {
         return false;
       }
@@ -124,15 +115,11 @@ export const applyFilters = (
     })
     .sort((a, b) => {
       switch (filters.sortBy) {
-        case 'price_low':
-          return (
-            (a.packages[0]?.price || 0) - (b.packages[0]?.price || 0)
-          );
-        case 'price_high':
-          return (
-            (b.packages[0]?.price || 0) - (a.packages[0]?.price || 0)
-          );
-        case 'reviews':
+        case "price_low":
+          return (a.packages[0]?.price || 0) - (b.packages[0]?.price || 0);
+        case "price_high":
+          return (b.packages[0]?.price || 0) - (a.packages[0]?.price || 0);
+        case "reviews":
           return b.reviews.length - a.reviews.length;
         default:
           return b.rating - a.rating;

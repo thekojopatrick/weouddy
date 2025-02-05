@@ -1,7 +1,7 @@
-'use client';
-import { Vendor } from '../types';
-import { CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+"use client";
+import { Vendor } from "../types";
+import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface VendorCardProps {
   vendor: Vendor;
@@ -16,9 +16,7 @@ export function VendorCard({ vendor, onBooking }: VendorCardProps) {
         <p className="text-sm text-muted-foreground">{vendor.type}</p>
         <div className="text-sm text-muted-foreground mt-1">
           <span>{vendor.location}</span>
-          {vendor.rating && (
-            <span className="ml-2">★ {vendor.rating}</span>
-          )}
+          {vendor.rating && <span className="ml-2">★ {vendor.rating}</span>}
         </div>
       </div>
       <Button

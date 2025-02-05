@@ -34,7 +34,7 @@ model User {
   following              Follow[]          @relation("Following")
   followers              Follow[]          @relation("Followers")
   roles                  EventRole[]
-  chats                  ChatMessage[]
+  messages               Message[]
   eventLogs              EventActivity[]
   sentFollowRequests     FollowRequest[]   @relation("Requestor")
   receivedFollowRequests FollowRequest[]   @relation("Target")
@@ -76,7 +76,7 @@ model Event {
   // Relations
   attendees    Attendee[]      @relation("EventAttendee")
   posts        Post[]
-  chats        ChatMessage[]
+  messages     Message[]
   chatSettings ChatSettings?
   roles        EventRole[]
   eventLogs    EventActivity[]
@@ -133,6 +133,8 @@ model ChatSettings {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now())
   event              Event    @relation(fields: [eventId], references: [id])
+
+  @@index([eventId])
 }
 
 model Post {
@@ -218,7 +220,7 @@ model FollowRequest {
   @@unique([requestorId, targetUserId])
 }
 
-model ChatMessage {
+model Message {
   id        String        @id @default(cuid())
   content   String
   isPinned  Boolean       @default(false)
@@ -247,13 +249,13 @@ enum MessageStatus {
 }
 
 model MessageReaction {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   emoji     String
   messageId String
-  userId    String      @db.Uuid
-  createdAt DateTime    @default(now())
-  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user      User        @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([messageId, userId, emoji])
   @@index([messageId])
@@ -447,7 +449,7 @@ model Vendor {
   packages   VendorPackage[]
   events     EventVendor[]
   reviews    VendorReview[]
-  messages   ChatMessage[]
+  messages   Message[]
   bookings   Booking[]
 
   createdAt DateTime @default(now())

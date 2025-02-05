@@ -23,7 +23,7 @@ export interface FilterState {
   rating: number;
   location: string;
   availableOnly: boolean;
-  sortBy: 'rating' | 'price_low' | 'price_high' | 'reviews';
+  sortBy: "rating" | "price_low" | "price_high" | "reviews";
   category: string;
 }
 
@@ -37,15 +37,15 @@ export interface Availability {
 }
 
 export type VendorType =
-  | 'VENUE'
-  | 'PHOTOGRAPHER'
-  | 'VIDEOGRAPHER'
-  | 'RENTAL'
-  | 'DECOR'
-  | 'PLANNER'
-  | 'CATERER'
-  | 'ENTERTAINMENT'
-  | 'STYLIST';
+  | "VENUE"
+  | "PHOTOGRAPHER"
+  | "VIDEOGRAPHER"
+  | "RENTAL"
+  | "DECOR"
+  | "PLANNER"
+  | "CATERER"
+  | "ENTERTAINMENT"
+  | "STYLIST";
 
 // export type VendorType =
 //   | 'VENUE'
@@ -56,12 +56,8 @@ export type VendorType =
 //   | 'DECOR'
 //   | 'TRANSPORTATION'
 //   | 'PLANNER';
-export type PriceRange = 'BUDGET' | 'MIDRANGE' | 'LUXURY' | 'CUSTOM';
-export type VendorStatus =
-  | 'PENDING'
-  | 'CONTACTED'
-  | 'BOOKED'
-  | 'DECLINED';
+export type PriceRange = "BUDGET" | "MIDRANGE" | "LUXURY" | "CUSTOM";
+export type VendorStatus = "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
 
 export interface Vendor {
   id: string;

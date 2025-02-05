@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
-import { Vendor } from '../types';
-import { Calendar } from '@/components/ui/calendar';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/sheet";
+import { Vendor } from "../types";
+import { Calendar } from "@/components/ui/calendar";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface BookingSheetProps {
   vendor: Vendor;
@@ -36,17 +36,11 @@ export function BookingSheet({ vendor, onClose }: BookingSheetProps) {
             <div className="space-y-4">
               <h3 className="font-medium">Available Time Slots</h3>
               <div className="grid grid-cols-2 gap-2">
-                {['9:00 AM', '10:00 AM', '2:00 PM', '3:00 PM'].map(
-                  (time) => (
-                    <Button
-                      key={time}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      {time}
-                    </Button>
-                  )
-                )}
+                {["9:00 AM", "10:00 AM", "2:00 PM", "3:00 PM"].map((time) => (
+                  <Button key={time} variant="outline" className="w-full">
+                    {time}
+                  </Button>
+                ))}
               </div>
               <Button className="w-full">Confirm Booking</Button>
             </div>

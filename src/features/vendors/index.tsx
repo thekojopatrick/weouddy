@@ -1,5 +1,5 @@
-import { vendorsData } from './dummy-data';
-import Marketplace from './components/marketplace';
+import { vendorsData } from "./dummy-data";
+import Marketplace from "./components/marketplace";
 
 export default function FindProfessionalsPage() {
   return (

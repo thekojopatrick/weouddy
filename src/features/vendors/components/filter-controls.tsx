@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Slider } from '@/components/ui/slider';
-import { PriceRange, VendorType } from '../types';
-import { Switch } from '@/components/ui/switch';
-import { FilterState } from '../types';
+} from "@/components/ui/accordion";
+import { SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
+import { PriceRange, VendorType } from "../types";
+import { Switch } from "@/components/ui/switch";
+import { FilterState } from "../types";
 
 interface FilterControlsProps {
   filters: FilterState;
@@ -31,19 +31,15 @@ export function FilterControls({
           <AccordionTrigger>Price Range</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              {['BUDGET', 'MIDRANGE', 'LUXURY'].map((range) => (
+              {["BUDGET", "MIDRANGE", "LUXURY"].map((range) => (
                 <div key={range} className="flex items-center gap-2">
                   <Switch
-                    checked={filters.priceRange.includes(
-                      range as PriceRange
-                    )}
+                    checked={filters.priceRange.includes(range as PriceRange)}
                     onCheckedChange={(checked) => {
                       const newRanges = checked
                         ? [...filters.priceRange, range as PriceRange]
-                        : filters.priceRange.filter(
-                            (r) => r !== range
-                          );
-                      onFilterChange('priceRange', newRanges);
+                        : filters.priceRange.filter((r) => r !== range);
+                      onFilterChange("priceRange", newRanges);
                     }}
                   />
                   <span>{range}</span>
@@ -58,24 +54,20 @@ export function FilterControls({
           <AccordionContent>
             <div className="space-y-2">
               {[
-                'VENUE',
-                'CATERER',
-                'PHOTOGRAPHER',
-                'ENTERTAINMENT',
-                'DECOR',
+                "VENUE",
+                "CATERER",
+                "PHOTOGRAPHER",
+                "ENTERTAINMENT",
+                "DECOR",
               ].map((type) => (
                 <div key={type} className="flex items-center gap-2">
                   <Switch
-                    checked={filters.vendorType.includes(
-                      type as VendorType
-                    )}
+                    checked={filters.vendorType.includes(type as VendorType)}
                     onCheckedChange={(checked) => {
                       const newTypes = checked
                         ? [...filters.vendorType, type as VendorType]
-                        : filters.vendorType.filter(
-                            (t) => t !== type
-                          );
-                      onFilterChange('vendorType', newTypes);
+                        : filters.vendorType.filter((t) => t !== type);
+                      onFilterChange("vendorType", newTypes);
                     }}
                   />
                   <span>{type}</span>
@@ -93,13 +85,9 @@ export function FilterControls({
               min={0}
               max={5}
               step={0.5}
-              onValueChange={([value]) =>
-                onFilterChange('rating', value)
-              }
+              onValueChange={([value]) => onFilterChange("rating", value)}
             />
-            <div className="mt-2 text-center">
-              {filters.rating} Stars
-            </div>
+            <div className="mt-2 text-center">{filters.rating} Stars</div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

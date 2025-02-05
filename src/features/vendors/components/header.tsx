@@ -1,9 +1,9 @@
-'use client';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Search } from 'lucide-react';
-import { FilterState } from '../types';
+"use client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Search } from "lucide-react";
+import { FilterState } from "../types";
 
 interface MarketplaceHeaderProps {
   onBudgetChange: (value: string) => void;
@@ -15,15 +15,15 @@ interface MarketplaceHeaderProps {
 }
 
 const categories = [
-  'All',
-  'Photographers',
-  'Hair stylist',
-  'Videographers',
-  'Rentals',
-  'Decor',
-  'Planners',
-  'Cooks',
-  'Djs',
+  "All",
+  "Photographers",
+  "Hair stylist",
+  "Videographers",
+  "Rentals",
+  "Decor",
+  "Planners",
+  "Cooks",
+  "Djs",
 ];
 
 export function MarketplaceHeader({
@@ -44,9 +44,7 @@ export function MarketplaceHeader({
         {categories.map((category) => (
           <Button
             key={category}
-            variant={
-              category === selectedCategory ? 'default' : 'ghost'
-            }
+            variant={category === selectedCategory ? "default" : "ghost"}
             className="rounded-full whitespace-nowrap p-1 px-3"
             onClick={() => onCategoryChange(category)}
           >

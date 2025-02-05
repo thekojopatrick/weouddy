@@ -1,17 +1,14 @@
-'use client';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { FilterState } from '../types';
+"use client";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FilterState } from "../types";
 
 interface ActiveFiltersProps {
   filters: FilterState;
   onFilterChange: (key: keyof FilterState, value: any) => void;
 }
 
-export function ActiveFilters({
-  filters,
-  onFilterChange,
-}: ActiveFiltersProps) {
+export function ActiveFilters({ filters, onFilterChange }: ActiveFiltersProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {filters.priceRange.map((range) => (
@@ -23,8 +20,8 @@ export function ActiveFilters({
             className="h-4 w-4 p-0"
             onClick={() =>
               onFilterChange(
-                'priceRange',
-                filters.priceRange.filter((r) => r !== range)
+                "priceRange",
+                filters.priceRange.filter((r) => r !== range),
               )
             }
           >
@@ -41,8 +38,8 @@ export function ActiveFilters({
             className="h-4 w-4 p-0"
             onClick={() =>
               onFilterChange(
-                'vendorType',
-                filters.vendorType.filter((t) => t !== type)
+                "vendorType",
+                filters.vendorType.filter((t) => t !== type),
               )
             }
           >
