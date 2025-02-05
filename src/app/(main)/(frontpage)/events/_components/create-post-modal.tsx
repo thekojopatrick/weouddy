@@ -37,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface CreatePostDialogProps {
   eventId: string;
@@ -57,6 +58,7 @@ export function CreatePostDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = !useMediaQuery("(min-width: 768px)");
+  const router = useRouter();
 
   const { handleFiles, uploadFiles, removeFile, uploadState, setUploadState } =
     useUploadFiles();
@@ -70,12 +72,26 @@ export function CreatePostDialog({
     }
   };
 
+  const handleClick = () => {
+    console.log("Button clicked, setting isOpen to true");
+    setIsOpen(true); // Explicitly set to true
+  };
+
   const handleDiscard = useCallback(() => {
+    console.log("Discarding post, resetting state");
     setShowCloseWarning(false);
     setIsOpen(false);
     setContent("");
-    uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [uploadState.files]);
+    // uploadState.files.forEach((file) =>
+    //   URL.revokeObjectURL(file.preview)
+    // );
+    setUploadState({
+      files: [],
+      isUploading: false,
+      totalProgress: 0,
+    });
+    router.refresh();
+  }, [uploadState.files, setUploadState]);
 
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,12 +181,14 @@ export function CreatePostDialog({
                       controls
                     />
                   ) : (
-                    <Image
-                      src={file.preview || "/placeholder.svg"}
-                      alt="Preview"
-                      className="h-[280px] w-[280px] object-cover"
-                      fill
-                    />
+                    <div className="h-[280px] w-[280px]">
+                      <Image
+                        src={file.preview || "/placeholder.svg"}
+                        alt="Preview"
+                        className="object-cover"
+                        fill
+                      />
+                    </div>
                   )}
                   <Button
                     size="icon"
@@ -256,7 +274,7 @@ export function CreatePostDialog({
             "rounded-full shadow-lg",
             isMobile ? "size-12" : "h-12",
           )}
-          onClick={() => setIsOpen(true)}
+          onClick={handleClick}
         >
           {isMobile ? <NotebookPen /> : <Plus className={"size-6"} />}
           <span className={isMobile ? "sr-only" : "font-semibold"}>
@@ -295,16 +313,16 @@ export function CreatePostDialog({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              onClick={() => setShowCloseWarning(false)}
-              className="bg-transparent border-gray-300 hover:bg-gray-100"
-            >
-              Continue
-            </AlertDialogCancel>
-            <AlertDialogAction
               onClick={handleDiscard}
-              className="bg-red-500 text-white hover:bg-red-600"
+              className="bg-red-500 text-white hover:bg-red-600 shadow-xs rounded-xl"
             >
               Discard
+            </AlertDialogCancel>
+            <AlertDialogAction
+              //onClick={() => setShowCloseWarning(false)}
+              className="bg-transparent border-gray-300 text-black hover:bg-gray-100 shadow-xs border rounded-xl"
+            >
+              Continue
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
