@@ -1,13 +1,13 @@
-import { getSession } from "@/lib/auth/server";
-import { EventService } from "@/server/services/event/get-event";
-import { NextResponse } from "next/server";
+import { getSession } from '@/lib/auth';
+import { EventService } from '@/server/services/event/get-event';
+import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "12");
-  const location = searchParams.get("location");
-  const category = searchParams.get("category");
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '12');
+  const location = searchParams.get('location');
+  const category = searchParams.get('category');
 
   try {
     const session = await getSession();
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       location,
       category,
       userId: session?.userId,
-      includeVendors: searchParams.get("includeVendors") === "true",
+      includeVendors: searchParams.get('includeVendors') === 'true',
     });
 
     return NextResponse.json({
@@ -28,10 +28,10 @@ export async function GET(request: Request) {
       limit,
     });
   } catch (error) {
-    console.error("Route error:", error);
+    console.error('Route error:', error);
     return NextResponse.json(
-      { error: "Failed to fetch events" },
-      { status: 500 },
+      { error: 'Failed to fetch events' },
+      { status: 500 }
     );
   }
 }
