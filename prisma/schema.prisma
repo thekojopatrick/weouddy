@@ -460,12 +460,12 @@ model Post {
 model PostMedia {
     id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
     publicId        String         @unique @default(cuid()) // External ID (CUID)
-    postId          String         @db.Uuid
+    postId          String?        @db.Uuid
     url             String
     type            MediaType
     order           Int            @default(0)
     createdAt       DateTime       @default(now())
-    post            Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+    post            Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
     portfolioItemId String?        @db.Uuid
     portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
 }
