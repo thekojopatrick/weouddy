@@ -83,6 +83,12 @@ function createUniqueFileName(prefix: string, extension: string): string {
  * Compresses a video file using FFmpeg
  */
 export async function compressVideo(file: File): Promise<File> {
+  console.log("Video compression started", {
+    fileName: file.name,
+    fileSize: file.size,
+    fileType: file.type,
+  });
+
   if (!file.type.startsWith("video/")) {
     console.warn("Invalid file type for video compression:", file.type);
     return file;
@@ -97,45 +103,72 @@ export async function compressVideo(file: File): Promise<File> {
     return file;
   }
 
+  // Detailed FFmpeg availability check
   const ff = await initFFmpeg();
   if (!ff) {
-    console.warn("FFmpeg not available, using original file");
+    console.error("FFmpeg initialization failed. Cannot compress video.");
     return file;
   }
 
   const inputName = createUniqueFileName("input", "mp4");
   const outputName = createUniqueFileName("output", "mp4");
 
+  console.log("Compression file names:", { inputName, outputName });
+
   try {
     // Write input file
-    await ff.writeFile(inputName, await fetchFile(file));
+    const inputBuffer = await fetchFile(file);
+    console.log("Input file buffer created", {
+      bufferLength: inputBuffer.length,
+    });
 
-    // Apply compression
-    await ff.exec([
-      "-i",
-      inputName,
-      "-c:v",
-      "h264",
-      "-crf",
-      VIDEO_COMPRESSION_CONFIG.crf,
-      "-preset",
-      VIDEO_COMPRESSION_CONFIG.preset,
-      "-c:a",
-      "aac",
-      "-b:a",
-      VIDEO_COMPRESSION_CONFIG.audioBitrate,
-      "-movflags",
-      "+faststart",
-      outputName,
-    ]);
+    await ff.writeFile(inputName, inputBuffer);
+    console.log("Input file written to FFmpeg");
+
+    // Apply compression with more detailed logging
+    try {
+      const ffmpegCommand = [
+        "-i",
+        inputName,
+        "-c:v",
+        "h264",
+        "-crf",
+        VIDEO_COMPRESSION_CONFIG.crf,
+        "-preset",
+        VIDEO_COMPRESSION_CONFIG.preset,
+        "-c:a",
+        "aac",
+        "-b:a",
+        VIDEO_COMPRESSION_CONFIG.audioBitrate,
+        "-movflags",
+        "+faststart",
+        outputName,
+      ];
+      console.log("FFmpeg command:", ffmpegCommand.join(" "));
+
+      const ffmpegResult = await ff.exec(ffmpegCommand);
+      console.log("FFmpeg execution result:", ffmpegResult);
+    } catch (execError) {
+      console.error("FFmpeg execution failed:", execError);
+      return file;
+    }
 
     // Read output file
-    const data = await ff.readFile(outputName);
-    const compressedBlob = new Blob([data], { type: "video/mp4" });
+    const outputData = await ff.readFile(outputName);
+    console.log("Output file read", {
+      outputDataLength: outputData.length,
+    });
 
-    // Only use compressed version if it's smaller
+    const compressedBlob = new Blob([outputData], {
+      type: "video/mp4",
+    });
     const compressedFile = new File([compressedBlob], file.name, {
       type: "video/mp4",
+    });
+
+    console.log("Compression comparison", {
+      originalSize: file.size,
+      compressedSize: compressedBlob.size,
     });
 
     if (compressedBlob.size < file.size) {
@@ -148,15 +181,16 @@ export async function compressVideo(file: File): Promise<File> {
       return file;
     }
   } catch (error) {
-    console.error("Video compression failed:", error);
+    console.error("Comprehensive video compression error:", error);
     return file;
   } finally {
     // Cleanup temporary files
     try {
       await ff.deleteFile(inputName);
       await ff.deleteFile(outputName);
-    } catch (error) {
-      console.warn("Cleanup failed:", error);
+      console.log("Temporary files cleaned up");
+    } catch (cleanupError) {
+      console.warn("Cleanup failed:", cleanupError);
     }
   }
 }

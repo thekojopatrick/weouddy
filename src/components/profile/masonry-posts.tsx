@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { EventPostCard } from "@/components/post/post-card";
+import { EventPostCard } from "@/features/events/components/post/post-card";
 import { PostWithDetails } from "@/types/prisma.types";
 
 const MasonryPosts = ({

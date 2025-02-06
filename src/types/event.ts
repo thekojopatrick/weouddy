@@ -29,6 +29,7 @@ export type PostData = Post & {
 
 export interface EventWithFullData {
   id: string;
+  publicId: string;
   name: string;
   type: string;
   coverImage: string;

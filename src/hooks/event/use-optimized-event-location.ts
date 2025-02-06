@@ -1,7 +1,7 @@
 import {
   CategorizedLocation,
   categorizeLocation,
-} from "@/lib/location-mapping";
+} from "@/lib/utils/location-mapping";
 import { useCallback, useMemo, useState } from "react";
 
 //import { EventData } from "@/types/event";

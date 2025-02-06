@@ -6,7 +6,7 @@ export class PostService {
   static async createPost(userId: string, data: CreatePostInput) {
     // Check if user has access to event
     const hasAccess = await this.validateEventAccess(userId, data.eventId);
-    if (!hasAccess) {
+    if (!hasAccess.status) {
       throw new Error(
         "Unauthorized access to event: User is not the host or a member",
       );
@@ -16,7 +16,7 @@ export class PostService {
       const post = await db.post.create({
         data: {
           userId,
-          eventId: data.eventId,
+          eventId: hasAccess.eventId,
           caption: data.caption,
           media: {
             create: data.media.map((mediaItem) => ({
@@ -125,7 +125,7 @@ export class PostService {
 
   private static async validateEventAccess(userId: string, eventId: string) {
     const event = await db.event.findUnique({
-      where: { id: eventId },
+      where: { publicId: eventId },
       include: {
         host: true,
         attendees: true,
@@ -145,6 +145,6 @@ export class PostService {
     const isHost = event.hostId === userId;
     const isMember = event.attendees.some((member) => member.userId === userId);
 
-    return isHost || isMember;
+    return { eventId: event.id, status: isHost || isMember };
   }
 }

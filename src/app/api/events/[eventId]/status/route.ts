@@ -1,4 +1,3 @@
-//import { UserEventService } from '@/server/services/user/event.service';
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { joinEventService } from "@/server/services/event/new-join-event.service";
@@ -23,8 +22,6 @@ export async function GET(
     );
 
     // If status is NOT_JOINED, double-check with Attendee table
-
-    console.log({ attendee });
 
     return NextResponse.json({
       status: attendee?.status === "APPROVED" ? "JOINED" : "NOT_JOINED",

@@ -4,6 +4,7 @@ import { Post, Event, Attendee } from "@prisma/client";
 
 export interface UserProfile {
   id: string;
+  publicId: string;
   name: string | null;
   username: string | null;
   email: string | null;
@@ -25,6 +26,7 @@ export interface UserFollow {
 
 export interface Follow {
   id: string;
+  publicId: string;
   followerId: string;
   followingId: string;
   createdAt: Date;

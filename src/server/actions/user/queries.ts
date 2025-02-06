@@ -13,6 +13,7 @@ export async function getUserProfile(
     where: { username: usernameOrId },
     select: {
       id: true,
+      publicId: true,
       name: true,
       username: true,
       email: true,

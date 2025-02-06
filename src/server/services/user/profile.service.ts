@@ -62,7 +62,7 @@ export class ProfileService {
       FollowService.getFollowStats(user.id),
       db.event.count({
         where: {
-          OR: [{ hostId: user.id }, { members: { some: { id: user.id } } }],
+          OR: [{ hostId: user.id }, { attendees: { some: { id: user.id } } }],
         },
       }),
       db.post.count({

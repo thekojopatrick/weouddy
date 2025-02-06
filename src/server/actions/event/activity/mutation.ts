@@ -13,7 +13,7 @@ export async function joinEvent(eventId: string) {
   const existingMembership = await prisma.event.findFirst({
     where: {
       id: eventId,
-      members: {
+      attendees: {
         some: {
           id: session.userId,
         },
@@ -29,12 +29,12 @@ export async function joinEvent(eventId: string) {
   const updatedevent = await prisma.event.update({
     where: { id: eventId },
     data: {
-      members: {
+      attendees: {
         connect: { id: session.userId },
       },
     },
     include: {
-      members: true,
+      attendees: true,
     },
   });
 
@@ -50,6 +50,6 @@ export async function joinEvent(eventId: string) {
   return {
     message: "Joined event successfully",
     status: "joined",
-    membersCount: updatedevent.members.length,
+    membersCount: updatedevent.attendees.length,
   };
 }

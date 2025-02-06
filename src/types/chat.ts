@@ -52,3 +52,11 @@ export interface ChatStats {
   settings: ChatSettings;
   lastMessageTime?: Date;
 }
+
+export interface Message {
+  id: string;
+  chatId: string;
+  role: string;
+  content: any;
+  createdAt: string;
+}

@@ -1,6 +1,6 @@
 import { type EventFormValues } from "@/types/validation";
 import { db } from "@/server/db/prisma";
-import { uploadEventCoverImage } from "@/lib/supabase/upload/event-cover-image";
+import { uploadEventCoverImage } from "@/lib/upload/event-cover-image";
 import { nanoid } from "nanoid";
 import { generateQRCode } from "@/lib/qr/generator";
 import { storeQRCode } from "@/lib/qr/storage";
@@ -88,7 +88,7 @@ export class EventService {
     const event = await db.event
       .findFirst({
         where: {
-          OR: [{ id: identifier }, { slug: identifier }],
+          OR: [{ publicId: identifier }, { slug: identifier }],
         },
         include: {
           host: {

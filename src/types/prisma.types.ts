@@ -103,6 +103,7 @@ export interface EventWithDetails extends BaseEvent {
 
 export interface BasePost {
   id: string;
+  publicId: string;
   caption?: string | null;
   createdAt: Date;
   updatedAt: Date;

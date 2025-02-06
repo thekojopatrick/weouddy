@@ -1,487 +1,924 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-model User {
-  id               String    @id @db.Uuid
-  email            String?   @unique
-  username         String?   @unique
-  name             String?
-  avatarUrl        String?
-  bio              String?
-  dob              DateTime? //Date of birth
-  role             UserRole  @default(USER)
-  isAnonymous      Boolean   @default(false)
-  allowFollowers   Boolean   @default(true)
-  isPrivateProfile Boolean   @default(false)
-  lastActive       DateTime  @default(now())
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-
-  //Relations
-  vendors                Vendor[]
-  posts                  Post[]
-  comments               Comment[]
-  likes                  Like[]
-  hostedEvents           Event[]           @relation("HostedEvents")
-  attendeeEvents         Attendee[]        @relation("UserAttendee")
-  following              Follow[]          @relation("Following")
-  followers              Follow[]          @relation("Followers")
-  roles                  EventRole[]
-  chats                  ChatMessage[]
-  eventLogs              EventActivity[]
-  sentFollowRequests     FollowRequest[]   @relation("Requestor")
-  receivedFollowRequests FollowRequest[]   @relation("Target")
-  feedbacks              Feedback[]
-  messageReactions       MessageReaction[]
-  vendorReviews          VendorReview[]
-}
-
-model Event {
-  id          String   @id @default(cuid())
-  name        String
-  type        String
-  description String?
-  location    String?
-  dateTime    DateTime
-  qrCodeUrl   String?
-  coverImage  String?
-  slug        String?  @unique
-  pinCode     String?  @unique // Optional field to store PIN code (if accessType = PIN_REQUIRED)
-
-  vendorBudget     Float?
-  vendorCosts      Json? // {bookedVendors: [{id: "ven_123", cost: 2000}]}
-  // Settings
-  isPrivate        Boolean    @default(false)
-  requiresApproval Boolean    @default(false)
-  isDisabled       Boolean    @default(false)
-  allowComments    Boolean    @default(true)
-  allowLikes       Boolean    @default(true)
-  allowChat        Boolean    @default(false)
-  allowPosts       Boolean    @default(true)
-  accessType       AccessType @default(DIRECT_PASS)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  hostId    String   @db.Uuid
-  host      User     @relation("HostedEvents", fields: [hostId], references: [id])
-
-  // Relations
-  attendees    Attendee[]      @relation("EventAttendee")
-  posts        Post[]
-  chats        ChatMessage[]
-  chatSettings ChatSettings?
-  roles        EventRole[]
-  eventLogs    EventActivity[]
-  eventVendors EventVendor[]
-
-  @@index([hostId])
-  @@index([createdAt])
-  @@index([isDisabled, isPrivate, location, type])
-  @@index([hostId, createdAt])
-  @@index([isDisabled, createdAt])
-}
-
-model Attendee {
-  id        String         @id @default(cuid())
-  userId    String         @db.Uuid
-  eventId   String
-  status    AttendeeStatus @default(APPROVED)
-  createdAt DateTime       @default(now())
-
-  // Relations
-  user  User  @relation("UserAttendee", fields: [userId], references: [id])
-  event Event @relation("EventAttendee", fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-  @@index([eventId, userId])
-  @@index([userId, status])
-  @@index([eventId, status])
-}
-
-model EventActivity {
-  id        String            @id @default(cuid())
-  eventId   String
-  userId    String            @db.Uuid
-  type      EventActivityType
-  createdAt DateTime          @default(now())
-  event     Event             @relation(fields: [eventId], references: [id])
-  user      User              @relation(fields: [userId], references: [id])
-
-  @@index([createdAt])
-  @@index([eventId])
-  @@index([userId])
-}
-
-model ChatSettings {
-  id                 String   @id @default(cuid())
-  eventId            String   @unique
-  isEnabled          Boolean  @default(true)
-  allowGuestMessages Boolean  @default(true)
-  slowMode           Boolean  @default(false)
-  slowModeInterval   Int      @default(0)
-  requireModeration  Boolean  @default(false)
-  muteList           Json? // List of muted users by ID
-  banList            Json? // List of banned users by ID
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
-  event              Event    @relation(fields: [eventId], references: [id])
-}
-
-model Post {
-  id        String      @id @default(cuid())
-  caption   String?
-  media     PostMedia[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  userId    String      @db.Uuid
-  eventId   String
-  user      User        @relation(fields: [userId], references: [id])
-  event     Event       @relation(fields: [eventId], references: [id])
-  comments  Comment[]
-  likes     Like[]
-
-  @@index([eventId])
-  @@index([userId])
-}
-
-model PostMedia {
-  id        String    @id @default(cuid())
-  postId    String
-  url       String
-  type      MediaType // Enum to specify media type
-  order     Int       @default(0) // To maintain order of media in a post
-  createdAt DateTime  @default(now())
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
 
 enum MediaType {
-  IMAGE
-  VIDEO
-}
-
-model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String   @db.Uuid
-  postId    String
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-
-  @@index([postId])
-  @@index([userId])
-}
-
-model Like {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  userId    String   @db.Uuid
-  postId    String
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-
-  @@unique([userId, postId])
-}
-
-model Follow {
-  id          String   @id @default(cuid())
-  followerId  String   @db.Uuid
-  followingId String   @db.Uuid
-  createdAt   DateTime @default(now())
-
-  // Relations
-  follower  User @relation("Following", fields: [followerId], references: [id])
-  following User @relation("Followers", fields: [followingId], references: [id])
-
-  @@unique([followerId, followingId])
-}
-
-model FollowRequest {
-  id           String   @id @default(cuid())
-  requestorId  String   @db.Uuid
-  targetUserId String   @db.Uuid
-  createdAt    DateTime @default(now())
-
-  // Relations
-  requestor User @relation("Requestor", fields: [requestorId], references: [id])
-  target    User @relation("Target", fields: [targetUserId], references: [id])
-
-  @@unique([requestorId, targetUserId])
-}
-
-model ChatMessage {
-  id        String        @id @default(cuid())
-  content   String
-  isPinned  Boolean       @default(false)
-  status    MessageStatus @default(SENT)
-  createdAt DateTime      @default(now())
-  userId    String        @db.Uuid
-  eventId   String
-
-  // Relations
-  user      User              @relation(fields: [userId], references: [id])
-  event     Event             @relation(fields: [eventId], references: [id])
-  reactions MessageReaction[]
-
-  // Add vendor context
-  vendorId String? // Reference to vendor being discussed
-  vendor   Vendor? @relation(fields: [vendorId], references: [id])
-
-  @@index([eventId])
-  @@index([userId])
+    IMAGE
+    VIDEO
 }
 
 enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
-}
-
-model MessageReaction {
-  id        String      @id @default(cuid())
-  emoji     String
-  messageId String
-  userId    String      @db.Uuid
-  createdAt DateTime    @default(now())
-  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user      User        @relation(fields: [userId], references: [id])
-
-  @@unique([messageId, userId, emoji])
-  @@index([messageId])
-}
-
-model EventRole {
-  id        String   @id @default(cuid())
-  userId    String   @db.Uuid
-  eventId   String
-  role      Role
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  event     Event    @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
+    SENT
+    DELIVERED
+    READ
 }
 
 enum Role {
-  ADMIN
-  MODERATOR
-  MEMBER
+    ADMIN
+    MODERATOR
+    MEMBER
 }
 
 enum UserRole {
-  ADMIN
-  USER
-  PARTNER
-  MEMBER
+    ADMIN
+    USER
+    VENDOR
+    PARTNER
+    MEMBER
 }
 
 enum EventActivityType {
-  JOIN
-  LEAVE
-  POST
-  LIKE
-  COMMENT
-  DELETE
-  REPORT
-  RESQUEST_PENDING
-  ACCESS_DENIED
-  ACCESS_GRANTED
+    JOIN
+    LEAVE
+    POST
+    LIKE
+    COMMENT
+    DELETE
+    REPORT
+    RESQUEST_PENDING
+    ACCESS_DENIED
+    ACCESS_GRANTED
 }
 
 enum AccessType {
-  DIRECT_PASS //  Direct access through links or QR codes
-  PIN_REQUIRED // Requires entering a PIN code to access
-  INVITE_ONLY // Requires host approval for access
-}
-
-model Forms {
-  id        String            @id @default(cuid())
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  email     String
-  name      String?
-  phone     String?
-  subject   String?
-  message   String?
-  type      FormsType         @default(CONTACT)
-  status    NewsletterStatus?
-  userId    String?
-
-  @@unique([email, userId])
+    DIRECT_PASS
+    PIN_REQUIRED
+    INVITE_ONLY
 }
 
 enum NewsletterStatus {
-  APPROVED
-  UNSUBSCRIBED
-  AUTO_ARCHIVED
+    APPROVED
+    UNSUBSCRIBED
+    AUTO_ARCHIVED
 }
 
 enum FormsType {
-  CONTACT
-  NEWSLETTER
+    CONTACT
+    NEWSLETTER
 }
 
 enum AttendeeStatus {
-  JOINED
-  PENDING
-  APPROVED
-  DENIED
-}
-
-model Feedback {
-  id        String           @id @default(cuid())
-  userId    String           @db.Uuid
-  type      FeedbackType
-  rating    Int
-  message   String?
-  category  FeedbackCategory
-  status    FeedbackStatus   @default(PENDING)
-  metadata  Json?
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  user      User             @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([type])
-  @@index([category])
-  @@index([status])
-  @@index([createdAt])
+    JOINED
+    PENDING
+    APPROVED
+    DENIED
 }
 
 enum FeedbackType {
-  ACCOUNT_SETUP
-  EVENT_EXPERIENCE
-  APP_USABILITY
-  BUG_REPORT
-  FEATURE_REQUEST
-  OTHER
+    ACCOUNT_SETUP
+    EVENT_EXPERIENCE
+    APP_USABILITY
+    BUG_REPORT
+    FEATURE_REQUEST
+    OTHER
 }
 
 enum FeedbackCategory {
-  UI_UX
-  PERFORMANCE
-  FUNCTIONALITY
-  CONTENT
-  TECHNICAL
-  GENERAL
+    UI_UX
+    PERFORMANCE
+    FUNCTIONALITY
+    CONTENT
+    TECHNICAL
+    GENERAL
+    SUGGESTION
 }
 
 enum FeedbackStatus {
-  PENDING
-  REVIEWED
-  RESOLVED
-  ARCHIVED
+    PENDING
+    REVIEWED
+    RESOLVED
+    ARCHIVED
 }
 
-//Vendors Management
+enum InvitationStatus {
+    PENDING
+    ACCEPTED
+    DECLINED
+    EXPIRED
+}
 
-enum VendorType {
-  VENUE
-  CATERER
-  PHOTOGRAPHER
-  VIDEOGRAPHER
-  ENTERTAINMENT
-  DECOR
-  TRANSPORTATION
-  PLANNER
+enum InvitationType {
+    USER // User inviting another user (e.g., friends)
+    VENDOR_TEAM // Vendor inviting a team member
+    EVENT_TEAM // Event inviting a team member
+}
+
+enum NotificationType {
+    EVENT_REMINDER
+    EVENT_UPDATE
+    POST_LIKE
+    POST_COMMENT
+    NEW_FOLLOWER
+    MESSAGE
+    SYSTEM
+    BOOKING_REQUEST
+    BOOKING_CONFIRMED
+    BOOKING_CANCELLED
+    PAYMENT_RECEIVED
+    REVIEW_RECEIVED
+    VENDOR_INVITATION
+    VENDOR_ACCOUNT_UPDATE
+    VENDOR_PERFORMANCE_METRICS
+    VENDOR_PROMOTION
+}
+
+enum VendorCategory {
+    INDIVIDUAL // Solo entrepreneurs/freelancers
+    AGENCY // Event management, advertising agencies
+    VENUE_PROVIDER // Hotels, banquet halls
+    CATERING // Restaurants, food services
+    CREATIVE // Designers, artists
+    RENTAL // Equipment/furniture rental
+    PROFESSIONAL // MCs, planners
+    OTHER
+}
+
+enum ServiceType {
+    // Core Services
+    RECREATION_CENTER
+    VENUE_HOSTING
+    CATERING
+    EVENT_PLANNING
+    PHOTOGRAPHY
+    VIDEOSGRAPHY
+
+    // Creative Services
+    GRAPHIC_DESIGN
+    BRANDING
+    CONTENT_CREATION
+    DECOR_AND_THEMING
+
+    // Logistics
+    EQUIPMENT_RENTAL
+    TRANSPORTATION
+    STAFFING
+
+    // Personal Services
+    HAIR_MAKEUP
+    WARDROBE_STYLING
+    ENTERTAINMENT
+
+    // Technical
+    AV_PRODUCTION
+    LIGHTING_SOUND
+    LIVE_STREAMING
+
+    // Specialty
+
+    DESTINATION_MANAGEMENT
+    SUSTAINABILITY_SERVICES
+}
+
+enum ContactType {
+    USER // Contact is a user on the platform
+    EXTERNAL // Contact is not on the platform
 }
 
 enum PriceRange {
-  BUDGET
-  MIDRANGE
-  LUXURY
-  CUSTOM
+    BUDGET
+    MIDRANGE
+    LUXURY
+    CUSTOM
 }
 
-model Vendor {
-  id           String     @id @default(cuid())
-  name         String
-  type         VendorType
-  services     String[] // ["Wedding Photography", "Corporate Events"]
-  priceRange   PriceRange
-  location     String? // Geocodable address
-  website      String?
-  contactEmail String?
-  phone        String?
-  rating       Float?     @default(0)
-  aiMetadata   Json? // For ML features (embedding vectors, etc)
-
-  userId String @db.Uuid
-  user   User   @relation(fields: [userId], references: [id])
-
-  // Relations
-  events     EventVendor[]
-  reviews    VendorReview[]
-  attributes VendorAttribute[]
-  packages   VendorPackage[]
-
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  ChatMessage ChatMessage[]
-
-  @@index([type])
-  @@index([location])
-  @@index([priceRange])
-  @@index([rating])
-  @@index([userId])
+enum TravelScope {
+    LOCAL_ONLY
+    NATIONAL
+    INTERNATIONAL
+    NATIONAL_AND_INTERNATIONAL
 }
 
-model VendorAttribute {
-  id       String @id @default(cuid())
-  vendorId String
-  key      String // "capacity", "menuType", "equipment"
-  value    String // "500", "Vegetarian", "4K Cameras"
-  vendor   Vendor @relation(fields: [vendorId], references: [id])
-
-  @@unique([vendorId, key])
-}
-
-model VendorPackage {
-  id          String   @id @default(cuid())
-  vendorId    String
-  name        String // "Premium Wedding Package"
-  description String?
-  price       Float?
-  inclusions  String[] // ["8hr Coverage", "2 Photographers", "Edited Photos"]
-  vendor      Vendor   @relation(fields: [vendorId], references: [id])
-}
-
-model EventVendor {
-  id       String       @id @default(cuid())
-  eventId  String
-  vendorId String
-  status   VendorStatus @default(PENDING)
-  notes    String?
-  event    Event        @relation(fields: [eventId], references: [id])
-  vendor   Vendor       @relation(fields: [vendorId], references: [id])
-
-  @@unique([eventId, vendorId])
-}
-
-model VendorReview {
-  id       String  @id @default(cuid())
-  rating   Int
-  comment  String?
-  userId   String  @db.Uuid
-  vendorId String
-  user     User    @relation(fields: [userId], references: [id])
-  vendor   Vendor  @relation(fields: [vendorId], references: [id])
-
-  @@index([vendorId])
-  @@index([userId])
+enum BookingStatus {
+    INQUIRY
+    PENDING
+    CONFIRMED
+    CANCELLED
+    COMPLETED
 }
 
 enum VendorStatus {
-  PENDING
-  CONTACTED
-  BOOKED
-  DECLINED
+    PENDING
+    CONTACTED
+    BOOKED
+    DECLINED
+}
+
+enum AnalyticsType {
+    VENDOR // Vendor-related analytics (e.g., bookings, revenue)
+    EVENT // Event-related analytics (e.g., attendance, engagement)
+    USER // User-related analytics (e.g., behavior, preferences)
+}
+
+//USER MANAGEMENT
+
+model User {
+    id               String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId         String    @unique @default(cuid()) // External ID (CUID)
+    email            String?   @unique
+    username         String?   @unique
+    name             String?
+    avatarUrl        String?
+    bio              String?
+    dob              DateTime?
+    role             UserRole  @default(USER)
+    isAnonymous      Boolean   @default(false)
+    allowFollowers   Boolean   @default(true)
+    isPrivateProfile Boolean   @default(false)
+    lastActive       DateTime  @default(now())
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+
+    // Relations
+    vendors                Vendor[]
+    posts                  Post[]
+    comments               Comment[]
+    likes                  Like[]
+    hostedEvents           Event[]            @relation("HostedEvents")
+    attendeeEvents         Attendee[]         @relation("UserAttendee")
+    following              Follow[]           @relation("Following")
+    followers              Follow[]           @relation("Followers")
+    messages               Message[]
+    eventLogs              EventActivity[]
+    sentFollowRequests     FollowRequest[]    @relation("Requestor")
+    receivedFollowRequests FollowRequest[]    @relation("Target")
+    feedbacks              Feedback[]
+    messageReactions       MessageReaction[]
+    vendorReviews          VendorReview[]
+    bookings               Booking[]
+    notifications          Notification[]
+    vendorPageVisits       VendorPageVisit[]
+    vendorTeamMembers      VendorTeamMember[]
+    eventTeamMembers       EventTeamMember[]
+    sentInvitations        Invitation[]       @relation("UserInvitations") // Invitations sent by the user
+    receivedInvitations    Invitation[]       @relation("UserInvitees") // Invitations received by the user
+    vendorContacts         VendorContact[]
+    analytics              Analytics[] // Analytics related to the user
+}
+
+//EVENT MANAGEMENT
+
+model Event {
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    name     String
+    type     String
+
+    description String?
+    location    String?
+    city        String? // Store city name for display
+    country     String? // Store country name for display
+    coordinates Json? // Store lat/lng for mapping
+    dateTime    DateTime
+    qrCodeUrl   String?
+    coverImage  String?
+    slug        String?  @unique
+    pinCode     String?  @unique
+
+    vendorBudget     Float?
+    vendorCosts      Json?
+    fee              Float?
+    isPaid           Boolean    @default(false)
+    isPrivate        Boolean    @default(false)
+    requiresApproval Boolean    @default(false)
+    isDisabled       Boolean    @default(false)
+    allowComments    Boolean    @default(true)
+    allowLikes       Boolean    @default(true)
+    allowChat        Boolean    @default(false)
+    allowPosts       Boolean    @default(true)
+    accessType       AccessType @default(DIRECT_PASS)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    hostId    String   @db.Uuid
+    host      User     @relation("HostedEvents", fields: [hostId], references: [id])
+
+    // Relations
+    attendees    Attendee[]    @relation("EventAttendee")
+    posts        Post[]
+    messages     Message[]
+    chatSettings ChatSettings?
+
+    eventLogs       EventActivity[]
+    eventVendors    EventVendor[]
+    notifications   Notification[]
+    eventTeams      EventTeam[]
+    sentInvitations Invitation[]    @relation("EventInvitations") // Invitations sent by the event
+    analytics       Analytics[] // Analytics related to the event
+
+    @@index([hostId])
+    @@index([createdAt])
+    @@index([isDisabled, isPrivate, location, type])
+    @@index([hostId, createdAt])
+    @@index([isDisabled, createdAt])
+}
+
+model Attendee {
+    id        String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String         @unique @default(cuid()) // External ID (CUID)
+    userId    String         @db.Uuid
+    eventId   String         @db.Uuid
+    status    AttendeeStatus @default(APPROVED)
+    createdAt DateTime       @default(now())
+
+    // Relations
+    user  User  @relation("UserAttendee", fields: [userId], references: [id])
+    event Event @relation("EventAttendee", fields: [eventId], references: [id])
+
+    @@unique([userId, eventId])
+    @@index([eventId, userId])
+    @@index([userId, status])
+    @@index([eventId, status])
+}
+
+model EventTeam {
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    eventId  String @db.Uuid
+    name     String // Team name (e.g., "Event Coordination Team")
+    event    Event  @relation(fields: [eventId], references: [id])
+
+    // Relations
+    members EventTeamMember[]
+
+    @@index([eventId])
+}
+
+model EventTeamMember {
+    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId    String   @unique @default(cuid()) // External ID (CUID)
+    eventTeamId String   @db.Uuid
+    userId      String   @db.Uuid
+    role        String // Role in the team (e.g., "Coordinator", "Assistant")
+    createdAt   DateTime @default(now())
+
+    // Relations
+    eventTeam EventTeam @relation(fields: [eventTeamId], references: [id])
+    user      User      @relation(fields: [userId], references: [id])
+
+    @@unique([eventTeamId, userId])
+    @@index([eventTeamId])
+    @@index([userId])
+}
+
+model EventActivity {
+    id        String            @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String            @unique @default(cuid()) // External ID (CUID)
+    eventId   String            @db.Uuid
+    userId    String            @db.Uuid
+    type      EventActivityType
+    createdAt DateTime          @default(now())
+    event     Event             @relation(fields: [eventId], references: [id])
+    user      User              @relation(fields: [userId], references: [id])
+
+    @@index([createdAt])
+    @@index([eventId])
+    @@index([userId])
+}
+
+model Message {
+    id        String        @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String        @unique @default(cuid()) // External ID (CUID)
+    content   String
+    isPinned  Boolean       @default(false)
+    status    MessageStatus @default(SENT)
+    createdAt DateTime      @default(now())
+    userId    String        @db.Uuid
+    eventId   String        @db.Uuid
+
+    // Relations
+    user      User              @relation(fields: [userId], references: [id])
+    event     Event             @relation(fields: [eventId], references: [id])
+    reactions MessageReaction[]
+
+    // Add vendor context
+    vendorId String? @db.Uuid // Reference to vendor being discussed
+    vendor   Vendor? @relation(fields: [vendorId], references: [id])
+
+    @@index([eventId])
+    @@index([userId])
+}
+
+model MessageReaction {
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
+    emoji     String
+    messageId String   @db.Uuid
+    userId    String   @db.Uuid
+    createdAt DateTime @default(now())
+    message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+    user      User     @relation(fields: [userId], references: [id])
+
+    @@unique([messageId, userId, emoji])
+    @@index([messageId])
+}
+
+model ChatSettings {
+    id                 String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId           String   @unique @default(cuid()) // External ID (CUID)
+    eventId            String   @unique @db.Uuid
+    isEnabled          Boolean  @default(true)
+    allowGuestMessages Boolean  @default(true)
+    slowMode           Boolean  @default(false)
+    slowModeInterval   Int      @default(0)
+    requireModeration  Boolean  @default(false)
+    muteList           Json?
+    banList            Json?
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @default(now())
+    event              Event    @relation(fields: [eventId], references: [id])
+
+    @@index([eventId])
+}
+
+//POST AND CONTENT MANAGEMENT
+
+model Post {
+    id            String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId      String         @unique @default(cuid()) // External ID (CUID)
+    caption       String?
+    media         PostMedia[]
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    userId        String         @db.Uuid
+    eventId       String         @db.Uuid
+    user          User           @relation(fields: [userId], references: [id])
+    event         Event          @relation(fields: [eventId], references: [id])
+    comments      Comment[]
+    likes         Like[]
+    notifications Notification[]
+
+    @@index([eventId])
+    @@index([userId])
+}
+
+model PostMedia {
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    postId          String?        @db.Uuid
+    url             String
+    type            MediaType
+    order           Int            @default(0)
+    createdAt       DateTime       @default(now())
+    post            Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
+}
+
+model Comment {
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    content         String
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    userId          String         @db.Uuid
+    postId          String         @db.Uuid
+    user            User           @relation(fields: [userId], references: [id])
+    post            Post           @relation(fields: [postId], references: [id])
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
+
+    @@index([postId])
+    @@index([userId])
+}
+
+model Like {
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    createdAt       DateTime       @default(now())
+    userId          String         @db.Uuid
+    postId          String         @db.Uuid
+    user            User           @relation(fields: [userId], references: [id])
+    post            Post           @relation(fields: [postId], references: [id])
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
+
+    @@unique([userId, postId])
+}
+
+//FOLLOW AND NOTIFICATION MANAGEMENT
+
+model Follow {
+    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId    String   @unique @default(cuid()) // External ID (CUID)
+    followerId  String   @db.Uuid
+    followingId String   @db.Uuid
+    createdAt   DateTime @default(now())
+
+    // Relations
+    follower  User @relation("Following", fields: [followerId], references: [id])
+    following User @relation("Followers", fields: [followingId], references: [id])
+
+    @@unique([followerId, followingId])
+}
+
+model FollowRequest {
+    id           String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String   @unique @default(cuid()) // External ID (CUID)
+    requestorId  String   @db.Uuid
+    targetUserId String   @db.Uuid
+    createdAt    DateTime @default(now())
+
+    // Relations
+    requestor User @relation("Requestor", fields: [requestorId], references: [id])
+    target    User @relation("Target", fields: [targetUserId], references: [id])
+
+    @@unique([requestorId, targetUserId])
+}
+
+model Notification {
+    id        String           @id @default(cuid())
+    type      NotificationType
+    userId    String           @db.Uuid
+    eventId   String?          @db.Uuid
+    postId    String?          @db.Uuid
+    subject   String?          @db.VarChar(128)
+    content   String           @db.VarChar(2000)
+    link      String?          @db.VarChar(500)
+    seenAt    DateTime?
+    dismissed Boolean          @default(false)
+    createdAt DateTime         @default(now())
+    updatedAt DateTime         @updatedAt
+
+    // Relations
+    user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    event Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    post  Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([eventId])
+    @@index([postId])
+    @@index([createdAt])
+}
+
+//VENDOR MANAGEMENT
+
+model Vendor {
+    id             String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId       String         @unique @default(cuid()) // External ID (CUID)
+    name           String
+    description    String?
+    logoUrl        String?
+    category       VendorCategory
+    services       ServiceType[]
+    customServices String[]
+    tiers          VendorTier[]   @relation("VendorTiers")
+    location       String?
+    rating         Float?         @default(0)
+    totalReviews   Int            @default(0)
+    aiTags         String[]
+    aiMetadata     Json?
+    contactEmail   String?
+    phone          String?
+    website        String?
+    travelScope    TravelScope    @default(LOCAL_ONLY)
+    travelFee      Float?
+    servingCities  String[]
+    travelNotes    String?
+    userId         String         @db.Uuid
+    user           User           @relation(fields: [userId], references: [id])
+
+    // Relations
+    portfolio        Portfolio?
+    operations       VendorOperations?
+    attributes       VendorAttribute[]
+    packages         VendorPackage[]
+    events           EventVendor[]
+    reviews          VendorReview[]
+    messages         Message[]
+    bookings         Booking[]
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    vendorPageVisits VendorPageVisit[]
+    vendorTeams      VendorTeam[]
+    sentInvitations  Invitation[]      @relation("VendorInvitations") // Invitations sent by the vendor
+    contacts         VendorContact[]
+    groups           ContactGroup[]
+    analytics        Analytics[] // Analytics related to the vendor
+
+    @@index([category])
+    @@index([location])
+    @@index([rating])
+    @@index([userId])
+}
+
+model VendorTier {
+    id      Int      @id @default(autoincrement())
+    name    String   @unique
+    vendors Vendor[] @relation("VendorTiers")
+}
+
+model VendorOperations {
+    id               String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId         String   @unique @default(cuid()) // External ID (CUID)
+    vendorId         String   @unique @db.Uuid
+    vendor           Vendor   @relation(fields: [vendorId], references: [id])
+    businessHours    Json?
+    availability     Json?
+    completionRate   Float?
+    responseTime     Int?
+    cancellationRate Float?
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
+
+    @@index([vendorId])
+}
+
+model VendorAttribute {
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    vendorId String @db.Uuid
+    key      String
+    value    String
+    vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+    @@unique([vendorId, key])
+}
+
+model VendorPackage {
+    id            String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId      String    @unique @default(cuid()) // External ID (CUID)
+    vendorId      String    @db.Uuid
+    name          String
+    description   String?
+    price         Float?
+    inclusions    String[]
+    basePrice     Float
+    surgePrice    Float?
+    discountRules Json?
+    vendor        Vendor    @relation(fields: [vendorId], references: [id])
+    Booking       Booking[]
+}
+
+model EventVendor {
+    id       String       @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String       @unique @default(cuid()) // External ID (CUID)
+    eventId  String       @db.Uuid
+    vendorId String       @db.Uuid
+    status   VendorStatus @default(PENDING)
+    notes    String?
+    event    Event        @relation(fields: [eventId], references: [id])
+    vendor   Vendor       @relation(fields: [vendorId], references: [id])
+
+    @@unique([eventId, vendorId])
+}
+
+model Booking {
+    id        String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String         @unique @default(cuid()) // External ID (CUID)
+    date      DateTime
+    timeSlot  String
+    status    BookingStatus  @default(PENDING)
+    notes     String?
+    vendorId  String         @db.Uuid
+    userId    String         @db.Uuid
+    packageId String?        @db.Uuid
+    vendor    Vendor         @relation(fields: [vendorId], references: [id])
+    user      User           @relation(fields: [userId], references: [id])
+    package   VendorPackage? @relation(fields: [packageId], references: [id])
+    reviews   VendorReview[]
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+
+    @@index([vendorId])
+    @@index([userId])
+    @@index([date])
+}
+
+model VendorReview {
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
+    rating    Int
+    comment   String?
+    userId    String   @db.Uuid
+    vendorId  String   @db.Uuid
+    bookingId String?  @db.Uuid
+    user      User     @relation(fields: [userId], references: [id])
+    vendor    Vendor   @relation(fields: [vendorId], references: [id])
+    booking   Booking? @relation(fields: [bookingId], references: [id])
+
+    @@index([vendorId])
+    @@index([userId])
+}
+
+model VendorPageVisit {
+    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String   @unique @default(cuid()) // External ID (CUID)
+    vendorId  String   @db.Uuid
+    userId    String?  @db.Uuid
+    timestamp DateTime @default(now())
+    vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    @@index([vendorId], map: "IX_VendorPageVisit_vendorId")
+    @@index([userId], map: "IX_VendorPageVisit_userId")
+}
+
+model VendorTeam {
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    vendorId String @db.Uuid
+    name     String // Team name (e.g., "Wedding Photography Team")
+    vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+    // Relations
+    members VendorTeamMember[]
+
+    @@index([vendorId])
+}
+
+model VendorTeamMember {
+    id           String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String   @unique @default(cuid()) // External ID (CUID)
+    vendorTeamId String   @db.Uuid
+    userId       String   @db.Uuid
+    role         String // Role in the team (e.g., "Lead Photographer", "Assistant")
+    createdAt    DateTime @default(now())
+
+    // Relations
+    vendorTeam VendorTeam @relation(fields: [vendorTeamId], references: [id])
+    user       User       @relation(fields: [userId], references: [id])
+
+    @@unique([vendorTeamId, userId])
+    @@index([vendorTeamId])
+    @@index([userId])
+}
+
+model VendorContact {
+    id           String      @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String      @unique @default(cuid()) // External ID (CUID)
+    vendorId     String      @db.Uuid // Vendor who owns this contact
+    contactType  ContactType // Type of contact (USER, EXTERNAL)
+    userId       String?     @db.Uuid // If the contact is a user on the platform
+    name         String? // Name of the contact (required for external contacts)
+    email        String? // Email of the contact
+    phone        String? // Phone number of the contact
+    company      String? // Company name (for external contacts)
+    tags         String[] // Tags to categorize contacts (e.g., "Clients", "Vendors")
+    notes        String? // Additional notes about the contact
+    customFields Json? // Store custom fields as JSON
+    createdAt    DateTime    @default(now())
+    updatedAt    DateTime    @updatedAt
+
+    // Relations
+    vendor  Vendor        @relation(fields: [vendorId], references: [id])
+    user    User?         @relation(fields: [userId], references: [id])
+    groupId String?       @db.Uuid
+    group   ContactGroup? @relation(fields: [groupId], references: [id])
+
+    // Indexes
+    @@index([vendorId])
+    @@index([userId])
+    @@index([email])
+    @@index([contactType])
+}
+
+model ContactGroup {
+    id        String          @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String          @unique @default(cuid()) // External ID (CUID)
+    vendorId  String          @db.Uuid
+    name      String
+    contacts  VendorContact[] // Many-to-many relation with VendorContact
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    // Relations
+    vendor Vendor @relation(fields: [vendorId], references: [id])
+
+    @@index([vendorId])
+}
+
+model Portfolio {
+    id        String          @id @default(uuid()) @db.Uuid
+    publicId  String          @unique @default(cuid())
+    vendorId  String          @unique @db.Uuid
+    vendor    Vendor          @relation(fields: [vendorId], references: [id])
+    items     PortfolioItem[]
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    @@index([vendorId])
+}
+
+model PortfolioItem {
+    id          String      @id @default(uuid()) @db.Uuid
+    publicId    String      @unique @default(cuid())
+    portfolioId String      @db.Uuid
+    eventId     String?     @db.Uuid
+    portfolio   Portfolio   @relation(fields: [portfolioId], references: [id])
+    title       String
+    description String?
+    media       PostMedia[]
+    tags        String[]
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    likes       Like[]
+    comments    Comment[]
+
+    @@index([portfolioId])
+}
+
+//Add Testimonials
+
+//Add event planning
+
+//INVITATION MANGEMENT
+
+model Invitation {
+    id           String           @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId     String           @unique @default(cuid()) // External ID (CUID)
+    type         InvitationType // Type of invitation (USER, VENDOR_TEAM, EVENT_TEAM)
+    status       InvitationStatus @default(PENDING)
+    inviterId    String           @db.Uuid // ID of the inviter (user, vendor, or event)
+    inviteeId    String?          @db.Uuid // ID of the invitee (user, if already registered)
+    inviteeEmail String? // Email of the invitee (if not yet registered)
+    role         String? // Role for team invitations (e.g., "Photographer", "Coordinator")
+    createdAt    DateTime         @default(now())
+    updatedAt    DateTime         @updatedAt
+
+    // Relations
+    inviterUser   User?   @relation("UserInvitations", fields: [inviterId], references: [id], map: "Invitation_inviterUser_fkey")
+    inviterVendor Vendor? @relation("VendorInvitations", fields: [inviterId], references: [id], map: "Invitation_inviterVendor_fkey")
+    inviterEvent  Event?  @relation("EventInvitations", fields: [inviterId], references: [id], map: "Invitation_inviterEvent_fkey")
+    inviteeUser   User?   @relation("UserInvitees", fields: [inviteeId], references: [id])
+
+    // Indexes
+    @@index([inviterId])
+    @@index([inviteeId])
+    @@index([inviteeEmail])
+    @@index([type])
+    @@index([status])
+}
+
+// ANALYSTICS 
+
+model Analytics {
+    id         String        @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId   String        @unique @default(cuid()) // External ID (CUID)
+    type       AnalyticsType // Type of analytics (VENDOR, EVENT, USER)
+    metric     String // Metric being tracked (e.g., "page_views", "bookings")
+    value      Float // Value of the metric (e.g., 100, 5000.50)
+    dimensions Json? // Additional context (e.g., { "eventId": "123", "date": "2023-10-01" })
+    vendorId   String?       @db.Uuid // Vendor ID (if related to a vendor)
+    eventId    String?       @db.Uuid // Event ID (if related to an event)
+    userId     String?       @db.Uuid // User ID (if related to a user)
+    createdAt  DateTime      @default(now())
+
+    // Relations
+    vendor Vendor? @relation(fields: [vendorId], references: [id])
+    event  Event?  @relation(fields: [eventId], references: [id])
+    user   User?   @relation(fields: [userId], references: [id])
+
+    // Indexes
+    @@index([type])
+    @@index([metric])
+    @@index([vendorId])
+    @@index([eventId])
+    @@index([userId])
+    @@index([createdAt])
+}
+
+// APP MODELS
+
+model Forms {
+    id        String            @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String            @unique @default(cuid()) // External ID (CUID)
+    createdAt DateTime          @default(now())
+    updatedAt DateTime          @updatedAt
+    email     String
+    name      String?
+    phone     String?
+    subject   String?
+    message   String?
+    type      FormsType         @default(CONTACT)
+    status    NewsletterStatus?
+    userId    String?
+
+    @@unique([email, userId])
+}
+
+model Feedback {
+    id        String           @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId  String           @unique @default(cuid()) // External ID (CUID)
+    userId    String           @db.Uuid
+    type      FeedbackType
+    rating    Int
+    message   String?
+    category  FeedbackCategory
+    status    FeedbackStatus   @default(PENDING)
+    metadata  Json?
+    createdAt DateTime         @default(now())
+    updatedAt DateTime         @updatedAt
+    user      User             @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+    @@index([type])
+    @@index([category])
+    @@index([status])
+    @@index([createdAt])
 }

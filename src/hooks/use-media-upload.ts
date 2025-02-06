@@ -1,4 +1,4 @@
-import { uploadToSupabase } from "@/lib/supabase/upload/supabase-storage";
+import { uploadToSupabase } from "@/lib/upload/supabase-storage";
 import { useState } from "react";
 
 export interface MediaFile {

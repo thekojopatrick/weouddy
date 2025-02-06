@@ -12,7 +12,7 @@ import { Container } from "@/components/common/container";
 import { UserProfileSidebar } from "./user-profile-sidebar";
 import { CurrentUser } from "@/types/prisma.types";
 import { Badge } from "@/components/ui/badge";
-import SearchDialog from "@/components/event/search-dialog";
+import SearchDialog from "@/features/events/components/search-dialog";
 
 export function SiteHeader({ user }: { user: CurrentUser | null }) {
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
@@ -57,6 +57,12 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
               {user ? "Explore" : "Home"}
             </Link>
             <Link
+              href="/vendors"
+              className="transition-colors hover:text-foreground/80"
+            >
+              Hire Vendors
+            </Link>
+            <Link
               href="/about"
               className="transition-colors hover:text-foreground/80"
             >
@@ -69,7 +75,7 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
               Support Us
             </Link>
           </nav>
-          <div className="relative w-full">
+          <div className="relative grow">
             <SearchDialog />
           </div>
           <div className="md:ml-auto flex items-center space-x-3">

@@ -1,6 +1,6 @@
 import React from "react";
 import { EventsStatsComponent } from "../_components/events-stats";
-import { getSession } from "@/lib/auth/server";
+import { getSession } from "@/lib/auth";
 import EventsOverview from "../_components/events/events-overview";
 
 const page = async () => {

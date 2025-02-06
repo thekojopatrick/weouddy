@@ -1,6 +1,6 @@
 "use server";
 
-import { getSession } from "@/lib/auth/server";
+import { getSession } from "@/lib/auth";
 import { EventService } from "@/server/services/event";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";

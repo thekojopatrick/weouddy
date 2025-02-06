@@ -67,11 +67,103 @@ export type Database = {
         };
         Relationships: [];
       };
+      _VendorTiers: {
+        Row: {
+          A: string;
+          B: number;
+        };
+        Insert: {
+          A: string;
+          B: number;
+        };
+        Update: {
+          A?: string;
+          B?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "_VendorTiers_A_fkey";
+            columns: ["A"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "_VendorTiers_B_fkey";
+            columns: ["B"];
+            isOneToOne: false;
+            referencedRelation: "VendorTier";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      Analytics: {
+        Row: {
+          createdAt: string;
+          dimensions: Json | null;
+          eventId: string | null;
+          id: string;
+          metric: string;
+          publicId: string;
+          type: Database["public"]["Enums"]["AnalyticsType"];
+          userId: string | null;
+          value: number;
+          vendorId: string | null;
+        };
+        Insert: {
+          createdAt?: string;
+          dimensions?: Json | null;
+          eventId?: string | null;
+          id: string;
+          metric: string;
+          publicId: string;
+          type: Database["public"]["Enums"]["AnalyticsType"];
+          userId?: string | null;
+          value: number;
+          vendorId?: string | null;
+        };
+        Update: {
+          createdAt?: string;
+          dimensions?: Json | null;
+          eventId?: string | null;
+          id?: string;
+          metric?: string;
+          publicId?: string;
+          type?: Database["public"]["Enums"]["AnalyticsType"];
+          userId?: string | null;
+          value?: number;
+          vendorId?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Analytics_eventId_fkey";
+            columns: ["eventId"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Analytics_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Analytics_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Attendee: {
         Row: {
           createdAt: string;
           eventId: string;
           id: string;
+          publicId: string;
           status: Database["public"]["Enums"]["AttendeeStatus"];
           userId: string;
         };
@@ -79,6 +171,7 @@ export type Database = {
           createdAt?: string;
           eventId: string;
           id: string;
+          publicId: string;
           status?: Database["public"]["Enums"]["AttendeeStatus"];
           userId: string;
         };
@@ -86,6 +179,7 @@ export type Database = {
           createdAt?: string;
           eventId?: string;
           id?: string;
+          publicId?: string;
           status?: Database["public"]["Enums"]["AttendeeStatus"];
           userId?: string;
         };
@@ -106,54 +200,63 @@ export type Database = {
           },
         ];
       };
-      ChatMessage: {
+      Booking: {
         Row: {
-          content: string;
           createdAt: string;
-          eventId: string;
+          date: string;
           id: string;
-          isPinned: boolean;
-          status: Database["public"]["Enums"]["MessageStatus"];
+          notes: string | null;
+          packageId: string | null;
+          publicId: string;
+          status: Database["public"]["Enums"]["BookingStatus"];
+          timeSlot: string;
+          updatedAt: string;
           userId: string;
-          vendorId: string | null;
+          vendorId: string;
         };
         Insert: {
-          content: string;
           createdAt?: string;
-          eventId: string;
+          date: string;
           id: string;
-          isPinned?: boolean;
-          status?: Database["public"]["Enums"]["MessageStatus"];
+          notes?: string | null;
+          packageId?: string | null;
+          publicId: string;
+          status?: Database["public"]["Enums"]["BookingStatus"];
+          timeSlot: string;
+          updatedAt: string;
           userId: string;
-          vendorId?: string | null;
+          vendorId: string;
         };
         Update: {
-          content?: string;
           createdAt?: string;
-          eventId?: string;
+          date?: string;
           id?: string;
-          isPinned?: boolean;
-          status?: Database["public"]["Enums"]["MessageStatus"];
+          notes?: string | null;
+          packageId?: string | null;
+          publicId?: string;
+          status?: Database["public"]["Enums"]["BookingStatus"];
+          timeSlot?: string;
+          updatedAt?: string;
           userId?: string;
-          vendorId?: string | null;
+          vendorId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "ChatMessage_eventId_fkey";
-            columns: ["eventId"];
+            foreignKeyName: "Booking_packageId_fkey";
+            columns: ["packageId"];
             isOneToOne: false;
-            referencedRelation: "Event";
+            referencedRelation: "VendorPackage";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "ChatMessage_userId_fkey";
+            foreignKeyName: "Booking_userId_fkey";
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "User";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "ChatMessage_vendorId_fkey";
+            foreignKeyName: "Booking_vendorId_fkey";
             columns: ["vendorId"];
             isOneToOne: false;
             referencedRelation: "Vendor";
@@ -170,6 +273,7 @@ export type Database = {
           id: string;
           isEnabled: boolean;
           muteList: Json | null;
+          publicId: string;
           requireModeration: boolean;
           slowMode: boolean;
           slowModeInterval: number;
@@ -183,6 +287,7 @@ export type Database = {
           id: string;
           isEnabled?: boolean;
           muteList?: Json | null;
+          publicId: string;
           requireModeration?: boolean;
           slowMode?: boolean;
           slowModeInterval?: number;
@@ -196,6 +301,7 @@ export type Database = {
           id?: string;
           isEnabled?: boolean;
           muteList?: Json | null;
+          publicId?: string;
           requireModeration?: boolean;
           slowMode?: boolean;
           slowModeInterval?: number;
@@ -216,7 +322,9 @@ export type Database = {
           content: string;
           createdAt: string;
           id: string;
+          portfolioItemId: string | null;
           postId: string;
+          publicId: string;
           updatedAt: string;
           userId: string;
         };
@@ -224,7 +332,9 @@ export type Database = {
           content: string;
           createdAt?: string;
           id: string;
+          portfolioItemId?: string | null;
           postId: string;
+          publicId: string;
           updatedAt: string;
           userId: string;
         };
@@ -232,11 +342,20 @@ export type Database = {
           content?: string;
           createdAt?: string;
           id?: string;
+          portfolioItemId?: string | null;
           postId?: string;
+          publicId?: string;
           updatedAt?: string;
           userId?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "Comment_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "Comment_postId_fkey";
             columns: ["postId"];
@@ -253,6 +372,41 @@ export type Database = {
           },
         ];
       };
+      ContactGroup: {
+        Row: {
+          createdAt: string;
+          id: string;
+          name: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id: string;
+          name: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          name?: string;
+          publicId?: string;
+          updatedAt?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ContactGroup_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Event: {
         Row: {
           accessType: Database["public"]["Enums"]["AccessType"];
@@ -260,17 +414,23 @@ export type Database = {
           allowComments: boolean;
           allowLikes: boolean;
           allowPosts: boolean;
+          city: string | null;
+          coordinates: Json | null;
+          country: string | null;
           coverImage: string | null;
           createdAt: string;
           dateTime: string;
           description: string | null;
+          fee: number | null;
           hostId: string;
           id: string;
           isDisabled: boolean;
+          isPaid: boolean;
           isPrivate: boolean;
           location: string | null;
           name: string;
           pinCode: string | null;
+          publicId: string;
           qrCodeUrl: string | null;
           requiresApproval: boolean;
           slug: string | null;
@@ -285,17 +445,23 @@ export type Database = {
           allowComments?: boolean;
           allowLikes?: boolean;
           allowPosts?: boolean;
+          city?: string | null;
+          coordinates?: Json | null;
+          country?: string | null;
           coverImage?: string | null;
           createdAt?: string;
           dateTime: string;
           description?: string | null;
+          fee?: number | null;
           hostId: string;
           id: string;
           isDisabled?: boolean;
+          isPaid?: boolean;
           isPrivate?: boolean;
           location?: string | null;
           name: string;
           pinCode?: string | null;
+          publicId: string;
           qrCodeUrl?: string | null;
           requiresApproval?: boolean;
           slug?: string | null;
@@ -310,17 +476,23 @@ export type Database = {
           allowComments?: boolean;
           allowLikes?: boolean;
           allowPosts?: boolean;
+          city?: string | null;
+          coordinates?: Json | null;
+          country?: string | null;
           coverImage?: string | null;
           createdAt?: string;
           dateTime?: string;
           description?: string | null;
+          fee?: number | null;
           hostId?: string;
           id?: string;
           isDisabled?: boolean;
+          isPaid?: boolean;
           isPrivate?: boolean;
           location?: string | null;
           name?: string;
           pinCode?: string | null;
+          publicId?: string;
           qrCodeUrl?: string | null;
           requiresApproval?: boolean;
           slug?: string | null;
@@ -344,6 +516,7 @@ export type Database = {
           createdAt: string;
           eventId: string;
           id: string;
+          publicId: string;
           type: Database["public"]["Enums"]["EventActivityType"];
           userId: string;
         };
@@ -351,6 +524,7 @@ export type Database = {
           createdAt?: string;
           eventId: string;
           id: string;
+          publicId: string;
           type: Database["public"]["Enums"]["EventActivityType"];
           userId: string;
         };
@@ -358,6 +532,7 @@ export type Database = {
           createdAt?: string;
           eventId?: string;
           id?: string;
+          publicId?: string;
           type?: Database["public"]["Enums"]["EventActivityType"];
           userId?: string;
         };
@@ -378,38 +553,70 @@ export type Database = {
           },
         ];
       };
-      EventRole: {
+      EventTeam: {
         Row: {
-          createdAt: string;
           eventId: string;
           id: string;
-          role: Database["public"]["Enums"]["Role"];
-          userId: string;
+          name: string;
+          publicId: string;
         };
         Insert: {
-          createdAt?: string;
           eventId: string;
           id: string;
-          role: Database["public"]["Enums"]["Role"];
-          userId: string;
+          name: string;
+          publicId: string;
         };
         Update: {
-          createdAt?: string;
           eventId?: string;
           id?: string;
-          role?: Database["public"]["Enums"]["Role"];
-          userId?: string;
+          name?: string;
+          publicId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "EventRole_eventId_fkey";
+            foreignKeyName: "EventTeam_eventId_fkey";
             columns: ["eventId"];
             isOneToOne: false;
             referencedRelation: "Event";
             referencedColumns: ["id"];
           },
+        ];
+      };
+      EventTeamMember: {
+        Row: {
+          createdAt: string;
+          eventTeamId: string;
+          id: string;
+          publicId: string;
+          role: string;
+          userId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          eventTeamId: string;
+          id: string;
+          publicId: string;
+          role: string;
+          userId: string;
+        };
+        Update: {
+          createdAt?: string;
+          eventTeamId?: string;
+          id?: string;
+          publicId?: string;
+          role?: string;
+          userId?: string;
+        };
+        Relationships: [
           {
-            foreignKeyName: "EventRole_userId_fkey";
+            foreignKeyName: "EventTeamMember_eventTeamId_fkey";
+            columns: ["eventTeamId"];
+            isOneToOne: false;
+            referencedRelation: "EventTeam";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "EventTeamMember_userId_fkey";
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "User";
@@ -422,6 +629,7 @@ export type Database = {
           eventId: string;
           id: string;
           notes: string | null;
+          publicId: string;
           status: Database["public"]["Enums"]["VendorStatus"];
           vendorId: string;
         };
@@ -429,6 +637,7 @@ export type Database = {
           eventId: string;
           id: string;
           notes?: string | null;
+          publicId: string;
           status?: Database["public"]["Enums"]["VendorStatus"];
           vendorId: string;
         };
@@ -436,6 +645,7 @@ export type Database = {
           eventId?: string;
           id?: string;
           notes?: string | null;
+          publicId?: string;
           status?: Database["public"]["Enums"]["VendorStatus"];
           vendorId?: string;
         };
@@ -463,6 +673,7 @@ export type Database = {
           id: string;
           message: string | null;
           metadata: Json | null;
+          publicId: string;
           rating: number;
           status: Database["public"]["Enums"]["FeedbackStatus"];
           type: Database["public"]["Enums"]["FeedbackType"];
@@ -475,6 +686,7 @@ export type Database = {
           id: string;
           message?: string | null;
           metadata?: Json | null;
+          publicId: string;
           rating: number;
           status?: Database["public"]["Enums"]["FeedbackStatus"];
           type: Database["public"]["Enums"]["FeedbackType"];
@@ -487,6 +699,7 @@ export type Database = {
           id?: string;
           message?: string | null;
           metadata?: Json | null;
+          publicId?: string;
           rating?: number;
           status?: Database["public"]["Enums"]["FeedbackStatus"];
           type?: Database["public"]["Enums"]["FeedbackType"];
@@ -509,18 +722,21 @@ export type Database = {
           followerId: string;
           followingId: string;
           id: string;
+          publicId: string;
         };
         Insert: {
           createdAt?: string;
           followerId: string;
           followingId: string;
           id: string;
+          publicId: string;
         };
         Update: {
           createdAt?: string;
           followerId?: string;
           followingId?: string;
           id?: string;
+          publicId?: string;
         };
         Relationships: [
           {
@@ -543,18 +759,21 @@ export type Database = {
         Row: {
           createdAt: string;
           id: string;
+          publicId: string;
           requestorId: string;
           targetUserId: string;
         };
         Insert: {
           createdAt?: string;
           id: string;
+          publicId: string;
           requestorId: string;
           targetUserId: string;
         };
         Update: {
           createdAt?: string;
           id?: string;
+          publicId?: string;
           requestorId?: string;
           targetUserId?: string;
         };
@@ -583,6 +802,7 @@ export type Database = {
           message: string | null;
           name: string | null;
           phone: string | null;
+          publicId: string;
           status: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject: string | null;
           type: Database["public"]["Enums"]["FormsType"];
@@ -596,6 +816,7 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           phone?: string | null;
+          publicId: string;
           status?: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject?: string | null;
           type?: Database["public"]["Enums"]["FormsType"];
@@ -609,6 +830,7 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           phone?: string | null;
+          publicId?: string;
           status?: Database["public"]["Enums"]["NewsletterStatus"] | null;
           subject?: string | null;
           type?: Database["public"]["Enums"]["FormsType"];
@@ -617,26 +839,107 @@ export type Database = {
         };
         Relationships: [];
       };
+      Invitation: {
+        Row: {
+          createdAt: string;
+          id: string;
+          inviteeEmail: string | null;
+          inviteeId: string | null;
+          inviterId: string;
+          publicId: string;
+          role: string | null;
+          status: Database["public"]["Enums"]["InvitationStatus"];
+          type: Database["public"]["Enums"]["InvitationType"];
+          updatedAt: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id: string;
+          inviteeEmail?: string | null;
+          inviteeId?: string | null;
+          inviterId: string;
+          publicId: string;
+          role?: string | null;
+          status?: Database["public"]["Enums"]["InvitationStatus"];
+          type: Database["public"]["Enums"]["InvitationType"];
+          updatedAt: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          inviteeEmail?: string | null;
+          inviteeId?: string | null;
+          inviterId?: string;
+          publicId?: string;
+          role?: string | null;
+          status?: Database["public"]["Enums"]["InvitationStatus"];
+          type?: Database["public"]["Enums"]["InvitationType"];
+          updatedAt?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Invitation_inviteeId_fkey";
+            columns: ["inviteeId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Invitation_inviterEvent_fkey";
+            columns: ["inviterId"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Invitation_inviterUser_fkey";
+            columns: ["inviterId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Invitation_inviterVendor_fkey";
+            columns: ["inviterId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Like: {
         Row: {
           createdAt: string;
           id: string;
+          portfolioItemId: string | null;
           postId: string;
+          publicId: string;
           userId: string;
         };
         Insert: {
           createdAt?: string;
           id: string;
+          portfolioItemId?: string | null;
           postId: string;
+          publicId: string;
           userId: string;
         };
         Update: {
           createdAt?: string;
           id?: string;
+          portfolioItemId?: string | null;
           postId?: string;
+          publicId?: string;
           userId?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "Like_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "Like_postId_fkey";
             columns: ["postId"];
@@ -653,12 +956,71 @@ export type Database = {
           },
         ];
       };
+      Message: {
+        Row: {
+          content: string;
+          createdAt: string;
+          eventId: string;
+          id: string;
+          isPinned: boolean;
+          publicId: string;
+          status: Database["public"]["Enums"]["MessageStatus"];
+          userId: string;
+          vendorId: string | null;
+        };
+        Insert: {
+          content: string;
+          createdAt?: string;
+          eventId: string;
+          id: string;
+          isPinned?: boolean;
+          publicId: string;
+          status?: Database["public"]["Enums"]["MessageStatus"];
+          userId: string;
+          vendorId?: string | null;
+        };
+        Update: {
+          content?: string;
+          createdAt?: string;
+          eventId?: string;
+          id?: string;
+          isPinned?: boolean;
+          publicId?: string;
+          status?: Database["public"]["Enums"]["MessageStatus"];
+          userId?: string;
+          vendorId?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Message_eventId_fkey";
+            columns: ["eventId"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Message_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Message_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       MessageReaction: {
         Row: {
           createdAt: string;
           emoji: string;
           id: string;
           messageId: string;
+          publicId: string;
           userId: string;
         };
         Insert: {
@@ -666,6 +1028,7 @@ export type Database = {
           emoji: string;
           id: string;
           messageId: string;
+          publicId: string;
           userId: string;
         };
         Update: {
@@ -673,6 +1036,7 @@ export type Database = {
           emoji?: string;
           id?: string;
           messageId?: string;
+          publicId?: string;
           userId?: string;
         };
         Relationships: [
@@ -680,7 +1044,7 @@ export type Database = {
             foreignKeyName: "MessageReaction_messageId_fkey";
             columns: ["messageId"];
             isOneToOne: false;
-            referencedRelation: "ChatMessage";
+            referencedRelation: "Message";
             referencedColumns: ["id"];
           },
           {
@@ -692,12 +1056,156 @@ export type Database = {
           },
         ];
       };
+      Notification: {
+        Row: {
+          content: string;
+          createdAt: string;
+          dismissed: boolean;
+          eventId: string | null;
+          id: string;
+          link: string | null;
+          postId: string | null;
+          seenAt: string | null;
+          subject: string | null;
+          type: Database["public"]["Enums"]["NotificationType"];
+          updatedAt: string;
+          userId: string;
+        };
+        Insert: {
+          content: string;
+          createdAt?: string;
+          dismissed?: boolean;
+          eventId?: string | null;
+          id: string;
+          link?: string | null;
+          postId?: string | null;
+          seenAt?: string | null;
+          subject?: string | null;
+          type: Database["public"]["Enums"]["NotificationType"];
+          updatedAt: string;
+          userId: string;
+        };
+        Update: {
+          content?: string;
+          createdAt?: string;
+          dismissed?: boolean;
+          eventId?: string | null;
+          id?: string;
+          link?: string | null;
+          postId?: string | null;
+          seenAt?: string | null;
+          subject?: string | null;
+          type?: Database["public"]["Enums"]["NotificationType"];
+          updatedAt?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Notification_eventId_fkey";
+            columns: ["eventId"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Notification_postId_fkey";
+            columns: ["postId"];
+            isOneToOne: false;
+            referencedRelation: "Post";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Notification_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      Portfolio: {
+        Row: {
+          createdAt: string;
+          id: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          publicId?: string;
+          updatedAt?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Portfolio_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      PortfolioItem: {
+        Row: {
+          createdAt: string;
+          description: string | null;
+          eventId: string | null;
+          id: string;
+          portfolioId: string;
+          publicId: string;
+          tags: string[] | null;
+          title: string;
+          updatedAt: string;
+        };
+        Insert: {
+          createdAt?: string;
+          description?: string | null;
+          eventId?: string | null;
+          id: string;
+          portfolioId: string;
+          publicId: string;
+          tags?: string[] | null;
+          title: string;
+          updatedAt: string;
+        };
+        Update: {
+          createdAt?: string;
+          description?: string | null;
+          eventId?: string | null;
+          id?: string;
+          portfolioId?: string;
+          publicId?: string;
+          tags?: string[] | null;
+          title?: string;
+          updatedAt?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "PortfolioItem_portfolioId_fkey";
+            columns: ["portfolioId"];
+            isOneToOne: false;
+            referencedRelation: "Portfolio";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Post: {
         Row: {
           caption: string | null;
           createdAt: string;
           eventId: string;
           id: string;
+          publicId: string;
           updatedAt: string;
           userId: string;
         };
@@ -706,6 +1214,7 @@ export type Database = {
           createdAt?: string;
           eventId: string;
           id: string;
+          publicId: string;
           updatedAt: string;
           userId: string;
         };
@@ -714,6 +1223,7 @@ export type Database = {
           createdAt?: string;
           eventId?: string;
           id?: string;
+          publicId?: string;
           updatedAt?: string;
           userId?: string;
         };
@@ -739,7 +1249,9 @@ export type Database = {
           createdAt: string;
           id: string;
           order: number;
-          postId: string;
+          portfolioItemId: string | null;
+          postId: string | null;
+          publicId: string;
           type: Database["public"]["Enums"]["MediaType"];
           url: string;
         };
@@ -747,7 +1259,9 @@ export type Database = {
           createdAt?: string;
           id: string;
           order?: number;
-          postId: string;
+          portfolioItemId?: string | null;
+          postId?: string | null;
+          publicId: string;
           type: Database["public"]["Enums"]["MediaType"];
           url: string;
         };
@@ -755,11 +1269,20 @@ export type Database = {
           createdAt?: string;
           id?: string;
           order?: number;
-          postId?: string;
+          portfolioItemId?: string | null;
+          postId?: string | null;
+          publicId?: string;
           type?: Database["public"]["Enums"]["MediaType"];
           url?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "PostMedia_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "PostMedia_postId_fkey";
             columns: ["postId"];
@@ -782,6 +1305,7 @@ export type Database = {
           isPrivateProfile: boolean;
           lastActive: string;
           name: string | null;
+          publicId: string;
           role: Database["public"]["Enums"]["UserRole"];
           updatedAt: string;
           username: string | null;
@@ -798,6 +1322,7 @@ export type Database = {
           isPrivateProfile?: boolean;
           lastActive?: string;
           name?: string | null;
+          publicId: string;
           role?: Database["public"]["Enums"]["UserRole"];
           updatedAt: string;
           username?: string | null;
@@ -814,6 +1339,7 @@ export type Database = {
           isPrivateProfile?: boolean;
           lastActive?: string;
           name?: string | null;
+          publicId?: string;
           role?: Database["public"]["Enums"]["UserRole"];
           updatedAt?: string;
           username?: string | null;
@@ -823,48 +1349,75 @@ export type Database = {
       Vendor: {
         Row: {
           aiMetadata: Json | null;
+          aiTags: string[] | null;
+          category: Database["public"]["Enums"]["VendorCategory"];
           contactEmail: string | null;
           createdAt: string;
+          customServices: string[] | null;
+          description: string | null;
           id: string;
           location: string | null;
+          logoUrl: string | null;
           name: string;
           phone: string | null;
-          priceRange: Database["public"]["Enums"]["PriceRange"];
+          publicId: string;
           rating: number | null;
-          services: string[] | null;
-          type: Database["public"]["Enums"]["VendorType"];
+          services: Database["public"]["Enums"]["ServiceType"][] | null;
+          servingCities: string[] | null;
+          totalReviews: number;
+          travelFee: number | null;
+          travelNotes: string | null;
+          travelScope: Database["public"]["Enums"]["TravelScope"];
           updatedAt: string;
           userId: string;
           website: string | null;
         };
         Insert: {
           aiMetadata?: Json | null;
+          aiTags?: string[] | null;
+          category: Database["public"]["Enums"]["VendorCategory"];
           contactEmail?: string | null;
           createdAt?: string;
+          customServices?: string[] | null;
+          description?: string | null;
           id: string;
           location?: string | null;
+          logoUrl?: string | null;
           name: string;
           phone?: string | null;
-          priceRange: Database["public"]["Enums"]["PriceRange"];
+          publicId: string;
           rating?: number | null;
-          services?: string[] | null;
-          type: Database["public"]["Enums"]["VendorType"];
+          services?: Database["public"]["Enums"]["ServiceType"][] | null;
+          servingCities?: string[] | null;
+          totalReviews?: number;
+          travelFee?: number | null;
+          travelNotes?: string | null;
+          travelScope?: Database["public"]["Enums"]["TravelScope"];
           updatedAt: string;
           userId: string;
           website?: string | null;
         };
         Update: {
           aiMetadata?: Json | null;
+          aiTags?: string[] | null;
+          category?: Database["public"]["Enums"]["VendorCategory"];
           contactEmail?: string | null;
           createdAt?: string;
+          customServices?: string[] | null;
+          description?: string | null;
           id?: string;
           location?: string | null;
+          logoUrl?: string | null;
           name?: string;
           phone?: string | null;
-          priceRange?: Database["public"]["Enums"]["PriceRange"];
+          publicId?: string;
           rating?: number | null;
-          services?: string[] | null;
-          type?: Database["public"]["Enums"]["VendorType"];
+          services?: Database["public"]["Enums"]["ServiceType"][] | null;
+          servingCities?: string[] | null;
+          totalReviews?: number;
+          travelFee?: number | null;
+          travelNotes?: string | null;
+          travelScope?: Database["public"]["Enums"]["TravelScope"];
           updatedAt?: string;
           userId?: string;
           website?: string | null;
@@ -883,18 +1436,21 @@ export type Database = {
         Row: {
           id: string;
           key: string;
+          publicId: string;
           value: string;
           vendorId: string;
         };
         Insert: {
           id: string;
           key: string;
+          publicId: string;
           value: string;
           vendorId: string;
         };
         Update: {
           id?: string;
           key?: string;
+          publicId?: string;
           value?: string;
           vendorId?: string;
         };
@@ -908,29 +1464,164 @@ export type Database = {
           },
         ];
       };
+      VendorContact: {
+        Row: {
+          company: string | null;
+          contactType: Database["public"]["Enums"]["ContactType"];
+          createdAt: string;
+          customFields: Json | null;
+          email: string | null;
+          groupId: string | null;
+          id: string;
+          name: string | null;
+          notes: string | null;
+          phone: string | null;
+          publicId: string;
+          tags: string[] | null;
+          updatedAt: string;
+          userId: string | null;
+          vendorId: string;
+        };
+        Insert: {
+          company?: string | null;
+          contactType: Database["public"]["Enums"]["ContactType"];
+          createdAt?: string;
+          customFields?: Json | null;
+          email?: string | null;
+          groupId?: string | null;
+          id: string;
+          name?: string | null;
+          notes?: string | null;
+          phone?: string | null;
+          publicId: string;
+          tags?: string[] | null;
+          updatedAt: string;
+          userId?: string | null;
+          vendorId: string;
+        };
+        Update: {
+          company?: string | null;
+          contactType?: Database["public"]["Enums"]["ContactType"];
+          createdAt?: string;
+          customFields?: Json | null;
+          email?: string | null;
+          groupId?: string | null;
+          id?: string;
+          name?: string | null;
+          notes?: string | null;
+          phone?: string | null;
+          publicId?: string;
+          tags?: string[] | null;
+          updatedAt?: string;
+          userId?: string | null;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorContact_groupId_fkey";
+            columns: ["groupId"];
+            isOneToOne: false;
+            referencedRelation: "ContactGroup";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "VendorContact_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "VendorContact_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorOperations: {
+        Row: {
+          availability: Json | null;
+          businessHours: Json | null;
+          cancellationRate: number | null;
+          completionRate: number | null;
+          createdAt: string;
+          id: string;
+          publicId: string;
+          responseTime: number | null;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Insert: {
+          availability?: Json | null;
+          businessHours?: Json | null;
+          cancellationRate?: number | null;
+          completionRate?: number | null;
+          createdAt?: string;
+          id: string;
+          publicId: string;
+          responseTime?: number | null;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Update: {
+          availability?: Json | null;
+          businessHours?: Json | null;
+          cancellationRate?: number | null;
+          completionRate?: number | null;
+          createdAt?: string;
+          id?: string;
+          publicId?: string;
+          responseTime?: number | null;
+          updatedAt?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorOperations_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       VendorPackage: {
         Row: {
+          basePrice: number;
           description: string | null;
+          discountRules: Json | null;
           id: string;
           inclusions: string[] | null;
           name: string;
           price: number | null;
+          publicId: string;
+          surgePrice: number | null;
           vendorId: string;
         };
         Insert: {
+          basePrice: number;
           description?: string | null;
+          discountRules?: Json | null;
           id: string;
           inclusions?: string[] | null;
           name: string;
           price?: number | null;
+          publicId: string;
+          surgePrice?: number | null;
           vendorId: string;
         };
         Update: {
+          basePrice?: number;
           description?: string | null;
+          discountRules?: Json | null;
           id?: string;
           inclusions?: string[] | null;
           name?: string;
           price?: number | null;
+          publicId?: string;
+          surgePrice?: number | null;
           vendorId?: string;
         };
         Relationships: [
@@ -943,29 +1634,81 @@ export type Database = {
           },
         ];
       };
+      VendorPageVisit: {
+        Row: {
+          id: string;
+          publicId: string;
+          timestamp: string;
+          userId: string | null;
+          vendorId: string;
+        };
+        Insert: {
+          id: string;
+          publicId: string;
+          timestamp?: string;
+          userId?: string | null;
+          vendorId: string;
+        };
+        Update: {
+          id?: string;
+          publicId?: string;
+          timestamp?: string;
+          userId?: string | null;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorPageVisit_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "VendorPageVisit_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       VendorReview: {
         Row: {
+          bookingId: string | null;
           comment: string | null;
           id: string;
+          publicId: string;
           rating: number;
           userId: string;
           vendorId: string;
         };
         Insert: {
+          bookingId?: string | null;
           comment?: string | null;
           id: string;
+          publicId: string;
           rating: number;
           userId: string;
           vendorId: string;
         };
         Update: {
+          bookingId?: string | null;
           comment?: string | null;
           id?: string;
+          publicId?: string;
           rating?: number;
           userId?: string;
           vendorId?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "VendorReview_bookingId_fkey";
+            columns: ["bookingId"];
+            isOneToOne: false;
+            referencedRelation: "Booking";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "VendorReview_userId_fkey";
             columns: ["userId"];
@@ -982,16 +1725,127 @@ export type Database = {
           },
         ];
       };
+      VendorTeam: {
+        Row: {
+          id: string;
+          name: string;
+          publicId: string;
+          vendorId: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          publicId: string;
+          vendorId: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          publicId?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorTeam_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorTeamMember: {
+        Row: {
+          createdAt: string;
+          id: string;
+          publicId: string;
+          role: string;
+          userId: string;
+          vendorTeamId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id: string;
+          publicId: string;
+          role: string;
+          userId: string;
+          vendorTeamId: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          publicId?: string;
+          role?: string;
+          userId?: string;
+          vendorTeamId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "VendorTeamMember_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "VendorTeamMember_vendorTeamId_fkey";
+            columns: ["vendorTeamId"];
+            isOneToOne: false;
+            referencedRelation: "VendorTeam";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      VendorTier: {
+        Row: {
+          id: number;
+          name: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      generate_cuid: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
+      generate_random_string: {
+        Args: {
+          length: number;
+        };
+        Returns: string;
+      };
+      get_counter_base36: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
+      get_timestamp_base36: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
     };
     Enums: {
       AccessType: "DIRECT_PASS" | "PIN_REQUIRED" | "INVITE_ONLY";
+      AnalyticsType: "VENDOR" | "EVENT" | "USER";
       AttendeeStatus: "JOINED" | "PENDING" | "APPROVED" | "DENIED";
+      BookingStatus:
+        | "INQUIRY"
+        | "PENDING"
+        | "CONFIRMED"
+        | "CANCELLED"
+        | "COMPLETED";
+      ContactType: "USER" | "EXTERNAL";
       EventActivityType:
         | "JOIN"
         | "LEAVE"
@@ -1009,7 +1863,8 @@ export type Database = {
         | "FUNCTIONALITY"
         | "CONTENT"
         | "TECHNICAL"
-        | "GENERAL";
+        | "GENERAL"
+        | "SUGGESTION";
       FeedbackStatus: "PENDING" | "REVIEWED" | "RESOLVED" | "ARCHIVED";
       FeedbackType:
         | "ACCOUNT_SETUP"
@@ -1019,22 +1874,68 @@ export type Database = {
         | "FEATURE_REQUEST"
         | "OTHER";
       FormsType: "CONTACT" | "NEWSLETTER";
+      InvitationStatus: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED";
+      InvitationType: "USER" | "VENDOR_TEAM" | "EVENT_TEAM";
       MediaType: "IMAGE" | "VIDEO";
       MessageStatus: "SENT" | "DELIVERED" | "READ";
       NewsletterStatus: "APPROVED" | "UNSUBSCRIBED" | "AUTO_ARCHIVED";
+      NotificationType:
+        | "EVENT_REMINDER"
+        | "EVENT_UPDATE"
+        | "POST_LIKE"
+        | "POST_COMMENT"
+        | "NEW_FOLLOWER"
+        | "MESSAGE"
+        | "SYSTEM"
+        | "BOOKING_REQUEST"
+        | "BOOKING_CONFIRMED"
+        | "BOOKING_CANCELLED"
+        | "PAYMENT_RECEIVED"
+        | "REVIEW_RECEIVED"
+        | "VENDOR_INVITATION"
+        | "VENDOR_ACCOUNT_UPDATE"
+        | "VENDOR_PERFORMANCE_METRICS"
+        | "VENDOR_PROMOTION";
       PriceRange: "BUDGET" | "MIDRANGE" | "LUXURY" | "CUSTOM";
       Role: "ADMIN" | "MODERATOR" | "MEMBER";
-      UserRole: "ADMIN" | "USER" | "PARTNER" | "MEMBER";
-      VendorStatus: "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
-      VendorType:
-        | "VENUE"
-        | "CATERER"
-        | "PHOTOGRAPHER"
-        | "VIDEOGRAPHER"
-        | "ENTERTAINMENT"
-        | "DECOR"
+      ServiceType:
+        | "RECREATION_CENTER"
+        | "VENUE_HOSTING"
+        | "CATERING"
+        | "EVENT_PLANNING"
+        | "PHOTOGRAPHY"
+        | "VIDEOSGRAPHY"
+        | "GRAPHIC_DESIGN"
+        | "BRANDING"
+        | "CONTENT_CREATION"
+        | "DECOR_AND_THEMING"
+        | "EQUIPMENT_RENTAL"
         | "TRANSPORTATION"
-        | "PLANNER";
+        | "STAFFING"
+        | "HAIR_MAKEUP"
+        | "WARDROBE_STYLING"
+        | "ENTERTAINMENT"
+        | "AV_PRODUCTION"
+        | "LIGHTING_SOUND"
+        | "LIVE_STREAMING"
+        | "DESTINATION_MANAGEMENT"
+        | "SUSTAINABILITY_SERVICES";
+      TravelScope:
+        | "LOCAL_ONLY"
+        | "NATIONAL"
+        | "INTERNATIONAL"
+        | "NATIONAL_AND_INTERNATIONAL";
+      UserRole: "ADMIN" | "USER" | "VENDOR" | "PARTNER" | "MEMBER";
+      VendorCategory:
+        | "INDIVIDUAL"
+        | "AGENCY"
+        | "VENUE_PROVIDER"
+        | "CATERING"
+        | "CREATIVE"
+        | "RENTAL"
+        | "PROFESSIONAL"
+        | "OTHER";
+      VendorStatus: "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
     };
     CompositeTypes: {
       [_ in never]: never;

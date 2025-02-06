@@ -3,7 +3,7 @@ import { generateQRCode } from "@/lib/qr/generator";
 import { nanoid } from "nanoid";
 import { prisma } from "@/lib/prisma";
 import { storeQRCode } from "@/lib/qr/storage";
-import { uploadEventCoverImage } from "@/lib/supabase/upload/event-cover-image";
+import { uploadEventCoverImage } from "@/lib/upload/event-cover-image";
 
 export async function createEventAction(data: EventFormValues, userId: string) {
   if (!data || !userId) {
