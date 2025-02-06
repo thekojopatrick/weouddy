@@ -469,28 +469,32 @@ model PostMedia {
 }
 
 model Comment {
-    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId  String   @unique @default(cuid()) // External ID (CUID)
-    content   String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    userId    String   @db.Uuid
-    postId    String   @db.Uuid
-    user      User     @relation(fields: [userId], references: [id])
-    post      Post     @relation(fields: [postId], references: [id])
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    content         String
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    userId          String         @db.Uuid
+    postId          String         @db.Uuid
+    user            User           @relation(fields: [userId], references: [id])
+    post            Post           @relation(fields: [postId], references: [id])
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
 
     @@index([postId])
     @@index([userId])
 }
 
 model Like {
-    id        String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId  String   @unique @default(cuid()) // External ID (CUID)
-    createdAt DateTime @default(now())
-    userId    String   @db.Uuid
-    postId    String   @db.Uuid
-    user      User     @relation(fields: [userId], references: [id])
-    post      Post     @relation(fields: [postId], references: [id])
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    createdAt       DateTime       @default(now())
+    userId          String         @db.Uuid
+    postId          String         @db.Uuid
+    user            User           @relation(fields: [userId], references: [id])
+    post            Post           @relation(fields: [postId], references: [id])
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
 
     @@unique([userId, postId])
 }
@@ -578,6 +582,7 @@ model Vendor {
     user           User           @relation(fields: [userId], references: [id])
 
     // Relations
+    portfolio        Portfolio?
     operations       VendorOperations?
     attributes       VendorAttribute[]
     packages         VendorPackage[]
@@ -786,7 +791,38 @@ model ContactGroup {
     @@index([vendorId])
 }
 
-// Add vendor portfolio
+model Portfolio {
+    id        String          @id @default(uuid()) @db.Uuid
+    publicId  String          @unique @default(cuid())
+    vendorId  String          @unique @db.Uuid
+    vendor    Vendor          @relation(fields: [vendorId], references: [id])
+    items     PortfolioItem[]
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    @@index([vendorId])
+}
+
+model PortfolioItem {
+    id          String    @id @default(uuid()) @db.Uuid
+    publicId    String    @unique @default(cuid())
+    portfolioId String    @db.Uuid
+    portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+    title       String
+    description String?
+    media       Json // Array of media URLs
+    tags        String[]
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    likes       Like[]
+    comments    Comment[]
+
+    @@index([portfolioId])
+}
+
+//Add Testimonials
+
+//Add event planning
 
 //INVITATION MANGEMENT
 
