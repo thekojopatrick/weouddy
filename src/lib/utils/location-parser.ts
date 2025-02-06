@@ -1,5 +1,5 @@
-import { getGeocode, getLatLng } from 'use-places-autocomplete';
-import { CITY_MAPPINGS, findCountryRegion } from './location-mapping';
+import { getGeocode, getLatLng } from "use-places-autocomplete";
+import { CITY_MAPPINGS, findCountryRegion } from "./location-mapping";
 
 interface ParsedLocation {
   locationPath: string;
@@ -12,9 +12,7 @@ interface ParsedLocation {
   originalAddress: string;
 }
 
-export async function parseLocation(
-  address: string
-): Promise<ParsedLocation> {
+export async function parseLocation(address: string): Promise<ParsedLocation> {
   try {
     // Get geocoding results
     const results = await getGeocode({ address });
@@ -22,52 +20,46 @@ export async function parseLocation(
 
     // Parse address components
     const addressComponents = results[0].address_components;
-    let country = '';
-    let city = '';
-    let subLocality = '';
+    let country = "";
+    let city = "";
+    let subLocality = "";
 
     for (const component of addressComponents) {
       const types = component.types;
 
-      if (types.includes('country')) {
+      if (types.includes("country")) {
         country = component.long_name;
       }
       if (
-        types.includes('locality') ||
-        types.includes('administrative_area_level_2')
+        types.includes("locality") ||
+        types.includes("administrative_area_level_2")
       ) {
         city = component.long_name;
       }
-      if (
-        types.includes('sublocality') ||
-        types.includes('neighborhood')
-      ) {
+      if (types.includes("sublocality") || types.includes("neighborhood")) {
         subLocality = component.long_name;
       }
     }
 
     // Find country's geographical location
     const countryRegion = findCountryRegion(country);
-    let locationPath = 'world'; // Default to world
+    let locationPath = "world"; // Default to world
 
     if (countryRegion) {
-      locationPath = `${countryRegion.continent}.${countryRegion.region}.${country.toLowerCase().replace(/\s+/g, '')}`;
+      locationPath = `${countryRegion.continent}.${countryRegion.region}.${country.toLowerCase().replace(/\s+/g, "")}`;
 
       // Check for city and sub-location mapping
       const countryMapping =
-        CITY_MAPPINGS[
-          country.toLowerCase() as keyof typeof CITY_MAPPINGS
-        ];
+        CITY_MAPPINGS[country.toLowerCase() as keyof typeof CITY_MAPPINGS];
       if (countryMapping) {
-        const cityKey = Object.keys(countryMapping.cities).find(
-          (key) =>
-            city
-              .toLowerCase()
-              .includes(
-                countryMapping.cities[
-                  key as keyof typeof countryMapping.cities
-                ]?.name.toLowerCase()
-              )
+        const cityKey = Object.keys(countryMapping.cities).find((key) =>
+          city
+            .toLowerCase()
+            .includes(
+              countryMapping.cities[
+                key as keyof typeof countryMapping.cities
+              ]?.name.toLowerCase(),
+            ),
         ) as keyof typeof countryMapping.cities;
 
         if (cityKey) {
@@ -83,7 +75,7 @@ export async function parseLocation(
               ? Object.keys(subLocations).find((key) =>
                   subLocality
                     .toLowerCase()
-                    .includes(subLocations[key].toLowerCase())
+                    .includes(subLocations[key].toLowerCase()),
                 )
               : undefined;
 
@@ -103,8 +95,8 @@ export async function parseLocation(
       originalAddress: results[0].formatted_address,
     };
   } catch (error) {
-    console.error('Error parsing location:', error);
-    throw new Error('Failed to parse location');
+    console.error("Error parsing location:", error);
+    throw new Error("Failed to parse location");
   }
 }
 
