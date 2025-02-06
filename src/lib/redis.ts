@@ -6,7 +6,7 @@ class RedisCache {
   private client: Redis;
 
   constructor() {
-    this.client = new Redis(env.REDIS_URL, {
+    this.client = new Redis(env.REDIS_URL!, {
       // Recommended options for production
       retryStrategy: (times) => {
         const delay = Math.min(times * 50, 2000);
