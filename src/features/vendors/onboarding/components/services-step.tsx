@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Form,
   FormControl,
@@ -7,10 +7,10 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 
-import { Input } from '@/components/ui/input';
-import { VendorOnboardingStepProps } from '../types';
+import { Input } from "@/components/ui/input";
+import { VendorOnboardingStepProps } from "../types";
 
 const ServicesStep = ({ form }: VendorOnboardingStepProps) => {
   return (
@@ -24,10 +24,10 @@ const ServicesStep = ({ form }: VendorOnboardingStepProps) => {
             <FormControl>
               <Input
                 placeholder="Enter services (comma-separated)"
-                value={field.value?.join(', ') || ''}
+                value={field.value?.join(", ") || ""}
                 onChange={(e) => {
                   const services = e.target.value
-                    .split(',')
+                    .split(",")
                     .map((service) => service.trim());
                   field.onChange(services);
                 }}
@@ -51,9 +51,7 @@ const ServicesStep = ({ form }: VendorOnboardingStepProps) => {
                 type="number"
                 placeholder="Enter base price"
                 {...field}
-                onChange={(e) =>
-                  field.onChange(Number(e.target.value))
-                }
+                onChange={(e) => field.onChange(Number(e.target.value))}
               />
             </FormControl>
             <FormMessage />

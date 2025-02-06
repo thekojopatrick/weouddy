@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { EventPostCard } from '@/features/events/components/post/post-card';
-import { PostWithDetails } from '@/types/prisma.types';
+import React, { useEffect, useRef, useState } from "react";
+import { EventPostCard } from "@/features/events/components/post/post-card";
+import { PostWithDetails } from "@/types/prisma.types";
 
 const MasonryPosts = ({
   posts,
@@ -27,13 +27,13 @@ const MasonryPosts = ({
       const minColumnWidth = 300; // minimum width for each column
       const columnCount = Math.max(
         1,
-        Math.floor(containerWidth / minColumnWidth)
+        Math.floor(containerWidth / minColumnWidth),
       );
 
       // Initialize columns
       const newColumns: PostWithDetails[][] = Array.from(
         { length: columnCount },
-        () => []
+        () => [],
       );
       let shortestColumn = 0;
 
@@ -45,13 +45,10 @@ const MasonryPosts = ({
             height: getColumnHeight(col),
             index,
           }))
-          .reduce(
-            (min, col) => (col.height < min.height ? col : min),
-            {
-              height: Infinity,
-              index: 0,
-            }
-          ).index;
+          .reduce((min, col) => (col.height < min.height ? col : min), {
+            height: Infinity,
+            index: 0,
+          }).index;
 
         newColumns[shortestColumn].push(post);
       });
@@ -60,19 +57,15 @@ const MasonryPosts = ({
     };
 
     calculateLayout();
-    window.addEventListener('resize', calculateLayout);
-    return () =>
-      window.removeEventListener('resize', calculateLayout);
+    window.addEventListener("resize", calculateLayout);
+    return () => window.removeEventListener("resize", calculateLayout);
   }, [posts]);
 
   return (
     <div ref={containerRef} className="w-full">
       <div className="flex gap-4">
         {columns.map((column, columnIndex) => (
-          <div
-            key={columnIndex}
-            className="flex-1 flex flex-col gap-4"
-          >
+          <div key={columnIndex} className="flex-1 flex flex-col gap-4">
             {column?.map((post: PostWithDetails) => (
               <EventPostCard
                 key={post.id}

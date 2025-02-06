@@ -3,8 +3,8 @@ import {
   UserRole,
   MediaType,
   EventActivityType,
-} from '@prisma/client';
-import { User } from '@supabase/supabase-js';
+} from "@prisma/client";
+import { User } from "@supabase/supabase-js";
 
 export type CurrentUser = User & {
   id: string;

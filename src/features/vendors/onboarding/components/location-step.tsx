@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   FormControl,
   FormField,
@@ -6,16 +6,16 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { VendorOnboardingStepProps } from '../types';
+} from "@/components/ui/form";
+import { VendorOnboardingStepProps } from "../types";
 import {
   Select,
   SelectValue,
   SelectTrigger,
   SelectContent,
   SelectItem,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 const LocationStep = ({ form }: VendorOnboardingStepProps) => {
   return (
@@ -27,10 +27,7 @@ const LocationStep = ({ form }: VendorOnboardingStepProps) => {
           <FormItem>
             <FormLabel>Primary Location</FormLabel>
             <FormControl>
-              <Input
-                placeholder="Enter primary business location"
-                {...field}
-              />
+              <Input placeholder="Enter primary business location" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -42,10 +39,7 @@ const LocationStep = ({ form }: VendorOnboardingStepProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Travel Range</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select travel scope" />
@@ -54,9 +48,7 @@ const LocationStep = ({ form }: VendorOnboardingStepProps) => {
               <SelectContent>
                 <SelectItem value="LOCAL_ONLY">Local Only</SelectItem>
                 <SelectItem value="NATIONAL">National</SelectItem>
-                <SelectItem value="INTERNATIONAL">
-                  International
-                </SelectItem>
+                <SelectItem value="INTERNATIONAL">International</SelectItem>
                 <SelectItem value="NATIONAL_AND_INTERNATIONAL">
                   National & International
                 </SelectItem>
@@ -76,18 +68,16 @@ const LocationStep = ({ form }: VendorOnboardingStepProps) => {
             <FormControl>
               <Input
                 placeholder="Enter cities (comma-separated)"
-                value={field.value?.join(', ') || ''}
+                value={field.value?.join(", ") || ""}
                 onChange={(e) => {
                   const cities = e.target.value
-                    .split(',')
+                    .split(",")
                     .map((city) => city.trim());
                   field.onChange(cities);
                 }}
               />
             </FormControl>
-            <FormDescription>
-              Enter at least one city you serve
-            </FormDescription>
+            <FormDescription>Enter at least one city you serve</FormDescription>
             <FormMessage />
           </FormItem>
         )}

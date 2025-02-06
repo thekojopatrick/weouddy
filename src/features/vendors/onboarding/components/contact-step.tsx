@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   FormControl,
   FormField,
@@ -6,9 +6,9 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { VendorOnboardingStepProps } from '../types';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { VendorOnboardingStepProps } from "../types";
 
 const ContactStep = ({ form }: VendorOnboardingStepProps) => {
   return (

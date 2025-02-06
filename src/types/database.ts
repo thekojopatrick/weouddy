@@ -67,6 +67,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      _VendorTiers: {
+        Row: {
+          A: string;
+          B: number;
+        };
+        Insert: {
+          A: string;
+          B: number;
+        };
+        Update: {
+          A?: string;
+          B?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "_VendorTiers_A_fkey";
+            columns: ["A"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "_VendorTiers_B_fkey";
+            columns: ["B"];
+            isOneToOne: false;
+            referencedRelation: "VendorTier";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Analytics: {
         Row: {
           createdAt: string;
@@ -292,6 +322,7 @@ export type Database = {
           content: string;
           createdAt: string;
           id: string;
+          portfolioItemId: string | null;
           postId: string;
           publicId: string;
           updatedAt: string;
@@ -301,6 +332,7 @@ export type Database = {
           content: string;
           createdAt?: string;
           id: string;
+          portfolioItemId?: string | null;
           postId: string;
           publicId: string;
           updatedAt: string;
@@ -310,12 +342,20 @@ export type Database = {
           content?: string;
           createdAt?: string;
           id?: string;
+          portfolioItemId?: string | null;
           postId?: string;
           publicId?: string;
           updatedAt?: string;
           userId?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "Comment_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "Comment_postId_fkey";
             columns: ["postId"];
@@ -381,9 +421,11 @@ export type Database = {
           createdAt: string;
           dateTime: string;
           description: string | null;
+          fee: number | null;
           hostId: string;
           id: string;
           isDisabled: boolean;
+          isPaid: boolean;
           isPrivate: boolean;
           location: string | null;
           name: string;
@@ -410,9 +452,11 @@ export type Database = {
           createdAt?: string;
           dateTime: string;
           description?: string | null;
+          fee?: number | null;
           hostId: string;
           id: string;
           isDisabled?: boolean;
+          isPaid?: boolean;
           isPrivate?: boolean;
           location?: string | null;
           name: string;
@@ -439,9 +483,11 @@ export type Database = {
           createdAt?: string;
           dateTime?: string;
           description?: string | null;
+          fee?: number | null;
           hostId?: string;
           id?: string;
           isDisabled?: boolean;
+          isPaid?: boolean;
           isPrivate?: boolean;
           location?: string | null;
           name?: string;
@@ -865,6 +911,7 @@ export type Database = {
         Row: {
           createdAt: string;
           id: string;
+          portfolioItemId: string | null;
           postId: string;
           publicId: string;
           userId: string;
@@ -872,6 +919,7 @@ export type Database = {
         Insert: {
           createdAt?: string;
           id: string;
+          portfolioItemId?: string | null;
           postId: string;
           publicId: string;
           userId: string;
@@ -879,11 +927,19 @@ export type Database = {
         Update: {
           createdAt?: string;
           id?: string;
+          portfolioItemId?: string | null;
           postId?: string;
           publicId?: string;
           userId?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "Like_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "Like_postId_fkey";
             columns: ["postId"];
@@ -1067,6 +1123,82 @@ export type Database = {
           },
         ];
       };
+      Portfolio: {
+        Row: {
+          createdAt: string;
+          id: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id: string;
+          publicId: string;
+          updatedAt: string;
+          vendorId: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          publicId?: string;
+          updatedAt?: string;
+          vendorId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Portfolio_vendorId_fkey";
+            columns: ["vendorId"];
+            isOneToOne: false;
+            referencedRelation: "Vendor";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      PortfolioItem: {
+        Row: {
+          createdAt: string;
+          description: string | null;
+          eventId: string | null;
+          id: string;
+          portfolioId: string;
+          publicId: string;
+          tags: string[] | null;
+          title: string;
+          updatedAt: string;
+        };
+        Insert: {
+          createdAt?: string;
+          description?: string | null;
+          eventId?: string | null;
+          id: string;
+          portfolioId: string;
+          publicId: string;
+          tags?: string[] | null;
+          title: string;
+          updatedAt: string;
+        };
+        Update: {
+          createdAt?: string;
+          description?: string | null;
+          eventId?: string | null;
+          id?: string;
+          portfolioId?: string;
+          publicId?: string;
+          tags?: string[] | null;
+          title?: string;
+          updatedAt?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "PortfolioItem_portfolioId_fkey";
+            columns: ["portfolioId"];
+            isOneToOne: false;
+            referencedRelation: "Portfolio";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       Post: {
         Row: {
           caption: string | null;
@@ -1117,7 +1249,8 @@ export type Database = {
           createdAt: string;
           id: string;
           order: number;
-          postId: string;
+          portfolioItemId: string | null;
+          postId: string | null;
           publicId: string;
           type: Database["public"]["Enums"]["MediaType"];
           url: string;
@@ -1126,7 +1259,8 @@ export type Database = {
           createdAt?: string;
           id: string;
           order?: number;
-          postId: string;
+          portfolioItemId?: string | null;
+          postId?: string | null;
           publicId: string;
           type: Database["public"]["Enums"]["MediaType"];
           url: string;
@@ -1135,12 +1269,20 @@ export type Database = {
           createdAt?: string;
           id?: string;
           order?: number;
-          postId?: string;
+          portfolioItemId?: string | null;
+          postId?: string | null;
           publicId?: string;
           type?: Database["public"]["Enums"]["MediaType"];
           url?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "PostMedia_portfolioItemId_fkey";
+            columns: ["portfolioItemId"];
+            isOneToOne: false;
+            referencedRelation: "PortfolioItem";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "PostMedia_postId_fkey";
             columns: ["postId"];
@@ -1208,22 +1350,24 @@ export type Database = {
         Row: {
           aiMetadata: Json | null;
           aiTags: string[] | null;
+          category: Database["public"]["Enums"]["VendorCategory"];
           contactEmail: string | null;
           createdAt: string;
+          customServices: string[] | null;
+          description: string | null;
           id: string;
           location: string | null;
+          logoUrl: string | null;
           name: string;
           phone: string | null;
-          priceRange: Database["public"]["Enums"]["PriceRange"];
           publicId: string;
           rating: number | null;
-          services: string[] | null;
+          services: Database["public"]["Enums"]["ServiceType"][] | null;
           servingCities: string[] | null;
           totalReviews: number;
           travelFee: number | null;
           travelNotes: string | null;
           travelScope: Database["public"]["Enums"]["TravelScope"];
-          type: Database["public"]["Enums"]["VendorType"];
           updatedAt: string;
           userId: string;
           website: string | null;
@@ -1231,22 +1375,24 @@ export type Database = {
         Insert: {
           aiMetadata?: Json | null;
           aiTags?: string[] | null;
+          category: Database["public"]["Enums"]["VendorCategory"];
           contactEmail?: string | null;
           createdAt?: string;
+          customServices?: string[] | null;
+          description?: string | null;
           id: string;
           location?: string | null;
+          logoUrl?: string | null;
           name: string;
           phone?: string | null;
-          priceRange: Database["public"]["Enums"]["PriceRange"];
           publicId: string;
           rating?: number | null;
-          services?: string[] | null;
+          services?: Database["public"]["Enums"]["ServiceType"][] | null;
           servingCities?: string[] | null;
           totalReviews?: number;
           travelFee?: number | null;
           travelNotes?: string | null;
           travelScope?: Database["public"]["Enums"]["TravelScope"];
-          type: Database["public"]["Enums"]["VendorType"];
           updatedAt: string;
           userId: string;
           website?: string | null;
@@ -1254,22 +1400,24 @@ export type Database = {
         Update: {
           aiMetadata?: Json | null;
           aiTags?: string[] | null;
+          category?: Database["public"]["Enums"]["VendorCategory"];
           contactEmail?: string | null;
           createdAt?: string;
+          customServices?: string[] | null;
+          description?: string | null;
           id?: string;
           location?: string | null;
+          logoUrl?: string | null;
           name?: string;
           phone?: string | null;
-          priceRange?: Database["public"]["Enums"]["PriceRange"];
           publicId?: string;
           rating?: number | null;
-          services?: string[] | null;
+          services?: Database["public"]["Enums"]["ServiceType"][] | null;
           servingCities?: string[] | null;
           totalReviews?: number;
           travelFee?: number | null;
           travelNotes?: string | null;
           travelScope?: Database["public"]["Enums"]["TravelScope"];
-          type?: Database["public"]["Enums"]["VendorType"];
           updatedAt?: string;
           userId?: string;
           website?: string | null;
@@ -1648,6 +1796,21 @@ export type Database = {
           },
         ];
       };
+      VendorTier: {
+        Row: {
+          id: number;
+          name: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1735,25 +1898,44 @@ export type Database = {
         | "VENDOR_PROMOTION";
       PriceRange: "BUDGET" | "MIDRANGE" | "LUXURY" | "CUSTOM";
       Role: "ADMIN" | "MODERATOR" | "MEMBER";
+      ServiceType:
+        | "RECREATION_CENTER"
+        | "VENUE_HOSTING"
+        | "CATERING"
+        | "EVENT_PLANNING"
+        | "PHOTOGRAPHY"
+        | "VIDEOSGRAPHY"
+        | "GRAPHIC_DESIGN"
+        | "BRANDING"
+        | "CONTENT_CREATION"
+        | "DECOR_AND_THEMING"
+        | "EQUIPMENT_RENTAL"
+        | "TRANSPORTATION"
+        | "STAFFING"
+        | "HAIR_MAKEUP"
+        | "WARDROBE_STYLING"
+        | "ENTERTAINMENT"
+        | "AV_PRODUCTION"
+        | "LIGHTING_SOUND"
+        | "LIVE_STREAMING"
+        | "DESTINATION_MANAGEMENT"
+        | "SUSTAINABILITY_SERVICES";
       TravelScope:
         | "LOCAL_ONLY"
         | "NATIONAL"
         | "INTERNATIONAL"
         | "NATIONAL_AND_INTERNATIONAL";
       UserRole: "ADMIN" | "USER" | "VENDOR" | "PARTNER" | "MEMBER";
-      VendorStatus: "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
-      VendorType:
-        | "VENUE"
-        | "CATERER"
-        | "PHOTOGRAPHER"
-        | "VIDEOGRAPHER"
-        | "ENTERTAINMENT"
-        | "DECOR"
-        | "TRANSPORTATION"
-        | "PLANNER"
-        | "STYLIST"
+      VendorCategory:
+        | "INDIVIDUAL"
+        | "AGENCY"
+        | "VENUE_PROVIDER"
+        | "CATERING"
+        | "CREATIVE"
         | "RENTAL"
-        | "CORPORATE";
+        | "PROFESSIONAL"
+        | "OTHER";
+      VendorStatus: "PENDING" | "CONTACTED" | "BOOKED" | "DECLINED";
     };
     CompositeTypes: {
       [_ in never]: never;
