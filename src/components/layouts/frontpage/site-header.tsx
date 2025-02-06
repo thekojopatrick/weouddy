@@ -58,7 +58,7 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
             </Link>
             <Link
               href="/vendors"
-              className="transition-colors hover:text-foreground/80"
+              className="transition-colors hover:text-foreground/80 hidden"
             >
               Hire Vendors
             </Link>
