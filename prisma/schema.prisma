@@ -439,33 +439,35 @@ model ChatSettings {
 //POST AND CONTENT MANAGEMENT
 
 model Post {
-    id           String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId     String         @unique @default(cuid()) // External ID (CUID)
-    caption      String?
-    media        PostMedia[]
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    userId       String         @db.Uuid
-    eventId      String         @db.Uuid
-    user         User           @relation(fields: [userId], references: [id])
-    event        Event          @relation(fields: [eventId], references: [id])
-    comments     Comment[]
-    likes        Like[]
-    Notification Notification[]
+    id            String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId      String         @unique @default(cuid()) // External ID (CUID)
+    caption       String?
+    media         PostMedia[]
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    userId        String         @db.Uuid
+    eventId       String         @db.Uuid
+    user          User           @relation(fields: [userId], references: [id])
+    event         Event          @relation(fields: [eventId], references: [id])
+    comments      Comment[]
+    likes         Like[]
+    notifications Notification[]
 
     @@index([eventId])
     @@index([userId])
 }
 
 model PostMedia {
-    id        String    @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId  String    @unique @default(cuid()) // External ID (CUID)
-    postId    String    @db.Uuid
-    url       String
-    type      MediaType
-    order     Int       @default(0)
-    createdAt DateTime  @default(now())
-    post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    id              String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId        String         @unique @default(cuid()) // External ID (CUID)
+    postId          String         @db.Uuid
+    url             String
+    type            MediaType
+    order           Int            @default(0)
+    createdAt       DateTime       @default(now())
+    post            Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+    portfolioItemId String?        @db.Uuid
+    portfolioItem   PortfolioItem? @relation(fields: [portfolioItemId], references: [id])
 }
 
 model Comment {
@@ -804,16 +806,17 @@ model Portfolio {
 }
 
 model PortfolioItem {
-    id          String    @id @default(uuid()) @db.Uuid
-    publicId    String    @unique @default(cuid())
-    portfolioId String    @db.Uuid
-    portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+    id          String      @id @default(uuid()) @db.Uuid
+    publicId    String      @unique @default(cuid())
+    portfolioId String      @db.Uuid
+    eventId     String?     @db.Uuid
+    portfolio   Portfolio   @relation(fields: [portfolioId], references: [id])
     title       String
     description String?
-    media       Json // Array of media URLs
+    media       PostMedia[]
     tags        String[]
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
     likes       Like[]
     comments    Comment[]
 
