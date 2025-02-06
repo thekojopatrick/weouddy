@@ -9,14 +9,7 @@ import {
 } from "@/features/vendors/onboarding/types";
 import { createVendor } from "@/app/(main)/(frontpage)/vendors/onboarding/actions";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import BasicInfoStep from "./components/basic-info-step";
 import ContactStep from "./components/contact-step";

@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useInView } from "react-intersection-observer";
 
 //components
-import { CategoryFilters } from "./category-filters";
-import { CreateEventButton } from "@/components/event/create/create-event-button";
-import { EventCard } from "@/components/event/event-card";
-import { EventListShimmer } from "@/components/event/shimmer-loading";
-import { ScanEventButton } from "@/components/event/join/scan-event-button";
-import { LocationFilters } from "./location-filters";
+import { CategoryFilters } from "./components/category-filters";
+import { CreateEventButton } from "./creation/create-event-button";
+import { EventCard } from "./components/event-card";
+import { EventListShimmer } from "./components/shimmer-loading";
+import { ScanEventButton } from "./join/scan-event-button";
+import { LocationFilters } from "./components/location-filters";
 
 //types
 import { EventWithDetails } from "@/types/prisma.types";
@@ -26,9 +26,9 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useInfiniteEvents } from "@/hooks/event/use-infinite-events";
 import { useVisibleEvents } from "@/hooks/event/use-visible-events";
 import { Container } from "@/components/common/container";
-import FilterDrawer from "./filter-drawer";
-import { EmptyEventsState } from "./empty-events-state";
-import { EmptyEventsSearchState } from "./empty-events-search-state";
+import FilterDrawer from "./components/filter-drawer";
+import { EmptyEventsState } from "./components/empty-events-state";
+import { EmptyEventsSearchState } from "./components/empty-events-search-state";
 
 export default function DiscoverPage({
   user,

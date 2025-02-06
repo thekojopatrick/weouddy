@@ -13,7 +13,7 @@ import { useAccount } from "@/hooks/account/use-account";
 import { useRouter } from "next/navigation";
 import { EventWithFullData } from "@/types/event";
 import { getNameInitials } from "@/lib/utils";
-import CustomDrawer from "../ui/custom-drawer";
+import CustomDrawer from "@/components/ui/custom-drawer";
 import { Drawer } from "vaul";
 
 interface EventModalProps {

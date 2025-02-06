@@ -12,7 +12,7 @@ import { Container } from "@/components/common/container";
 import { UserProfileSidebar } from "./user-profile-sidebar";
 import { CurrentUser } from "@/types/prisma.types";
 import { Badge } from "@/components/ui/badge";
-import SearchDialog from "@/components/event/search-dialog";
+import SearchDialog from "@/features/events/components/search-dialog";
 
 export function SiteHeader({ user }: { user: CurrentUser | null }) {
   const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");

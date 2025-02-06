@@ -219,7 +219,7 @@ export function CoverUploadStep({
                         //   input.click();
                       }}
                     >
-                      Choose Image
+                      Create Cover
                     </Button>
                   )}
                 </div>
