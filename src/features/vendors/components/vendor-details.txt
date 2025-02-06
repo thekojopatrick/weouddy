@@ -1,0 +1,108 @@
+import { Vendor } from '../types';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/components/ui/tabs';
+import { useState, useEffect } from 'react';
+
+import ContactDialog from './contact-dialog';
+import VendorCalendar from './vendor-calender';
+import VendorCard from './vendor-card';
+import VendorPackages from './vendor-packages';
+import VendorReviews from './vendor-reviews';
+
+export default function VendorDetailsPage({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>();
+  const [vendor, setVendor] = useState<Vendor>();
+
+  useEffect(() => {
+    const fetchVendor = async () => {
+      try {
+        setIsLoading(true);
+        // Fetch vendor data
+        const response = await fetch(`/api/vendors/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch vendor');
+        const data = await response.json();
+        setVendor(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Something went wrong'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVendor();
+  }, [id]);
+
+  if (isLoading) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
+
+  if (error || !vendor) {
+    return (
+      <div className="text-red-500">
+        {error || 'Vendor not found'}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <VendorCard
+        vendor={vendor}
+        onContactClick={setSelectedVendor}
+        onPackageClick={handlePackageSelect}
+      />
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="packages">Packages</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          {/* Vendor details */}
+        </TabsContent>
+
+        <TabsContent value="packages">
+          <VendorPackages
+            packages={vendor.packages}
+            onSelect={handlePackageSelect}
+          />
+        </TabsContent>
+
+        <TabsContent value="availability">
+          <VendorCalendar
+            availability={vendor.availability || []}
+            onDateSelect={handleDateSelect}
+          />
+        </TabsContent>
+
+        <TabsContent value="reviews">
+          <VendorReviews reviews={vendor.reviews} />
+        </TabsContent>
+      </Tabs>
+
+      {selectedVendor && (
+        <ContactDialog
+          isOpen={!!selectedVendor}
+          onClose={() => setSelectedVendor(null)}
+          vendor={selectedVendor}
+          onSubmit={handleContact}
+        />
+      )}
+    </div>
+  );
+}

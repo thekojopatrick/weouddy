@@ -1,6 +1,8 @@
 import { EventSettings } from "./types";
 import QRCode from "qrcode";
 import { prisma } from "@/lib/prisma";
+import { cache } from "@/lib/redis";
+import { AttendeeStatus } from "@prisma/client";
 
 export async function generateEventQRCode(eventId: string, baseUrl: string) {
   const eventUrl = `${baseUrl}/events/${eventId}/room`;
@@ -12,7 +14,7 @@ export async function getEventById(eventId: string) {
     where: { id: eventId },
     include: {
       host: true,
-      members: true,
+      attendees: true,
       posts: {
         include: {
           user: true,
@@ -25,86 +27,119 @@ export async function getEventById(eventId: string) {
 }
 
 export async function getEventBySlug(slug: string) {
-  return prisma.event.findUnique({
-    where: { slug },
-    include: {
-      host: true,
-      members: true,
-      posts: {
-        include: {
-          media: true,
-          user: true,
-          comments: true,
-          likes: true,
-          _count: {
-            select: {
-              likes: true,
-              comments: true,
+  const cacheKey = `event:${slug}`;
+
+  // Try cache first
+  const cachedEvent = await cache.get(cacheKey);
+  if (cachedEvent) {
+    return cachedEvent;
+  }
+
+  const event = prisma.event
+    .findUnique({
+      where: { slug },
+      include: {
+        host: true,
+
+        attendees: true,
+        posts: {
+          include: {
+            media: true,
+            user: true,
+            comments: true,
+            likes: true,
+            _count: {
+              select: {
+                likes: true,
+                comments: true,
+              },
             },
           },
         },
+        _count: {
+          select: {
+            posts: true,
+            attendees: true,
+          },
+        },
       },
-    },
-  });
+    })
+    .then((event) => ({
+      ...event,
+
+      attendeeCount: event?._count.attendees,
+    }));
+
+  if (event) {
+    // Cache for 1 minute
+    await cache.set(cacheKey, event, 60);
+  }
+
+  return event;
 }
 
 export async function getAllEvents(userId?: string) {
   if (userId) {
     // For authenticated users, return all events
-    return prisma.event.findMany({
-      where: {
-        OR: [
-          { isPrivate: false },
-          { hostId: userId },
-          { members: { some: { id: userId } } },
-        ],
-      },
-      include: {
-        host: true,
-        _count: {
-          select: {
-            members: true,
-            posts: true,
-            attendees: true,
+    return prisma.event
+      .findMany({
+        where: {
+          OR: [
+            { isPrivate: false },
+            { hostId: userId },
+            {
+              attendees: {
+                some: { id: userId, status: AttendeeStatus.APPROVED },
+              },
+            },
+          ],
+        },
+        include: {
+          host: true,
+          _count: {
+            select: {
+              posts: true,
+              attendees: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    }).then((events) =>
-      events.map((event) => ({
-        ...event,
-        memberCount: event._count.members,
-        attendeeCount: event._count.attendees,
-      }))
-    );
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+      .then((events) =>
+        events.map((event) => ({
+          ...event,
+          attendeeCount: event._count.attendees,
+        })),
+      );
   } else {
     // For unauthenticated users, return only public events
-    return prisma.event.findMany({
-      where: {
-        isPrivate: false,
-      },
-      include: {
-        host: true,
-        _count: {
-          select: {
-            members: true,
-            posts: true,
-            attendees: true,
+    return prisma.event
+      .findMany({
+        where: {
+          isPrivate: false,
+        },
+        include: {
+          host: true,
+          _count: {
+            select: {
+              posts: true,
+              attendees: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    }).then((events) =>
-      events.map((event) => ({
-        ...event,
-        memberCount: event._count.members,
-        attendeeCount: event._count.attendees,
-      }))
-    );
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+      .then((events) =>
+        events.map((event) => ({
+          ...event,
+
+          attendeeCount: event._count.attendees,
+        })),
+      );
   }
 }
 
@@ -142,7 +177,7 @@ export async function getEventStats(eventId: string) {
       where: { id: eventId },
       select: {
         _count: {
-          select: { members: true },
+          select: { attendees: true },
         },
       },
     }),
@@ -151,7 +186,7 @@ export async function getEventStats(eventId: string) {
     }),
     prisma.user.count({
       where: {
-        joinedEvents: {
+        attendeeEvents: {
           some: {
             id: eventId,
           },
@@ -164,7 +199,7 @@ export async function getEventStats(eventId: string) {
   ]);
 
   return {
-    memberCount: memberCount?._count.members ?? 0,
+    memberCount,
     postCount,
     activeMembers,
   };

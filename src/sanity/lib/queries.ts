@@ -32,14 +32,12 @@ export const postQuery = groq`*[_type == "post" && slug.current == $slug][0]{
   }`;
 
 // Get all post slugs
-export const postPathsQuery =
-  groq`*[_type == "post" && defined(slug.current)][]{
+export const postPathsQuery = groq`*[_type == "post" && defined(slug.current)][]{
     "params": { "slug": slug.current }
   }`;
 
 // Get 4 most recent posts
-export const recentPostsQuery =
-  groq`*[_type == "post"] | order(date desc) [0...4] {
+export const recentPostsQuery = groq`*[_type == "post"] | order(date desc) [0...4] {
   "slug": slug.current,
   title,
   description,

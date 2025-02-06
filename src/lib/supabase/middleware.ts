@@ -16,13 +16,13 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
+            request.cookies.set(name, value),
           );
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           );
         },
       },
@@ -41,7 +41,7 @@ export async function updateSession(request: NextRequest) {
 
   // Allow access public page without authentication
   if (
-    !user && request.nextUrl.pathname.startsWith("/") ||
+    (!user && request.nextUrl.pathname.startsWith("/")) ||
     request.nextUrl.pathname.startsWith("/contact")
   ) {
     return supabaseResponse;

@@ -1,8 +1,11 @@
-import { EventActivityType, MediaType, UserRole } from "./enums";
-
+import {
+  AccessType,
+  UserRole,
+  MediaType,
+  EventActivityType,
+} from "@prisma/client";
 import { User } from "@supabase/supabase-js";
 
-// User-related Types
 export type CurrentUser = User & {
   id: string;
   username?: string | null;
@@ -19,6 +22,7 @@ export interface BaseUser {
   role: UserRole;
   isAnonymous: boolean;
   allowFollowers: boolean;
+  isPrivateProfile: boolean; // Added to match schema
   lastActive: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -28,12 +32,13 @@ export interface BaseUser {
 
 export interface UserProfile {
   id: string;
-  name: string;
-  username: string;
-  email?: string;
-  avatarUrl: string;
-  bio: string;
+  name: string | null;
+  username: string | null;
+  email?: string | null;
+  avatarUrl: string | null;
+  bio: string | null;
   allowFollowers: boolean;
+  isPrivateProfile: boolean; // Added to match schema
 }
 
 export interface FollowStats {
@@ -59,7 +64,6 @@ export interface Follow {
   isFollowing?: boolean;
 }
 
-// Event-related Types
 export interface BaseEvent {
   id: string;
   name: string;
@@ -70,6 +74,9 @@ export interface BaseEvent {
   qrCodeUrl?: string | null;
   coverImage?: string | null;
   slug?: string | null;
+  pinCode?: string | null;
+  vendorBudget?: number | null;
+  vendorCosts?: any; // JSON type
   isPrivate: boolean;
   isDisabled: boolean;
   allowComments: boolean;
@@ -77,7 +84,7 @@ export interface BaseEvent {
   allowChat: boolean;
   allowPosts: boolean;
   requiresApproval: boolean;
-  accessType: string;
+  accessType: AccessType;
   createdAt: Date;
   updatedAt: Date;
   hostId: string;
@@ -86,7 +93,7 @@ export interface BaseEvent {
 export interface EventWithDetails extends BaseEvent {
   host: {
     id: string;
-    name: string;
+    name: string | null;
     username: string | null;
     avatarUrl: string | null;
   };
@@ -94,9 +101,9 @@ export interface EventWithDetails extends BaseEvent {
   attendeeCount: number;
 }
 
-// Post-related Types
 export interface BasePost {
   id: string;
+  publicId: string;
   caption?: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -107,15 +114,14 @@ export interface BasePost {
 export interface PostWithDetails extends BasePost {
   media: PostMedia[];
   user: {
-    name: string;
-    username: string;
-    avatarUrl: string;
+    name: string | null;
+    username: string | null;
+    avatarUrl: string | null;
   };
   _count: {
     likes: number;
     comments: number;
   };
-  likes: Array<{ userId: string }>;
 }
 
 export interface PostMedia {
@@ -192,7 +198,7 @@ export interface ProfilePageData {
   };
   isOwnProfile: boolean;
   isFollowing?: boolean;
-  allowFollowers: boolean;
+  allowFollowers?: boolean;
   followers: UserFollow[];
   following: UserFollow[];
 }

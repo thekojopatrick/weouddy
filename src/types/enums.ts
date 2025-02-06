@@ -25,3 +25,10 @@ export enum EventActivityType {
   DELETE = "DELETE",
   REPORT = "REPORT",
 }
+
+export enum SharePlatform {
+  Twitter = "twitter",
+  Facebook = "facebook",
+  Email = "email",
+  WhatsApp = "whatsapp",
+}

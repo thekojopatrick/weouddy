@@ -1,4 +1,4 @@
-import { uploadToSupabase } from "@/lib/supabase/upload/supabase-storage";
+import { uploadToSupabase } from "@/lib/upload/supabase-storage";
 import { useState } from "react";
 
 export interface MediaFile {
@@ -14,9 +14,7 @@ export function useMediaUpload(maxFiles: number = 5) {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileSelect = (
-    files: FileList | null,
-  ) => {
+  const handleFileSelect = (files: FileList | null) => {
     if (!files) return;
 
     // Check if adding these files would exceed the limit
@@ -63,7 +61,11 @@ export function useMediaUpload(maxFiles: number = 5) {
   const uploadFiles = async (
     eventId: string,
   ): Promise<
-    Array<{ url: string; type: "IMAGE" | "VIDEO"; order: number } | null>
+    Array<{
+      url: string;
+      type: "IMAGE" | "VIDEO";
+      order: number;
+    } | null>
   > => {
     if (mediaFiles.length === 0) return [];
 
@@ -79,10 +81,7 @@ export function useMediaUpload(maxFiles: number = 5) {
         });
 
         try {
-          const url = await uploadToSupabase(
-            mediaFile.file,
-            eventId,
-          );
+          const url = await uploadToSupabase(mediaFile.file, eventId);
 
           return {
             url,

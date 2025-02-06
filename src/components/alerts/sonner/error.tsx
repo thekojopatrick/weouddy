@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const SonnerError = (error: string) => {
-	return <div>{error}</div>;
+  return <div>{error}</div>;
 };
 
 export default SonnerError;

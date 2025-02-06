@@ -1,104 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useUserStore } from "@/stores/user-store";
 
-import { CurrentUser } from "@/types/prisma.types";
-import { supabase } from "@/lib/supabase/client";
-
-export interface AccountData {
-  fullname: string | null;
-  username: string | null;
-  avatarUrl: string | null;
-  email: string | null;
-}
-
-export const useAccount = (user: CurrentUser | null) => {
-  const [loading, setLoading] = useState(true);
-  const [accountData, setAccountData] = useState<AccountData>({
-    fullname: user?.name ?? null,
-    username: user?.username ?? null,
-    avatarUrl: user?.avatarUrl ?? null,
-    email: user?.email ?? null,
-  });
-
-  const fetchProfile = useCallback(async () => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
-
-      const { data, error, status } = await supabase
-        .from("User")
-        .select(`name, username, avatarUrl`)
-        .eq("email", user.email!)
-        .single();
-
-      if (error && status !== 406) {
-        console.error(error);
-        throw error;
-      }
-
-      if (data) {
-        setAccountData((prev) => ({
-          ...prev,
-          fullname: data.name,
-          username: data.username,
-          avatarUrl: data.avatarUrl ?? user.avatarUrl ?? "",
-        }));
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  const updateProfile = async (updates: Partial<AccountData>) => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
-
-      const updateData = {
-        id: user.id,
-        email: user.email,
-        name: updates.fullname ?? accountData.fullname,
-        username: updates.username ?? accountData.username,
-        avatarUrl: updates.avatarUrl ?? accountData.avatarUrl,
-        updatedAt: new Date().toISOString(),
-      };
-
-      const { error } = await supabase.from("User").update(updateData).eq(
-        "email",
-        user.email!,
-      ).single();
-
-      if (error) throw error;
-
-      // Update local state
-      setAccountData((prev) => ({
-        ...prev,
-        ...updates,
-      }));
-
-      return { success: true, message: "Profile updated!" };
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      return {
-        success: false,
-        message: "Error updating the data!",
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, [user, fetchProfile]);
+export const useAccount = () => {
+  const { currentUser, isLoading, updateCurrentUser } = useUserStore();
 
   return {
-    accountData,
-    loading,
-    updateProfile,
-    fetchProfile,
+    accountData: currentUser
+      ? {
+          id: currentUser.id,
+          fullname: currentUser.name,
+          username: currentUser.username,
+          avatarUrl: currentUser.avatarUrl,
+          email: currentUser.email,
+        }
+      : null,
+    loading: isLoading,
+    updateProfile: updateCurrentUser,
   };
 };

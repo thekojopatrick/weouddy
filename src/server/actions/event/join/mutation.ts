@@ -21,9 +21,8 @@ const eventInfoCache = new Map();
 
 export async function joinEvent(input: JoinEventInput) {
   try {
-    const { identifier, identifierType, pinCode } = joinEventSchema.parse(
-      input,
-    );
+    const { identifier, identifierType, pinCode } =
+      joinEventSchema.parse(input);
 
     // Parallel fetch of session and event data
     const [session, event] = await Promise.all([

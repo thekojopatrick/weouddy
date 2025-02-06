@@ -137,11 +137,17 @@ const setStyle = (
 ): StyleRestoreFunction => {
   // Get the current computed value
   const currentValue = getComputedStyle(element).getPropertyValue(
-    style.toString().replace(/([A-Z])/g, "-$1").toLowerCase(),
+    style
+      .toString()
+      .replace(/([A-Z])/g, "-$1")
+      .toLowerCase(),
   );
 
   // Convert camelCase to kebab-case for CSS property names
-  const cssProperty = style.toString().replace(/([A-Z])/g, "-$1").toLowerCase();
+  const cssProperty = style
+    .toString()
+    .replace(/([A-Z])/g, "-$1")
+    .toLowerCase();
 
   // Set the new value
   element.style.setProperty(cssProperty, value);
@@ -163,7 +169,7 @@ const addEvent = <K extends keyof GlobalEventHandlersEventMap>(
   event: K,
   handler: EventHandler<K>,
   options?: boolean | AddEventListenerOptions,
-): () => void => {
+): (() => void) => {
   target.addEventListener(event, handler as EventListener, options);
   return () => {
     target.removeEventListener(event, handler as EventListener, options);
@@ -195,7 +201,7 @@ const scrollIntoView = (target: Element): void => {
 };
 
 // Mobile Safari Scroll Prevention
-const preventScrollMobileSafari = (): () => void => {
+const preventScrollMobileSafari = (): (() => void) => {
   const state: ScrollState = {
     scrollable: null,
     lastY: 0,
@@ -326,9 +332,8 @@ const preventScrollMobileSafari = (): () => void => {
 let preventScrollCount = 0;
 let restore: (() => void) | undefined;
 
-const useIsomorphicLayoutEffect = typeof window !== "undefined"
-  ? useLayoutEffect
-  : useEffect;
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export const usePreventScroll = (options: PreventScrollOptions = {}): void => {
   const { isDisabled } = options;

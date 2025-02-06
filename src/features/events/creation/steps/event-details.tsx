@@ -1,0 +1,142 @@
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const eventTypes = [
+  "Birthday",
+  "Anniversary",
+  "Church",
+  "Wedding",
+  "Conference",
+  "Indoor Party",
+  "Outdoor Party",
+  "Celebration",
+  "Worklife",
+  "Meeting",
+  "Other",
+];
+
+interface EventDetailsStepProps {
+  onNext: () => void;
+  onBack: () => void;
+  disabled?: boolean;
+}
+
+export function EventDetailsStep({
+  onNext,
+  onBack,
+  disabled = false,
+}: EventDetailsStepProps) {
+  return (
+    <div className="space-y-6 pb-5 md:py-6">
+      <div className="space-y-2">
+        <h2 className="text-xl font-bold tracking-tight">
+          Enter Event or Room Details
+        </h2>
+        <p className="text-muted-foreground text-sm">
+          Big or small, your event, your room deserves the spotlight. Share your
+          vibe, your way!
+        </p>
+      </div>
+
+      <FormField
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="font-medium">
+              What&apos;s the title of your event?
+            </FormLabel>
+            <FormControl>
+              <Input
+                className="rounded-full shadow-none text-sm py-5 bg-zinc-50"
+                placeholder="E.g., Summer BBQ Bash"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        name="type"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="font-medium">
+              Choose the type of event you&apos;re planning
+            </FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger className="rounded-full shadow-none text-sm py-5 bg-zinc-50">
+                  <SelectValue placeholder="Select event type" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {eventTypes.map((type) => (
+                  <SelectItem key={type} value={type.toLowerCase()}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="font-medium text-md">
+              Tell us a little about your event
+            </FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Enter event description"
+                className="min-h-[100px] text-sm bg-zinc-50"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="flex justify-between">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          disabled={disabled}
+          className="rounded-full shadow-none"
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={onNext}
+          disabled={disabled}
+          className="rounded-full"
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}

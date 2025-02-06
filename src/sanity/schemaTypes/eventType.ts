@@ -8,21 +8,17 @@ export const eventType = defineType({
   type: "document",
   icon: CalendarIcon as never,
   fields: [
-    defineField(
-      {
-        name: "title",
-        title: "Title",
-        type: "string",
-        validation: (Rule) => Rule.required(),
-      },
-    ),
-    defineField(
-      {
-        name: "description",
-        title: "Description",
-        type: "text",
-      },
-    ),
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+    }),
     defineField({
       name: "date",
       title: "Date",

@@ -44,7 +44,7 @@ export const siteMeta = {
     description:
       "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
     creator: "@OfficialWeOuddy",
-    images: ['/og-image.png']
+    images: ["/og-image.png"],
   },
   manifest: "/manifest.json",
   icons: {

@@ -1,19 +1,22 @@
-'use client'
+"use client";
 
-import Image from "next/image"
+import Image from "next/image";
 
 interface ImageGridProps {
   images: {
-    url: string
-    progress: number
-  }[]
+    url: string;
+    progress: number;
+  }[];
 }
 
 export function ImageGrid({ images }: ImageGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {images.map((image, index) => (
-        <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
+        <div
+          key={index}
+          className="relative aspect-square rounded-lg overflow-hidden"
+        >
           <Image
             src={image.url}
             alt={`Uploaded image ${index + 1}`}
@@ -47,6 +50,5 @@ export function ImageGrid({ images }: ImageGridProps) {
         </div>
       ))}
     </div>
-  )
+  );
 }
-

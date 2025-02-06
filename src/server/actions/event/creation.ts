@@ -3,7 +3,7 @@ import { generateQRCode } from "@/lib/qr/generator";
 import { nanoid } from "nanoid";
 import { prisma } from "@/lib/prisma";
 import { storeQRCode } from "@/lib/qr/storage";
-import { uploadEventCoverImage } from "@/lib/supabase/upload/event-cover-image";
+import { uploadEventCoverImage } from "@/lib/upload/event-cover-image";
 
 export async function createEventAction(data: EventFormValues, userId: string) {
   if (!data || !userId) {
@@ -28,8 +28,10 @@ export async function createEventAction(data: EventFormValues, userId: string) {
   let coverImageUrl = null;
   if (data.coverImage) {
     try {
-      const imageSize =
-        Buffer.from(data.coverImage.split(",")[1], "base64").length;
+      const imageSize = Buffer.from(
+        data.coverImage.split(",")[1],
+        "base64",
+      ).length;
       if (imageSize > 5 * 1024 * 1024) {
         throw new Error("Cover image exceeds maximum size of 5MB");
       }
@@ -67,7 +69,7 @@ export async function createEventAction(data: EventFormValues, userId: string) {
 
     const event = await prisma.event.create({
       data: {
-        name: data.title,
+        name: data.name,
         description: data.description,
         type: data.type,
         location: data.location,
@@ -115,9 +117,9 @@ export async function createEventAction(data: EventFormValues, userId: string) {
       qrCodeUrl: publicUrl,
       qrCode: publicUrl
         ? {
-          ...qrCode,
-          publicUrl,
-        }
+            ...qrCode,
+            publicUrl,
+          }
         : null,
     };
   } catch (error) {

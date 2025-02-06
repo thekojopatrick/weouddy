@@ -1,6 +1,7 @@
 "use server";
 
 import { EventWithDetails, PostWithDetails } from "@/types/prisma.types";
+import { EventActivityType } from "@prisma/client";
 import { Follow, UserProfile } from "./types";
 
 import { prisma } from "@/lib/prisma";
@@ -9,19 +10,20 @@ export async function getUserProfile(
   usernameOrId: string,
 ): Promise<UserProfile | null> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { username: usernameOrId },
-        { id: usernameOrId },
-      ],
-    },
+    where: { username: usernameOrId },
     select: {
       id: true,
+      publicId: true,
       name: true,
       username: true,
+      email: true,
       avatarUrl: true,
       bio: true,
+      isPrivateProfile: true,
       allowFollowers: true,
+      posts: true,
+      attendeeEvents: true,
+      hostedEvents: true,
     },
   });
 
@@ -30,16 +32,9 @@ export async function getUserProfile(
   return user;
 }
 
-export async function getFollowStats(
-  usernameOrId: string,
-) {
+export async function getFollowStats(usernameOrId: string) {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { username: usernameOrId },
-        { id: usernameOrId },
-      ],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -59,12 +54,7 @@ export async function getUserFollowers(
   usernameOrId: string,
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { username: usernameOrId },
-        { id: usernameOrId },
-      ],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -108,12 +98,7 @@ export async function getUserFollowing(
   usernameOrId: string,
 ): Promise<Follow[]> {
   const user = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { username: usernameOrId },
-        { id: usernameOrId },
-      ],
-    },
+    where: { username: usernameOrId },
     select: { id: true },
   });
 
@@ -180,37 +165,37 @@ export async function fetchUserEvents(
   page: number = 1,
   limit: number = 10,
 ): Promise<EventWithDetails[]> {
-  return prisma.event.findMany({
-    where: {
-      OR: [
-        { hostId: userId }, // Events hosted by user
-        { members: { some: { id: userId } } }, // Events user is a member of
-      ],
-    },
-    include: {
-      _count: {
-        select: {
-          members: true,
-          attendees: true,
+  return prisma.event
+    .findMany({
+      where: {
+        OR: [
+          { hostId: userId },
+          { attendees: { some: { userId: userId } } }, // Updated to use attendees relation
+        ],
+      },
+      include: {
+        _count: {
+          select: {
+            attendees: true,
+          },
+        },
+        host: {
+          select: {
+            name: true,
+            username: true,
+          },
         },
       },
-      host: {
-        select: {
-          name: true,
-          username: true,
-        },
-      },
-    },
-    orderBy: { dateTime: "desc" },
-    take: limit,
-    skip: (page - 1) * limit,
-  }).then((events) =>
-    events.map((event) => ({
-      ...event,
-      memberCount: event._count.members,
-      attendeeCount: event._count.attendees,
-    }))
-  ) as Promise<EventWithDetails[]>;
+      orderBy: { dateTime: "desc" },
+      take: limit,
+      skip: (page - 1) * limit,
+    })
+    .then((events) =>
+      events.map((event) => ({
+        ...event,
+        attendeeCount: event._count.attendees,
+      })),
+    ) as Promise<EventWithDetails[]>;
 }
 
 export async function fetchFollowers(
@@ -288,28 +273,107 @@ export async function fetchFollowing(
   }) as Promise<Follow[]>;
 }
 
-export async function getUserEventStatus(eventId: string, userId: string) {
-  const [membership, pendingRequest] = await Promise.all([
-    prisma.event.findFirst({
+export async function getProfileStats(usernameOrId: string) {
+  const user = await prisma.user.findFirst({
+    where: { username: usernameOrId },
+    select: { id: true },
+  });
+
+  if (!user) return null;
+
+  const [followStats, eventCount, postCount] = await Promise.all([
+    getFollowStats(usernameOrId),
+    prisma.event.count({
       where: {
-        id: eventId,
-        members: {
-          some: {
-            id: userId,
-          },
-        },
+        OR: [{ hostId: user.id }, { attendees: { some: { id: user.id } } }],
       },
     }),
-    prisma.attendee.findFirst({
-      where: {
-        eventId,
-        userId,
-        status: "PENDING",
-      },
+    prisma.post.count({
+      where: { userId: user.id },
     }),
   ]);
 
-  if (membership) return "JOINED";
-  if (pendingRequest) return "PENDING";
-  return "NOT_JOINED";
+  return {
+    following: followStats?.followingCount ?? 0,
+    followers: followStats?.followersCount ?? 0,
+    events: eventCount,
+    posts: postCount,
+  };
+}
+
+export async function fetchPendingRequests(hostId: string) {
+  return prisma.attendee.findMany({
+    where: {
+      event: {
+        hostId: hostId,
+      },
+      status: {
+        in: ["PENDING", "DENIED"],
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+      event: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function updateRequestStatus(
+  requestId: string,
+  status: "APPROVED" | "DENIED" | "PENDING",
+) {
+  return prisma.$transaction(async (tx) => {
+    const attendee = await tx.attendee.update({
+      where: { id: requestId },
+      data: { status },
+      include: {
+        event: true,
+        user: true,
+      },
+    });
+
+    // Create activity log based on status
+    const activityType: EventActivityType =
+      status === "APPROVED"
+        ? "ACCESS_GRANTED"
+        : status === "DENIED"
+          ? "ACCESS_DENIED"
+          : "RESQUEST_PENDING";
+
+    await tx.eventActivity.create({
+      data: {
+        eventId: attendee.eventId,
+        userId: attendee.userId,
+        type: activityType,
+      },
+    });
+
+    // If approved, create a JOIN activity
+    if (status === "APPROVED") {
+      await tx.eventActivity.create({
+        data: {
+          eventId: attendee.eventId,
+          userId: attendee.userId,
+          type: "JOIN",
+        },
+      });
+    }
+
+    return attendee;
+  });
 }

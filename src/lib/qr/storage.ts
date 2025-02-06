@@ -1,5 +1,5 @@
 import { QRCodeResult } from "./types";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function storeQRCode(
   eventId: string,

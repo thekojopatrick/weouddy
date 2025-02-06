@@ -1,0 +1,55 @@
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { PostService } from "@/server/services/post";
+
+export async function POST(
+  req: Request,
+  { params }: { params: { postId: string } },
+) {
+  try {
+    const session = await getSession();
+
+    const { postId } = await params;
+
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const like = PostService.toggleLike(postId, session.userId);
+
+    return NextResponse.json(like);
+  } catch (error) {
+    console.error(error);
+    return new NextResponse("Error creating like", { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { postId: string } },
+) {
+  try {
+    const session = await getSession();
+
+    const { postId } = await params;
+
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    await prisma.like.delete({
+      where: {
+        userId_postId: {
+          userId: session.user.id,
+          postId: postId,
+        },
+      },
+    });
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error(error);
+    return new NextResponse("Error deleting like", { status: 500 });
+  }
+}

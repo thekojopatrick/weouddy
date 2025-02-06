@@ -1,80 +1,276 @@
-@import url('cabinet-grotesk.css');
+@import url("cabinet-grotesk.css") layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body {
-	font-family: Arial, Helvetica, sans-serif;
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-display: var(--font-cabinet-grotesk);
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-brand: hsl(var(--chart-2));
+  --color-brand-foreground: var(--white);
+  --color-brand-primary: hsl(var(--chart-2));
+  --color-brand-primary-foreground: var(--white);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* h1,
-h2,
-h3 {
-	font-family: var(--font-cabinet-grotesk);
-} */
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
 @layer base {
-	:root {
-		--background: 0 0% 100%;
-		--foreground: 240 10% 3.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 240 10% 3.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 240 10% 3.9%;
-		--primary: 240 5.9% 10%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 240 4.8% 95.9%;
-		--secondary-foreground: 240 5.9% 10%;
-		--muted: 240 4.8% 95.9%;
-		--muted-foreground: 240 3.8% 46.1%;
-		--accent: 240 4.8% 95.9%;
-		--accent-foreground: 240 5.9% 10%;
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 240 5.9% 90%;
-		--input: 240 5.9% 90%;
-		--ring: 240 10% 3.9%;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
-		--chart-4: 43 74% 66%;
-		--chart-5: 27 87% 67%;
-		--radius: 0.5rem;
-	}
-	.dark {
-		--background: 240 10% 3.9%;
-		--foreground: 0 0% 98%;
-		--card: 240 10% 3.9%;
-		--card-foreground: 0 0% 98%;
-		--popover: 240 10% 3.9%;
-		--popover-foreground: 0 0% 98%;
-		--primary: 0 0% 98%;
-		--primary-foreground: 240 5.9% 10%;
-		--secondary: 240 3.7% 15.9%;
-		--secondary-foreground: 0 0% 98%;
-		--muted: 240 3.7% 15.9%;
-		--muted-foreground: 240 5% 64.9%;
-		--accent: 240 3.7% 15.9%;
-		--accent-foreground: 0 0% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 240 3.7% 15.9%;
-		--input: 240 3.7% 15.9%;
-		--ring: 240 4.9% 83.9%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
-		--chart-5: 340 75% 55%;
-	}
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer utilities {
+  :root {
+    --font-cabinet-grotesk: "cabinetGrotesk";
+    --font-size: 14px;
+    --secondary-type-size: 12px;
+    --line-height: 1.6;
+    --grey1: #111;
+    --grey2: #555;
+    --grey3: #999;
+    --white: #fff;
+    --gray-10: #f4f5f6;
+    --gray-20: #ebeced;
+    --gray-30: #dee0e2;
+    --gray-40: #d2d4d7;
+    --gray-50: #b3b5b7;
+    --gray-60: #939597;
+    --gray-70: #737577;
+    --gray-80: #535557;
+    --gray-90: #333537;
+    --gray-100: #212325;
+    --gray-100-base-rgb: 33, 35, 37;
+    --black-base-rgb: 19, 21, 23;
+    --pale-white: #fff2;
+    --half-white: #fff9;
+    --half-gray: #b3b5b799;
+    --half-black: #0009;
+    --cranberry-5: #fef4f9;
+    --cranberry-10: #fde2ef;
+    --cranberry-20: #fcc6de;
+    --cranberry-30: #f98dbe;
+    --cranberry-40: #f6539d;
+    --cranberry-50: #f31a7c;
+    --cranberry-60: #d5176d;
+    --cranberry-70: #b6145d;
+    --cranberry-80: #98104e;
+    --cranberry-90: #790d3e;
+    --pale-cranberry: #f31a7c22;
+    --faint-cranberry: #f31a7c11;
+    --barney-5: #faeeff;
+    --barney-10: #f0d3ff;
+    --barney-20: #e1a8fe;
+    --barney-30: #d27cfe;
+    --barney-40: #c350fd;
+    --barney-50: #ab46dd;
+    --barney-60: #923cbe;
+    --barney-70: #7a329e;
+    --barney-80: #62287f;
+    --barney-90: #491e5f;
+    --pale-barney: #ab46dd22;
+    --faint-barney: #ab46dd11;
+
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --backdrop: rgba(0, 0, 0, 0.3);
+    --inputBackgroundColor: #f2f2f2;
+    --primaryBorderColor: #e5e5e5;
+    --secondaryBorderColor: #f2f2f2;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  body {
+    font-family: "geistSans", Helvetica, sans-serif;
+  }
+}
+@layer base {
+  :root {
+    --font-size: var(--font-size);
+    --secondary-type-size: var(--secondary-type-size);
+    --line-height: var(--line-height);
+
+    --barney: var(--barney-50);
+    --barney-content: var(--barney-50);
+    --barney-active: var(--barney-60);
+    --barney-background: var(--barney-50);
+    --barney-background-active: var(--barney-60);
+
+    --brand-color: var(--barney);
+    --brand-content-color: var(--barney-content);
+    --brand-bg-color: var(--barney-background);
+    --brand-active-color: var(--barney-active);
+    --brand-active-bg-color: var(--barney-background-active);
+    --brand-pale-bg-color: var(--pale-barney);
+    --gray-background: var(--gray-60);
+    --gray-background-active: var(--gray-70);
+
+    --primary-button-color: var(--white);
+    --primary-button-bg-color: var(--gray-90);
+    --primary-button-hover-bg-color: var(--gray-80);
+    --primary-button-link-color: var(--gray-80);
+    --primary-button-hover-link-color: var(--gray-90);
+    --secondary-button-color: var(--white);
+    --secondary-button-bg-color: var(--gray-60);
+    --secondary-button-hover-bg-color: var(--gray-70);
+    --secondary-button-link-color: var(--tertiary-color-alpha);
+    --secondary-button-hover-link-color: var(--secondary-color-alpha);
+    --light-button-color: var(--opacity-64);
+    --light-button-bg-color: var(--opacity-light);
+    --light-button-hover-color: var(--primary-bg-color);
+    --light-button-hover-bg-color: var(--opacity-64);
+    --light-button-hover-border-color: var(--opacity-0);
+
+    --primary-border-color: var(--gray-40);
+    --secondary-border-color: var(--gray-20);
+    --active-border-color: var(--black);
+    --opacity-base-rgb: var(--black-base-rgb);
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --backdrop: rgba(0, 0, 0, 0.5);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
 @layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+  :target {
+    scroll-margin-top: var(--scroll-offset, 4rem);
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+.btn-primary {
+  @apply text-brand-foreground bg-brand-primary;
+  @apply hover:bg-[hsl(var(--chart-3))]! hover:text-white!;
+  @apply transition-colors ease-in;
 }

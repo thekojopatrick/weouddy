@@ -1,72 +1,53 @@
+// types.ts
+import { FollowRelation } from "@/server/services/user";
+import { Post, Event, Attendee } from "@prisma/client";
+
 export interface UserProfile {
   id: string;
+  publicId: string;
   name: string | null;
   username: string | null;
-  email?: string;
+  email: string | null;
   avatarUrl: string | null;
   bio: string | null;
   allowFollowers: boolean;
-}
-
-export interface FollowStats {
-  isFollowing?: boolean;
-  followersCount: number;
-  followingCount: number;
-}
-
-export interface FollowRequestResult {
-  success: boolean;
-  action: "accept" | "decline";
-}
-
-export interface FollowRequest {
-  id: string;
-  requestorId: string;
-  targetUserId: string;
-  createdAt: Date;
-  requestor: {
-    id: string;
-    name: string | null;
-    username: string | null;
-    avatarUrl: string | null;
-  };
+  isPrivateProfile: boolean; // Added to match schema
+  posts: Post[];
+  hostedEvents: Event[];
+  attendeeEvents: Attendee[];
 }
 
 export interface UserFollow {
   id: string;
-  name: string;
-  username: string;
-  avatarUrl: string;
+  name: string | null; // Updated to allow null
+  username: string | null; // Updated to allow null
+  avatarUrl: string | null; // Updated to allow null
 }
 
 export interface Follow {
   id: string;
+  publicId: string;
   followerId: string;
   followingId: string;
   createdAt: Date;
   follower: UserFollow;
   following: UserFollow;
   isFollowing?: boolean;
-  isMutual?: boolean; // Added to track mutual follow status
+  isMutual?: boolean;
 }
 
 export interface FollowStats {
   isFollowing?: boolean;
-  isMutual?: boolean; // Added to track mutual follow status
+  isMutual?: boolean;
   followersCount: number;
   followingCount: number;
 }
 
-export interface FollowRelation {
-  isFollowing: boolean;
-  isMutual: boolean;
-}
-
 export interface ProfilePageData {
   id: string;
-  name: string;
-  username: string;
-  avatarUrl: string;
+  name: string | null; // Updated to allow null
+  username: string | null; // Updated to allow null
+  avatarUrl: string | null; // Updated to allow null
   stats: {
     following: number;
     followers: number;
@@ -75,10 +56,11 @@ export interface ProfilePageData {
   };
   isOwnProfile: boolean;
   isFollowing?: boolean;
-  isMutual?: boolean; // Added to track mutual follow status
+  isMutual?: boolean;
   allowFollowers: boolean;
-  followers: Array<UserFollow & FollowRelation>; // Enhanced with follow status
-  following: Array<UserFollow & FollowRelation>; // Enhanced with follow status
+  isPrivateProfile: boolean; // Added to match schema
+  followers: Array<UserFollow & FollowRelation>;
+  following: Array<UserFollow & FollowRelation>;
 }
 
 export interface FollowButtonProps {
