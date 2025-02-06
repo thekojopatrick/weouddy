@@ -237,6 +237,9 @@ model Event {
     type        String
     description String?
     location    String?
+    city        String? // Store city name for display
+    country     String? // Store country name for display
+    coordinates Json? // Store lat/lng for mapping
     dateTime    DateTime
     qrCodeUrl   String?
     coverImage  String?
