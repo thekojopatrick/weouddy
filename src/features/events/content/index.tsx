@@ -2,9 +2,9 @@
 
 import { CalendarDays, MapPin, Settings, Users } from "lucide-react";
 
-import CreatePostButton from "./create-post-button";
-import JoinChatRoom from "./join-chat-room";
-import { EventSettingsModal } from "@/components/event/event-settings-modal";
+import CreatePostButton from "./_components/create-post-button";
+import JoinChatRoom from "./_components/join-chat-room";
+import { EventSettingsModal } from "../settings/event-settings-modal";
 import { EventWithFullData } from "@/types/event";
 
 import React from "react";
@@ -16,8 +16,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import FeedbackDialog from "@/components/feedback-dialog";
 
 import { usePosts } from "@/hooks/post/use-post";
-import MasonryPosts from "./masonry-posts";
-import ShareEventPopover from "./share-event";
+import MasonryPosts from "./_components/masonry-posts";
+import ShareEventPopover from "./_components/share-event";
 import { Button } from "@/components/ui/button";
 import { SharePlatform } from "@/types/enums";
 import {

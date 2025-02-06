@@ -1,13 +1,13 @@
 import type { Metadata, ResolvingMetadata } from "next";
 
-import EventRoom from "../_components/event-room";
+import EventRoom from "@/features/events/content";
 import { formatEventDateTime } from "@/lib/utils/formatters";
 import { getSession } from "@/lib/auth";
 import { getURL } from "@/lib/utils";
 import { EventService } from "@/server/services/event";
-import EventAccessGuard from "../_components/event-access-guard";
+import EventAccessGuard from "@/features/events/content/_components/event-access-guard";
 import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
-import EventNotFound from "../_components/event-not-found";
+import EventNotFound from "@/features/events/content/_components/event-not-found";
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -60,6 +60,8 @@ export default async function EventRoomPage(props: {
   if (!session) return null;
 
   const event = await EventService.getEvent(eventId);
+
+  console.log(event, eventId);
 
   if (!event.id) return <EventNotFound />;
 

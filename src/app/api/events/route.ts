@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth";
-import { EventService } from "@/server/services/event/get-event";
+import { EventService } from "@/server/services/event/get-events";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

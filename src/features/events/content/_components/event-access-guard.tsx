@@ -15,7 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { JoinEventDialog } from "@/components/event/join/join-event-dialog";
+import { JoinEventDialog } from "../../join/join-event-dialog";
 import { Container } from "@/components/common/container";
 import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
 

@@ -88,7 +88,7 @@ export class EventService {
     const event = await db.event
       .findFirst({
         where: {
-          OR: [{ id: identifier }, { slug: identifier }],
+          OR: [{ publicId: identifier }, { slug: identifier }],
         },
         include: {
           host: {
