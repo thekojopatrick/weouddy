@@ -124,18 +124,24 @@ export class MediaCompressor {
           return null;
         }
 
+        console.log({ isValid });
+
         // Notify start of compression
         onProgress?.({ progress: 0, stage: 'compressing' });
+
+        console.log('compressing');
 
         let compressedFile: File;
         if (file.type.startsWith('image/')) {
           compressedFile = await compressImage(file);
         } else if (file.type.startsWith('video/')) {
-          compressedFile = await compressVideo(file);
+          //compressedFile = await compressVideo(file);
+          return { file, compressed: false };
         } else {
           return { file, compressed: false };
         }
 
+        console.log('compressing', compressedFile);
         // Notify completion of compression
         onProgress?.({ progress: 100, stage: 'compressing' });
 
