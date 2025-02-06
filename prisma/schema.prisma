@@ -128,18 +128,51 @@ enum NotificationType {
     VENDOR_PROMOTION
 }
 
-enum VendorType {
-    VENUE
-    CATERER
-    PHOTOGRAPHER
-    VIDEOGRAPHER
-    ENTERTAINMENT
-    DECOR
+enum VendorCategory {
+    INDIVIDUAL // Solo entrepreneurs/freelancers
+    AGENCY // Event management, advertising agencies
+    VENUE_PROVIDER // Hotels, banquet halls
+    CATERING // Restaurants, food services
+    CREATIVE // Designers, artists
+    RENTAL // Equipment/furniture rental
+    PROFESSIONAL // MCs, planners
+    OTHER
+}
+
+enum ServiceType {
+    // Core Services
+    RECREATION_CENTER
+    VENUE_HOSTING
+    CATERING
+    EVENT_PLANNING
+    PHOTOGRAPHY
+    VIDEOSGRAPHY
+
+    // Creative Services
+    GRAPHIC_DESIGN
+    BRANDING
+    CONTENT_CREATION
+    DECOR_AND_THEMING
+
+    // Logistics
+    EQUIPMENT_RENTAL
     TRANSPORTATION
-    PLANNER
-    STYLIST
-    RENTAL
-    CORPORATE
+    STAFFING
+
+    // Personal Services
+    HAIR_MAKEUP
+    WARDROBE_STYLING
+    ENTERTAINMENT
+
+    // Technical
+    AV_PRODUCTION
+    LIGHTING_SOUND
+    LIVE_STREAMING
+
+    // Specialty
+
+    DESTINATION_MANAGEMENT
+    SUSTAINABILITY_SERVICES
 }
 
 enum ContactType {
@@ -231,10 +264,11 @@ model User {
 //EVENT MANAGEMENT
 
 model Event {
-    id          String   @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId    String   @unique @default(cuid()) // External ID (CUID)
-    name        String
-    type        String
+    id       String @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId String @unique @default(cuid()) // External ID (CUID)
+    name     String
+    type     String
+
     description String?
     location    String?
     city        String? // Store city name for display
@@ -248,6 +282,8 @@ model Event {
 
     vendorBudget     Float?
     vendorCosts      Json?
+    fee              Float?
+    isPaid           Boolean    @default(false)
     isPrivate        Boolean    @default(false)
     requiresApproval Boolean    @default(false)
     isDisabled       Boolean    @default(false)
@@ -517,26 +553,29 @@ model Notification {
 //VENDOR MANAGEMENT
 
 model Vendor {
-    id            String      @id @default(uuid()) @db.Uuid // Internal ID (UUID)
-    publicId      String      @unique @default(cuid()) // External ID (CUID)
-    name          String
-    type          VendorType
-    services      String[]
-    priceRange    PriceRange
-    location      String?
-    rating        Float?      @default(0)
-    totalReviews  Int         @default(0)
-    aiTags        String[]
-    aiMetadata    Json?
-    contactEmail  String?
-    phone         String?
-    website       String?
-    travelScope   TravelScope @default(LOCAL_ONLY)
-    travelFee     Float?
-    servingCities String[]
-    travelNotes   String?
-    userId        String      @db.Uuid
-    user          User        @relation(fields: [userId], references: [id])
+    id             String         @id @default(uuid()) @db.Uuid // Internal ID (UUID)
+    publicId       String         @unique @default(cuid()) // External ID (CUID)
+    name           String
+    description    String?
+    logoUrl        String?
+    category       VendorCategory
+    services       ServiceType[]
+    customServices String[]
+    tiers          VendorTier[]   @relation("VendorTiers")
+    location       String?
+    rating         Float?         @default(0)
+    totalReviews   Int            @default(0)
+    aiTags         String[]
+    aiMetadata     Json?
+    contactEmail   String?
+    phone          String?
+    website        String?
+    travelScope    TravelScope    @default(LOCAL_ONLY)
+    travelFee      Float?
+    servingCities  String[]
+    travelNotes    String?
+    userId         String         @db.Uuid
+    user           User           @relation(fields: [userId], references: [id])
 
     // Relations
     operations       VendorOperations?
@@ -555,11 +594,16 @@ model Vendor {
     groups           ContactGroup[]
     analytics        Analytics[] // Analytics related to the vendor
 
-    @@index([type])
+    @@index([category])
     @@index([location])
-    @@index([priceRange])
     @@index([rating])
     @@index([userId])
+}
+
+model VendorTier {
+    id      Int      @id @default(autoincrement())
+    name    String   @unique
+    vendors Vendor[] @relation("VendorTiers")
 }
 
 model VendorOperations {
@@ -741,6 +785,8 @@ model ContactGroup {
 
     @@index([vendorId])
 }
+
+// Add vendor portfolio
 
 //INVITATION MANGEMENT
 

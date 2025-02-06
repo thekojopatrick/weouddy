@@ -1,5 +1,5 @@
-import React from "react";
-import { VendorOnboardingStepProps } from "../types";
+import React from 'react';
+import { VendorOnboardingStepProps } from '../types';
 import {
   Form,
   FormControl,
@@ -7,15 +7,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectValue,
   SelectTrigger,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 const BasicInfoStep = ({ form }: VendorOnboardingStepProps) => {
   return (
@@ -41,7 +41,10 @@ const BasicInfoStep = ({ form }: VendorOnboardingStepProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Vendor Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select vendor type" />
@@ -49,17 +52,17 @@ const BasicInfoStep = ({ form }: VendorOnboardingStepProps) => {
                 </FormControl>
                 <SelectContent>
                   {[
-                    "PHOTOGRAPHER",
-                    "VIDEOGRAPHER",
-                    "HAIR_STYLIST",
-                    "RENTAL",
-                    "DECOR",
-                    "PLANNER",
-                    "COOK",
-                    "DJ",
+                    'PHOTOGRAPHER',
+                    'VIDEOGRAPHER',
+                    'STYLIST',
+                    'RENTAL',
+                    'DECOR',
+                    'PLANNER',
+                    'COOK',
+                    'DJ',
                   ].map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type.replace("_", " ")}
+                      {type.replace('_', ' ')}
                     </SelectItem>
                   ))}
                 </SelectContent>

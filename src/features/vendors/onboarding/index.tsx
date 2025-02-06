@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   vendorSchema,
   type VendorFormData,
-} from "@/features/vendors/onboarding/types";
-import { createVendor } from "@/app/(main)/(frontpage)/vendors/onboarding/actions";
-import { useToast } from "@/hooks/use-toast";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import BasicInfoStep from "./components/basic-info-step";
-import ContactStep from "./components/contact-step";
-import LocationStep from "./components/location-step";
-import ServicesStep from "./components/services-step";
+} from '@/features/vendors/onboarding/types';
+import { createVendor } from '@/app/(main)/(frontpage)/vendors/onboarding/actions';
+import { useToast } from '@/hooks/use-toast';
+import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import BasicInfoStep from './components/basic-info-step';
+import ContactStep from './components/contact-step';
+import LocationStep from './components/location-step';
+import ServicesStep from './components/services-step';
 
 const FormSteps = {
   BASIC_INFO: 0,
@@ -32,7 +32,7 @@ export default function VendorOnboarding() {
     defaultValues: {
       services: [],
       servingCities: [],
-      travelScope: "LOCAL_ONLY",
+      travelScope: 'LOCAL_ONLY',
     },
   });
 
@@ -40,41 +40,46 @@ export default function VendorOnboarding() {
     try {
       await createVendor(data);
       toast({
-        title: "Success",
-        description: "Vendor profile created successfully",
+        title: 'Success',
+        description: 'Vendor profile created successfully',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create vendor profile",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create vendor profile',
+        variant: 'destructive',
       });
     }
   };
 
   return (
-    <div className="container max-w-3xl mx-auto py-8">
+    <div className="container max-w-2xl mx-auto py-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8"
+        >
           {/* Progress Indicator */}
           <div className="flex justify-between mb-8">
             {Object.keys(FormSteps).map((stepKey, index) => (
               <div
                 key={stepKey}
                 className={`flex items-center ${
-                  step >= index ? "text-primary" : "text-muted-foreground"
+                  step >= index
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center 
-                  ${step >= index ? "bg-primary text-white" : "bg-muted"}`}
+                  ${step >= index ? 'bg-primary text-white' : 'bg-muted'}`}
                 >
                   {index + 1}
                 </div>
                 {index < Object.keys(FormSteps).length - 1 && (
                   <div
                     className={`w-full h-1 ${
-                      step > index ? "bg-primary" : "bg-muted"
+                      step > index ? 'bg-primary' : 'bg-muted'
                     }`}
                   />
                 )}
@@ -82,11 +87,25 @@ export default function VendorOnboarding() {
             ))}
           </div>
 
+          <h2 className="text-2xl font-bold mb-4">
+            {step === FormSteps.BASIC_INFO &&
+              'Basic Business Information'}
+            {step === FormSteps.CONTACT && 'Contact Details'}
+            {step === FormSteps.LOCATION && 'Location & Travel'}
+            {step === FormSteps.SERVICES && 'Services & Pricing'}
+          </h2>
+
           {/* Form Steps */}
-          {step === FormSteps.BASIC_INFO && <BasicInfoStep form={form} />}
+          {step === FormSteps.BASIC_INFO && (
+            <BasicInfoStep form={form} />
+          )}
           {step === FormSteps.CONTACT && <ContactStep form={form} />}
-          {step === FormSteps.LOCATION && <LocationStep form={form} />}
-          {step === FormSteps.SERVICES && <ServicesStep form={form} />}
+          {step === FormSteps.LOCATION && (
+            <LocationStep form={form} />
+          )}
+          {step === FormSteps.SERVICES && (
+            <ServicesStep form={form} />
+          )}
 
           {/* Navigation */}
           <div className="flex justify-between pt-6">
