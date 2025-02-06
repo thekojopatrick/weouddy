@@ -1,6 +1,5 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Share2, Users } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
@@ -53,7 +52,9 @@ const EventModal = memo(
             description: "Event link has been copied to clipboard.",
           });
         }
-        Sentry.captureException(err);
+
+        //add sentry or posthog
+        console.error(err);
       }
     }, [event.name, eventUrl]);
 

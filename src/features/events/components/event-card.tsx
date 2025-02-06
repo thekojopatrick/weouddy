@@ -16,11 +16,11 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { getNameInitials } from "@/lib/utils";
 import EventModal from "./event-modal";
-import * as Sentry from "@sentry/nextjs";
 import { UserEventStatus } from "@/types/event";
 
 interface BaseEventCardProps {
   id: string;
+  publicId: string;
   name: string;
   type: string;
   coverImage: string | null;
@@ -52,6 +52,7 @@ interface EventCardProps extends BaseEventCardProps {
 
 export function EventCard({
   id,
+  publicId,
   name,
   type,
   coverImage,
@@ -96,7 +97,8 @@ export function EventCard({
       }
     } catch (err) {
       if (err instanceof Error && err.name !== "AbortError") {
-        Sentry.captureException(err);
+        //add sentry or posthog
+        console.error(err);
       }
     }
   };
@@ -203,6 +205,7 @@ export function EventCard({
             description,
             additionalInfo,
             slug,
+            publicId,
             memberCount,
             attendeeCount,
           }}

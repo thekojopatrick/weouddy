@@ -10,7 +10,6 @@ const publicPaths = [
   "/support-us",
   "/privacy-policy",
   "/discover",
-  "/sentry-example-page",
   "/api/events",
   "/auth/callback",
 ];

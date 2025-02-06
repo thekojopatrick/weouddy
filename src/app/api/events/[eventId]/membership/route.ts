@@ -58,7 +58,8 @@ export async function GET(
     const statusMap: Record<AttendeeStatus, string> = {
       PENDING: "PENDING",
       APPROVED: "JOINED",
-      REJECTED: "NOT_JOINED",
+      JOINED: "JOINED",
+      DENIED: "NOT_JOINED",
     };
 
     return NextResponse.json(

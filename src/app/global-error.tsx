@@ -1,7 +1,5 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
-
 import { Button } from "@/components/ui/button";
 import Error from "next/error";
 import Link from "next/link";
@@ -16,7 +14,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    //add sentry or posthog
     console.error(error);
   }, [error]);
 

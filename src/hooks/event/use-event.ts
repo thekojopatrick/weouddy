@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { EventWithDetails } from "@/types/prisma.types";
 import { UserEventStatus } from "@/types/event";
-import * as Sentry from "@sentry/nextjs";
+
 import { useEventStore } from "./use-event-cache";
 
 export function useEvents(location = "world", category = "All") {
@@ -62,7 +62,9 @@ export const useEventStatus = (eventId: string) => {
         const data = await response.json();
         return data.status as UserEventStatus;
       } catch (error) {
-        Sentry.captureException(error);
+        //add sentry or posthog
+        console.error(error);
+
         throw error;
       }
     },
@@ -103,7 +105,7 @@ export const useBatchEventStatuses = (eventIds: string[]) => {
         return response.json() as Promise<Record<string, UserEventStatus>>;
       } catch (error) {
         console.error("Error fetching event statuses:", error);
-        Sentry.captureException(error);
+        //add sentry or posthog
         throw error;
       }
     },
