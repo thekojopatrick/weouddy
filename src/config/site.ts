@@ -1,9 +1,7 @@
-import { getURL } from "@/lib/utils";
-
-const siteUrl = getURL();
+import { companyWebsite } from "./app";
 
 export const siteConfig = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(companyWebsite),
   name: "WeOuddy",
   description:
     "WeOuddy connects people to moments that matter with real-time event engagement and community sharing.",
@@ -18,7 +16,7 @@ export const siteConfig = {
 };
 
 export const siteMeta = {
-  title: "WeOuddy - Real-Time Event Engagement and Community Sharing",
+  title: "WeOuddy - Real-Time Event Engagement and Memonts Sharing Platform",
   description:
     "Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.",
   keywords: [
@@ -33,22 +31,22 @@ export const siteMeta = {
   ],
   applicationName: "WeOuddy",
   openGraph: {
-    title: "WeOuddy - Moments That Matter",
+    title: "WeOuddy - Real-Time Event Engagement Platform",
     description:
       "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-    url: siteUrl,
+    url: companyWebsite,
     siteName: "WeOuddy",
     locale: "en_US",
     type: "website",
-    images: [`${siteUrl}assets/og-image.jpg`], // Replace with your hero/banner image path
+    images: [`${companyWebsite}/assets/opengraph-image.jpg`], // Replace with your hero/banner image path
   },
   twitter: {
     card: "summary_large_image",
-    title: "WeOuddy - Moments That Matter",
+    title: "WeOuddy - Real-Time Event Engagement Platform",
     description:
       "Engage with real-time events and communities on WeOuddy. Share memories, discover events, and connect with others like never before.",
     creator: "@OfficialWeOuddy",
-    images: [`${siteUrl}assets/og-image.jpg`],
+    images: [`${companyWebsite}/twitter-image.jpg`],
   },
   manifest: "/manifest.json",
   icons: {
