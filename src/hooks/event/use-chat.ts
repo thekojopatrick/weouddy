@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { ChatMessage, ChatSettings } from "@/types/chat";
 
+import { createId } from "@paralleldrive/cuid2";
+
 export const useEventChat = (eventId: string, userId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [settings, setSettings] = useState<ChatSettings | null>(null);
@@ -10,7 +12,8 @@ export const useEventChat = (eventId: string, userId: string) => {
 
   useEffect(() => {
     console.log("Starting chat subscription for eventId:", eventId);
-
+    fetchMessages();
+    fetchChatSettings();
     const messageChannel = supabase
       .channel(`event-chat-${eventId}`)
       .on(
@@ -18,8 +21,8 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: "INSERT",
           schema: "public",
-          table: "ChatMessage",
-          filter: `"eventId"=eq.${eventId}`,
+          table: "Message",
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           console.log("INSERT payload:", payload);
@@ -31,8 +34,8 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: "UPDATE",
           schema: "public",
-          table: "ChatMessage",
-          filter: `"eventId"=eq.${eventId}`,
+          table: "Message",
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           console.log("UPDATE payload:", payload);
@@ -50,8 +53,8 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: "DELETE",
           schema: "public",
-          table: "ChatMessage",
-          filter: `"eventId"=eq.${eventId}`,
+          table: "Message",
+          filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
           console.log("DELETE payload:", payload);
@@ -74,7 +77,7 @@ export const useEventChat = (eventId: string, userId: string) => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
-        .from("ChatMessage")
+        .from("Message")
         .select("*")
         .order("createdAt", { ascending: true });
 
@@ -102,6 +105,8 @@ export const useEventChat = (eventId: string, userId: string) => {
         .eq("eventId", eventId)
         .single();
 
+      console.log(data);
+
       if (error) throw error;
       setSettings(data as ChatSettings);
     } catch (error) {
@@ -121,13 +126,14 @@ export const useEventChat = (eventId: string, userId: string) => {
 
     try {
       const { data, error } = await supabase
-        .from("ChatMessage")
+        .from("Message")
         .insert([
           {
             content,
             eventId,
             userId,
             id: crypto.randomUUID(),
+            publicId: createId(),
             createdAt: new Date().toISOString(),
             isPinned: false,
             status: "SENT",
@@ -163,9 +169,9 @@ export const useEventChat = (eventId: string, userId: string) => {
   const deleteMessage = async (messageId: string) => {
     try {
       const { error } = await supabase
-        .from("ChatMessage")
+        .from("Message")
         .delete()
-        .eq("id", messageId)
+        .eq("publicId", messageId)
         .eq("userId", userId);
 
       if (error) throw error;
@@ -179,9 +185,9 @@ export const useEventChat = (eventId: string, userId: string) => {
   const pinMessage = async (messageId: string, isPinned: boolean) => {
     try {
       const { error } = await supabase
-        .from("ChatMessage")
+        .from("Message")
         .update({ isPinned })
-        .eq("id", messageId);
+        .eq("publicId", messageId);
 
       if (error) throw error;
       toast.success(isPinned ? "Message pinned" : "Message unpinned");
@@ -196,6 +202,7 @@ export const useEventChat = (eventId: string, userId: string) => {
       const { error } = await supabase.from("MessageReaction").insert([
         {
           id: crypto.randomUUID(), // Add id field
+          publicId: createId(),
           messageId,
           userId,
           emoji,

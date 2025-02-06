@@ -61,8 +61,6 @@ export default async function EventRoomPage(props: {
 
   const event = await EventService.getEvent(eventId);
 
-  console.log(event, eventId);
-
   if (!event.id) return <EventNotFound />;
 
   const userEventStatus = await checkUserEventStatus({
