@@ -86,6 +86,11 @@ export function CreatePostDialog({
     uploadState.files.forEach((file) =>
       URL.revokeObjectURL(file.preview)
     );
+    setUploadState({
+      files: [],
+      isUploading: false,
+      totalProgress: 0,
+    });
   }, [uploadState.files]);
 
   const handleFileSelect = useCallback(
@@ -178,12 +183,14 @@ export function CreatePostDialog({
                       controls
                     />
                   ) : (
-                    <Image
-                      src={file.preview || '/placeholder.svg'}
-                      alt="Preview"
-                      className="h-[280px] w-[280px] object-cover"
-                      fill
-                    />
+                    <div className="h-[280px] w-[280px]">
+                      <Image
+                        src={file.preview || '/placeholder.svg'}
+                        alt="Preview"
+                        className="object-cover"
+                        fill
+                      />
+                    </div>
                   )}
                   <Button
                     size="icon"
