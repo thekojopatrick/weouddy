@@ -1,13 +1,10 @@
-import {
-  compressImage,
-  compressVideo,
-} from '@/lib/media-compression';
-import type { FileWithPreview } from '@/types/upload';
-import { toast } from 'sonner';
+import { compressImage, compressVideo } from "@/lib/media-compression";
+import type { FileWithPreview } from "@/types/upload";
+import { toast } from "sonner";
 
 interface CompressionProgress {
   progress: number;
-  stage: 'compressing' | 'uploading';
+  stage: "compressing" | "uploading";
 }
 
 interface CompressionResult {
@@ -19,6 +16,7 @@ interface MediaValidationConfig {
   maxVideoSize: number;
   maxImageSize: number;
   maxVideoDuration: number;
+  minCompressionSize: number;
 }
 
 type ProgressCallback = (progress: CompressionProgress) => void;
@@ -27,13 +25,11 @@ const DEFAULT_VALIDATION_CONFIG: MediaValidationConfig = {
   maxVideoSize: 1024 * 1024 * 1024, // 1 GB
   maxImageSize: 512 * 1024 * 1024, // 512 MB
   maxVideoDuration: 200, // seconds
+  minCompressionSize: 1024 * 1024, // 1 MB - minimum size to apply compression
 };
 
 export class MediaCompressor {
-  private compressionQueue: Map<
-    string,
-    Promise<CompressionResult | null>
-  >;
+  private compressionQueue: Map<string, Promise<CompressionResult | null>>;
   private validationConfig: MediaValidationConfig;
 
   constructor(config: Partial<MediaValidationConfig> = {}) {
@@ -47,36 +43,48 @@ export class MediaCompressor {
   /**
    * Validates a media file against size and duration constraints
    */
-  private async validateFile(
-    file: File,
-    mediaType: string
-  ): Promise<boolean> {
+  private async validateFile(file: File, mediaType: string): Promise<boolean> {
     try {
-      if (mediaType === 'VIDEO') {
+      if (mediaType === "VIDEO") {
         if (file.size > this.validationConfig.maxVideoSize) {
-          toast.error('Video file size must be less than 1 GB');
+          toast.error("Video file size must be less than 1 GB");
           return false;
         }
 
         // Check video duration
         const duration = await this.getVideoDuration(file);
         if (duration > this.validationConfig.maxVideoDuration) {
-          toast.error('Video length must be less than 200 seconds');
+          toast.error("Video length must be less than 200 seconds");
           return false;
         }
       } else {
         if (file.size > this.validationConfig.maxImageSize) {
-          toast.error('File size must be less than 512 MB');
+          toast.error("File size must be less than 512 MB");
           return false;
         }
       }
 
       return true;
     } catch (error) {
-      console.error('File validation failed:', error);
-      toast.error('Failed to validate file');
+      console.error("File validation failed:", error);
+      toast.error("Failed to validate file");
       return false;
     }
+  }
+
+  /**
+   * Determines if a file should be compressed based on type and size
+   */
+  private shouldCompress(file: File): boolean {
+    // Skip compression for small images
+    if (
+      file.type.startsWith("image/") &&
+      file.size < this.validationConfig.minCompressionSize
+    ) {
+      console.log(`Skipping compression for ${file.name} (${file.size} bytes)`);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -84,7 +92,7 @@ export class MediaCompressor {
    */
   private getVideoDuration(file: File): Promise<number> {
     return new Promise((resolve, reject) => {
-      const video = document.createElement('video');
+      const video = document.createElement("video");
       const objectUrl = URL.createObjectURL(file);
 
       video.onloadedmetadata = () => {
@@ -94,7 +102,7 @@ export class MediaCompressor {
 
       video.onerror = () => {
         URL.revokeObjectURL(objectUrl);
-        reject(new Error('Failed to load video metadata'));
+        reject(new Error("Failed to load video metadata"));
       };
 
       video.src = objectUrl;
@@ -106,7 +114,7 @@ export class MediaCompressor {
    */
   async processFile(
     fileWithPreview: FileWithPreview,
-    onProgress?: ProgressCallback
+    onProgress?: ProgressCallback,
   ): Promise<CompressionResult | null> {
     const { file, mediaType } = fileWithPreview;
     const fileId = `${file.name}_${Date.now()}`;
@@ -124,26 +132,29 @@ export class MediaCompressor {
           return null;
         }
 
-        console.log({ isValid });
+        // Check if we should compress this file
+        if (!this.shouldCompress(file)) {
+          return { file, compressed: false };
+        }
 
         // Notify start of compression
-        onProgress?.({ progress: 0, stage: 'compressing' });
+        onProgress?.({ progress: 0, stage: "compressing" });
 
-        console.log('compressing');
+        console.log("compressing");
 
         let compressedFile: File;
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith("image/")) {
           compressedFile = await compressImage(file);
-        } else if (file.type.startsWith('video/')) {
+        } else if (file.type.startsWith("video/")) {
           //compressedFile = await compressVideo(file);
           return { file, compressed: false };
         } else {
           return { file, compressed: false };
         }
 
-        console.log('compressing', compressedFile);
+        console.log("compressing", compressedFile);
         // Notify completion of compression
-        onProgress?.({ progress: 100, stage: 'compressing' });
+        onProgress?.({ progress: 100, stage: "compressing" });
 
         const wasCompressed = compressedFile.size < file.size;
         return {
@@ -151,10 +162,7 @@ export class MediaCompressor {
           compressed: wasCompressed,
         };
       } catch (error) {
-        console.warn(
-          'Compression failed, using original file:',
-          error
-        );
+        console.warn("Compression failed, using original file:", error);
         return { file, compressed: false };
       } finally {
         // Clean up queue
@@ -172,17 +180,12 @@ export class MediaCompressor {
    */
   async processFiles(
     files: FileWithPreview[],
-    onProgress?: (
-      fileIndex: number,
-      progress: CompressionProgress
-    ) => void
+    onProgress?: (fileIndex: number, progress: CompressionProgress) => void,
   ): Promise<(CompressionResult | null)[]> {
     return Promise.all(
       files.map((file, index) =>
-        this.processFile(file, (progress) =>
-          onProgress?.(index, progress)
-        )
-      )
+        this.processFile(file, (progress) => onProgress?.(index, progress)),
+      ),
     );
   }
 }
