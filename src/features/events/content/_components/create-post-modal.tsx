@@ -1,29 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-} from '@/components/ui/drawer';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
-import { EmojiPicker } from '@/components/emoji-picker';
-import { ImageIcon, X, NotebookPen, Plus } from 'lucide-react';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+} from "@/components/ui/drawer";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { EmojiPicker } from "@/components/emoji-picker";
+import { ImageIcon, X, NotebookPen, Plus } from "lucide-react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -33,14 +29,14 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@/components/ui/alert-dialog';
-import { useUploadFiles } from '@/features/events/hooks/post/use-upload-files';
-import { useCreatePost } from '@/features/events/hooks/post/use-post';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/alert-dialog";
+import { useUploadFiles } from "@/features/events/hooks/post/use-upload-files";
+import { useCreatePost } from "@/features/events/hooks/post/use-post";
+import { useToast } from "@/hooks/use-toast";
 
-import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
-import Image from 'next/image';
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 
 interface CreatePostDialogProps {
   eventId: string;
@@ -56,19 +52,14 @@ export function CreatePostDialog({
 }: CreatePostDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const isMobile = !useMediaQuery('(min-width: 768px)');
+  const isMobile = !useMediaQuery("(min-width: 768px)");
 
-  const {
-    handleFiles,
-    uploadFiles,
-    removeFile,
-    uploadState,
-    setUploadState,
-  } = useUploadFiles();
+  const { handleFiles, uploadFiles, removeFile, uploadState, setUploadState } =
+    useUploadFiles();
   const createPost = useCreatePost();
 
   const handleOpenChange = (open: boolean) => {
@@ -82,10 +73,8 @@ export function CreatePostDialog({
   const handleDiscard = useCallback(() => {
     setShowCloseWarning(false);
     setIsOpen(false);
-    setContent('');
-    uploadState.files.forEach((file) =>
-      URL.revokeObjectURL(file.preview)
-    );
+    setContent("");
+    uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
     setUploadState({
       files: [],
       isUploading: false,
@@ -97,15 +86,15 @@ export function CreatePostDialog({
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       await handleFiles(e.target.files, eventId);
     },
-    [handleFiles, eventId]
+    [handleFiles, eventId],
   );
 
   const handlePost = async () => {
     if (uploadState.isUploading) {
       toast({
-        title: 'Please wait',
-        description: 'Wait for all media to finish uploading.',
-        variant: 'destructive',
+        title: "Please wait",
+        description: "Wait for all media to finish uploading.",
+        variant: "destructive",
       });
       return;
     }
@@ -121,27 +110,25 @@ export function CreatePostDialog({
       });
 
       toast({
-        title: 'Post created!',
-        description: 'Your post has been published successfully.',
+        title: "Post created!",
+        description: "Your post has been published successfully.",
       });
 
       // Reset the state
       setIsOpen(false);
-      setContent('');
-      uploadState.files.forEach((file) =>
-        URL.revokeObjectURL(file.preview)
-      );
+      setContent("");
+      uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
       setUploadState({
         files: [],
         isUploading: false,
         totalProgress: 0,
       });
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error("Error creating post:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to create post. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create post. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsPosting(false);
@@ -153,7 +140,7 @@ export function CreatePostDialog({
       <>
         <div className="flex gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={userAvatar ?? ''} />
+            <AvatarImage src={userAvatar ?? ""} />
             <AvatarFallback>{userName?.[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
@@ -176,7 +163,7 @@ export function CreatePostDialog({
                   key={index}
                   className="relative shrink-0 rounded-xl overflow-hidden"
                 >
-                  {file.mediaType === 'VIDEO' ? (
+                  {file.mediaType === "VIDEO" ? (
                     <video
                       src={file.preview}
                       className="h-[280px] w-[280px] object-cover"
@@ -185,7 +172,7 @@ export function CreatePostDialog({
                   ) : (
                     <div className="h-[280px] w-[280px]">
                       <Image
-                        src={file.preview || '/placeholder.svg'}
+                        src={file.preview || "/placeholder.svg"}
                         alt="Preview"
                         className="object-cover"
                         fill
@@ -203,10 +190,7 @@ export function CreatePostDialog({
                   </Button>
                   {file.uploading && (
                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
-                      <Progress
-                        value={file.progress}
-                        className="h-1"
-                      />
+                      <Progress value={file.progress} className="h-1" />
                       <p className="text-xs mt-1">
                         Uploading ({Math.round(file.progress)}%)
                       </p>
@@ -255,19 +239,12 @@ export function CreatePostDialog({
               uploadState.isUploading
             }
           >
-            {isPosting ? 'Posting...' : 'Post'}
+            {isPosting ? "Posting..." : "Post"}
           </Button>
         </div>
       </>
     ),
-    [
-      content,
-      uploadState,
-      isPosting,
-      handleFileSelect,
-      removeFile,
-      handlePost,
-    ]
+    [content, uploadState, isPosting, handleFileSelect, removeFile, handlePost],
   );
 
   // Wrapper components for mobile and desktop
@@ -280,25 +257,25 @@ export function CreatePostDialog({
     <>
       <Wrapper open={isOpen} onOpenChange={handleOpenChange}>
         <Button
-          variant={'outline'}
-          size={isMobile ? 'icon' : 'lg'}
+          variant={"outline"}
+          size={isMobile ? "icon" : "lg"}
           className={cn(
-            'rounded-full shadow-lg',
-            isMobile ? 'size-12' : 'h-12'
+            "rounded-full shadow-lg",
+            isMobile ? "size-12" : "h-12",
           )}
           onClick={() => setIsOpen(true)}
         >
-          {isMobile ? <NotebookPen /> : <Plus className={'size-6'} />}
-          <span className={isMobile ? 'sr-only' : 'font-semibold'}>
+          {isMobile ? <NotebookPen /> : <Plus className={"size-6"} />}
+          <span className={isMobile ? "sr-only" : "font-semibold"}>
             Create Post
           </span>
         </Button>
         <WrapperContent
           className={cn(
-            'bg-white text-black overflow-hidden flex flex-col',
+            "bg-white text-black overflow-hidden flex flex-col",
             isMobile
-              ? 'h-[90vh]'
-              : 'fixed top-[35%] left-1/2 transform -translate-x-1/2 min-h-[200px] max-h-[70vh] overflow-y-auto'
+              ? "h-[90vh]"
+              : "fixed top-[35%] left-1/2 transform -translate-x-1/2 min-h-[200px] max-h-[70vh] overflow-y-auto",
           )}
         >
           <HeaderWrapper className="flex-shrink-0">
@@ -307,7 +284,7 @@ export function CreatePostDialog({
             </TitleWrapper>
           </HeaderWrapper>
           <div
-            className={`flex-grow overflow-y-auto ${isMobile ? 'px-4' : ''}`}
+            className={`flex-grow overflow-y-auto ${isMobile ? "px-4" : ""}`}
           >
             {renderContent()}
           </div>
@@ -319,9 +296,8 @@ export function CreatePostDialog({
               <AlertDialogHeader>
                 <AlertDialogTitle>Hold that thought</AlertDialogTitle>
                 <AlertDialogDescription>
-                  We are still uploading your media. Are you sure you
-                  want to discard your post? Your draft and
-                  attachments will be lost.
+                  We are still uploading your media. Are you sure you want to
+                  discard your post? Your draft and attachments will be lost.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

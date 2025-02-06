@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { MediaControls } from './media-controls';
+import Image from "next/image";
+import { MediaControls } from "./media-controls";
 
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { useMediaSlider } from '../../hooks/post/use-media-slider';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useMediaSlider } from "../../hooks/post/use-media-slider";
 
 interface PostMediaSliderProps {
   media: Array<{
     id: string;
     url: string;
-    type: 'IMAGE' | 'VIDEO';
+    type: "IMAGE" | "VIDEO";
   }>;
   alt?: string;
   isHovered: boolean;
@@ -18,7 +18,7 @@ interface PostMediaSliderProps {
 
 export function PostMediaSlider({
   media,
-  alt = '',
+  alt = "",
   isHovered,
 }: PostMediaSliderProps) {
   const {
@@ -37,7 +37,7 @@ export function PostMediaSlider({
   return (
     <div className="relative w-full">
       <AspectRatio ratio={1 / 1.3}>
-        {currentMedia.type === 'IMAGE' ? (
+        {currentMedia.type === "IMAGE" ? (
           <Image
             src={currentMedia.url}
             alt={alt}
@@ -72,7 +72,7 @@ export function PostMediaSlider({
         onNext={handleNext}
         onPlayPause={togglePlayPause}
         onMute={toggleMute}
-        isVideo={currentMedia.type === 'VIDEO'}
+        isVideo={currentMedia.type === "VIDEO"}
       />
     </div>
   );

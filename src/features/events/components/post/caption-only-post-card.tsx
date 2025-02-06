@@ -1,23 +1,15 @@
-'use client';
+"use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import {
-  RiChat1Line,
-  RiHeart3Fill,
-  RiHeart3Line,
-} from '@remixicon/react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RiChat1Line, RiHeart3Fill, RiHeart3Line } from "@remixicon/react";
 
-import { Badge } from '@/components/ui/badge';
-import { Comments } from './comment-post-dialog';
-import { EventPostCardProps } from './post-card';
-import React from 'react';
-import { formatTimeAgo } from '@/lib/utils/formatters';
-import { getNameInitials } from '@/lib/utils';
-import { usePostInteractions } from '../../hooks/post/use-post-interaction';
+import { Badge } from "@/components/ui/badge";
+import { Comments } from "./comment-post-dialog";
+import { EventPostCardProps } from "./post-card";
+import React from "react";
+import { formatTimeAgo } from "@/lib/utils/formatters";
+import { getNameInitials } from "@/lib/utils";
+import { usePostInteractions } from "../../hooks/post/use-post-interaction";
 
 export default function CaptionOnlyPostCard({
   post,
@@ -47,22 +39,18 @@ export default function CaptionOnlyPostCard({
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">
-              {post.user.name}
-            </span>
+            <span className="text-sm font-medium">{post.user.name}</span>
             <p className="text-xs text-muted-foreground">
               {formatTimeAgo(new Date(post.createdAt))}
             </p>
           </div>
         </div>
         <Badge variant="secondary">
-          {post.userId === userId ? 'Your post' : 'Member'}
+          {post.userId === userId ? "Your post" : "Member"}
         </Badge>
       </div>
 
-      <p className="font-medium text-sm whitespace-pre-wrap">
-        {post.caption}
-      </p>
+      <p className="font-medium text-sm whitespace-pre-wrap">{post.caption}</p>
 
       <div className="flex gap-3">
         <button
