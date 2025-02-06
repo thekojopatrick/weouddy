@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Redis from "ioredis";
-import { env } from "@/env";
+import Redis from 'ioredis';
 
 class RedisCache {
   private client: Redis;
 
   constructor() {
-    this.client = new Redis(env.REDIS_URL!, {
+    this.client = new Redis(process.env.REDIS_UR!, {
       // Recommended options for production
       retryStrategy: (times) => {
         const delay = Math.min(times * 50, 2000);
@@ -15,12 +14,12 @@ class RedisCache {
       maxRetriesPerRequest: 3,
     });
 
-    this.client.on("error", (err) => {
-      console.error("Redis connection error:", err);
+    this.client.on('error', (err) => {
+      console.error('Redis connection error:', err);
     });
 
-    this.client.on("connect", () => {
-      console.log("Successfully connected to Redis");
+    this.client.on('connect', () => {
+      console.log('Successfully connected to Redis');
     });
   }
 
@@ -39,30 +38,35 @@ class RedisCache {
     key: string,
     value: any,
     ttlInSeconds?: number,
-    flag?: "NX" | "XX",
-    px?: "PX",
-    pxValue?: number,
+    flag?: 'NX' | 'XX',
+    px?: 'PX',
+    pxValue?: number
   ): Promise<boolean> {
     const serializedValue =
-      typeof value === "string" ? value : JSON.stringify(value);
+      typeof value === 'string' ? value : JSON.stringify(value);
 
     if (flag && px && pxValue) {
       // Handle the special case for locks with PX
-      const result = await this.client.set(key, serializedValue, px, pxValue);
-      return result === "OK";
+      const result = await this.client.set(
+        key,
+        serializedValue,
+        px,
+        pxValue
+      );
+      return result === 'OK';
     }
 
     if (ttlInSeconds) {
       const result = await this.client.setex(
         key,
         ttlInSeconds,
-        serializedValue,
+        serializedValue
       );
-      return result === "OK";
+      return result === 'OK';
     }
 
     const result = await this.client.set(key, serializedValue);
-    return result === "OK";
+    return result === 'OK';
   }
 
   async del(key: string): Promise<void> {
