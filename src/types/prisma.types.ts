@@ -3,8 +3,8 @@ import {
   UserRole,
   MediaType,
   EventActivityType,
-} from "@prisma/client";
-import { User } from "@supabase/supabase-js";
+} from '@prisma/client';
+import { User } from '@supabase/supabase-js';
 
 export type CurrentUser = User & {
   id: string;
@@ -103,6 +103,7 @@ export interface EventWithDetails extends BaseEvent {
 
 export interface BasePost {
   id: string;
+  publicId: string;
   caption?: string | null;
   createdAt: Date;
   updatedAt: Date;

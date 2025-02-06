@@ -1,17 +1,22 @@
-"use client";
+'use client';
 
-import CaptionOnlyPostCard from "./caption-only-post-card";
-import { EventPostWithMedia } from "./post-with-media-card";
-import React from "react";
+import CaptionOnlyPostCard from './caption-only-post-card';
+import {
+  PostWithMediaShimmer,
+  PostCardShimmer,
+} from './post-card-shimmer';
+import { EventPostWithMedia } from './post-with-media-card';
+import React from 'react';
 
 export interface EventPostCardProps {
   post: {
     id: string;
+    publicId: string;
     caption?: string | null;
     media: Array<{
       id: string;
       url: string;
-      type: "IMAGE" | "VIDEO";
+      type: 'IMAGE' | 'VIDEO';
     }>;
     createdAt: Date | string;
     userId: string;
@@ -30,6 +35,10 @@ export interface EventPostCardProps {
 
 export function EventPostCard({ post, userId }: EventPostCardProps) {
   const hasMedia = post.media.length > 0;
+
+  if (!post) {
+    return hasMedia ? <PostWithMediaShimmer /> : <PostCardShimmer />;
+  }
 
   return hasMedia ? (
     <EventPostWithMedia post={post} userId={userId} />
