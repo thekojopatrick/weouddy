@@ -53,8 +53,9 @@
     }
   ],
   "scope": "/",
-  "start_url": "/?source=pwa",
+  "start_url": "/discover",
+  "theme_color": "#1e1e1e",
+  "background_color": "#1e1e1e",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "splash_pages": null
 }

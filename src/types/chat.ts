@@ -1,4 +1,4 @@
-import { MessageStatus as MessageStatusType } from '@prisma/client';
+import { MessageStatus as MessageStatusType } from "@prisma/client";
 
 export interface ReactionInfo {
   emoji: string;
@@ -38,7 +38,7 @@ export interface MessageStatus {
   id: string;
   messageId: string;
   userId: string;
-  status: 'delivered' | 'read';
+  status: "delivered" | "read";
   updatedAt: string;
 }
 

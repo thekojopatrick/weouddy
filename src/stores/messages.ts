@@ -1,14 +1,14 @@
-import { create } from 'zustand';
-import { supabase } from '@/utils/supabase/client';
-import { toast } from 'sonner';
-import { createId } from '@paralleldrive/cuid2';
+import { create } from "zustand";
+import { supabase } from "@/utils/supabase/client";
+import { toast } from "sonner";
+import { createId } from "@paralleldrive/cuid2";
 import type {
   Message,
   MessageReaction,
   MessageStatus,
   User,
-} from '@prisma/client';
-import React from 'react';
+} from "@prisma/client";
+import React from "react";
 
 type MessageWithUser = Message & {
   user: {
@@ -35,7 +35,7 @@ interface MessagesState {
   sendMessage: (
     content: string,
     eventId: string,
-    userId: string
+    userId: string,
   ) => Promise<Message | null>;
   pinMessage: (messageId: string, isPinned: boolean) => Promise<void>;
   removeMessage: (messageId: string, userId: string) => Promise<void>;
@@ -43,12 +43,9 @@ interface MessagesState {
   addReaction: (
     messageId: string,
     emoji: string,
-    userId: string
+    userId: string,
   ) => Promise<void>;
-  removeReaction: (
-    reactionId: string,
-    userId: string
-  ) => Promise<void>;
+  removeReaction: (reactionId: string, userId: string) => Promise<void>;
 }
 
 export const useMessagesStore = create<MessagesState>((set, get) => ({
@@ -86,9 +83,9 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
           ? {
               ...updatedMessage,
               createdAt: new Date(updatedMessage.createdAt),
-              user: updatedMessage.user[0],
+              user: updatedMessage.user,
             }
-          : msg
+          : msg,
       ),
     })),
 
@@ -101,7 +98,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
     try {
       set({ isLoading: true });
       const { data, error } = await supabase
-        .from('messages')
+        .from("messages")
         .select(
           `
           *,
@@ -112,43 +109,15 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
             username,
             avatarUrl,
           )
-        `
+        `,
         )
-        .eq('eventId', eventId)
-        .order('createdAt', { ascending: true });
+        .eq("eventId", eventId)
+        .order("createdAt", { ascending: true });
 
       if (error) throw error;
-
-      set({
-        messages: (data || [])
-          .map((msg) => {
-            if (!msg || typeof msg !== 'object') return null;
-            return {
-              id: String(msg.id),
-              publicId: String(msg.publicId),
-              content: String(msg.content),
-              eventId: String(msg.eventId),
-              userId: String(msg.userId),
-              vendorId: msg.vendorId ? String(msg.vendorId) : null,
-              isPinned: Boolean(msg.isPinned),
-              status: msg.status as MessageStatus,
-              createdAt: msg.createdAt
-                ? new Date(msg.createdAt)
-                : new Date(),
-              user:
-                msg.user && typeof msg.user === 'object'
-                  ? msg.user
-                  : null,
-            };
-          })
-          .filter(
-            (msg): msg is NonNullable<typeof msg> => msg !== null
-          ),
-        isLoading: false,
-      });
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      toast.error('Failed to load messages');
+      console.error("Error fetching messages:", error);
+      toast.error("Failed to load messages");
       set({ isLoading: false });
     }
   },
@@ -163,12 +132,12 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         publicId: createId(),
         createdAt: new Date().toISOString(),
         isPinned: false,
-        status: 'SENT' as const,
+        status: "SENT" as const,
         vendorId: null,
       };
 
       const { data, error } = await supabase
-        .from('messages')
+        .from("messages")
         .insert([messageData])
         .select(
           `
@@ -179,7 +148,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
             avatarUrl,
             name
           )
-        `
+        `,
         )
         .single();
 
@@ -192,8 +161,8 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
           } as Message)
         : null;
     } catch (error) {
-      console.error('Error sending message:', error);
-      toast.error('Failed to send message');
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
       return null;
     }
   },
@@ -201,91 +170,88 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
   pinMessage: async (messageId, isPinned) => {
     try {
       const { error } = await supabase
-        .from('messages')
+        .from("messages")
         .update({ isPinned })
-        .eq('publicId', messageId);
+        .eq("publicId", messageId);
 
       if (error) throw error;
-      toast.success(isPinned ? 'Message pinned' : 'Message unpinned');
+      toast.success(isPinned ? "Message pinned" : "Message unpinned");
     } catch (error) {
-      console.error('Error updating message:', error);
-      toast.error('Failed to update message');
+      console.error("Error updating message:", error);
+      toast.error("Failed to update message");
     }
   },
 
   removeMessage: async (messageId, userId) => {
     try {
       const { error } = await supabase
-        .from('messages')
+        .from("messages")
         .delete()
-        .eq('publicId', messageId)
-        .eq('userId', userId);
+        .eq("publicId", messageId)
+        .eq("userId", userId);
 
       if (error) throw error;
-      toast.success('Message deleted');
+      toast.success("Message deleted");
     } catch (error) {
-      console.error('Error deleting message:', error);
-      toast.error('Failed to delete message');
+      console.error("Error deleting message:", error);
+      toast.error("Failed to delete message");
     }
   },
 
   addReaction: async (messageId, emoji, userId) => {
     try {
-      const { error } = await supabase
-        .from('message_reactions')
-        .insert([
-          {
-            id: crypto.randomUUID(),
-            publicId: createId(),
-            messageId,
-            userId,
-            emoji,
-            createdAt: new Date().toISOString(),
-          },
-        ]);
+      const { error } = await supabase.from("message_reactions").insert([
+        {
+          id: crypto.randomUUID(),
+          publicId: createId(),
+          messageId,
+          userId,
+          emoji,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error adding reaction:', error);
-      toast.error('Failed to add reaction');
+      console.error("Error adding reaction:", error);
+      toast.error("Failed to add reaction");
     }
   },
 
   removeReaction: async (reactionId, userId) => {
     try {
       const { error } = await supabase
-        .from('message_reactions')
+        .from("message_reactions")
         .delete()
-        .eq('id', reactionId)
-        .eq('userId', userId);
+        .eq("id", reactionId)
+        .eq("userId", userId);
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error removing reaction:', error);
-      toast.error('Failed to remove reaction');
+      console.error("Error removing reaction:", error);
+      toast.error("Failed to remove reaction");
     }
   },
 }));
 
 // Hook for real-time updates
 export const useMessagesSubscription = (eventId: string) => {
-  const { addMessage, updateMessage, deleteMessage } =
-    useMessagesStore();
+  const { addMessage, updateMessage, deleteMessage } = useMessagesStore();
 
   React.useEffect(() => {
     const channel = supabase
       .channel(`messages-${eventId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
           filter: `eventId=eq.${eventId}`,
         },
         async (payload) => {
           const { data: messageWithUser } = await supabase
-            .from('messages')
+            .from("messages")
             .select(
               `
               *,
@@ -296,9 +262,9 @@ export const useMessagesSubscription = (eventId: string) => {
                 name,
                 avatarUrl
               )
-            `
+            `,
             )
-            .eq('id', payload.new.id)
+            .eq("id", payload.new.id)
             .single();
 
           if (messageWithUser) {
@@ -309,19 +275,19 @@ export const useMessagesSubscription = (eventId: string) => {
             } as unknown as MessageWithUser;
             addMessage(transformedMessage);
           }
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
           filter: `eventId=eq.${eventId}`,
         },
         async (payload) => {
           const { data: messageWithUser } = await supabase
-            .from('messages')
+            .from("messages")
             .select(
               `
               *,
@@ -332,9 +298,9 @@ export const useMessagesSubscription = (eventId: string) => {
                 name,
                 avatarUrl
               )
-            `
+            `,
             )
-            .eq('id', payload.new.id)
+            .eq("id", payload.new.id)
             .single();
 
           if (messageWithUser) {
@@ -345,20 +311,20 @@ export const useMessagesSubscription = (eventId: string) => {
             } as unknown as MessageWithUser;
             updateMessage(transformedMessage);
           }
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'messages',
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
           filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
-          console.log('Deleted message:', payload);
+          console.log("Deleted message:", payload);
           deleteMessage(payload.old.id);
-        }
+        },
       )
       .subscribe();
 
