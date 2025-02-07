@@ -1,16 +1,20 @@
-import { FC } from "react";
-import { ChatMessage } from "@/types/chat";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Pin, MoreVertical, CheckCheck, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FC } from 'react';
+import { ChatMessage } from '@/types/chat';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
+import { Pin, MoreVertical, CheckCheck, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import { getNameInitials } from "@/lib/utils";
+import { getNameInitials } from '@/lib/utils';
 
 interface ChatMessageProps {
   message: ChatMessage;
@@ -36,7 +40,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
 }) => {
   const displayName = isOwnMessage
     ? (currentUser.name ?? currentUser?.username)
-    : message.user?.name || message.user?.username || "Anonymous";
+    : message.user?.name || message.user?.username || 'Anonymous';
 
   const displayProfilePic = isOwnMessage
     ? currentUser?.avatarUrl
@@ -44,7 +48,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
 
   return (
     <div
-      className={`flex gap-2 mb-4 ${isOwnMessage ? "flex-row-reverse" : ""}`}
+      className={`flex gap-2 mb-4 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
     >
       <Avatar className="h-8 w-8">
         <AvatarImage src={displayProfilePic as never} />
@@ -54,21 +58,21 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
       </Avatar>
 
       <div
-        className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"}`}
+        className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
       >
         <div
-          className={`flex items-center gap-2 ${isOwnMessage ? "flex-row-reverse" : ""}`}
+          className={`flex items-center gap-2 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
         >
           <span className="text-xs font-medium">{displayName}</span>
           <span className="text-xs text-muted-foreground">
             {new Date(message.createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
+              hour: '2-digit',
+              minute: '2-digit',
             })}
           </span>
           {message.status && (
             <span className="text-muted-foreground">
-              {message.status === "read" ? (
+              {message.status === 'READ' ? (
                 <CheckCheck className="h-4 w-4 text-blue-500" />
               ) : (
                 <Check className="h-4 w-4" />
@@ -80,7 +84,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
         <div
           className={`
           max-w-[280px] rounded-lg p-2 mt-1
-          ${isOwnMessage ? "bg-brand text-primary-foreground" : "bg-muted"}
+          ${isOwnMessage ? 'bg-brand text-primary-foreground' : 'bg-muted'}
         `}
         >
           <p className="text-sm break-words">{message.content}</p>
@@ -91,11 +95,13 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
             {message.reactions.map((reaction) => (
               <button
                 key={reaction.emoji}
-                onClick={() => onReaction?.(message.id, reaction.emoji)}
+                onClick={() =>
+                  onReaction?.(message.id, reaction.emoji)
+                }
                 className={`px-2 py-1 rounded-lg text-sm flex items-center gap-1 ${
                   reaction.reacted
-                    ? "bg-brand text-primary"
-                    : "bg-muted hover:bg-muted/80"
+                    ? 'bg-brand text-primary'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
                 <span>{reaction.emoji}</span>
@@ -121,9 +127,11 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            onClick={() => onPinMessage(message.id, !message.isPinned)}
+            onClick={() =>
+              onPinMessage(message.id, !message.isPinned)
+            }
           >
-            {message.isPinned ? "Unpin Message" : "Pin Message"}
+            {message.isPinned ? 'Unpin Message' : 'Pin Message'}
           </DropdownMenuItem>
           {isOwnMessage && (
             <DropdownMenuItem
