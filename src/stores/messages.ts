@@ -2,21 +2,35 @@ import { create } from 'zustand';
 import { supabase } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import { createId } from '@paralleldrive/cuid2';
-import type { Message, MessageReaction, User } from '@prisma/client';
+import type {
+  Message,
+  MessageReaction,
+  MessageStatus,
+  User,
+} from '@prisma/client';
 import React from 'react';
+
+type MessageWithUser = Message & {
+  user: {
+    id: string;
+    publicId: string;
+    username: string | null;
+    name: string | null;
+    avatarUrl: string | null;
+  } | null;
+  createdAt: Date; // Changed from string to Date
+};
 
 interface MessagesState {
   messages: (Message & { user: User })[];
   isLoading: boolean;
   users: Map<string, User>;
 
-  // Store actions
-  setMessages: (messages: (Message & { user: User })[]) => void;
-  addMessage: (message: Message & { user: User }) => void;
-  updateMessage: (message: Message & { user: User }) => void;
+  setMessages: (messages: MessageWithUser[]) => void;
+  addMessage: (message: MessageWithUser) => void;
+  updateMessage: (message: MessageWithUser) => void;
   deleteMessage: (messageId: string) => void;
 
-  // API actions
   fetchMessages: (eventId: string) => Promise<void>;
   sendMessage: (
     content: string,
@@ -26,7 +40,6 @@ interface MessagesState {
   pinMessage: (messageId: string, isPinned: boolean) => Promise<void>;
   removeMessage: (messageId: string, userId: string) => Promise<void>;
 
-  // Reaction handlers
   addReaction: (
     messageId: string,
     emoji: string,
@@ -43,18 +56,39 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
   isLoading: true,
   users: new Map(),
 
-  setMessages: (messages) => set({ messages }),
+  setMessages: (messages) =>
+    set({
+      messages: messages.map((msg) => ({
+        ...msg,
+        createdAt: new Date(msg.createdAt),
+        user: msg.user, // Assuming user is returned as an array
+      })),
+      isLoading: false,
+    }),
 
   addMessage: (message) =>
-    set((state) => ({
-      messages: [...state.messages, message],
-      users: state.users.set(message.user.id, message.user),
-    })),
+    set((state) => {
+      const newMessage: Message = {
+        ...message,
+        createdAt: new Date(message.createdAt),
+        user: message.user,
+      };
+      return {
+        messages: [...state.messages, newMessage],
+        users: state.users.set(newMessage.userId, newMessage.user),
+      };
+    }),
 
   updateMessage: (updatedMessage) =>
     set((state) => ({
       messages: state.messages.map((msg) =>
-        msg.id === updatedMessage.id ? updatedMessage : msg
+        msg.id === updatedMessage.id
+          ? {
+              ...updatedMessage,
+              createdAt: new Date(updatedMessage.createdAt),
+              user: updatedMessage.user[0],
+            }
+          : msg
       ),
     })),
 
@@ -73,9 +107,10 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
           *,
           user:userId (
             id,
+            publicId,
+            name,
             username,
             avatarUrl,
-            name
           )
         `
         )
@@ -84,7 +119,33 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
 
       if (error) throw error;
 
-      set({ messages: data, isLoading: false });
+      set({
+        messages: (data || [])
+          .map((msg) => {
+            if (!msg || typeof msg !== 'object') return null;
+            return {
+              id: String(msg.id),
+              publicId: String(msg.publicId),
+              content: String(msg.content),
+              eventId: String(msg.eventId),
+              userId: String(msg.userId),
+              vendorId: msg.vendorId ? String(msg.vendorId) : null,
+              isPinned: Boolean(msg.isPinned),
+              status: msg.status as MessageStatus,
+              createdAt: msg.createdAt
+                ? new Date(msg.createdAt)
+                : new Date(),
+              user:
+                msg.user && typeof msg.user === 'object'
+                  ? msg.user
+                  : null,
+            };
+          })
+          .filter(
+            (msg): msg is NonNullable<typeof msg> => msg !== null
+          ),
+        isLoading: false,
+      });
     } catch (error) {
       console.error('Error fetching messages:', error);
       toast.error('Failed to load messages');
@@ -102,7 +163,8 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         publicId: createId(),
         createdAt: new Date().toISOString(),
         isPinned: false,
-        status: 'SENT',
+        status: 'SENT' as const,
+        vendorId: null,
       };
 
       const { data, error } = await supabase
@@ -122,7 +184,13 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         .single();
 
       if (error) throw error;
-      return data;
+      return data
+        ? ({
+            ...data,
+            createdAt: new Date(data.createdAt),
+            user: data.user || null,
+          } as Message)
+        : null;
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
@@ -215,9 +283,32 @@ export const useMessagesSubscription = (eventId: string) => {
           table: 'messages',
           filter: `eventId=eq.${eventId}`,
         },
-        (payload) => {
-          console.log('New message:', payload);
-          addMessage(payload.new);
+        async (payload) => {
+          const { data: messageWithUser } = await supabase
+            .from('messages')
+            .select(
+              `
+              *,
+              user:userId (
+                id,
+                publicId,
+                username,
+                name,
+                avatarUrl
+              )
+            `
+            )
+            .eq('id', payload.new.id)
+            .single();
+
+          if (messageWithUser) {
+            const transformedMessage = {
+              ...messageWithUser,
+              createdAt: new Date(messageWithUser.createdAt),
+              user: messageWithUser.user || null,
+            } as unknown as MessageWithUser;
+            addMessage(transformedMessage);
+          }
         }
       )
       .on(
@@ -228,9 +319,32 @@ export const useMessagesSubscription = (eventId: string) => {
           table: 'messages',
           filter: `eventId=eq.${eventId}`,
         },
-        (payload) => {
-          console.log('Updated message:', payload);
-          updateMessage(payload.new);
+        async (payload) => {
+          const { data: messageWithUser } = await supabase
+            .from('messages')
+            .select(
+              `
+              *,
+              user:userId (
+                id,
+                publicId,
+                username,
+                name,
+                avatarUrl
+              )
+            `
+            )
+            .eq('id', payload.new.id)
+            .single();
+
+          if (messageWithUser) {
+            const transformedMessage = {
+              ...messageWithUser,
+              createdAt: new Date(messageWithUser.createdAt),
+              user: messageWithUser.user || null,
+            } as unknown as MessageWithUser;
+            updateMessage(transformedMessage);
+          }
         }
       )
       .on(
