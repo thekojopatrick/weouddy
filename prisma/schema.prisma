@@ -402,6 +402,7 @@ model Message {
 
     @@index([eventId])
     @@index([userId])
+    @@map("messages")
 }
 
 model MessageReaction {
@@ -416,6 +417,7 @@ model MessageReaction {
 
     @@unique([messageId, userId, emoji])
     @@index([messageId])
+    @@map("message_reactions")
 }
 
 model ChatSettings {

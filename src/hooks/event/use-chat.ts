@@ -21,7 +21,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: '*',
           schema: 'public',
-          table: 'Message',
+          table: 'messages',
         },
         (payload) => console.log({ payload })
       )
@@ -30,7 +30,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'Message',
+          table: 'messages',
           filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
@@ -46,7 +46,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'Message',
+          table: 'messages',
           filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
@@ -65,7 +65,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         {
           event: 'DELETE',
           schema: 'public',
-          table: 'Message',
+          table: 'messages',
           filter: `eventId=eq.${eventId}`,
         },
         (payload) => {
@@ -83,13 +83,13 @@ export const useEventChat = (eventId: string, userId: string) => {
       console.log('Cleaning up subscription');
       supabase.removeChannel(messageChannel);
     };
-  }, [eventId]);
+  }, []);
 
   const fetchMessages = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('Message')
+      let { data, error } = await supabase
+        .from('messages')
         .select('*')
         .order('createdAt', { ascending: true });
 
@@ -101,6 +101,7 @@ export const useEventChat = (eventId: string, userId: string) => {
         return;
       }
       setMessages(data as unknown as ChatMessage[]);
+      return data;
     } catch (error) {
       console.error('Catch Block Error:', error);
       toast.error('Unexpected error loading messages');
@@ -121,6 +122,7 @@ export const useEventChat = (eventId: string, userId: string) => {
 
       if (error) throw error;
       setSettings(data as ChatSettings);
+      return data;
     } catch (error) {
       console.error('Error fetching chat settings:', error);
     } finally {
@@ -136,7 +138,7 @@ export const useEventChat = (eventId: string, userId: string) => {
 
     try {
       const { data, error } = await supabase
-        .from('Message')
+        .from('messages')
         .insert([
           {
             content,
@@ -179,7 +181,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const deleteMessage = async (messageId: string) => {
     try {
       const { error } = await supabase
-        .from('Message')
+        .from('messages')
         .delete()
         .eq('publicId', messageId)
         .eq('userId', userId);
@@ -195,7 +197,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const pinMessage = async (messageId: string, isPinned: boolean) => {
     try {
       const { error } = await supabase
-        .from('Message')
+        .from('messages')
         .update({ isPinned })
         .eq('publicId', messageId);
 
@@ -210,7 +212,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const addReaction = async (messageId: string, emoji: string) => {
     try {
       const { error } = await supabase
-        .from('MessageReaction')
+        .from('message_reactions')
         .insert([
           {
             id: crypto.randomUUID(), // Add id field
@@ -232,7 +234,7 @@ export const useEventChat = (eventId: string, userId: string) => {
   const removeReaction = async (reactionId: string) => {
     try {
       const { error } = await supabase
-        .from('MessageReaction')
+        .from('message_reactions')
         .delete()
         .eq('id', reactionId)
         .eq('userId', userId);
@@ -248,6 +250,7 @@ export const useEventChat = (eventId: string, userId: string) => {
     messages,
     settings,
     isLoading,
+    fetchMessages,
     sendMessage,
     deleteMessage,
     pinMessage,

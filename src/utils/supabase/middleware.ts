@@ -11,6 +11,7 @@ const publicPaths = [
   "/privacy-policy",
   "/discover",
   "/api/events",
+  "/api/events/*",
   "/auth/callback",
 ];
 
