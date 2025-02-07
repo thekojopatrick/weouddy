@@ -25,6 +25,39 @@ export default async function Image({
     join(process.cwd(), 'fonts/GeistVF.woff')
   );
 
+  if (!event.coverImage) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            fontSize: 48,
+            background: '#fafafa',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#1E1E1E',
+            padding: '50px 200px',
+          }}
+        >
+          👋 Hello!! Join &quot;{event.name}&quot; on WeOuddy.
+        </div>
+      ),
+      {
+        ...size,
+        fonts: [
+          {
+            name: 'Geist',
+            data: interSemiBold,
+            style: 'normal',
+            weight: 500,
+          },
+        ],
+      }
+    );
+  }
+
   return new ImageResponse(
     (
       // ImageResponse JSX element
@@ -38,7 +71,13 @@ export default async function Image({
           height: '100%',
         }}
       >
-        <img src={event.coverImage} height="100" />
+        <img
+          src={`${event.coverImage}`}
+          height="100"
+          style={{
+            borderRadius: 12,
+          }}
+        />
       </div>
     ),
     // ImageResponse options
@@ -51,7 +90,7 @@ export default async function Image({
           name: 'Geist',
           data: interSemiBold,
           style: 'normal',
-          weight: 400,
+          weight: 500,
         },
       ],
     }
