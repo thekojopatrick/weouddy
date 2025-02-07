@@ -12,10 +12,19 @@ export const useEventChat = (eventId: string, userId: string) => {
 
   useEffect(() => {
     console.log('Starting chat subscription for eventId:', eventId);
-    fetchMessages();
     fetchChatSettings();
+    fetchMessages();
     const messageChannel = supabase
       .channel(`event-chat-${eventId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Message',
+        },
+        (payload) => console.log({ payload })
+      )
       .on(
         'postgres_changes',
         {
@@ -82,7 +91,6 @@ export const useEventChat = (eventId: string, userId: string) => {
       const { data, error } = await supabase
         .from('Message')
         .select('*')
-        .eq('eventId', eventId)
         .order('createdAt', { ascending: true });
 
       console.log(data, error);
@@ -121,8 +129,6 @@ export const useEventChat = (eventId: string, userId: string) => {
   };
 
   const sendMessage = async (content: string) => {
-    console.log({ content });
-
     if (!settings?.isEnabled) {
       toast.error('Chat is currently disabled');
       return;
