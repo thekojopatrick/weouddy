@@ -1,3 +1,4 @@
+// prettier-ignore-file
 export type Json =
   | string
   | number
@@ -990,6 +991,13 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "message_reactions_messageId_fkey";
+            columns: ["messageId"];
+            isOneToOne: false;
+            referencedRelation: "messages_normalized";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "message_reactions_userId_fkey";
             columns: ["userId"];
             isOneToOne: false;
@@ -1813,7 +1821,54 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      messages_normalized: {
+        Row: {
+          content: string | null;
+          createdat: string | null;
+          eventid: string | null;
+          id: string | null;
+          ispinned: boolean | null;
+          publicid: string | null;
+          status: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid: string | null;
+        };
+        Insert: {
+          content?: string | null;
+          createdat?: string | null;
+          eventid?: string | null;
+          id?: string | null;
+          ispinned?: boolean | null;
+          publicid?: string | null;
+          status?: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid?: string | null;
+        };
+        Update: {
+          content?: string | null;
+          createdat?: string | null;
+          eventid?: string | null;
+          id?: string | null;
+          ispinned?: boolean | null;
+          publicid?: string | null;
+          status?: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_eventId_fkey";
+            columns: ["eventid"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_userId_fkey";
+            columns: ["userid"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       generate_cuid: {
