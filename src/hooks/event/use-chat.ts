@@ -147,18 +147,21 @@ export const useEventChat = (eventId: string, userId: string) => {
     }
 
     try {
+      // First, try the normal insert
       const { data, error } = await supabase
         .from('messages')
-        .insert({
-          content: content,
-          eventId: eventId,
-          userId: userId,
-          id: crypto.randomUUID(),
-          publicId: createId(),
-          createdAt: new Date().toISOString(),
-          isPinned: false,
-          status: 'SENT',
-        })
+        .insert([
+          {
+            content,
+            eventId,
+            userId,
+            id: crypto.randomUUID(),
+            publicId: createId(),
+            createdAt: new Date().toISOString(),
+            isPinned: false,
+            status: 'SENT',
+          },
+        ])
         .select(
           `
           *,
@@ -175,9 +178,6 @@ export const useEventChat = (eventId: string, userId: string) => {
       console.log('message:', data);
 
       if (error) throw error;
-
-      console.log({ data });
-
       return data;
     } catch (error) {
       toast.error('Failed to send message');
