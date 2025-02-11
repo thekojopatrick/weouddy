@@ -8,6 +8,7 @@ export interface ReactionInfo {
 
 export interface ChatMessage {
   id: string;
+  publicId: string;
   content: string;
   isPinned: boolean;
   status: MessageStatusType;
@@ -16,9 +17,11 @@ export interface ChatMessage {
   eventId: string;
   user: {
     id: string;
+    publicId: string;
+    email: string | null;
+    username: string | null;
     name: string | null;
-    username?: string | null;
-    avatarUrl?: string | null;
+    avatarUrl: string | null;
   };
   reactions?: ReactionInfo[];
 }

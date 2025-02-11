@@ -1,3 +1,4 @@
+// prettier-ignore-file
 export type Json =
   | string
   | number
@@ -956,7 +957,56 @@ export type Database = {
           },
         ];
       };
-      Message: {
+      message_reactions: {
+        Row: {
+          createdAt: string;
+          emoji: string;
+          id: string;
+          messageId: string;
+          publicId: string;
+          userId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          emoji: string;
+          id: string;
+          messageId: string;
+          publicId: string;
+          userId: string;
+        };
+        Update: {
+          createdAt?: string;
+          emoji?: string;
+          id?: string;
+          messageId?: string;
+          publicId?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_messageId_fkey";
+            columns: ["messageId"];
+            isOneToOne: false;
+            referencedRelation: "messages";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "message_reactions_messageId_fkey";
+            columns: ["messageId"];
+            isOneToOne: false;
+            referencedRelation: "messages_normalized";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "message_reactions_userId_fkey";
+            columns: ["userId"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      messages: {
         Row: {
           content: string;
           createdAt: string;
@@ -992,66 +1042,24 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "Message_eventId_fkey";
+            foreignKeyName: "messages_eventId_fkey";
             columns: ["eventId"];
             isOneToOne: false;
             referencedRelation: "Event";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "Message_userId_fkey";
+            foreignKeyName: "messages_userId_fkey";
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "User";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "Message_vendorId_fkey";
+            foreignKeyName: "messages_vendorId_fkey";
             columns: ["vendorId"];
             isOneToOne: false;
             referencedRelation: "Vendor";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      MessageReaction: {
-        Row: {
-          createdAt: string;
-          emoji: string;
-          id: string;
-          messageId: string;
-          publicId: string;
-          userId: string;
-        };
-        Insert: {
-          createdAt?: string;
-          emoji: string;
-          id: string;
-          messageId: string;
-          publicId: string;
-          userId: string;
-        };
-        Update: {
-          createdAt?: string;
-          emoji?: string;
-          id?: string;
-          messageId?: string;
-          publicId?: string;
-          userId?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "MessageReaction_messageId_fkey";
-            columns: ["messageId"];
-            isOneToOne: false;
-            referencedRelation: "Message";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "MessageReaction_userId_fkey";
-            columns: ["userId"];
-            isOneToOne: false;
-            referencedRelation: "User";
             referencedColumns: ["id"];
           },
         ];
@@ -1813,7 +1821,54 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      messages_normalized: {
+        Row: {
+          content: string | null;
+          createdat: string | null;
+          eventid: string | null;
+          id: string | null;
+          ispinned: boolean | null;
+          publicid: string | null;
+          status: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid: string | null;
+        };
+        Insert: {
+          content?: string | null;
+          createdat?: string | null;
+          eventid?: string | null;
+          id?: string | null;
+          ispinned?: boolean | null;
+          publicid?: string | null;
+          status?: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid?: string | null;
+        };
+        Update: {
+          content?: string | null;
+          createdat?: string | null;
+          eventid?: string | null;
+          id?: string | null;
+          ispinned?: boolean | null;
+          publicid?: string | null;
+          status?: Database["public"]["Enums"]["MessageStatus"] | null;
+          userid?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_eventId_fkey";
+            columns: ["eventid"];
+            isOneToOne: false;
+            referencedRelation: "Event";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_userId_fkey";
+            columns: ["userid"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       generate_cuid: {

@@ -68,7 +68,7 @@ export const ChatMessageItem: FC<ChatMessageProps> = ({
           </span>
           {message.status && (
             <span className="text-muted-foreground">
-              {message.status === "read" ? (
+              {message.status === "READ" ? (
                 <CheckCheck className="h-4 w-4 text-blue-500" />
               ) : (
                 <Check className="h-4 w-4" />
