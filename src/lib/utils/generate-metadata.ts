@@ -1,11 +1,13 @@
+import { formatDate } from 'date-fns';
 import { Metadata } from 'next';
 import { getSiteURL } from '@/utils';
 import { EventWithFullData } from '@/types/event';
+import { formatEventDateTime } from './formatters';
 
 const SITE_URL = getSiteURL();
 
 function getHomepageOGImageLink(): string {
-  return `${SITE_URL}/opengraph-image.jpg`;
+  return `${SITE_URL}/assets/opengraph-image.jpg`;
 }
 
 export function generateMetadataForEvent(
@@ -54,8 +56,8 @@ function getOpenGraphMetadata(
     authors: data.host.name,
     description: data.description,
     title: `${data.name} | WeOuddy`,
-    modifiedTime: data?.updatedAt?.toUTCString(),
-    publishedTime: data?.createdAt?.toUTCString(),
+    modifiedTime: formatEventDateTime(data?.updatedAt as never).date,
+    publishedTime: formatEventDateTime(data?.updatedAt as never).time,
     url: `https://www.weouddy.com/events/${data.slug}`,
     images: [
       {

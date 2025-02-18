@@ -42,7 +42,7 @@ export const siteMeta = {
     siteName: 'WeOuddy',
     locale: 'en_US',
     type: 'website',
-    images: [`${SITE_URL}/opengraph-image.jpg`], // Replace with your hero/banner image path
+    images: [`${SITE_URL}/assets/opengraph-image.jpg`], // Replace with your hero/banner image path
   },
   twitter: {
     card: 'summary_large_image',
