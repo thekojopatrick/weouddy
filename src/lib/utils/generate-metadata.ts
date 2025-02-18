@@ -1,7 +1,7 @@
 import { formatDate } from 'date-fns';
 import { Metadata } from 'next';
 import { getSiteURL } from '@/utils';
-import { EventWithFullData } from '@/types/event';
+import { EventModel } from '@/types/event';
 import { formatEventDateTime } from './formatters';
 
 const SITE_URL = getSiteURL();
@@ -10,9 +10,7 @@ function getHomepageOGImageLink(): string {
   return `${SITE_URL}/assets/opengraph-image.jpg`;
 }
 
-export function generateMetadataForEvent(
-  data: EventWithFullData
-): Metadata {
+export function generateMetadataForEvent(data: EventModel): Metadata {
   const metadata: Metadata = {
     title: data.name,
     publisher: data.host.name,
@@ -47,14 +45,14 @@ function getRobotsMetadata(): Metadata['robots'] {
 }
 
 function getOpenGraphMetadata(
-  data: EventWithFullData
+  data: EventModel
 ): Metadata['openGraph'] {
   return {
     type: 'article',
     locale: 'en_US',
     siteName: 'WeOuddy',
     authors: data.host.name,
-    description: data.description,
+    description: data?.description ?? `Join me at ${data?.name}`,
     title: `${data.name} | WeOuddy`,
     modifiedTime: formatEventDateTime(data?.updatedAt as never).date,
     publishedTime: formatEventDateTime(data?.updatedAt as never).time,
@@ -71,13 +69,11 @@ function getOpenGraphMetadata(
   };
 }
 
-function getTwitterMetadata(
-  data: EventWithFullData
-): Metadata['twitter'] {
+function getTwitterMetadata(data: EventModel): Metadata['twitter'] {
   return {
     title: `${data.name} | WeOuddy`,
     site: `WeOuddy`,
-    description: data.description,
+    description: data?.description ?? `Join me at ${data?.name}`,
     card: 'summary_large_image',
     siteId: 'https://www.weouddy.com',
     images: [

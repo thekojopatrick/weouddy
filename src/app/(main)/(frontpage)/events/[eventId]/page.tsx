@@ -22,39 +22,11 @@ export async function generateMetadata({
   params,
 }: Props): Promise<Metadata> {
   const slug = (await params).eventId;
-  const data = await EventService.getEvent(slug);
+  const data = await EventService.getEventBySlug(slug);
   if (!data) notFound();
 
   return generateMetadataForEvent(data);
 }
-
-// export async function generateMetadata(
-//   { params }: Props,
-//   parent: ResolvingMetadata,
-// ): Promise<Metadata> {
-//   // read route params
-//   const id = (await params).eventId;
-
-//   // fetch data
-//   const event = await EventService.getEvent(id);
-
-//   // optionally access and extend (rather than replace) parent metadata
-//   //const previousImages = (await parent).openGraph?.images || [];
-
-//   const { date, time } = formatEventDateTime(event?.dateTime as never);
-//   const siteUrl = getURL();
-
-//   return {
-//     title: `${event?.name} | WeOuddy - Real-Time Event Engagement and Moments Sharing Platform`,
-//     description: `Join ${event?.name} on ${date} at ${time}. ${event?.location} : ${event?.description}`,
-//     openGraph: {
-//       title: `${event?.name} | WeOuddy - Real-Time Event Engagement`,
-//       description:
-//         "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-//       url: `${siteUrl}${event?.slug}`,
-//     },
-//   };
-// }
 
 export default async function EventRoomPage(props: {
   params: Promise<{ eventId: string }>;
