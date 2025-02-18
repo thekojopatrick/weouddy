@@ -1,0 +1,11 @@
+User-agent: *
+
+Allow: /$
+
+Disallow: /*?*
+Disallow: /api/
+Disallow: /_next/
+Disallow: /public/
+Disallow: /dashboard/*
+
+Sitemap: https://www.weouddy.com/sitemap.xml
