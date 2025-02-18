@@ -1,19 +1,19 @@
-import { createServerClient } from '@supabase/ssr';
-import { type NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 
 const publicPaths = [
-  '/',
-  '/contact',
-  '/about',
-  '/pricing',
-  '/help',
-  '/support-us',
-  '/privacy-policy',
-  '/discover',
-  '/events/*',
-  '/api/events',
-  '/api/events/*',
-  '/auth/callback',
+  "/",
+  "/contact",
+  "/about",
+  "/pricing",
+  "/help",
+  "/support-us",
+  "/privacy-policy",
+  "/discover",
+  "/events/:path*",
+  "/api/events",
+  "/api/events/*",
+  "/auth/callback",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -32,17 +32,17 @@ export async function updateSession(request: NextRequest) {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
+              request.cookies.set(name, value),
             );
             supabaseResponse = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
+              supabaseResponse.cookies.set(name, value, options),
             );
           },
         },
-      }
+      },
     );
 
     // Do not run code between createServerClient and
@@ -55,15 +55,18 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Check if it's a metadata request
+    const isMetadataRequest =
+      request.headers.get("sec-purpose") === "prefetch" ||
+      request.headers.get("x-nextjs-data") === "1" ||
+      request.headers.get("purpose") === "prefetch";
+
     // Special handling for event pages
-    const isEventPage =
-      request.nextUrl.pathname.startsWith('/events/');
+    const isEventPage = request.nextUrl.pathname.startsWith("/events/");
 
     // Check if it's a bot or crawler request (for metadata)
-    const userAgent = request.headers.get('user-agent') || '';
-    const isBot = /bot|crawler|spider|google|bing|yandex/i.test(
-      userAgent
-    );
+    const userAgent = request.headers.get("user-agent") || "";
+    const isBot = /bot|crawler|spider|google|bing|yandex/i.test(userAgent);
 
     // Allow bots to access event pages for metadata
     if (isEventPage && isBot) {
@@ -74,27 +77,32 @@ export async function updateSession(request: NextRequest) {
     const isPublicPath = publicPaths.some(
       (path) =>
         request.nextUrl.pathname === path ||
-        request.nextUrl.pathname.startsWith('/auth')
+        request.nextUrl.pathname.startsWith("/auth"),
     );
 
-    // Allow access to public paths without authentication
-    if (isPublicPath && !isEventPage) {
+    // Allow metadata requests and public paths
+    if (isMetadataRequest || isPublicPath) {
       return supabaseResponse;
     }
 
+    // // Allow access to public paths without authentication
+    // if (isPublicPath && !isEventPage) {
+    //   return supabaseResponse;
+    // }
+
     if (
       !user &&
-      !request.nextUrl.pathname.startsWith('/sign-in') &&
-      !request.nextUrl.pathname.startsWith('/sign-up') &&
-      !request.nextUrl.pathname.startsWith('/auth')
+      !request.nextUrl.pathname.startsWith("/sign-in") &&
+      !request.nextUrl.pathname.startsWith("/sign-up") &&
+      !request.nextUrl.pathname.startsWith("/auth")
     ) {
       // Preserve the original URL the user was trying to access
       const url = request.nextUrl.clone();
       const originalPath = url.pathname + url.search;
 
       // Create the redirect URL to the auth page with the redirect parameter
-      url.pathname = '/auth';
-      url.searchParams.set('redirect', originalPath);
+      url.pathname = "/auth";
+      url.searchParams.set("redirect", originalPath);
 
       return NextResponse.redirect(url);
     }
