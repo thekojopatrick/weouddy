@@ -16,8 +16,11 @@ export const siteConfig = {
 };
 
 export const siteMeta = {
-  title:
-    'WeOuddy - Real-Time Event Engagement and Moments Sharing Platform',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    template: '%s | WeOuddy',
+    default: 'WeOuddy - Real-Time Event Engagement',
+  },
   description:
     'Discover, share, and engage with moments that matter. WeOuddy lets you connect in real-time through events, communities, and more.',
   keywords: [
