@@ -1,60 +1,77 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import EventRoom from '@/features/events/content';
-import { formatEventDateTime } from '@/lib/utils/formatters';
-import { getSession } from '@/lib/auth';
-import { getURL } from '@/lib/utils';
-import { EventService } from '@/server/services/event';
-import EventAccessGuard from '@/features/events/content/_components/event-access-guard';
-import { checkUserEventStatus } from '@/app/actions/check-user-event-status';
-import EventNotFound from '@/features/events/content/_components/event-not-found';
-import { generateMetadataForEvent } from '@/lib/utils/generate-metadata';
-import { notFound } from 'next/navigation';
+import EventRoom from "@/features/events/content";
+import { getSession } from "@/lib/auth";
+import { EventService } from "@/server/services/event";
+import EventAccessGuard from "@/features/events/content/_components/event-access-guard";
+import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
+import EventNotFound from "@/features/events/content/_components/event-not-found";
+import { generateMetadataForEvent } from "@/lib/utils/generate-metadata";
 
 type Props = {
-  params: Promise<{ eventId: string }>;
-  searchParams: Promise<{
+  params: { eventId: string };
+  searchParams?: {
     [key: string]: string | string[] | undefined;
-  }>;
+  };
 };
 
-export async function generateMetadata({
-  params,
-}: Props): Promise<Metadata> {
-  const slug = (await params).eventId;
-  const data = await EventService.getEventBySlug(slug);
-  if (!data) notFound();
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  try {
+    const { eventId } = await params;
+    const event = await EventService.getEventBySlug(eventId);
 
-  return generateMetadataForEvent(data);
+    if (!event) {
+      return {
+        title: "Event Not Found",
+        description: "The requested event could not be found.",
+      };
+    }
+
+    return generateMetadataForEvent(event);
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Event",
+      description: "View event details",
+    };
+  }
 }
 
-export default async function EventRoomPage(props: {
-  params: Promise<{ eventId: string }>;
-}) {
-  const params = await props.params;
-  const { eventId } = await params;
+export default async function EventRoomPage({ params }: Props) {
+  try {
+    const { eventId } = await params;
+    const session = await getSession();
 
-  const session = await getSession();
+    // Handle authentication
+    if (!session) {
+      return redirect(`/auth?redirect=/events/${eventId}`);
+    }
 
-  if (!session) return null;
+    // Fetch event data
+    const event = await EventService.getEvent(eventId);
+    if (!event || !event.id) {
+      return <EventNotFound />;
+    }
 
-  const event = await EventService.getEvent(eventId);
+    // Check user's event status
+    const userEventStatus = await checkUserEventStatus({
+      eventId: event.id,
+      userId: session.userId,
+      slug: event.slug,
+    });
 
-  if (!event.id) return <EventNotFound />;
-
-  const userEventStatus = await checkUserEventStatus({
-    eventId: event.id,
-    userId: session.userId,
-    slug: event.slug,
-  });
-
-  return (
-    <EventAccessGuard
-      user={session?.user}
-      event={event || null}
-      userStatus={userEventStatus?.status || 'NOT_JOINED'}
-    >
-      <EventRoom user={session.user} event={event as never} />
-    </EventAccessGuard>
-  );
+    return (
+      <EventAccessGuard
+        user={session.user}
+        event={event}
+        userStatus={userEventStatus?.status || "NOT_JOINED"}
+      >
+        <EventRoom user={session.user} event={event} />
+      </EventAccessGuard>
+    );
+  } catch (error) {
+    console.error("Error in EventRoomPage:", error);
+    throw error; // Let the nearest error boundary handle it
+  }
 }

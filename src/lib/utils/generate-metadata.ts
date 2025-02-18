@@ -1,8 +1,8 @@
-import { formatDate } from 'date-fns';
-import { Metadata } from 'next';
-import { getSiteURL } from '@/utils';
-import { EventModel } from '@/types/event';
-import { formatEventDateTime } from './formatters';
+import { formatDate } from "date-fns";
+import { Metadata } from "next";
+import { getSiteURL } from "@/utils";
+import { EventModel } from "@/types/event";
+import { formatEventDateTime } from "./formatters";
 
 const SITE_URL = getSiteURL();
 
@@ -27,30 +27,28 @@ export function generateMetadataForEvent(data: EventModel): Metadata {
   return metadata;
 }
 
-function getRobotsMetadata(): Metadata['robots'] {
-  const metadata: Metadata['robots'] = {
+function getRobotsMetadata(): Metadata["robots"] {
+  const metadata: Metadata["robots"] = {
     index: true,
     follow: true,
     nocache: true,
     googleBot: {
       index: true,
       follow: true,
-      'max-snippet': -1,
+      "max-snippet": -1,
       noimageindex: false,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
+      "max-video-preview": -1,
+      "max-image-preview": "large",
     },
   };
   return metadata;
 }
 
-function getOpenGraphMetadata(
-  data: EventModel
-): Metadata['openGraph'] {
+function getOpenGraphMetadata(data: EventModel): Metadata["openGraph"] {
   return {
-    type: 'article',
-    locale: 'en_US',
-    siteName: 'WeOuddy',
+    type: "article",
+    locale: "en_US",
+    siteName: "WeOuddy",
     authors: data.host.name,
     description: data?.description ?? `Join me at ${data?.name}`,
     title: `${data.name} | WeOuddy`,
@@ -59,29 +57,29 @@ function getOpenGraphMetadata(
     url: `https://www.weouddy.com/events/${data.slug}`,
     images: [
       {
-        width: '1080',
-        height: '1080',
+        width: "1080",
+        height: "1080",
         alt: data.name,
-        type: 'image/jpeg',
+        type: "image/jpeg",
         url: data.coverImage ?? getHomepageOGImageLink(),
       },
     ],
   };
 }
 
-function getTwitterMetadata(data: EventModel): Metadata['twitter'] {
+function getTwitterMetadata(data: EventModel): Metadata["twitter"] {
   return {
     title: `${data.name} | WeOuddy`,
     site: `WeOuddy`,
     description: data?.description ?? `Join me at ${data?.name}`,
-    card: 'summary_large_image',
-    siteId: 'https://www.weouddy.com',
+    card: "summary_large_image",
+    siteId: "https://www.weouddy.com",
     images: [
       {
-        width: '1080',
-        height: '1080',
+        width: "1080",
+        height: "1080",
         alt: data.name,
-        type: 'image/jpeg',
+        type: "image/jpeg",
         url: data.coverImage ?? getHomepageOGImageLink(),
       },
     ],

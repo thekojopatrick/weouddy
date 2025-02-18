@@ -13,6 +13,7 @@ const publicPaths = [
   "/api/events",
   "/api/events/*",
   "/auth/callback",
+  "/events/*",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -54,6 +55,18 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Special handling for event pages
+    const isEventPage = request.nextUrl.pathname.startsWith("/events/");
+
+    // Check if it's a bot or crawler request (for metadata)
+    const userAgent = request.headers.get("user-agent") || "";
+    const isBot = /bot|crawler|spider|google|bing|yandex/i.test(userAgent);
+
+    // Allow bots to access event pages for metadata
+    if (isEventPage && isBot) {
+      return supabaseResponse;
+    }
+
     // Check if the current path is in the public paths array
     const isPublicPath = publicPaths.some(
       (path) =>
@@ -62,7 +75,7 @@ export async function updateSession(request: NextRequest) {
     );
 
     // Allow access to public paths without authentication
-    if (isPublicPath) {
+    if (isPublicPath && !isEventPage) {
       return supabaseResponse;
     }
 
