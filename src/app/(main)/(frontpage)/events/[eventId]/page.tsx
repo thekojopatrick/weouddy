@@ -1,13 +1,15 @@
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata, ResolvingMetadata } from 'next';
 
-import EventRoom from "@/features/events/content";
-import { formatEventDateTime } from "@/lib/utils/formatters";
-import { getSession } from "@/lib/auth";
-import { getURL } from "@/lib/utils";
-import { EventService } from "@/server/services/event";
-import EventAccessGuard from "@/features/events/content/_components/event-access-guard";
-import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
-import EventNotFound from "@/features/events/content/_components/event-not-found";
+import EventRoom from '@/features/events/content';
+import { formatEventDateTime } from '@/lib/utils/formatters';
+import { getSession } from '@/lib/auth';
+import { getURL } from '@/lib/utils';
+import { EventService } from '@/server/services/event';
+import EventAccessGuard from '@/features/events/content/_components/event-access-guard';
+import { checkUserEventStatus } from '@/app/actions/check-user-event-status';
+import EventNotFound from '@/features/events/content/_components/event-not-found';
+import { generateMetadataForEvent } from '@/lib/utils/generate-metadata';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -16,33 +18,43 @@ type Props = {
   }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
-  // read route params
-  const id = (await params).eventId;
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
+  const slug = (await params).eventId;
+  const data = await EventService.getEvent(slug);
+  if (!data) notFound();
 
-  // fetch data
-  const event = await EventService.getEvent(id);
-
-  // optionally access and extend (rather than replace) parent metadata
-  //const previousImages = (await parent).openGraph?.images || [];
-
-  const { date, time } = formatEventDateTime(event?.dateTime as never);
-  const siteUrl = getURL();
-
-  return {
-    title: `${event?.name} | WeOuddy - Real-Time Event Engagement and Moments Sharing Platform`,
-    description: `Join ${event?.name} on ${date} at ${time}. ${event?.location} : ${event?.description}`,
-    openGraph: {
-      title: `${event?.name} | WeOuddy - Real-Time Event Engagement`,
-      description:
-        "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
-      url: `${siteUrl}${event?.slug}`,
-    },
-  };
+  return generateMetadataForEvent(data);
 }
+
+// export async function generateMetadata(
+//   { params }: Props,
+//   parent: ResolvingMetadata,
+// ): Promise<Metadata> {
+//   // read route params
+//   const id = (await params).eventId;
+
+//   // fetch data
+//   const event = await EventService.getEvent(id);
+
+//   // optionally access and extend (rather than replace) parent metadata
+//   //const previousImages = (await parent).openGraph?.images || [];
+
+//   const { date, time } = formatEventDateTime(event?.dateTime as never);
+//   const siteUrl = getURL();
+
+//   return {
+//     title: `${event?.name} | WeOuddy - Real-Time Event Engagement and Moments Sharing Platform`,
+//     description: `Join ${event?.name} on ${date} at ${time}. ${event?.location} : ${event?.description}`,
+//     openGraph: {
+//       title: `${event?.name} | WeOuddy - Real-Time Event Engagement`,
+//       description:
+//         "Join a vibrant community where real-time engagement brings events to life. Share stories, discover events, and make meaningful connections.",
+//       url: `${siteUrl}${event?.slug}`,
+//     },
+//   };
+// }
 
 export default async function EventRoomPage(props: {
   params: Promise<{ eventId: string }>;
@@ -68,7 +80,7 @@ export default async function EventRoomPage(props: {
     <EventAccessGuard
       user={session?.user}
       event={event || null}
-      userStatus={userEventStatus?.status || "NOT_JOINED"}
+      userStatus={userEventStatus?.status || 'NOT_JOINED'}
     >
       <EventRoom user={session.user} event={event as never} />
     </EventAccessGuard>
