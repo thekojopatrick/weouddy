@@ -1,7 +1,7 @@
-import { cache } from "@/lib/redis";
-import { db } from "@/server/db/prisma";
-import { AttendeeStatus, EventVendor, Prisma } from "@prisma/client";
-import { performance } from "perf_hooks";
+import { cache } from '@/lib/redis';
+import { db } from '@/server/db/prisma';
+import { AttendeeStatus, EventVendor, Prisma } from '@prisma/client';
+import { performance } from 'perf_hooks';
 
 interface GetAllEventsOptions {
   skip: number;
@@ -57,8 +57,8 @@ export class EventService {
               ],
             }
           : { isPrivate: false }),
-        ...(location && location !== "world" && { location }),
-        ...(category && category !== "All" && { type: category }),
+        ...(location && location !== 'world' && { location }),
+        ...(category && category !== 'All' && { type: category }),
       };
 
       // Split into two queries: one for basic event data and another for additional details
@@ -93,7 +93,7 @@ export class EventService {
               },
             },
           },
-          orderBy: { createdAt: "desc" },
+          orderBy: { createdAt: 'desc' },
         }),
 
         // Counts query
@@ -145,13 +145,16 @@ export class EventService {
       // Check if query time exceeds limit
       const queryTime = performance.now() - startTime;
       if (queryTime > this.MAX_QUERY_TIME) {
-        console.warn(`Slow query detected: ${queryTime}ms for events list`);
+        console.warn(
+          `Slow query detected: ${queryTime}ms for events list`
+        );
         // Could add monitoring/alerting here
       }
 
       // Combine the results
       const enrichedEvents = events.map((event) => {
-        const counts = eventCounts.find((e) => e.id === event.id)?._count || {
+        const counts = eventCounts.find((e) => e.id === event.id)
+          ?._count || {
           attendees: 0,
           posts: 0,
         };
@@ -170,15 +173,17 @@ export class EventService {
 
       return enrichedEvents;
     } catch (error) {
-      console.error("Error in getAll events:", error);
+      console.error('Error in getAll events:', error);
       // Add error tracking here if needed (e.g., Sentry)
-      throw new Error("Failed to fetch events");
+      throw new Error('Failed to fetch events');
     }
   }
 
   // Helper method to invalidate cache for specific parameters
-  static async invalidateEventsCache(params: Partial<GetAllEventsOptions>) {
-    const cachePattern = `events:${params.location || "*"}:${params.category || "*"}:*`;
+  static async invalidateEventsCache(
+    params: Partial<GetAllEventsOptions>
+  ) {
+    const cachePattern = `events:${params.location || '*'}:${params.category || '*'}:*`;
     await cache.del(cachePattern);
   }
 }

@@ -4,6 +4,7 @@ import {
   Like,
   Post,
   PostMedia,
+  User,
 } from '@prisma/client';
 
 import { EventWithDetails, PostWithDetails } from './prisma.types';
@@ -94,3 +95,7 @@ export type JoinStep =
   | 'REDIRECTING';
 
 export type UserEventStatus = 'NOT_JOINED' | 'PENDING' | 'JOINED';
+
+export type EventModel = Event & {
+  host: User;
+};
