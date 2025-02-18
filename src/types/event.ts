@@ -1,13 +1,6 @@
-import {
-  Comment,
-  Event,
-  Like,
-  Post,
-  PostMedia,
-  User,
-} from '@prisma/client';
+import { Comment, Event, Like, Post, PostMedia, User } from "@prisma/client";
 
-import { EventWithDetails, PostWithDetails } from './prisma.types';
+import { EventWithDetails, PostWithDetails } from "./prisma.types";
 
 export type EventData = Event & {
   host: {
@@ -56,7 +49,7 @@ export interface EventWithFullData {
   isPrivate: boolean;
   isDisabled: boolean;
   requiresApproval: boolean;
-  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED' | 'INVITE_ONLY';
+  accessType: "DIRECT_PASS" | "PIN_REQUIRED" | "INVITE_ONLY";
   posts?: PostWithDetails[];
   members: number;
   description: string;
@@ -78,7 +71,7 @@ export interface JoinEventData {
   isDisabled: boolean;
   isPrivate: boolean; // This will determine the initial flow
   requiresApproval: boolean;
-  accessType: 'DIRECT_PASS' | 'PIN_REQUIRED';
+  accessType: "DIRECT_PASS" | "PIN_REQUIRED";
   pinCode?: string;
 }
 
@@ -88,13 +81,13 @@ export interface EventCache {
 }
 
 export type JoinStep =
-  | 'LINK_PASTE'
-  | 'QR_SCAN'
-  | 'PIN_ENTRY'
-  | 'WAITING_APPROVAL'
-  | 'REDIRECTING';
+  | "LINK_PASTE"
+  | "QR_SCAN"
+  | "PIN_ENTRY"
+  | "WAITING_APPROVAL"
+  | "REDIRECTING";
 
-export type UserEventStatus = 'NOT_JOINED' | 'PENDING' | 'JOINED';
+export type UserEventStatus = "NOT_JOINED" | "PENDING" | "JOINED";
 
 export type EventModel = Event & {
   host: User;
