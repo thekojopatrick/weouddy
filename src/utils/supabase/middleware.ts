@@ -10,7 +10,7 @@ const publicPaths = [
   "/support-us",
   "/privacy-policy",
   "/discover",
-  "/events/(.*)",
+  "/events/:path*",
   "/api/events",
   "/api/events/*",
   "/auth/callback",
@@ -55,6 +55,12 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Check if it's a metadata request
+    const isMetadataRequest =
+      request.headers.get("sec-purpose") === "prefetch" ||
+      request.headers.get("x-nextjs-data") === "1" ||
+      request.headers.get("purpose") === "prefetch";
+
     // Special handling for event pages
     const isEventPage = request.nextUrl.pathname.startsWith("/events/");
 
@@ -74,10 +80,15 @@ export async function updateSession(request: NextRequest) {
         request.nextUrl.pathname.startsWith("/auth"),
     );
 
-    // Allow access to public paths without authentication
-    if (isPublicPath && !isEventPage) {
+    // Allow metadata requests and public paths
+    if (isMetadataRequest || isPublicPath) {
       return supabaseResponse;
     }
+
+    // // Allow access to public paths without authentication
+    // if (isPublicPath && !isEventPage) {
+    //   return supabaseResponse;
+    // }
 
     if (
       !user &&
