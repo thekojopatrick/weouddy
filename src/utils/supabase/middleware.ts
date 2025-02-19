@@ -10,7 +10,8 @@ const publicPaths = [
   "/support-us",
   "/privacy-policy",
   "/discover",
-  "/events/:path*",
+  "/events",
+  "/events/(.)*",
   "/api/events",
   "/api/events/*",
   "/auth/callback",
@@ -55,23 +56,13 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Check if it's a metadata request
-    const isMetadataRequest =
-      request.headers.get("sec-purpose") === "prefetch" ||
-      request.headers.get("x-nextjs-data") === "1" ||
-      request.headers.get("purpose") === "prefetch";
+    // Bypass middleware for /events/[slug]
+    // if (request.nextUrl.pathname.startsWith("/events/")) {
+    //   return NextResponse.next();
+    // }
 
-    // Special handling for event pages
-    const isEventPage = request.nextUrl.pathname.startsWith("/events/");
-
-    // Check if it's a bot or crawler request (for metadata)
-    const userAgent = request.headers.get("user-agent") || "";
-    const isBot = /bot|crawler|spider|google|bing|yandex/i.test(userAgent);
-
-    // Allow bots to access event pages for metadata
-    if (isEventPage && isBot) {
-      return supabaseResponse;
-    }
+    // Check if it's a metadata request (for social media previews)
+    const isMetadataRequest = request.headers.get("purpose") === "prefetch";
 
     // Check if the current path is in the public paths array
     const isPublicPath = publicPaths.some(
@@ -82,13 +73,8 @@ export async function updateSession(request: NextRequest) {
 
     // Allow metadata requests and public paths
     if (isMetadataRequest || isPublicPath) {
-      return supabaseResponse;
+      return NextResponse.next({ request });
     }
-
-    // // Allow access to public paths without authentication
-    // if (isPublicPath && !isEventPage) {
-    //   return supabaseResponse;
-    // }
 
     if (
       !user &&
