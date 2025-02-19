@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-
 import EventRoom from "@/features/events/content";
 import { getSession } from "@/lib/auth";
 import { EventService } from "@/server/services/event";
@@ -8,6 +6,8 @@ import EventAccessGuard from "@/features/events/content/_components/event-access
 import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
 import EventNotFound from "@/features/events/content/_components/event-not-found";
 import { generateMetadataForEvent } from "@/lib/utils/generate-metadata";
+
+import AuthGuard from "./auth-guard";
 
 type Props = {
   params: { eventId: string };
@@ -45,7 +45,7 @@ export default async function EventRoomPage({ params }: Props) {
 
     // Handle authentication
     if (!session) {
-      return redirect(`/auth?redirect=/events/${eventId}`);
+      return <AuthGuard />;
     }
 
     // Fetch event data

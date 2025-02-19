@@ -44,9 +44,16 @@ export function AuthDialog({
     toast.success(message, { description });
     onOpenChangeAction(false);
     // Use setTimeout to ensure state updates complete before navigation
-    setTimeout(() => {
-      router.push(redirectTo);
-    }, 0);
+    // Check if we're on an event page
+    if (window.location.pathname.startsWith("/events/")) {
+      // Use router.refresh() instead of navigation
+      router.refresh();
+    } else {
+      // Use setTimeout to ensure state updates complete before navigation
+      setTimeout(() => {
+        router.push(redirectTo);
+      }, 0);
+    }
   };
 
   const handleSignIn = async (values: LoginFormValues) => {
