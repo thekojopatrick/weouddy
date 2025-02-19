@@ -60,11 +60,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Check if it's a metadata request
-    const isMetadataRequest =
-      request.headers.get("sec-purpose") === "prefetch" ||
-      request.headers.get("x-present") === "1" ||
-      request.headers.get("purpose") === "prefetch";
+    // Check if it's a metadata request (for social media previews)
+    const isMetadataRequest = request.headers.get("purpose") === "prefetch";
 
     // Check if the current path is in the public paths array
     const isPublicPath = publicPaths.some(
