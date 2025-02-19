@@ -45,7 +45,7 @@ export default async function EventRoomPage({ params }: Props) {
 
     // Handle authentication
     if (!session) {
-      return redirect(`/auth?redirect=/events/${eventId}`);
+      return null;
     }
 
     // Fetch event data
