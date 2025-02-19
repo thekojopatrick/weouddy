@@ -56,9 +56,9 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     // Bypass middleware for /events/[slug]
-    if (request.nextUrl.pathname.startsWith("/events/")) {
-      return NextResponse.next();
-    }
+    // if (request.nextUrl.pathname.startsWith("/events/")) {
+    //   return NextResponse.next();
+    // }
 
     // Check if it's a metadata request (for social media previews)
     const isMetadataRequest = request.headers.get("purpose") === "prefetch";
@@ -72,7 +72,7 @@ export async function updateSession(request: NextRequest) {
 
     // Allow metadata requests and public paths
     if (isMetadataRequest || isPublicPath) {
-      return supabaseResponse;
+      return NextResponse.next({ request });
     }
 
     if (
