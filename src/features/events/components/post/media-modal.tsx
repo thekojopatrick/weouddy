@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { formatTimeAgo } from "@/lib/utils/formatters";
 import { RiHeart3Fill, RiChat1Fill } from "@remixicon/react";
 import { getNameInitials } from "@/lib/utils";
-import { Post } from "@prisma/client";
-import { EventPostCardProps, PostDataCard } from "./post-card";
+
+import { PostDataCard } from "./post-card";
 
 interface MediaModalProps {
   isOpen: boolean;
