@@ -42,7 +42,7 @@ export function PostMediaSlider({
             src={currentMedia.url}
             alt={alt}
             fill
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         ) : (
           <video
@@ -52,7 +52,7 @@ export function PostMediaSlider({
               }
             }}
             src={currentMedia.url}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full object-cover"
             muted={isMuted}
             playsInline
             onEnded={() => {
