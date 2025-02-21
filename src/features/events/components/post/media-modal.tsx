@@ -38,13 +38,13 @@ export default function MediaModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenModal}>
       <DialogContent
-        closebtnstyle="grid place-items-center cursor-pointer left-4 bg-black/90 text-white rounded-full size-8 text-center"
+        closebtnstyle="grid place-items-center cursor-pointer left-4 bg-black text-white rounded-full size-8 text-center"
         className="max-w-4xl w-full h-screen md:h-auto p-0 gap-0 bg-black/90 overflow-clip"
       >
         <DialogTitle className="sr-only"> Media Post</DialogTitle>
-        <div className="relative h-full flex flex-col md:flex-row">
+        <div className="relative h-full flex flex-col justify-end md:flex-row">
           {/* Media Section */}
-          <div className="flex-1 relative">
+          <div className="h-fit md:flex-1 relative">
             <div className="aspect-auto">
               <PostMediaSlider
                 media={post.media}
