@@ -1,26 +1,18 @@
-'use client';
-import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from '@/components/ui/dialog';
-import { PostMediaSlider } from './post-media-slider';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { formatTimeAgo } from '@/lib/utils/formatters';
-import { RiHeart3Fill, RiChat1Fill } from '@remixicon/react';
-import { getNameInitials } from '@/lib/utils';
+"use client";
+import React, { useState } from "react";
+import { Dialog, DialogTitle, DialogContent } from "@/components/ui/dialog";
+import { PostMediaSlider } from "./post-media-slider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { formatTimeAgo } from "@/lib/utils/formatters";
+import { RiHeart3Fill, RiChat1Fill } from "@remixicon/react";
+import { getNameInitials } from "@/lib/utils";
 
-import { PostDataCard } from './post-card';
+import { PostDataCard } from "./post-card";
 
 interface MediaModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenModal: (open: boolean) => void;
   post: PostDataCard;
   userId: string;
   onLike: () => void;
@@ -32,7 +24,7 @@ interface MediaModalProps {
 
 export default function MediaModal({
   isOpen,
-  onClose,
+  onOpenModal,
   post,
   userId,
   onLike,
@@ -41,8 +33,10 @@ export default function MediaModal({
   likes,
   commentCount,
 }: MediaModalProps) {
+  console.log({ isOpen });
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onOpenModal}>
       <DialogContent
         closebtnstyle="grid place-items-center cursor-pointer left-4 bg-black/90 text-white rounded-full size-8 text-center"
         className="max-w-4xl w-full h-screen md:h-auto p-0 gap-0 bg-black/90 overflow-clip"
@@ -54,7 +48,7 @@ export default function MediaModal({
             <div className="aspect-auto">
               <PostMediaSlider
                 media={post.media}
-                alt={post.caption || ''}
+                alt={post.caption || ""}
                 isHovered={true}
               />
             </div>
@@ -65,9 +59,7 @@ export default function MediaModal({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage
-                    src={post.user.avatarUrl || undefined}
-                  />
+                  <AvatarImage src={post.user.avatarUrl || undefined} />
                   <AvatarFallback className="text-black text-sm">
                     {getNameInitials(post.user.name)}
                   </AvatarFallback>
@@ -82,7 +74,7 @@ export default function MediaModal({
                 </div>
               </div>
               <Badge variant="secondary">
-                {post.userId === userId ? 'Your post' : 'Member'}
+                {post.userId === userId ? "Your post" : "Member"}
               </Badge>
             </div>
 
@@ -99,7 +91,7 @@ export default function MediaModal({
                   className="flex items-center gap-2 hover:text-gray-300 transition-colors"
                 >
                   <RiHeart3Fill
-                    className={`h-6 w-6 ${isLiked ? 'text-red-500' : ''}`}
+                    className={`h-6 w-6 ${isLiked ? "text-red-500" : ""}`}
                   />
                   <span>{likes}</span>
                 </button>

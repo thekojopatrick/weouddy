@@ -134,19 +134,18 @@ export function EventPostWithMedia({ post, userId }: EventPostCardProps) {
             currentUserId={currentUserId}
           />
         </div>
-
-        <MediaModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          post={post}
-          userId={userId}
-          onLike={handleLike}
-          onComment={() => setIsCommentsOpen(true)}
-          isLiked={currentUserLiked}
-          likes={likes}
-          commentCount={commentCount}
-        />
       </div>
+      <MediaModal
+        isOpen={isModalOpen}
+        onOpenModal={setIsModalOpen}
+        post={post}
+        userId={userId}
+        onLike={handleLike}
+        onComment={() => setIsCommentsOpen(true)}
+        isLiked={currentUserLiked}
+        likes={likes}
+        commentCount={commentCount}
+      />
     </>
   );
 }
