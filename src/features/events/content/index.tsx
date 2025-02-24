@@ -181,6 +181,7 @@ export default function EventRoom({
           )}
         >
           {/*  Wrap JoinChatRoom with auth protection 
+          {event.allowChat && (
           <div
             onClick={() =>
               protectAction(
@@ -203,34 +204,36 @@ export default function EventRoom({
               eventName={event.name}
               user={user as never}
             />
-          </div>
+          </div>)}
           */}
           {/* Wrap CreatePostButton with auth protection */}
-          <div
-            onClick={() =>
-              protectAction(
-                user,
-                () => (
-                  <CreatePostButton
-                    isSmallDevice={isSmallDevice}
-                    eventId={event.publicId}
-                    user={user as never}
-                  />
-                ),
-                "create a post",
-              )
-            }
-          >
-            <CreatePostButton
-              isSmallDevice={isSmallDevice}
-              eventId={event.publicId}
-              user={{
-                id: user?.id,
-                userName: user?.user_metadata.full_name ?? "",
-                userAvatar: user?.avatarUrl ?? "",
-              }}
-            />
-          </div>
+          {event.allowPosts && (
+            <div
+              onClick={() =>
+                protectAction(
+                  user,
+                  () => (
+                    <CreatePostButton
+                      isSmallDevice={isSmallDevice}
+                      eventId={event.publicId}
+                      user={user as never}
+                    />
+                  ),
+                  "create a post",
+                )
+              }
+            >
+              <CreatePostButton
+                isSmallDevice={isSmallDevice}
+                eventId={event.publicId}
+                user={{
+                  id: user?.id,
+                  userName: user?.user_metadata.full_name ?? "",
+                  userAvatar: user?.avatarUrl ?? "",
+                }}
+              />
+            </div>
+          )}
         </div>
 
         <EventSettingsModal
