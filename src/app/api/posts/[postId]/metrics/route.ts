@@ -12,7 +12,7 @@ export async function GET(
   // Rate limit API requests - 30 requests per minute per IP
   await rateLimiter.limitByIp({
     key: "get-metrics",
-    limit: 15,
+    limit: 30,
     window: 60000,
   });
 
