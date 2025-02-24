@@ -37,7 +37,6 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 interface CreatePostDialogProps {
   eventId: string;
@@ -58,7 +57,6 @@ export function CreatePostDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = !useMediaQuery("(min-width: 768px)");
-  const router = useRouter();
 
   const { handleFiles, uploadFiles, removeFile, uploadState, setUploadState } =
     useUploadFiles();
@@ -265,10 +263,10 @@ export function CreatePostDialog({
     <>
       <Wrapper open={isOpen} onOpenChange={handleOpenChange}>
         <Button
-          variant={"outline"}
+          variant={"default"}
           size={isMobile ? "icon" : "lg"}
           className={cn(
-            "rounded-full shadow-lg",
+            "rounded-full shadow-lg bg-[#101F00] text-white",
             isMobile ? "size-12" : "h-12",
           )}
           onClick={handleClick}

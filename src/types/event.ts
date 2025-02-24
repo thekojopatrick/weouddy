@@ -48,6 +48,9 @@ export interface EventWithFullData {
   };
   isPrivate: boolean;
   isDisabled: boolean;
+  allowChat: boolean;
+  allowPosts: boolean;
+  allowComments: boolean;
   requiresApproval: boolean;
   accessType: "DIRECT_PASS" | "PIN_REQUIRED" | "INVITE_ONLY";
   posts?: PostWithDetails[];

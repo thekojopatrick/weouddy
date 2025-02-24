@@ -14,6 +14,7 @@ import {
   KeyRound,
   GlobeLock,
   Copy,
+  NotebookPen,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -68,11 +69,7 @@ export function EventSettingsModal({
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const newSettings = await onSaveSettingsAction(settings);
-
-      console.log({ newSettings });
-
-      ///setSettings(newSettings as never);
+      await onSaveSettingsAction(settings);
 
       onOpenChangeAction(false);
       toast.success("Event settings updated successfully");
@@ -179,8 +176,23 @@ export function EventSettingsModal({
           {/* Interaction Settings */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
+              <NotebookPen className="size-4" />
+              <span className="text-sm">Allow members to post</span>
+            </div>
+            <Switch
+              checked={settings.allowPosts}
+              onCheckedChange={(checked) =>
+                setSettings((prev) => ({
+                  ...prev,
+                  allowPosts: checked,
+                }))
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <MessageCircle className="size-4" />
-              <span className="text-sm">Allow Comments</span>
+              <span className="text-sm">Allow members to comment</span>
             </div>
             <Switch
               checked={settings.allowComments}

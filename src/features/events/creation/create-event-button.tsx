@@ -25,10 +25,10 @@ export function CreateEventButton({
   return (
     <>
       <Button
-        variant={"outline"}
+        variant={"default"}
         size={isSmallDevice ? "icon" : "lg"}
         className={cn(
-          "rounded-full shadow-lg",
+          "rounded-full shadow-lg bg-[#101F00] text-white",
           isSmallDevice ? "size-12" : "h-12",
         )}
         onClick={handleClick}
