@@ -33,10 +33,12 @@ import {
 import { useUploadFiles } from "@/features/events/hooks/post/use-upload-files";
 import { useCreatePost } from "@/features/events/hooks/post/use-post";
 import { useToast } from "@/hooks/use-toast";
+import { uploadFiles } from "@/utils/upload-utils";
 
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import type { FileWithPreview, UploadState } from "@/types/upload";
 
 interface CreatePostDialogProps {
   eventId: string;
@@ -57,9 +59,12 @@ export function CreatePostDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = !useMediaQuery("(min-width: 768px)");
+  const [uploadState, setUploadState] = useState<UploadState>({
+    files: [],
+    isUploading: false,
+    totalProgress: 0,
+  });
 
-  const { handleFiles, uploadFiles, removeFile, uploadState, setUploadState } =
-    useUploadFiles();
   const createPost = useCreatePost();
 
   const handleOpenChange = (open: boolean) => {
@@ -90,9 +95,32 @@ export function CreatePostDialog({
 
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      await handleFiles(e.target.files, eventId);
+      if (!e.target.files) return;
+
+      const files = Array.from(e.target.files);
+      const newFiles = files.map((file) => {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = file.type.startsWith("video/")
+          ? `${eventId}/videos/${fileName}`
+          : `${eventId}/images/${fileName}`;
+
+        return {
+          file,
+          preview: URL.createObjectURL(file),
+          mediaType: file.type.startsWith("video/") ? "VIDEO" : "IMAGE", // Explicitly type as "IMAGE" | "VIDEO"
+          progress: 0,
+          filePath,
+          uploading: false, // Add the missing `uploading` property
+        };
+      });
+
+      setUploadState((prev) => ({
+        ...prev,
+        files: [...prev.files, ...newFiles],
+      }));
     },
-    [handleFiles, eventId],
+    [eventId],
   );
 
   const handlePost = async () => {
@@ -108,10 +136,31 @@ export function CreatePostDialog({
     setIsPosting(true);
 
     try {
-      const mediaFiles = await uploadFiles();
+      // Upload files using uploadFiles from upload-utils
+      const uploadedFiles = await uploadFiles(
+        "posts", // Replace with your Supabase bucket name
+        uploadState.files.map((f) => f.file),
+        (fileIndex, progress) => {
+          setUploadState((prev) => ({
+            ...prev,
+            files: prev.files.map((file, index) =>
+              index === fileIndex ? { ...file, progress } : file,
+            ),
+          }));
+        },
+      );
+
+      // Get the URLs of the uploaded files
+      const mediaFiles = uploadedFiles.map((file, index) => ({
+        url: file.url, // Replace with the actual URL from Supabase
+        type: uploadState.files[index].mediaType,
+        order: index, // Add the `order` property
+      }));
+
+      // Create the post
       await createPost.mutateAsync({
         content: content.trim(),
-        media: mediaFiles, // Pass the filtered media files
+        media: mediaFiles,
         eventId,
       });
 
@@ -139,6 +188,15 @@ export function CreatePostDialog({
     } finally {
       setIsPosting(false);
     }
+  };
+
+  const removeFile = (index: number) => {
+    setUploadState((prev) => {
+      const newFiles = [...prev.files];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return { ...prev, files: newFiles };
+    });
   };
 
   const renderContent = useCallback(
