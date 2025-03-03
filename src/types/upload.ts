@@ -5,6 +5,7 @@ export interface FileWithPreview {
   uploading: boolean;
   mediaType: "IMAGE" | "VIDEO";
   filePath?: string;
+  uploadedUrl?: string;
   url?: string;
   error?: string; // Optional error field
 }

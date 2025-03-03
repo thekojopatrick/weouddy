@@ -105,6 +105,7 @@ export function CreatePostDialog({
         });
         return;
       }
+
       const files = Array.from(e.target.files);
       const newFiles: FileWithPreview[] = files.map((file) => {
         const fileExt = file.name.split(".").pop();
@@ -116,19 +117,81 @@ export function CreatePostDialog({
         return {
           file,
           preview: URL.createObjectURL(file),
-          mediaType: file.type.startsWith("video/") ? "VIDEO" : "IMAGE", // Explicitly type as "IMAGE" | "VIDEO"
+          mediaType: file.type.startsWith("video/") ? "VIDEO" : "IMAGE",
           progress: 0,
           filePath,
-          uploading: false, // Add the missing `uploading` property
+          uploading: true, // Set to true immediately
         };
       });
 
+      // Update state with new files and set uploading to true
       setUploadState((prev) => ({
         ...prev,
+        isUploading: true,
         files: [...prev.files, ...newFiles],
       }));
+
+      // Start uploading immediately
+      try {
+        const uploadedFiles = await uploadFiles(
+          "posts",
+          newFiles.map((f) => f.file),
+          newFiles.map((f) => f.filePath!),
+          (fileIndex, progress) => {
+            setUploadState((prev) => ({
+              ...prev,
+              files: prev.files.map((file, index) =>
+                prev.files.length - newFiles.length + fileIndex === index
+                  ? { ...file, progress }
+                  : file,
+              ),
+            }));
+          },
+        );
+
+        // Update files with uploaded URLs
+        setUploadState((prev) => ({
+          ...prev,
+          isUploading: false,
+          files: prev.files.map((file, index) => {
+            // Only update the newly uploaded files
+            if (index >= prev.files.length - newFiles.length) {
+              const newIndex = index - (prev.files.length - newFiles.length);
+              return {
+                ...file,
+                uploading: false,
+                uploadedUrl: uploadedFiles[newIndex].url,
+              };
+            }
+            return file;
+          }),
+        }));
+
+        toast({
+          title: "Upload complete",
+          description: "Your files are ready to post.",
+        });
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload one or more files.",
+          variant: "destructive",
+        });
+
+        // Mark files as not uploading anymore
+        setUploadState((prev) => ({
+          ...prev,
+          isUploading: false,
+          files: prev.files.map((file, index) =>
+            index >= prev.files.length - newFiles.length
+              ? { ...file, uploading: false }
+              : file,
+          ),
+        }));
+      }
     },
-    [eventId],
+    [eventId, toast, uploadFiles],
   );
 
   const handlePost = async () => {
@@ -144,32 +207,11 @@ export function CreatePostDialog({
     setIsPosting(true);
 
     try {
-      setUploadState((prev) => ({
-        ...prev,
-        isUploading: true,
-        files: prev.files.map((f) => ({ ...f, uploading: true })),
-      }));
-
-      // Upload files using uploadFiles from upload-utils
-      const uploadedFiles = await uploadFiles(
-        "posts", // Replace with your Supabase bucket name
-        uploadState.files.map((f) => f.file),
-        uploadState.files.map((f) => f.filePath!),
-        (fileIndex, progress) => {
-          setUploadState((prev) => ({
-            ...prev,
-            files: prev.files.map((file, index) =>
-              index === fileIndex ? { ...file, progress } : file,
-            ),
-          }));
-        },
-      );
-
-      // Get the URLs of the uploaded files
-      const mediaFiles = uploadedFiles.map((file, index) => ({
-        url: file.url, // Replace with the actual URL from Supabase
-        type: uploadState.files[index].mediaType,
-        order: index, // Add the `order` property
+      // Get the URLs of the already uploaded files
+      const mediaFiles = uploadState.files.map((file, index) => ({
+        url: file.uploadedUrl!, // Use the URL from the upload
+        type: file.mediaType,
+        order: index,
       }));
 
       // Create the post
@@ -188,11 +230,11 @@ export function CreatePostDialog({
       setIsOpen(false);
       setContent("");
       uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
-      setUploadState((prev) => ({
-        ...prev,
+      setUploadState({
+        files: [],
         isUploading: false,
-        files: prev.files.map((f) => ({ ...f, uploading: false })),
-      }));
+        totalProgress: 0,
+      });
     } catch (error) {
       console.error("Error creating post:", error);
       toast({
@@ -315,10 +357,15 @@ export function CreatePostDialog({
             disabled={
               (!content && uploadState.files.length === 0) ||
               isPosting ||
-              uploadState.isUploading
+              uploadState.isUploading ||
+              uploadState.files.some((file) => file.uploading)
             }
           >
-            {isPosting ? "Posting..." : "Post"}
+            {isPosting
+              ? "Posting..."
+              : uploadState.isUploading
+                ? "Uploading..."
+                : "Post"}
           </Button>
         </div>
       </>
