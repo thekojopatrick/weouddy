@@ -30,7 +30,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { useUploadFiles } from "@/features/events/hooks/post/use-upload-files";
 import { useCreatePost } from "@/features/events/hooks/post/use-post";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFiles } from "@/utils/upload-utils";
@@ -97,8 +96,17 @@ export function CreatePostDialog({
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
 
+      if (uploadState.files.length + e.target.files.length > 5) {
+        toast({
+          title: "Exceeded Maximum",
+          description:
+            "You can only upload up to 5 files (Images, Videos, or GIFs)",
+          variant: "destructive",
+        });
+        return;
+      }
       const files = Array.from(e.target.files);
-      const newFiles = files.map((file) => {
+      const newFiles: FileWithPreview[] = files.map((file) => {
         const fileExt = file.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = file.type.startsWith("video/")
@@ -136,10 +144,17 @@ export function CreatePostDialog({
     setIsPosting(true);
 
     try {
+      setUploadState((prev) => ({
+        ...prev,
+        isUploading: true,
+        files: prev.files.map((f) => ({ ...f, uploading: true })),
+      }));
+
       // Upload files using uploadFiles from upload-utils
       const uploadedFiles = await uploadFiles(
         "posts", // Replace with your Supabase bucket name
         uploadState.files.map((f) => f.file),
+        uploadState.files.map((f) => f.filePath!),
         (fileIndex, progress) => {
           setUploadState((prev) => ({
             ...prev,
@@ -173,11 +188,11 @@ export function CreatePostDialog({
       setIsOpen(false);
       setContent("");
       uploadState.files.forEach((file) => URL.revokeObjectURL(file.preview));
-      setUploadState({
-        files: [],
+      setUploadState((prev) => ({
+        ...prev,
         isUploading: false,
-        totalProgress: 0,
-      });
+        files: prev.files.map((f) => ({ ...f, uploading: false })),
+      }));
     } catch (error) {
       console.error("Error creating post:", error);
       toast({

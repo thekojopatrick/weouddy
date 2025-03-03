@@ -10,13 +10,33 @@ function getFileExtension(filename: string): string {
 }
 
 function getMimeType(extension: string): string {
-  if (extension === "jpg") return "image/jpeg";
-  return `image/${extension}`;
+  switch (extension.toLowerCase()) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "gif":
+      return "image/gif";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    case "mp4":
+      return "video/mp4";
+    case "webm":
+      return "video/webm";
+    case "mov":
+      return "video/quicktime";
+    default:
+      return `image/${extension}`;
+  }
 }
 
 export async function uploadFiles(
   bucketName: string,
   files: File[],
+  filePaths: string[],
   onProgress?: (fileIndex: number, progress: number) => void,
 ): Promise<{ url: string }[]> {
   const supabase = createClient();
@@ -30,7 +50,8 @@ export async function uploadFiles(
       return new Promise<{ url: string }>((resolve, reject) => {
         const extension = getFileExtension(file.name);
         const fileName = `${Math.random()}.${extension}`;
-        const filePath = `${bucketName}/${fileName}`;
+
+        const filePath = filePaths[fileIndex] || `${bucketName}/${fileName}`;
 
         const upload = new Upload(file, {
           endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/upload/resumable`,

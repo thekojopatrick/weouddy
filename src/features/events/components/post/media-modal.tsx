@@ -33,8 +33,6 @@ export default function MediaModal({
   likes,
   commentCount,
 }: MediaModalProps) {
-  console.log({ isOpen });
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenModal}>
       <DialogContent
