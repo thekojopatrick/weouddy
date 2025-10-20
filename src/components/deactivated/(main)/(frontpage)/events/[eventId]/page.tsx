@@ -3,7 +3,7 @@ import EventRoom from "@/features/events/content";
 import { getSession } from "@/lib/auth";
 import { EventService } from "@/server/services/event";
 import EventAccessGuard from "@/features/events/content/_components/event-access-guard";
-import { checkUserEventStatus } from "@/app/deactivated/actions/check-user-event-status";
+import { checkUserEventStatus } from "@/components/deactivated/actions/check-user-event-status";
 import EventNotFound from "@/features/events/content/_components/event-not-found";
 import { generateMetadataForEvent } from "@/lib/utils/generate-metadata";
 

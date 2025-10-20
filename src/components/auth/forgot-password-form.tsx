@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SVGLogo from "../svg-logo";
-import { forgotPasswordAction } from "@/app/deactivated/auth/actions";
+import { forgotPasswordAction } from "@/components/deactivated/auth/actions";
 
 import Link from "next/link";
 import { forgotPasswordSchema } from "@/types/validation";

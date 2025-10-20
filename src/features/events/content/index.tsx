@@ -23,7 +23,7 @@ import { SharePlatform } from "@/types/enums";
 import {
   EventSettings,
   updateEventSettings,
-} from "@/app/deactivated/actions/event-settings";
+} from "@/components/deactivated/actions/event-settings";
 
 export default function EventRoom({
   user,

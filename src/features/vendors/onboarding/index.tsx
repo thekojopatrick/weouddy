@@ -7,7 +7,7 @@ import {
   vendorSchema,
   type VendorFormData,
 } from "@/features/vendors/onboarding/types";
-import { createVendor } from "@/app/deactivated/(main)/(frontpage)/vendors/onboarding/actions";
+import { createVendor } from "@/components/deactivated/(main)/(frontpage)/vendors/onboarding/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";

@@ -12,7 +12,7 @@ import {
   signInAction,
   signInWithGoogleAction,
   signUpAction,
-} from "@/app/deactivated/actions/auth";
+} from "@/components/deactivated/actions/auth";
 
 export function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const [isLoading, setIsLoading] = useState(false);

@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { JoinEventDialog } from "../../join/join-event-dialog";
 import { Container } from "@/components/common/container";
-import { checkUserEventStatus } from "@/app/deactivated/actions/check-user-event-status";
+import { checkUserEventStatus } from "@/components/deactivated/actions/check-user-event-status";
 
 interface EventAccessGuardProps {
   user: (User & { username: string | null; avatarUrl: string | null }) | null;

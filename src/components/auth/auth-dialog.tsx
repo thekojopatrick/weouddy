@@ -13,7 +13,7 @@ import {
   signInAction,
   signInWithGoogleAction,
   signUpAction,
-} from "@/app/deactivated/actions/auth";
+} from "@/components/deactivated/actions/auth";
 
 interface AuthDialogProps {
   open: boolean;

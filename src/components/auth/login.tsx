@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { signInWithMagicLinkAction } from "@/app/deactivated/actions/auth";
+import { signInWithMagicLinkAction } from "@/components/deactivated/actions/auth";
 import { useActionState, useState } from "react";
 import { ActionState } from "@/utils/auth/middleware";
 
