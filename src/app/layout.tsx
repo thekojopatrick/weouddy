@@ -5,12 +5,13 @@ import { cabinetGrotesk, geistMono, geistSans } from "@/components/ui/fonts";
 import type { Metadata } from "next";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
-import { siteMeta } from "@/config/site";
 import Provider from "./provider";
 import Script from "next/script";
-// import { env } from "@/env";
 
-export const metadata: Metadata = siteMeta;
+export const metadata: Metadata = {
+  title: "WeOuddy - Real-Time Event Engagement",
+  description: "Discover, share, and engage with moments that matter.",
+};
 
 export default function RootLayout({
   children,
