@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { signInWithMagicLinkAction } from "@/app/actions/auth";
+import { signInWithMagicLinkAction } from "@/app/deactivated/actions/auth";
 import { useActionState, useState } from "react";
 import { ActionState } from "@/utils/auth/middleware";
 
@@ -28,9 +28,9 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
       provider: "google",
       options: {
         redirectTo: `${redirectTo}?priceId=${encodeURIComponent(
-          priceId || "",
+          priceId || ""
         )}&discountCode=${encodeURIComponent(
-          discountCode || "",
+          discountCode || ""
         )}&redirect=${encodeURIComponent("/test")}`,
       },
     });

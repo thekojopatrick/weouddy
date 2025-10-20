@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { JoinEventDialog } from "../../join/join-event-dialog";
 import { Container } from "@/components/common/container";
-import { checkUserEventStatus } from "@/app/actions/check-user-event-status";
+import { checkUserEventStatus } from "@/app/deactivated/actions/check-user-event-status";
 
 interface EventAccessGuardProps {
   user: (User & { username: string | null; avatarUrl: string | null }) | null;
@@ -36,10 +36,10 @@ export default function EventAccessGuard({
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [userStatus, setUserStatus] = useState<string>(
-    initialUserEventStatus === "APPROVED" ? "JOINED" : initialUserEventStatus,
+    initialUserEventStatus === "APPROVED" ? "JOINED" : initialUserEventStatus
   );
   const [isCheckingAccess, setIsCheckingAccess] = useState(
-    userStatus !== "JOINED" && userStatus !== "DENIED",
+    userStatus !== "JOINED" && userStatus !== "DENIED"
   );
 
   useEffect(() => {

@@ -17,7 +17,7 @@ export default function NotFound() {
             <Link href={"/"}>Go back to home</Link>
           </Button>
           <Button variant={"secondary"} className="rounded-full" asChild>
-            <Link href={"/contact"}>Contact Support</Link>
+            <Link href={"http://x.com/_kojopatrick"}>Contact Support</Link>
           </Button>
         </div>
       </div>

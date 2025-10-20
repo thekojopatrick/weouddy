@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { VideoShowcase } from "../_components/video-showcase";
+import { VideoShowcase } from "./video-showcase";
 import Link from "next/link";
 //import { TestimonialCard } from '../_components/testimonial-card';
 //import { FeaturesGrid } from '../_components/features-grid';

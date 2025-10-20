@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CreateEventForm } from "./create-event-form";
 import { SuccessStep } from "./steps/success";
 import { getURL } from "@/lib/utils";
-import { createEvent } from "@/app/actions/create-event";
+import { createEvent } from "@/app/deactivated/actions/create-event";
 
 interface EventCreationManagerProps {
   onClose: () => void;

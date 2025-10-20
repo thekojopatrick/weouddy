@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { siteMeta } from "@/config/site";
 import Provider from "./provider";
 import Script from "next/script";
-import { env } from "@/env";
+// import { env } from "@/env";
 
 export const metadata: Metadata = siteMeta;
 
@@ -50,10 +50,15 @@ export default function RootLayout({
           });
         `}
         </Script>
-        <Script
+        {/* <Script
           id="map"
           async
           src={`https://maps.googleapis.com/maps/api/js?key=${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        /> */}
+        <Script
+          src="https://app.rybbit.io/api/script.js"
+          data-site-id="707e49a46ebb"
+          strategy="afterInteractive"
         />
       </body>
     </html>

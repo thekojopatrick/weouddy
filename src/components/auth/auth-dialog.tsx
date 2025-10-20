@@ -13,7 +13,7 @@ import {
   signInAction,
   signInWithGoogleAction,
   signUpAction,
-} from "@/app/actions/auth";
+} from "@/app/deactivated/actions/auth";
 
 interface AuthDialogProps {
   open: boolean;
@@ -33,13 +33,13 @@ export function AuthDialog({
 
   // Get redirect path from URL parameters and decode it
   const redirectPath = decodeURIComponent(
-    searchParams.get("redirect") || "/discover",
+    searchParams.get("redirect") || "/discover"
   );
 
   const handleAuthSuccess = async (
     message: string,
     description: string,
-    redirectTo: string = redirectPath,
+    redirectTo: string = redirectPath
   ) => {
     toast.success(message, { description });
     onOpenChangeAction(false);
@@ -80,7 +80,7 @@ export function AuthDialog({
       if (response.success && response.user) {
         await handleAuthSuccess(
           "Welcome back!",
-          "You have successfully signed in.",
+          "You have successfully signed in."
         );
         return; // Exit early after successful auth
       }
@@ -113,7 +113,7 @@ export function AuthDialog({
       if (response.success && response.user) {
         await handleAuthSuccess(
           "Account created!",
-          "Please check your email to verify your account.",
+          "Please check your email to verify your account."
         );
       }
     } catch (error) {

@@ -23,7 +23,7 @@ import { SharePlatform } from "@/types/enums";
 import {
   EventSettings,
   updateEventSettings,
-} from "@/app/actions/event-settings";
+} from "@/app/deactivated/actions/event-settings";
 
 export default function EventRoom({
   user,
@@ -78,7 +78,7 @@ export default function EventRoom({
       window.open(
         shareUrls[platform],
         "share",
-        `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`,
+        `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`
       );
     }
   };
@@ -177,7 +177,7 @@ export default function EventRoom({
         <div
           className={cn(
             "fixed bottom-8 flex flex-col gap-4 z-50 items-end",
-            isSmallDevice ? "right-5" : "right-8",
+            isSmallDevice ? "right-5" : "right-8"
           )}
         >
           {/*  Wrap JoinChatRoom with auth protection 
@@ -219,7 +219,7 @@ export default function EventRoom({
                       user={user as never}
                     />
                   ),
-                  "create a post",
+                  "create a post"
                 )
               }
             >

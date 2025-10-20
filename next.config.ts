@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
       { hostname: "img.buymeacoffee.com" },
+      { hostname: "instagram.facc6-1.fna.fbcdn.net" },
     ],
   },
 };
